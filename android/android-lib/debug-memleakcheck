@@ -1,0 +1,5 @@
+#! /bin/sh
+# メモリリークチェック用のコマンド
+# 目視になるが、ある程度役には立つだろう。
+
+adb shell top -d 1 | grep com.eaglesakura.jc.sample

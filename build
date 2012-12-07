@@ -1,0 +1,12 @@
+#! /bin/sh
+
+# android project build
+cd android
+./debug-build
+
+if [ $? -ne 0 ]; then
+    echo "android-build failed..."
+    exit 1
+fi
+
+cd ../

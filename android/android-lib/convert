@@ -1,0 +1,24 @@
+#! /bin/sh
+
+if [ ! -e AndroidManifest.xml ]; then
+    echo "is not Android Project directory..."
+    exit 1
+fi
+
+ANDROID_VERSION=android-15
+OUTPUT_PATH=../../sources/
+
+#
+echo "android classes --------------"
+java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin/classes/com/eaglesakura/jc/android/" --output "${OUTPUT_PATH}/platforms/android/gen/classes" --library "${ANDROID_HOME}/platforms/${ANDROID_VERSION}/android.jar" "./bin/classes"  | grep "export"
+
+java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin/classes/com/google/" --output "${OUTPUT_PATH}/platforms/android/gen/classes-google" --library "${ANDROID_HOME}/platforms/${ANDROID_VERSION}/android.jar" "./bin/classes"  | grep "export"
+
+#
+echo "protocols --------------"
+java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin/classes/com/eaglesakura/jc/protocol/" --output "${OUTPUT_PATH}/core/gen/protocols" --library "${ANDROID_HOME}/platforms/${ANDROID_VERSION}/android.jar" | grep "export"
+
+#
+#echo "samples --------------"
+#java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin/classes/com/eaglesakura/jc/sample/" --output "./jni/gen/classes" --library "${ANDROID_HOME}/platforms/${ANDROID_VERSION}/android.jar" "./bin/classes" | grep "export"
+

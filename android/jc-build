@@ -1,0 +1,65 @@
+#! /bin/sh
+
+# JC_PROJECT_PATH=android-lib
+JC_CURRENT_PATH=${PWD}
+
+
+####### android command #######
+if type -P android > /dev/null; then
+  echo "android command exist"
+else
+  # android.bat
+  if type -P android.bat > /dev/null;then
+    alias android=android.bat
+    echo "alias android.bat -> android"
+  else
+    echo "android command not exist..."
+#    exit 1
+  fi
+fi
+###############################
+
+# プロジェクトパスへ移動
+cd ${JC_PROJECT_PATH}
+
+# プロジェクト更新
+android update ${JC_PROJECT_TYPE} -p ./
+
+# build check
+if [ $? -ne 0 ]; then
+    echo "android update failed..."
+    exit 1
+fi
+
+# ndk-build
+#if [ -e jni/Android.mk ]; then
+#    cd ./jni
+#    if [ ${JC_NDK_CLEAN} = "true" ]; then
+#        ndk-build clean
+#    fi
+#    # release build
+#    ndk-build ${JC_NDK_OPTION}
+#    # build check
+#    if [ $? -ne 0 ]; then
+#        echo "ndk-build failed..."
+#        exit 1
+#    fi
+#    cd ..
+#fi
+# release build!!
+if [ -f keystore.properties ]; then
+    ant clean
+    ant release -propertyfile keystore.properties
+else
+    ant clean
+    ant ${JC_ANT_TASK}
+fi
+
+# build check
+if [ $? -ne 0 ]; then
+    echo "ant release failed..."
+    exit 1
+fi
+
+# back to current
+cd ${JC_CURRENT_PATH}

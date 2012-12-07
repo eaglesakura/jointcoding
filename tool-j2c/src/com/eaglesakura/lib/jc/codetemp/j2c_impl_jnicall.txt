@@ -1,0 +1,20 @@
+#if 0
+#include "jointcoding-android.h"
+#include "JCEXPORTCLASSHEADERNAME"
+
+extern "C" {
+// prototype
+JNIEXPORT JCRESULTTYPE JNICALL Java_JCEXPORTCLASSNATIVEFUNCTIONNAME(JNIEnv *env, jobject _thisJCEXPORTCLASS_JNIARGMETNS);
+}
+
+// main
+JNIEXPORT JCRESULTTYPE JNICALL Java_JCEXPORTCLASSNATIVEFUNCTIONNAME(JNIEnv *env, jobject _thisJCEXPORTCLASS_JNIARGMETNS) {
+    // call env reset
+    initJniEnv(env);
+    
+    // add code.
+    jclogf("call method!! :: %s", "Java_JCEXPORTCLASSNATIVEFUNCTIONNAME");
+    
+    JCEXPORTCLASSRETURNCODE
+}
+#endif

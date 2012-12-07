@@ -1,0 +1,26 @@
+static jclass class_JCEXPORTCLASS = NULL;
+
+#define methods_JCEXPORTCLASS_LENGTH JCEXPORTMETHOD_LENGTH
+
+#if methods_JCEXPORTCLASS_LENGTH
+static jmethodID methods_JCEXPORTCLASS[JCEXPORTMETHOD_LENGTH];
+#endif
+
+static void initialize_JCEXPORTCLASS() {
+    // loaded !
+    if (class_JCEXPORTCLASS) {
+        return;
+    }
+
+    CALL_JNIENV();
+
+    // load class object
+    class_JCEXPORTCLASS = env->FindClass(JCEXPORTCLASS::CLASS_SIGNATURE);
+    class_JCEXPORTCLASS = (jclass)env->NewGlobalRef(class_JCEXPORTCLASS);
+    
+
+    // load methods
+    {
+JCEXPORTMETHODS
+    }
+}

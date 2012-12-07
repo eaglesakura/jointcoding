@@ -1,0 +1,14 @@
+extern "C" {
+// prototype
+JNIEXPORT JCRESULTTYPE JNICALL Java_JCEXPORTCLASSNATIVEFUNCTIONNAME(JNIEnv *env, jobject _this, jint pointer_intJCEXPORTCLASS_JNIARGMETNS);
+}
+
+// main
+JNIEXPORT JCRESULTTYPE JNICALL Java_JCEXPORTCLASSNATIVEFUNCTIONNAME(JNIEnv *env, jobject _this, jint pointer_intJCEXPORTCLASS_JNIARGMETNS) {
+    // call env reset
+    initJniEnv(env);
+    
+    ALIAS_CLASSNAME* pointer = (ALIAS_CLASSNAME*)pointer_int;
+
+    JCEXPORTCLASSRETURNCODE
+}
