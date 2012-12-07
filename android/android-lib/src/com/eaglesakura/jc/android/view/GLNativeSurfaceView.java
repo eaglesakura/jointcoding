@@ -26,6 +26,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
+@Deprecated
 public final class GLNativeSurfaceView extends SurfaceView {
     /**
      * デバイスポインタ

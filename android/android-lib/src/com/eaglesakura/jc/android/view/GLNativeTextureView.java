@@ -12,9 +12,15 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCField;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
 /**
- * Native連携用のGLView
+
+ * OpenGL ES 2.0に最適化したTextureViewを構築する。
  * 
- *
+ * サーフェイス作成後、{@link #initialize(int)}を呼び出してEGLの初期化準備を明示的に行わなければならい。
+ * また、初期化準備はUIスレッドから行うことを前提としている。
+ * setContentView()される前にinitialize()を呼び出すことを想定している。
+ * 
+ * サーフェイスの復旧等は自動的に行われるが、廃棄する場合は必ず{@link #destroy()}を呼び出し、Native側の資源を開放しなければならない。
+ * 
  */
 @JCClass(
          cppNamespace = "ndk")
