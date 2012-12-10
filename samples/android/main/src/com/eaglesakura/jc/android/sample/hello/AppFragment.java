@@ -18,6 +18,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "app")
+@SuppressWarnings("all")
 public class AppFragment extends NativeFragment implements GLNativeSurfaceView.GLES2Callback {
 
     GLNativeSurfaceView glView = null;

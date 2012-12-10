@@ -76,7 +76,7 @@ public:
     MSpriteManager spriteManager;
 
     static void backRender(AppFragmentNative* fragment) {
-        MDevice device = ViewUtil::getDevice(fragment->view.getObject());
+        MDevice device = ViewUtil::getDeviceFromSurfaceView(fragment->view.getObject());
 
         try {
 

@@ -21,7 +21,13 @@ public:
      * GLNativeSurfaceViewからGLレンダリング用のDeviceを取得する。
      * Deviceは自動的に復帰が行われる。
      */
-    static jc::gl::MDevice getDevice(jobject GLNativeSurfaceView_instance);
+    static jc::gl::MDevice getDeviceFromSurfaceView(jobject GLNativeSurfaceView_instance);
+
+    /**
+     * GLNativeTexureViewからGLレンダリング用のDeviceを取得する。
+     * Deviceは自動的に復帰が行われる。
+     */
+    static jc::gl::MDevice getDeviceFromTextureView(jobject GLNativeTextureView_instance);
 
     /**
      * onTouchListenerをセッティングする。

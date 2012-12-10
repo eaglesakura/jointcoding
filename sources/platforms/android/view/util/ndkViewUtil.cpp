@@ -6,6 +6,7 @@
 
 #include    "ndkViewUtil.h"
 #include    "ndkGLNativeSurfaceViewContext.h"
+#include    "ndkGLNativeTextureViewContext.h"
 #include    "ndkNativeOnTouchListener.h"
 #include    "jcViewOnTouchListener.h"
 #include    "jcViewOnClickListener.h"
@@ -18,8 +19,16 @@ namespace ndk {
  * GLNativeSurfaceViewからGLレンダリング用のDeviceを取得する。
  * Deviceは自動的に復帰が行われる。
  */
-jc::gl::MDevice ViewUtil::getDevice(jobject GLNativeSurfaceView_instance) {
+jc::gl::MDevice ViewUtil::getDeviceFromSurfaceView(jobject GLNativeSurfaceView_instance) {
     return GLNativeSurfaceViewContext::getNativeContext(GLNativeSurfaceView_instance)->getDevice();
+}
+
+/**
+ * GLNativeTexureViewからGLレンダリング用のDeviceを取得する。
+ * Deviceは自動的に復帰が行われる。
+ */
+jc::gl::MDevice ViewUtil::getDeviceFromTextureView(jobject GLNativeTextureView_instance) {
+    return GLNativeTextureViewContext::getNativeContext(GLNativeTextureView_instance)->getDevice();
 }
 
 /**

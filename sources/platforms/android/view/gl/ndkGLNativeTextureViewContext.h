@@ -88,8 +88,8 @@ public:
     /**
      * Context変換
      */
-    static jc_sp<GLNativeTextureViewContext>& getNativeContext(jobject glNativeSurfaceView) {
-        return *((jc_sp<GLNativeTextureViewContext>*)GLNativeTextureView::getNativeContextPointer_(glNativeSurfaceView));
+    static jc_sp<GLNativeTextureViewContext>& getNativeContext(jobject glNativeTextureView) {
+        return *((jc_sp<GLNativeTextureViewContext>*)GLNativeTextureView::getNativeContextPointer_(glNativeTextureView));
     }
 };
 

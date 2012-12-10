@@ -197,6 +197,15 @@ public:
             method_hashCode = NULL;
             method_toString = NULL;
         }
+        return (*this);
+    }
+
+    SmartJObject<T>& reset(const T jobj, jcboolean globalRef) {
+        reset(jobj);
+
+        if(globalRef) {
+            addGlobalRef();
+        }
 
         return (*this);
     }
@@ -205,7 +214,7 @@ public:
 /**
  * jclassのラッパ
  */
-typedef SmartJObject<jobject> JClass;
+typedef SmartJObject<jobject> JObject;
 
 }
 

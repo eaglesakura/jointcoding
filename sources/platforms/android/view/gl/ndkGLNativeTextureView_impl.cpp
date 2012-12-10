@@ -7,7 +7,7 @@
 #include "ndkGLNativeTextureView.h"
 #include "ndkGLNativeTextureViewContext.h"
 
-#define RENDERING_CHECK
+// #define RENDERING_CHECK
 
 #ifdef RENDERING_CHECK
 #include    "jcglDeviceLock.h"
