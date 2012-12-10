@@ -42,7 +42,7 @@ void ViewUtil::setOnTouchListener(jobject view, jc_sp<Object> listener ) {
     }
 
     {
-        jobject objMonitor = NativeOnTouchListener::setOnTouchListener( view, (jint) uspListener);
+        jobject objMonitor = NativeOnTouchListener::setOnTouchListener_unsafe( view, (jint) uspListener);
         SystemMemory::addMonitor(objMonitor, listener);
     }
 
@@ -61,7 +61,7 @@ void ViewUtil::setOnClickListener(jobject view, jc_sp<Object> listener) {
     }
 
     {
-        jobject objMonitor = NativeOnClickListener::setOnClickListener(view, (jint)uspListener);
+        jobject objMonitor = NativeOnClickListener::setOnClickListener_unsafe(view, (jint)uspListener);
         SystemMemory::addMonitor(objMonitor, listener);
     }
 }

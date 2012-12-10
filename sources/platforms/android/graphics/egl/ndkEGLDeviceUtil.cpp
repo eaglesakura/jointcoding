@@ -6,7 +6,6 @@
 
 #include    "ndkEGLDeviceUtil.h"
 #include    "ndkEGLImpl.h"
-#include    "ndkGLNativeSurfaceViewContext.h"
 
 namespace ndk {
 
@@ -28,14 +27,6 @@ MDevice EGLDeviceUtil::createInstance() {
 MEGLProtocol EGLDeviceUtil::getEGLProtocol() {
     static jc_sp<EGLManager> g_eglManager( new EGLManager() );
     return g_eglManager;
-}
-
-/**
- * glNativeSurfaceViewからデバイスインスタンスを取得する
- */
-MDevice EGLDeviceUtil::getDevice(jobject glNativeSurfaceView) {
-    jc_sp<ndk::GLNativeSurfaceViewContext>& context = GLNativeSurfaceViewContext::getNativeContext(glNativeSurfaceView);
-    return context->getDevice();
 }
 
 }

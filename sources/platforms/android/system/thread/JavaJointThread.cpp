@@ -11,7 +11,7 @@ namespace ndk {
 
 JavaJointThread::JavaJointThread(MRunnable runnable) :
         Thread(runnable) {
-    nativeThread = JavaNativeThread::global(JavaNativeThread::createInstance((jint) this));
+    nativeThread = JavaNativeThread::global(JavaNativeThread::createInstance_unsafe((jint) this));
     this->setName(getName());
 }
 

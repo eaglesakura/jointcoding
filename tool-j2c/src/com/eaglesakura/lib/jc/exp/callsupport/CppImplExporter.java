@@ -189,7 +189,7 @@ public class CppImplExporter extends CppClassInfomationBase {
         {
             writer.append(methodArrayName).append("[").append(Integer.toString(id)).append("] = ");
             writer.append("::ndk::JniWrapper::loadMethod(class_").append(converter.getClassName()).append(", \"")
-                    .append(method.getName()).append("\"").append(", \"").append(method.getMethodSigneture())
+                    .append(method.getRawName()).append("\"").append(", \"").append(method.getMethodSigneture())
                     .append("\", ").append(Boolean.toString(method.isStaticMethod())).append(");");
         }
 

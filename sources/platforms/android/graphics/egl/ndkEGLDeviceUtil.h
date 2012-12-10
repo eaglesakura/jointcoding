@@ -30,11 +30,6 @@ public:
      * EGL資源はAndroidアプリ内で1つしか利用できない（必要がない）ため。
      */
     static MEGLProtocol getEGLProtocol();
-
-    /**
-     * glNativeSurfaceViewからデバイスインスタンスを取得する
-     */
-    static MDevice getDevice(jobject glNativeSurfaceView);
 };
 
 }

@@ -10,6 +10,7 @@ import com.eaglesakura.lib.jc.AnnotationArgment;
 import com.eaglesakura.lib.jc.JCUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCAliasMethod;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
+import com.eaglesakura.lib.jc.type.JniArgmentType;
 
 /**
  * メソッドを出力する
@@ -99,6 +100,7 @@ public class MethodConverter extends ConverterBase {
      */
     private void _build() throws Exception {
         methodName = method.getName();
+
         callSign = method.getSignature();
         resultType = method.getReturnType();
         paramTypes = method.getParameterTypes();
@@ -133,6 +135,17 @@ public class MethodConverter extends ConverterBase {
                 argNames = new String[0];
             }
         }
+
+        // jobject関係はunsafeの警告を入れる
+        try {
+            String typename = JniArgmentType.getType(resultType.getSimpleName()).name().toLowerCase();
+            if (typename.contains("object") || typename.contains("array")) {
+                methodName = methodName + "_unsafe";
+            }
+        } catch (Exception e) {
+
+        }
+
     }
 
     /**
@@ -166,6 +179,10 @@ public class MethodConverter extends ConverterBase {
 
     public String getName() {
         return methodName;
+    }
+
+    public String getRawName() {
+        return method.getName();
     }
 
     public int getArgmentNum() {

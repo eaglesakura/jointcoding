@@ -26,8 +26,8 @@ MInputStream NDKFileSystem::openAsset(const String fileName) {
     jobject is = NULL;
     jstring jFileName = env->NewStringUTF(fileName.c_str());
     {
-        jobject local_context = context->getAppContext();
-        is = NativeIOUtil::openFromAssets(jFileName, local_context);
+        jobject local_context = context->getAppContext_unsafe();
+        is = NativeIOUtil::openFromAssets_unsafe(jFileName, local_context);
         env->DeleteLocalRef(local_context);
     }
     env->DeleteLocalRef(jFileName);
