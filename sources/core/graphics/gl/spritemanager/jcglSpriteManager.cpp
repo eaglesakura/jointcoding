@@ -15,9 +15,14 @@ void SpriteManager::initialize(MDevice device) {
     this->attrVertices = shader->getAttribLocation("vPosition");
     this->attrCoords = shader->getAttribLocation("vTexCoord");
 
+    assert(attrVertices != ATTRIBUTE_DISABLE_INDEX);
+    assert(attrCoords != ATTRIBUTE_DISABLE_INDEX);
+
     this->unifPolyData = shader->getUniformLocation("poly_data");
+    assert(unifPolyData != UNIFORM_DISABLE_INDEX);
     this->unifTexture = 0;
     this->unifPolyUv = shader->getUniformLocation("poly_uv");
+    assert(unifPolyData != UNIFORM_DISABLE_INDEX);
 
     this->quad.reset(new Quad(device));
     quad->attributes(attrVertices, attrCoords);
@@ -33,6 +38,7 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     this->unifPolyUv = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
+    this->bindedTextureIndex = 0;
 
     this->initialize(device);
 }
@@ -69,22 +75,39 @@ void SpriteManager::rendering(s32 x, s32 y, s32 width, s32 height) {
  * レンダリングを行う
  */
 void SpriteManager::rendering(MTextureImage texture, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstWidth, const s32 dstHeight) {
-    s32 unitIndex = texture->bind();
-    const float displayWidth = (float) device->getSurface()->getWidth();
-    const float displayHeight = (float) device->getSurface()->getHeight();
 
-    //! 描画位置を行列で操作する
-    {
-        const float sizeX = (float) srcW / (float) texture->getWidth();
-        const float sizeY = (float) srcH / (float) texture->getHeight();
-        const float sx = (float) srcX / (float) texture->getWidth();
-        const float sy = (float) srcY / (float) texture->getHeight();
+    if (texture) {
+        // テクスチャ番号を設定する
+        shaderContext.texEnable = jctrue;
+        bindedTextureIndex = texture->bind();
 
-        const float poly_uv[] = { sx, sy, sizeX, sizeY, };
-        glUniform4fv(unifPolyUv, 1, poly_uv);
-//        gl.glTranslatef(sx, sy, 0.0f);
-//        gl.glScalef(sizeX, sizeY, 1.0f);
-//        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        //! テクスチャ描画位置を行列で操作する
+        {
+            const float sizeX = (float) srcW / (float) texture->getWidth();
+            const float sizeY = (float) srcH / (float) texture->getHeight();
+            const float sx = (float) srcX / (float) texture->getWidth();
+            const float sy = (float) srcY / (float) texture->getHeight();
+
+            const float poly_uv[] = { sx, sy, sizeX, sizeY, };
+            glUniform4fv(unifPolyUv, 1, poly_uv);
+            //        gl.glTranslatef(sx, sy, 0.0f);
+            //        gl.glScalef(sizeX, sizeY, 1.0f);
+            //        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        }
+
+    } else {
+        shaderContext.texEnable = jcfalse;
+        /*
+         // 空いているテクスチャにバインドする
+         bindedTextureIndex = device->getState()->getFreeTextureUnitIndex();
+
+         // どれも空いていないなら0番を切り替える
+         if (bindedTextureIndex < 0) {
+         bindedTextureIndex = 0;
+         device->getState()->activeTexture(0);
+         device->getState()->unbindTexture(0);
+         }
+         */
     }
 
     this->rendering(dstX, dstY, dstWidth, dstHeight);
@@ -99,13 +122,14 @@ void SpriteManager::dispose() {
     device.reset();
 }
 
-MSpriteManager SpriteManager::createInstance(MDevice device) {
-    MGLShaderProgram program = ShaderProgram::buildFromUri(device, Uri::fromAssets("basic/shader/sprite.vsd"), Uri::fromAssets("basic/shader/sprite.fsd"));
+MSpriteManager SpriteManager::createInstance(MDevice device, const Uri vertexShaderUri, const Uri fragmentShaderUri) {
+    MGLShaderProgram program = ShaderProgram::buildFromUri(device, vertexShaderUri, fragmentShaderUri);
     if (!program) {
         return MSpriteManager();
     }
 
     MSpriteManager result(new SpriteManager(device, program));
+
     return result;
 }
 

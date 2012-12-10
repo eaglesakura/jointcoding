@@ -24,10 +24,11 @@ MInputStream NDKFileSystem::openAsset(const String fileName) {
     CALL_JNIENV();
 
     jobject is = NULL;
-    jclogf("env = %x", env);
     jstring jFileName = env->NewStringUTF(fileName.c_str());
     {
-        is = NativeIOUtil::openFromAssets(jFileName, context->getAppContext());
+        jobject local_context = context->getAppContext();
+        is = NativeIOUtil::openFromAssets(jFileName, local_context);
+        env->DeleteLocalRef(local_context);
     }
     env->DeleteLocalRef(jFileName);
 

@@ -20,50 +20,54 @@ using namespace jc;
 extern "C" {
 
 TESTFUNCTION void Inputstream_openTest() {
-    Uri fileUri = Uri::fromAssets("test.txt");
-    _assertNotNull( Platform::getFileSystem() );
 
-    try {
-        MInputStream stream = Platform::getFileSystem()->openInputStream(fileUri);
-        _assertNotNull( stream );
+    const s32 LOOP = 1000;
 
-        jclogf("available = %d", stream->available() );
+    for (s32 i = 0; i < LOOP; ++i) {
+        Uri fileUri = Uri::fromAssets("test.txt");
+        _assertNotNull( Platform::getFileSystem());
 
-        jc_sa<u8> temp(new u8[ stream->available() + 1 ]);
-        stream->read(temp.get(), stream->available());
+        try {
+            MInputStream stream = Platform::getFileSystem()->openInputStream(fileUri);
+            _assertNotNull( stream);
 
-        jclogf("text = %s", temp.get());
+            jclogf("available = %d", stream->available());
 
-    } catch( const Exception &e ) {
-        jcloge(e);
-        _assertTrue(false);
+            jc_sa<u8> temp(new u8[ stream->available() + 1 ]);
+            stream->read(temp.get(), stream->available());
+
+            jclogf("text = %s", temp.get());
+        } catch (const Exception &e) {
+            jcloge(e);
+            _assertTrue(false);
+        }
+
     }
 }
 
 TESTFUNCTION void Inputstream_openJpegTest() {
     Uri fileUri = Uri::fromAssets("sample_raw.jpg");
 
-    _assertNotNull( Platform::getFileSystem() );
+    _assertNotNull( Platform::getFileSystem());
 
     try {
         MInputStream stream = Platform::getFileSystem()->openInputStream(fileUri);
-        _assertNotNull( stream );
+        _assertNotNull( stream);
 
-        jclogf("available = %d kb", stream->available() / 1024 );
-
+        jclogf("available = %d kb", stream->available() / 1024);
 
         boost::timer timer;
         jc_sp<ImageDecoder> decoder(new JpegImageDecoder(stream));
         /*
-        decoder->decodeHeader();
-        {
-            decoder->decodeBegin(PixelFormat_RGB888, 5);
-            s32 scan = 0;
-            while( (scan = decoder->decode()) != 0 ) {
-                jclogf("decode lines = %d", scan);
-            }
-        }
-        */
+         decoder->decodeHeader();
+         {
+         decoder->decodeBegin(PixelFormat_RGB888, 5);
+         s32 scan = 0;
+         while( (scan = decoder->decode()) != 0 ) {
+         jclogf("decode lines = %d", scan);
+         }
+         }
+         */
         jclogf("decode time = %d ms", (int)(timer.elapsed() * 1000));
 
         jclog("stream reset");
@@ -73,7 +77,7 @@ TESTFUNCTION void Inputstream_openJpegTest() {
         jclog("decoder reset");
 //        decoder.reset();
         jclog("decoder reset finish");
-    } catch( const Exception &e ) {
+    } catch (const Exception &e) {
         jcloge(e);
         _assertTrue(false);
     }

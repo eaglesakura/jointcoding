@@ -11,8 +11,9 @@
 namespace ndk {
 
 JavaJointInputStream::JavaJointInputStream(jobject inputstream) {
-    this->stream = JniInputStream::global(inputstream);
     CALL_JNIENV();
+    this->stream = JniInputStream::global(inputstream);
+//    env->DeleteLocalRef(inputstream);
     // 一時領域を作成する。デフォルトは32kb
     this->tempBuffer = JByteArray::global(env->NewByteArray(1024 * 32));
 }
@@ -21,7 +22,7 @@ JavaJointInputStream::~JavaJointInputStream() {
     try {
         jclog("java inputstream close");
         this->close();
-        this->stream.reset();
+        jclog("java inputstream close finish");
     } catch (const Exception &e) {
         jcloge(e);
     }

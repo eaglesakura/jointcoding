@@ -56,6 +56,11 @@ protected:
     s32 unifTexture;
 
     /**
+     * バインドされたテクスチャ番号
+     */
+    s32 bindedTextureIndex;
+
+    /**
      * テクスチャUVのuniformインデックス
      * @shader_uniform poly_uv
      */
@@ -110,7 +115,11 @@ public:
      * 明示的な解放を行う
      */
     virtual void dispose();
-    static jc_sp<SpriteManager> createInstance( MDevice device );
+
+    /**
+     * インスタンスを作成する
+     */
+    static jc_sp<SpriteManager> createInstance( MDevice device, const Uri vertexShaderUri, const Uri fragmentShaderUri );
 };
 
 /**

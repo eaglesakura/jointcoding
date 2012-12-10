@@ -66,7 +66,7 @@ class AppFragmentNative: public NativeFragmentBase {
 
     jcboolean initialized;
 public:
-    ndk::JClass view;
+    ndk::SmartJObject<jobject> view;
 
     /**
      * レンダリングするテクスチャ
@@ -139,7 +139,7 @@ public:
         device->getState()->syncContext();
 
 // マネージャ作成
-        spriteManager = SpriteManager::createInstance(device);
+        spriteManager = SpriteManager::createInstance(device, Uri::fromAssets("basic/shader/sprite.vsd"), Uri::fromAssets("basic/shader/sprite.fsd"));
 
 // テクスチャの作成
         try {

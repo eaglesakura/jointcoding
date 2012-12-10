@@ -16,7 +16,7 @@ static void initialize_JCEXPORTCLASS() {
 
     // load class object
     class_JCEXPORTCLASS = env->FindClass(JCEXPORTCLASS::CLASS_SIGNATURE);
-    class_JCEXPORTCLASS = (jclass)env->NewGlobalRef(class_JCEXPORTCLASS);
+    class_JCEXPORTCLASS = (jclass)::ndk::change_globalref(env, class_JCEXPORTCLASS);
     
 
     // load methods

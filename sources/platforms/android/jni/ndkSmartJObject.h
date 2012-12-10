@@ -14,6 +14,15 @@
 
 namespace ndk {
 
+inline jobject change_globalref(JNIEnv *env, jobject obj) {
+    jobject old_ref = obj;
+    jobject new_ref = env->NewGlobalRef(obj);
+
+    env->DeleteLocalRef(old_ref);
+
+    return new_ref;
+}
+
 /**
  * Javaのリファレンス管理を行う
  */
@@ -54,11 +63,19 @@ protected:
      * グローバル参照している場合、オーナーシップを破棄する
      */
     virtual void release() {
+        CALL_JNIENV();
         if (globalRef) {
-            CALL_JNIENV();
+            jclogf("delete globalRef(%x)", obj);
             env->DeleteGlobalRef(obj);
             env->DeleteGlobalRef(clazz);
             globalRef = jcfalse;
+        } else {
+            if(obj) {
+                env->DeleteLocalRef(obj);
+            }
+            if( clazz ) {
+                env->DeleteLocalRef(clazz);
+            }
         }
 
         this->obj = NULL;
@@ -90,7 +107,7 @@ public:
         clazz = NULL;
 
         this->reset(cpy.obj);
-        if(cpy.globalRef) {
+        if (cpy.globalRef) {
             this->addGlobalRef();
         }
     }
@@ -153,9 +170,10 @@ public:
     virtual SmartJObject<T>* addGlobalRef() {
         if (!globalRef) {
             CALL_JNIENV();
-            obj = (T) env->NewGlobalRef((jobject) obj);
-            clazz = (jclass) env->NewGlobalRef((jobject) clazz);
+            obj = (T)change_globalref( env, obj );
+            clazz = (jclass) change_globalref(env,(jobject) clazz);
             globalRef = true;
+            jclogf("add globalRef(%x)", obj);
         }
         return this;
     }
