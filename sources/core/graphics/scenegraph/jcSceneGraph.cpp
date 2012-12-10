@@ -119,7 +119,7 @@ void SceneGraph::removeFromParent() {
  * 更新作業を行う
  */
 jcboolean SceneGraph::update() {
-    std::list<MSceneGraph>::iterator itr = childs.iterator, end = childs.end();
+    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
         if ((*itr)->update()) {

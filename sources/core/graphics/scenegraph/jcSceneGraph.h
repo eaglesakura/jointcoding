@@ -7,6 +7,7 @@
 #ifndef JCSCENEGRAPH_H_
 #define JCSCENEGRAPH_H_
 
+#include    "jcMacro.h"
 #include    "jcObject.h"
 #include    "jcSmartPtr.h"
 #include    <list>
