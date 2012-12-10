@@ -88,17 +88,15 @@ public:
 
     /**
      * 更新作業を行う
+     * trueを返すと「処理完了」とみなして排除する
      */
-    virtual void update() {
-
-    }
+    virtual jcboolean update();
 
     /**
      * レンダリングを行う
+     * 子（プライオリティ順） -> 親の順番で描画される
      */
-    virtual void rendering() {
-
-    }
+    virtual void rendering();
 
     /**
      * 親シーンに統合されたタイミングで呼び出される
@@ -109,7 +107,20 @@ public:
     /**
      * 親シーンから外されたタイミングで呼び出される
      */
-    virtual void onSceneUnbinded( ) {
+    virtual void onSceneUnbinded() {
+    }
+
+    /**
+     * 自分自身の更新作業を行う
+     */
+    virtual jcboolean onSelfUpdate() {
+        return jcfalse;
+    }
+
+    /**
+     * 自分自身のレンダリングを行う
+     */
+    virtual void onSelfRendering() {
     }
 };
 

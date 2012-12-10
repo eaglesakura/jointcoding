@@ -115,5 +115,55 @@ void SceneGraph::removeFromParent() {
     throw create_exception(RuntimeException, "parent not have this");
 }
 
+/**
+ * 更新作業を行う
+ */
+jcboolean SceneGraph::update() {
+    std::list<MSceneGraph>::iterator itr = childs.iterator, end = childs.end();
+
+    while (itr != end) {
+        if ((*itr)->update()) {
+            MSceneGraph child = (*itr);
+
+            // リストから排除する
+            itr = childs.erase(itr);
+            end = childs.end();
+
+            child->parent = NULL;
+            // send message
+            child->onSceneUnbinded();
+        } else {
+            ++itr;
+        }
+    }
+
+    return onSelfUpdate();
+}
+
+static bool compare_scenegraph(const MSceneGraph a, const MSceneGraph b) {
+    return a->getRenderingPriority() < b->getRenderingPriority();
+}
+
+/**
+ * レンダリングを行う
+ */
+void SceneGraph::rendering() {
+    std::list<MSceneGraph> renderingScenes;
+    // 元のリストをコピーする
+    std::copy(childs.begin(), childs.end(), std::back_inserter(renderingScenes));
+
+    // sort
+    renderingScenes.sort(compare_scenegraph);
+
+    // レンダリング作業
+    std::list<MSceneGraph>::iterator itr = renderingScenes.begin(), end = renderingScenes.end();
+    while (itr != end) {
+        (*itr)->rendering();
+        ++itr;
+    }
+
+    onSelfRendering();
+}
+
 }
 
