@@ -18,7 +18,10 @@ inline jobject change_globalref(JNIEnv *env, jobject obj) {
     jobject old_ref = obj;
     jobject new_ref = env->NewGlobalRef(obj);
 
-    env->DeleteLocalRef(old_ref);
+    const jobjectRefType refType = env->GetObjectRefType(obj);
+    if (refType == JNILocalRefType) {
+        env->DeleteLocalRef(old_ref);
+    }
 
     return new_ref;
 }
@@ -92,6 +95,7 @@ public:
         globalRef = jcfalse;
         method_equals = NULL;
         clazz = NULL;
+        obj = NULL;
 
         this->reset(jobj);
     }
@@ -105,6 +109,7 @@ public:
         globalRef = jcfalse;
         method_equals = NULL;
         clazz = NULL;
+        obj = NULL;
 
         this->reset(cpy.obj);
         if (cpy.globalRef) {
