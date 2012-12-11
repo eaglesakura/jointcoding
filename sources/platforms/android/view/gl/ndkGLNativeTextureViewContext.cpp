@@ -9,7 +9,6 @@
 #include    "dlfcn.h"
 #include    "EGLSupport.h"
 
-
 namespace ndk {
 
 GLNativeTextureViewContext::GLNativeTextureViewContext(const u32 eglFlags) {
@@ -95,7 +94,7 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
 // EGLSurfaceの再構築を行う
     {
         EGLSurface eglSurface = NULL;
-        eglSurface = (EGLSurface)EGLSupport::eglCreateWindowSurfaceSupport((jint) display, (jint) config, surfaceTexture);
+        eglSurface = (EGLSurface) EGLSupport::eglCreateWindowSurfaceSupport((jint) display, (jint) config, surfaceTexture);
 
         if (eglSurface == EGL_NO_SURFACE ) {
             jclog("error surface");
@@ -105,6 +104,13 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
 
         // サーフェイスを設定する
         this->device->setSurface(MEGLSurfaceProtocol(new EGLSurfaceManager(display, eglSurface)));
+    }
+
+    {
+        EGLManager *manager = dynamic_cast<EGLManager*>(device->getEGL().get());
+        if (manager) {
+            manager->stashEGLCurrents();
+        }
     }
 }
 

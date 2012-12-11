@@ -28,6 +28,28 @@ class EGLManager: public EGLProtocol {
      */
     MThreadID threadId;
 
+    struct {
+        /**
+         * OSが保持していたDisplay
+         */
+        EGLDisplay display;
+
+        /**
+         * OSが保持していたContext
+         */
+        EGLContext context;
+
+        /**
+         * OSが保持していたSurface
+         */
+        EGLSurface readSurface;
+
+        /**
+         * OSが保持していたSurface
+         */
+        EGLSurface drawSurface;
+    } androidEGL;
+
 public:
     EGLManager();
 
@@ -60,6 +82,11 @@ public:
      * このメソッドは完了するまでブロックされることを保証しない（デバイス依存、基本的にブロッキングになるように調整している）
      */
     virtual jcboolean postFrontBuffer(MEGLSurfaceProtocol displaySurface);
+
+    /**
+     * 現在のEGLパラメーターを一時的に格納する
+     */
+    virtual void stashEGLCurrents();
 
     /**
      * 資源の開放を行う

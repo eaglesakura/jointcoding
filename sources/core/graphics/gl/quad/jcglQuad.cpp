@@ -32,10 +32,9 @@ struct tagVertex {
 #define RIGHT   0.5
 #define BOTTOM  -0.5
 
-tagVertex g_vertices[] = {
+static tagVertex g_vertices[] = {
 //
         /**
-
          // 位置情報
          left, top, //!< 左上
          right, top, //!< 右上
@@ -83,14 +82,10 @@ void Quad::initialize() {
     state->bindBuffer(GL_ARRAY_BUFFER, vertices.get());
 
 // バッファ転送
-    jclogf("sizeof g_vertices %d = %d", sizeof(g_vertices), sizeof(tagVertex) * 3);
-    CLEAR_GL_ERROR;
+    CLEAR_GL_ERROR
+    ;
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertices), g_vertices, GL_STATIC_DRAW);
     PRINT_GL_ERROR;
-
-    jclogf("sizeof color %d", sizeof(Color));
-    jclogf("sizeof vector2f %d", sizeof(Vector2f));
-    jclogf("sizeof vector3f %d", sizeof(Vector3f));
 }
 
 /**
@@ -114,6 +109,7 @@ void Quad::attributes(const s32 attribute_vertices, const s32 attribute_coords) 
  */
 void Quad::rendering() {
     state->bindBuffer(GL_ARRAY_BUFFER, vertices.get());
+
     // 頂点バッファ
     if (attrVertices >= 0) {
         state->enableVertexAttribArray(attrVertices);
@@ -128,7 +124,8 @@ void Quad::rendering() {
         state->vertexAttribPointer(attrCoords, 2, GL_FLOAT, GL_FALSE, sizeof(tagVertex), NULL, sizeof(float) * 2);
     }
 
-    CLEAR_GL_ERROR;
+    CLEAR_GL_ERROR
+    ;
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     PRINT_GL_ERROR;
 }

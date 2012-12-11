@@ -41,6 +41,11 @@ class DeviceLock {
      * デバイスの専有を行う
      */
     void lockDevice() {
+        if(!device) {
+            locked = jcfalse;
+            return;
+        }
+
         // 現在のスレッドが専有状態にあるかをチェックする
         const jcboolean current_thread = device->isCurrentThread();
 

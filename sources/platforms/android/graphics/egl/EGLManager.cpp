@@ -8,6 +8,7 @@
 #include    "jcException.h"
 #include    "ndkEGLImpl.h"
 #include    <vector>
+#include    "ndkNativeContext.h"
 
 using namespace jc;
 using namespace jc::gl;
@@ -50,6 +51,7 @@ EGLStatus_e EGLManager::getStatus() const {
  */
 void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProtocol> surface) {
     if( context.get() && surface.get() ) {
+//        this->stashEGLCurrents();
         EGLContextManager *contextManager = dynamic_cast<EGLContextManager*>(context.get());
         EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(surface.get());
 
@@ -57,13 +59,28 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
         EGLContext eglContext = contextManager->getContext();
         EGLSurface eglSurface = surfaceManager->getSurface();
 
-        // カレントに設定できなければ例外を投げる
+// カレントに設定できなければ例外を投げる
         if( !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ) {
             throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
         }
     } else {
+        EGLDisplay eglDisplay = display;
+        EGLSurface eglReadSurface = EGL_NO_SURFACE;
+        EGLSurface eglDrawSurface = EGL_NO_SURFACE;
+        EGLContext eglContext = EGL_NO_CONTEXT;
+
+#if 0
+        if( NativeContext::isUIThread() ) {
+            jclog("egl -> UIThread");
+            eglDisplay = androidEGL.display;
+            eglContext = androidEGL.context;
+            eglReadSurface = androidEGL.readSurface;
+            eglDrawSurface = androidEGL.drawSurface;
+        }
+#endif
+
         // コンテキストとサーフェイスが揃っていないから、設定できない
-        if( !eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
+        if( !eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext) ) {
             throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
         }
     }
@@ -78,6 +95,20 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
     EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(displaySurface.get());
     return eglSwapBuffers(display, surfaceManager->getSurface());
+}
+/**
+ * 現在のEGLパラメーターを一時的に格納する
+ */
+void EGLManager::stashEGLCurrents() {
+    androidEGL.display = eglGetCurrentDisplay();
+    androidEGL.context = eglGetCurrentContext();
+    androidEGL.readSurface = eglGetCurrentSurface(EGL_READ);
+    androidEGL.drawSurface = eglGetCurrentSurface(EGL_DRAW);
+
+    jclogf("Android EGLDisplay(%x)", androidEGL.display);
+    jclogf("Android EGLContext(%x)", androidEGL.context);
+    jclogf("Android EGLSurface-Read(%x)", androidEGL.readSurface);
+    jclogf("Android EGLSurface-Draw(%x)", androidEGL.drawSurface);
 }
 
 /**
@@ -174,7 +205,7 @@ EGLConfig EGLManager::chooseConfig(const EGLDisplay display, const PixelFormat_e
     const EGLint MAX_CONFIG = 32;
     EGLConfig configs[MAX_CONFIG] = { NULL };
     EGLint numConfig;
-    eglChooseConfig((void*)display, (const int*)&specs[0], (void**)configs, MAX_CONFIG, &numConfig);
+    eglChooseConfig((void*) display, (const int*) &specs[0], (void**) configs, MAX_CONFIG, &numConfig);
 
     // 最も適切なスペックを選択する
     for (int i = 0; i < numConfig; ++i) {
@@ -209,9 +240,8 @@ EGLConfig EGLManager::chooseConfig(const EGLDisplay display, const PixelFormat_e
  * eglGetDisplay(EGL_DEFAULT_DISPLAY)を呼び出す
  */
 EGLDisplay EGLManager::getDefaultDisplay() {
-    return eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    return eglGetDisplay(EGL_DEFAULT_DISPLAY );
 }
-
 
 }
 

@@ -29,6 +29,8 @@ namespace gl {
  */
 #define UNIFORM_DISABLE_INDEX -1
 
+#define  STATE_NO_CHECK
+
 /**
  * GLのステート情報を保持する。
  * ステートが一致する場合、無駄な呼び出しを極力抑えるように動作する。
@@ -217,7 +219,9 @@ public:
      */
     inline jcboolean clearColorf(const GLclampf r, const GLclampf g, const GLclampf b, const GLclampf a) {
         Color temp = Color::fromRGBAf(r, g, b, a);
+#ifndef STATE_NO_CHECK
         if (temp != clearContext.clearColor) {
+#endif
             // 色が違うからコマンド呼び出し
             glClearColor(r, g, b, a);
 
@@ -225,8 +229,10 @@ public:
             clearContext.clearColor = temp;
 
             return jctrue;
+#ifndef STATE_NO_CHECK
         }
         return jcfalse;
+#endif
     }
 
     /**
@@ -238,13 +244,16 @@ public:
         const s32 top = y;
         const s32 right = x + width;
         const s32 bottom = y + height;
-
+#ifndef STATE_NO_CHECK
         if (!viewportContext.equalsLTRB(left, top, right, bottom)) {
+#endif
             glViewport(x, y, width, height);
             viewportContext.setXYWH(x, y, width, height);
             return jctrue;
+#ifndef STATE_NO_CHECK
         }
         return jcfalse;
+#endif
     }
 
     /**
@@ -254,14 +263,18 @@ public:
      */
     inline jcboolean bindBuffer(GLenum target, GLuint buffer) {
         const s32 index = target - GL_ARRAY_BUFFER;
+#ifndef STATE_NO_CHECK
         if (bindBufferContext.buffers[index] != buffer) {
+#endif
             // バッファが一致しないから呼び出す
             glBindBuffer(target, buffer);
             // バッファを保存する
             bindBufferContext.buffers[index] = buffer;
             return jctrue;
+#ifndef STATE_NO_CHECK
         }
         return jcfalse;
+#endif
     }
 
     /**
@@ -293,13 +306,17 @@ public:
         const s32 unit = toTextureUnit(index);
 
         // 違うユニットがアクティブ化されていたら、アクティブにし直す
+#ifndef STATE_NO_CHECK
         if (unit != textureContext.active) {
+#endif
             textureContext.active = unit;
             glActiveTexture(unit);
 
             return jctrue;
+#ifndef STATE_NO_CHECK
         }
         return jcfalse;
+#endif
     }
 
     /**
@@ -366,13 +383,18 @@ public:
      * ステートを変更した場合trueを返す
      */
     inline jcboolean useProgram(const GLuint shaderProgram) {
-        if (shaderProgramContext.usingProgram != shaderProgram) {
+#ifndef STATE_NO_CHECK
+        if (shaderProgramContext.usingProgram != shaderProgram)
+#endif
+        {
             glUseProgram(shaderProgram);
             shaderProgramContext.usingProgram = shaderProgram;
 
             return jctrue;
         }
+#ifndef STATE_NO_CHECK
         return jcfalse;
+#endif
     }
 
     /**
@@ -392,7 +414,9 @@ public:
         // この命令でバインドされるポインタ値
         void* checkPtr = (ptr ? (void*) ptr : (void*) bindBufferContext.buffers[INDEX_GL_ARRAY_BUFFER]);
 
+#ifndef STATE_NO_CHECK
         if (attr->size != size || attr->type != type || attr->normalized != normalized || attr->stride != stride || attr->ptr != checkPtr || attr->offset != offset) {
+#endif
             glVertexAttribPointer(index, size, type, normalized, stride, (const void*) (((u8*) ptr) + offset));
 
             // 属性情報を書き換える
@@ -403,8 +427,10 @@ public:
             attr->ptr = checkPtr;
             attr->offset = offset;
             return jctrue;
+#ifndef STATE_NO_CHECK
         }
         return jcfalse;
+#endif
     }
 
     /**
@@ -413,12 +439,16 @@ public:
      */
     inline jcboolean enableVertexAttribArray(const GLuint index) {
         // 無効化されているため、有効化する
+#ifndef STATE_NO_CHECK
         if (!vertexAttrContext.buffers[index].enable) {
+#endif
             vertexAttrContext.buffers[index].enable = jctrue;
             glEnableVertexAttribArray(index);
             return jctrue;
+#ifndef STATE_NO_CHECK
         }
         return jcfalse;
+#endif
     }
 
     /**
@@ -427,12 +457,16 @@ public:
      */
     inline jcboolean disableVertexAttribArray(const GLuint index) {
         // 有効化されているため、無効化する
+#ifndef STATE_NO_CHECK
         if (vertexAttrContext.buffers[index].enable) {
+#endif
             vertexAttrContext.buffers[index].enable = jcfalse;
             glDisableVertexAttribArray(index);
             return jcfalse;
+#ifndef STATE_NO_CHECK
         }
         return jcfalse;
+#endif
     }
 
     /**

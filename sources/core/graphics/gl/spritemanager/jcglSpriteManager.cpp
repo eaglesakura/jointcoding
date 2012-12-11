@@ -21,10 +21,13 @@ void SpriteManager::initialize(MDevice device) {
     this->unifPolyData = shader->getUniformLocation("poly_data");
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
     this->unifTexture = 0;
+#if 0
     this->unifPolyUv = shader->getUniformLocation("poly_uv");
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
+#endif
 
     this->quad.reset(new Quad(device));
+
     quad->attributes(attrVertices, attrCoords);
 }
 
