@@ -29,7 +29,7 @@ namespace gl {
  */
 #define UNIFORM_DISABLE_INDEX -1
 
-#define  STATE_NO_CHECK
+// #define  STATE_NO_CHECK
 
 /**
  * GLのステート情報を保持する。
@@ -383,18 +383,13 @@ public:
      * ステートを変更した場合trueを返す
      */
     inline jcboolean useProgram(const GLuint shaderProgram) {
-#ifndef STATE_NO_CHECK
-        if (shaderProgramContext.usingProgram != shaderProgram)
-#endif
-        {
+        if (shaderProgramContext.usingProgram != shaderProgram) {
             glUseProgram(shaderProgram);
             shaderProgramContext.usingProgram = shaderProgram;
 
             return jctrue;
         }
-#ifndef STATE_NO_CHECK
         return jcfalse;
-#endif
     }
 
     /**
@@ -414,9 +409,7 @@ public:
         // この命令でバインドされるポインタ値
         void* checkPtr = (ptr ? (void*) ptr : (void*) bindBufferContext.buffers[INDEX_GL_ARRAY_BUFFER]);
 
-#ifndef STATE_NO_CHECK
         if (attr->size != size || attr->type != type || attr->normalized != normalized || attr->stride != stride || attr->ptr != checkPtr || attr->offset != offset) {
-#endif
             glVertexAttribPointer(index, size, type, normalized, stride, (const void*) (((u8*) ptr) + offset));
 
             // 属性情報を書き換える
@@ -427,10 +420,8 @@ public:
             attr->ptr = checkPtr;
             attr->offset = offset;
             return jctrue;
-#ifndef STATE_NO_CHECK
         }
         return jcfalse;
-#endif
     }
 
     /**

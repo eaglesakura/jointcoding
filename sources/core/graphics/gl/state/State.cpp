@@ -106,7 +106,7 @@ void GLState::syncContext() {
         for (int i = 0; i < maxAttr; ++i) {
             // ショートカット用
             VertexAttributePointerData *attr = &vertexAttrContext.buffers[i].pointerData;
-            GLint temp;
+            GLint temp = 0;
 
             {
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*) &attr->type);
@@ -119,6 +119,7 @@ void GLState::syncContext() {
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER, (GLint*) &attr->ptr);
             }
 
+            temp = 0;
             glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &temp);
             vertexAttrContext.buffers[i].enable = (jcboolean) temp;
         }
