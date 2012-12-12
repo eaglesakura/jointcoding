@@ -21,7 +21,6 @@ typedef std::string string_t;
 #define _native     (native_string.get<string_t>())
 
 String::String(const charactor* str) {
-
     if (str) {
         // 文字列が設定されているなら、それに従う
         native_string = ImplCapsule(new string_t(str), JC_CAPSULE_RELEAE(string_t) );

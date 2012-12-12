@@ -10,11 +10,17 @@
 #include    "jcPlatform.h"
 #include    "jcJpegImageDecoder.h"
 #include    "jcglState.h"
+#include    "jcglGPUCapacity.h"
 
 #define _BIND_CHECK(_this)      { if(_this->bindUnit < 0 ){ jclogf("texture not bind | this=( %x ) texture=( %d ) abort.", _this, _this->texture.get()); return; } }
 
 namespace jc {
 namespace gl {
+
+/**
+ * 強制的に持ち回りでテクスチャユニットを上書きする
+ */
+static s32 g_overrideTextureUnitIndex = 0;
 
 TextureImage::TextureImage(s32 width, s32 height, MDevice device) {
     this->alloced = jcfalse;
@@ -156,7 +162,10 @@ s32 TextureImage::bind() {
     }
 
     s32 unitIndex = state->getFreeTextureUnitIndex();
-    jclogf("texture unit = %d", unitIndex);
+    if (unitIndex < 0) {
+        unitIndex = (++g_overrideTextureUnitIndex % (s32) GPUCapacity::getMaxTextureUnits());
+        jclogf("texture unit = %d", unitIndex);
+    }
     this->bind(unitIndex);
     return unitIndex;
 }
@@ -236,12 +245,12 @@ static u32 PIXEL_TYPES[4] = {
 //
         GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,
 //
-};
+        };
 static u32 PIXEL_FORMATS[] = {
 //
         GL_RGB, GL_RGBA, GL_RGB, GL_RGBA,
 //
-};
+        };
 }
 
 /**
@@ -265,7 +274,8 @@ MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, PixelF
     // カレントのライン数
     s32 line = 0;
     // 可能な限り読み込み続ける
-    CLEAR_GL_ERROR;
+    CLEAR_GL_ERROR
+    ;
     while ((line = decoder->decode()) > 0) {
         result->copyPixelLine(decoder->getPixels().get(), PIXEL_TYPES[pixelFormat], PIXEL_FORMATS[pixelFormat], 0, readed, line);
         readed += line;

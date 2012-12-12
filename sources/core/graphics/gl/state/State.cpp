@@ -7,11 +7,55 @@
 #include "JCGLState.h"
 #include "jcMath.h"
 #include "jcglGPUCapacity.h"
+#include    "jcMemoryUtil.h"
+
 
 namespace jc {
 namespace gl {
 
 GLState::GLState() {
+    // clear color
+    {
+        clearContext.clearColor = Color::fromRGBAi(0, 0, 0, 0);
+    }
+    // attribute
+    {
+        for (int i = 0; i < MAX_VERTEX_ATTRIBUTE; ++i) {
+            vertexAttrContext.buffers[i].enable = jcfalse;
+            zeromemory((void*) &vertexAttrContext.buffers[i].pointerData, sizeof(VertexAttributePointerData));
+        }
+    }
+    // enable
+    {
+        enableContext.depthtest = jcfalse;
+        enableContext.texture2d = jcfalse;
+    }
+    // scissor
+    {
+        scissorContext.box.setXYWH(0, 0, 0, 0);
+        scissorContext.enable = jcfalse;
+    }
+    // viewport
+    {
+        viewportContext.setXYWH(0, 0, 0, 0);
+    }
+    // shader
+    {
+        shaderProgramContext.usingProgram = 0;
+    }
+    // reset texture params
+    {
+        textureContext.active = jcfalse;
+        for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
+            textureContext.textures[i] = 0;
+        }
+    }
+    // reset buffer params
+    {
+        for (int i = 0; i < MAX_BINDBUFFER; ++i) {
+            bindBufferContext.buffers[i] = 0;
+        }
+    }
 }
 
 GLState::~GLState() {

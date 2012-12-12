@@ -222,16 +222,16 @@ public:
 #ifndef STATE_NO_CHECK
         if (temp != clearContext.clearColor) {
 #endif
-            // 色が違うからコマンド呼び出し
-            glClearColor(r, g, b, a);
+        // 色が違うからコマンド呼び出し
+        glClearColor(r, g, b, a);
 
-            // 最後に呼び出した色を保存
-            clearContext.clearColor = temp;
+        // 最後に呼び出した色を保存
+        clearContext.clearColor = temp;
 
-            return jctrue;
+        return jctrue;
 #ifndef STATE_NO_CHECK
-        }
-        return jcfalse;
+    }
+    return jcfalse;
 #endif
     }
 
@@ -247,12 +247,12 @@ public:
 #ifndef STATE_NO_CHECK
         if (!viewportContext.equalsLTRB(left, top, right, bottom)) {
 #endif
-            glViewport(x, y, width, height);
-            viewportContext.setXYWH(x, y, width, height);
-            return jctrue;
+        glViewport(x, y, width, height);
+        viewportContext.setXYWH(x, y, width, height);
+        return jctrue;
 #ifndef STATE_NO_CHECK
-        }
-        return jcfalse;
+    }
+    return jcfalse;
 #endif
     }
 
@@ -266,14 +266,14 @@ public:
 #ifndef STATE_NO_CHECK
         if (bindBufferContext.buffers[index] != buffer) {
 #endif
-            // バッファが一致しないから呼び出す
-            glBindBuffer(target, buffer);
-            // バッファを保存する
-            bindBufferContext.buffers[index] = buffer;
-            return jctrue;
+        // バッファが一致しないから呼び出す
+        glBindBuffer(target, buffer);
+        // バッファを保存する
+        bindBufferContext.buffers[index] = buffer;
+        return jctrue;
 #ifndef STATE_NO_CHECK
-        }
-        return jcfalse;
+    }
+    return jcfalse;
 #endif
     }
 
@@ -309,13 +309,13 @@ public:
 #ifndef STATE_NO_CHECK
         if (unit != textureContext.active) {
 #endif
-            textureContext.active = unit;
-            glActiveTexture(unit);
+        textureContext.active = unit;
+        glActiveTexture(unit);
 
-            return jctrue;
+        return jctrue;
 #ifndef STATE_NO_CHECK
-        }
-        return jcfalse;
+    }
+    return jcfalse;
 #endif
     }
 
@@ -350,6 +350,12 @@ public:
         }
 
         // どのテクスチャユニットも空いていない
+        jclog("free texture unit not found...");
+        {
+            for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
+                jclogf("texture[%d] = %x", i, textureContext.textures[i]);
+            }
+        }
         return -1;
     }
 
@@ -433,12 +439,12 @@ public:
 #ifndef STATE_NO_CHECK
         if (!vertexAttrContext.buffers[index].enable) {
 #endif
-            vertexAttrContext.buffers[index].enable = jctrue;
-            glEnableVertexAttribArray(index);
-            return jctrue;
+        vertexAttrContext.buffers[index].enable = jctrue;
+        glEnableVertexAttribArray(index);
+        return jctrue;
 #ifndef STATE_NO_CHECK
-        }
-        return jcfalse;
+    }
+    return jcfalse;
 #endif
     }
 
@@ -451,12 +457,12 @@ public:
 #ifndef STATE_NO_CHECK
         if (vertexAttrContext.buffers[index].enable) {
 #endif
-            vertexAttrContext.buffers[index].enable = jcfalse;
-            glDisableVertexAttribArray(index);
-            return jcfalse;
-#ifndef STATE_NO_CHECK
-        }
+        vertexAttrContext.buffers[index].enable = jcfalse;
+        glDisableVertexAttribArray(index);
         return jcfalse;
+#ifndef STATE_NO_CHECK
+    }
+    return jcfalse;
 #endif
     }
 
@@ -498,7 +504,8 @@ public:
      */
     static void clearGLError();
 
-};
+}
+;
 
 /**
  * managed
