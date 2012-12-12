@@ -29,7 +29,7 @@ namespace gl {
  */
 #define UNIFORM_DISABLE_INDEX -1
 
-// #define  STATE_NO_CHECK
+#define  STATE_NO_CHECK
 
 /**
  * GLのステート情報を保持する。

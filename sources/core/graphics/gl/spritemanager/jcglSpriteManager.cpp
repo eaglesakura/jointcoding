@@ -20,29 +20,36 @@ void SpriteManager::initialize(MDevice device) {
 
     this->unifPolyData = shader->getUniformLocation("poly_data");
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
-    this->unifTexture = 0;
-#if 0
+    this->unifTexture = shader->getUniformLocation("tex");
+    assert(unifTexture != UNIFORM_DISABLE_INDEX);
     this->unifPolyUv = shader->getUniformLocation("poly_uv");
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
-#endif
 
     this->quad.reset(new Quad(device));
 
     quad->attributes(attrVertices, attrCoords);
+
+    {
+        whiteTexture.reset(new TextureImage(1, 1, device));
+        Color pix = Color::fromRGBAf(1.0f, 1.0f, 1.0f, 1.0f);
+        whiteTexture->bind();
+        {
+            whiteTexture->copyPixelLine(&pix, GL_UNSIGNED_BYTE, GL_RGBA, 0, 0, 1);
+        }
+        whiteTexture->unbind();
+    }
 }
 
 SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     this->device = device;
     this->shader = shader;
     this->shaderContext.rotate = 0;
-    this->shaderContext.texEnable = jcfalse;
+    this->shaderContext.bindedTextureIndex = 0;
     this->unifPolyData = UNIFORM_DISABLE_INDEX;
     this->unifTexture = UNIFORM_DISABLE_INDEX;
     this->unifPolyUv = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
-    this->bindedTextureIndex = 0;
-
     this->initialize(device);
 }
 
@@ -69,48 +76,42 @@ void SpriteManager::rendering(s32 x, s32 y, s32 width, s32 height) {
     // データを転送する
     glUniform4fv(unifPolyData, 1, poly_data);
 
-    // 描画する
-    shader->bind();
     quad->rendering();
+}
+
+/**
+ * 四角形描画を行う
+ */
+void SpriteManager::renderingRect(const s32 x, const s32 y, const s32 w, const s32 h, const u32 rgba) {
+    renderingImage(whiteTexture, 0, 0, 0, 0, x, y, w, h, 0.0f, rgba);
 }
 
 /**
  * レンダリングを行う
  */
-void SpriteManager::rendering(MTextureImage texture, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstWidth, const s32 dstHeight) {
+void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstWidth, const s32 dstHeight, const float degree, const u32 rgba) {
+    // シェーダーを切り替える
+    shader->bind();
 
-    if (texture) {
+    // 変更前のテクスチャを保持しておく
+    {
+        const u32 old_bindedTextureIndex = shaderContext.bindedTextureIndex;
         // テクスチャ番号を設定する
-        shaderContext.texEnable = jctrue;
-        bindedTextureIndex = texture->bind();
-
-        //! テクスチャ描画位置を行列で操作する
-        {
-            const float sizeX = (float) srcW / (float) texture->getWidth();
-            const float sizeY = (float) srcH / (float) texture->getHeight();
-            const float sx = (float) srcX / (float) texture->getWidth();
-            const float sy = (float) srcY / (float) texture->getHeight();
-
-            const float poly_uv[] = { sx, sy, sizeX, sizeY, };
-            glUniform4fv(unifPolyUv, 1, poly_uv);
-            //        gl.glTranslatef(sx, sy, 0.0f);
-            //        gl.glScalef(sizeX, sizeY, 1.0f);
-            //        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        shaderContext.bindedTextureIndex = image->bind();
+        if (old_bindedTextureIndex != shaderContext.bindedTextureIndex) {
+            glUniform1i(unifTexture, shaderContext.bindedTextureIndex);
         }
+    }
 
-    } else {
-        shaderContext.texEnable = jcfalse;
-        /*
-         // 空いているテクスチャにバインドする
-         bindedTextureIndex = device->getState()->getFreeTextureUnitIndex();
+    //! テクスチャ描画位置を行列で操作する
+    if (image != whiteTexture) {
+        const float sizeX = (float) srcW / (float) image->getWidth();
+        const float sizeY = (float) srcH / (float) image->getHeight();
+        const float sx = (float) srcX / (float) image->getWidth();
+        const float sy = (float) srcY / (float) image->getHeight();
 
-         // どれも空いていないなら0番を切り替える
-         if (bindedTextureIndex < 0) {
-         bindedTextureIndex = 0;
-         device->getState()->activeTexture(0);
-         device->getState()->unbindTexture(0);
-         }
-         */
+        const float poly_uv[] = { sx, sy, sizeX, sizeY, };
+        glUniform4fv(unifPolyUv, 1, poly_uv);
     }
 
     this->rendering(dstX, dstY, dstWidth, dstHeight);
@@ -122,6 +123,7 @@ void SpriteManager::rendering(MTextureImage texture, const s32 srcX, const s32 s
 void SpriteManager::dispose() {
     quad.reset();
     shader.reset();
+    whiteTexture.reset();
     device.reset();
 }
 

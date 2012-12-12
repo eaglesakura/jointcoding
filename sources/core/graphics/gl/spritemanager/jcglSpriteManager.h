@@ -56,26 +56,20 @@ protected:
     s32 unifTexture;
 
     /**
-     * バインドされたテクスチャ番号
-     */
-    s32 bindedTextureIndex;
-
-    /**
      * テクスチャUVのuniformインデックス
      * @shader_uniform poly_uv
      */
     s32 unifPolyUv;
 
     /**
+     * 四角形描画用の白テクスチャ
+     */
+    MTextureImage whiteTexture;
+
+    /**
      * 保持しておくべきシェーダー設定値
      */
     struct {
-        /**
-         * テクスチャの有効・無効値
-         * 初期値はfalseで、trueの場合はテクスチャ描画、falseの場合は単色描画を行う
-         */
-        jcboolean texEnable;
-
         /**
          * 回転角度情報
          * 同値が設定されている場合、何もしない。
@@ -83,6 +77,11 @@ protected:
          * 初期値は0.0
          */
         float rotate;
+
+        /**
+         * バインドされたテクスチャ番号
+         */
+        s32 bindedTextureIndex;
     } shaderContext;
 
     /**
@@ -100,16 +99,31 @@ protected:
     /**
      * 現在の環境にしたがってレンダリングさせる。
      */
-    void rendering( s32 x, s32 y, s32 w, s32 h );
+    virtual void rendering( s32 x, s32 y, s32 w, s32 h );
+
 public:
     virtual ~SpriteManager();
 
     /**
-     * レンダリングを行う
+     * 四角形描画を行う
+     */
+    virtual void renderingRect(const s32 x, const s32 y, const s32 w, const s32 h, const u32 rgba);
+
+    /**
+     * 画像を描画する
      * @param src{XYWH} テクスチャ内の座標をpix単位で指定する
      * @param dst{XYWH} 描画先の座標をpix単位で指定する。
+     * @param degree 画像の回転角（360度系）
+     * @param rgba   画像の色補正（RGBA形式）
      */
-    virtual void rendering(MTextureImage texture, const s32 srcX,const s32 srcY,const s32 srcW,const s32 srcH,const s32 dstX,const s32 dstY,const s32 dstW,const s32 dstH);
+    virtual void renderingImage( MTextureImage image, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstW, const s32 dstH, const float degree, const u32 rgba);
+
+    /**
+     * 画像を描画する
+     */
+    virtual void renderingImage( MTextureImage image, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstW, const s32 dstH) {
+        renderingImage(image, srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH, 0.0f, 0xFFFFFFFF);
+    }
 
     /**
      * 明示的な解放を行う
