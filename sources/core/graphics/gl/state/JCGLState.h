@@ -255,7 +255,8 @@ public:
      * ブレンド状態を更新する
      */
     inline jcboolean blendEnable(const jcboolean enable) {
-        if (!blendContext.enable != enable) {
+        if (blendContext.enable != enable) {
+            blendContext.enable = enable;
             glEnable(GL_BLEND);
             return jctrue;
         }
@@ -267,6 +268,8 @@ public:
      */
     inline jcboolean blendFunc(const GLint sfactor, const GLint dfactor) {
         if (blendContext.src != sfactor || blendContext.dst != dfactor) {
+            blendContext.src = sfactor;
+            blendContext.dst = dfactor;
             glBlendFunc(sfactor, dfactor);
             return jctrue;
         }

@@ -32,12 +32,13 @@ struct Color {
     union {
         /**
          * 1要素ごとの情報
+         * リトルエンディアン格納のため、並びは反転する
          */
         struct {
-            u8 r;
-            u8 g;
-            u8 b;
             u8 a;
+            u8 b;
+            u8 g;
+            u8 r;
         } tag;
 
         /**
@@ -167,6 +168,12 @@ struct Color {
     inline static Color fromRGBAi(const u8 r, const u8 g, const u8 b, const u8 a) {
         Color result;
         result.RGBAi(r, g, b, a);
+        return result;
+    }
+
+    inline static Color fromRGBAi(const rgba32 rgba ) {
+        Color result;
+        result.colors.rgba = rgba;
         return result;
     }
 };

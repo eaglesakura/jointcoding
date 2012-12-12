@@ -24,6 +24,8 @@ void SpriteManager::initialize(MDevice device) {
     assert(unifTexture != UNIFORM_DISABLE_INDEX);
     this->unifPolyUv = shader->getUniformLocation("poly_uv");
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
+    this->unifBlendColor = shader->getUniformLocation("blendColor");
+    assert(unifBlendColor != UNIFORM_DISABLE_INDEX);
 
     this->quad.reset(new Quad(device));
 
@@ -48,6 +50,7 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     this->unifPolyData = UNIFORM_DISABLE_INDEX;
     this->unifTexture = UNIFORM_DISABLE_INDEX;
     this->unifPolyUv = UNIFORM_DISABLE_INDEX;
+    this->unifBlendColor = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
     this->initialize(device);
@@ -101,6 +104,12 @@ void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s3
         if (old_bindedTextureIndex != shaderContext.bindedTextureIndex) {
             glUniform1i(unifTexture, shaderContext.bindedTextureIndex);
         }
+    }
+
+    // ブレンド色を設定する
+    if (shaderContext.blendColor.colors.rgba != rgba) {
+        shaderContext.blendColor = Color::fromRGBAi(rgba);
+        glUniform4f(unifBlendColor, shaderContext.blendColor.rf(), shaderContext.blendColor.gf(), shaderContext.blendColor.bf(), shaderContext.blendColor.af());
     }
 
     //! テクスチャ描画位置を行列で操作する

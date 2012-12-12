@@ -62,6 +62,11 @@ protected:
     s32 unifPolyUv;
 
     /**
+     * ポリゴンのブレンド色
+     */
+    s32 unifBlendColor;
+
+    /**
      * 四角形描画用の白テクスチャ
      */
     MTextureImage whiteTexture;
@@ -82,6 +87,11 @@ protected:
          * バインドされたテクスチャ番号
          */
         s32 bindedTextureIndex;
+
+        /**
+         * ポリゴンのブレンド色
+         */
+        Color blendColor;
     } shaderContext;
 
     /**
