@@ -69,19 +69,26 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
         EGLSurface eglDrawSurface = EGL_NO_SURFACE;
         EGLContext eglContext = EGL_NO_CONTEXT;
 
-#if 0
+        jcboolean backToDefault = false;
+#if 1
         if( NativeContext::isUIThread() ) {
             jclog("egl -> UIThread");
             eglDisplay = androidEGL.display;
             eglContext = androidEGL.context;
             eglReadSurface = androidEGL.readSurface;
             eglDrawSurface = androidEGL.drawSurface;
+            backToDefault = true;
         }
 #endif
 
         // コンテキストとサーフェイスが揃っていないから、設定できない
         if( !eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext) ) {
-            throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
+            if(backToDefault) {
+                // zeroにも戻せない
+                if(!eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
+                    throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
+                }
+            }
         }
     }
 
