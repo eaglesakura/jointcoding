@@ -13,7 +13,7 @@
 namespace jc {
 
 template<typename T>
-struct Vector3 {
+struct Vector4 {
     /**
      * X座標を示す
      */
@@ -30,66 +30,76 @@ struct Vector3 {
     T z;
 
     /**
+     *
+     */
+    T w;
+
+    /**
      * 各座標を指定する
      */
-    Vector3(const T _x = 0, const T _y = 0, const T _z = 0) {
+    Vector4(const T _x = 0, const T _y = 0, const T _z = 0, const T _w = 0) {
         x = _x;
         y = _y;
         z = _z;
+        w = _w;
     }
 
     /**
      * 加算を行う
      */
-    Vector3<T>& operator+=(const Vector3 &v) {
+    Vector4<T>& operator+=(const Vector4 &v) {
         x += v.x;
         y += v.y;
         z += v.z;
+        w += v.w;
         return (*this);
     }
 
     /**
      * 減算を行う
      */
-    Vector2<T>& operator-=(const Vector3 &v) {
+    Vector4<T>& operator-=(const Vector4 &v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
+        x -= x.z;
         return (*this);
     }
 
     /**
      * スカラー演算を行う
      */
-    Vector2<T> operator*=(const T scalar) {
+    Vector4<T> operator*=(const T scalar) {
         x *= scalar;
         y *= scalar;
         z *= scalar;
+        w *= scalar;
         return (*this);
     }
 
     /**
      * 除算を行う
      */
-    Vector2<T> operator/=(const T div) {
+    Vector4<T> operator/=(const T div) {
         x /= div;
         y /= div;
         z /= div;
+        w /= div;
         return (*this);
     }
 
     /**
      * 同一性チェック
      */
-    bool operator==(const Vector3<T> &v) {
-        return equals(x, v.x) && equals(y, v.y) && equals(z, v.z);
+    bool operator==(const Vector4<T> &v) {
+        return equals(x, v.x) && equals(y, v.y) && equals(z, v.z) && equals(w, v.w);
     }
 
     /**
      * 同一性チェック
      */
-    bool operator!=(const Vector3<T> &v) {
-        return !equals(x, v.x) || !equals(y, v.y) || !equals(z, v.z);
+    bool operator!=(const Vector2<T> &v) {
+        return !equals(x, v.x) || !equals(y, v.y) || !equals(z, v.z) || !equals(w, v.w);
     }
 
     /**
@@ -98,7 +108,7 @@ struct Vector3 {
      * @return
      */
     T length() const {
-        return (T) sqrt(((double) x * (double) x) + ((double) y * (double) y) + ((double) z * (double) z));
+        return (T) sqrt(((double) x * (double) x) + ((double) y * (double) y) + ((double) z * (double) z) + ((double)w * (double)w));
     }
 
     /**
@@ -107,11 +117,12 @@ struct Vector3 {
      * @param p
      * @return
      */
-    T length(const Vector3<T> &p) const {
+    T length(const Vector4<T> &p) const {
         const double tx = x - p.x;
         const double ty = y - p.y;
         const double tz = z - p.z;
-        return (T) sqrt((tx * tx) + (ty * ty) + (tz * tz));
+        const double tw = w - p.w;
+        return (T) sqrt((tx * tx) + (ty * ty) + (tz * tz) + (tw * tw));
     }
 
     /**
@@ -120,11 +131,12 @@ struct Vector3 {
      * @param p
      * @return
      */
-    T length(const T px, const T py, const T pz) const {
+    T length(const T px, const T py, const T pz, const T pw) const {
         const double tx = x - px;
         const double ty = y - py;
         const double tz = z - pz;
-        return (T) sqrt((tx * tx) + (ty * ty) + (tz * tz));
+        const double tw = w - pw;
+        return (T) sqrt((tx * tx) + (ty * ty) + (tz * tz) + (tw * tw));
     }
 
     /**
@@ -138,12 +150,12 @@ struct Vector3 {
 /**
  * signed int のベクトル
  */
-typedef Vector3<s32> Vector3i;
+typedef Vector4<s32> Vector4i;
 
 /**
  * 浮動小数のベクトル
  */
-typedef Vector3<float> Vector3f;
+typedef Vector4<float> Vector4f;
 
 }
 

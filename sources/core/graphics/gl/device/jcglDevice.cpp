@@ -26,12 +26,13 @@ jcboolean Device::makeCurrent(EGLMakeCurrent_e type) {
         case EGLMakeCurrent_Bind:
             // 廃棄フラグが設定されているなら、カレントに設定できない
             if (hasFlags(DeviceFlag_RequestDestroy)) {
+                jclog("has destroy flag");
                 return jcfalse;
             }
 
             // 既に廃棄済みでもカレントにできない
             if (context.get() == NULL || surface.get() == NULL) {
-                // contextが廃棄済みのため、カレントに設定できない。
+                jclogf("error context(%x) || surface(%x)", context.get(), surface.get());
                 return jcfalse;
             }
             egl->current(context, surface);

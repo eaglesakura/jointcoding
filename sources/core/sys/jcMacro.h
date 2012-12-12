@@ -8,26 +8,22 @@
 #ifndef JCMACRO_H_
 #define JCMACRO_H_
 
-
 // ECLIPSE認識のため、デフォルトで__ANDROID__チェックを行う
 #ifndef __APPLE__
 #ifndef __ANDROID__
 #define __ANDROID__
 #endif  // __ANDROID__
 #endif  // __APPLE__
-
 // 定数設定
 #ifdef  __APPLE__
 #define BUILD_iOS 1
 #endif
-
 
 // ANDROIDモード
 #ifdef  __ANDROID__
 #ifndef BUILD_Android
 #define BUILD_Android 1
 #endif
-
 
 #ifdef  __ARM_V7__
 #define BUILD_Android_ARMv7 1
@@ -44,7 +40,6 @@
 #define NULL ((void *)0)
 #endif
 #endif // NULL
-
 /**
  * 安全にdeleteを行う
  */
@@ -83,6 +78,21 @@ typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
+
+/**
+ * ポインタを強制キャストする場合に利用する
+ */
+typedef int int_pointer;
+
+/**
+ * CPU最適化した符号あり整数
+ */
+typedef int sint_cpu;
+
+/**
+ * CPU最適化した符号なし整数
+ */
+typedef unsigned int uint_cpu;
 
 /**
  * 文字型

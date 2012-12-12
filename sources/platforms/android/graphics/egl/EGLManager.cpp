@@ -57,7 +57,7 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 
         EGLDisplay eglDisplay = contextManager->getDisplay();
         EGLContext eglContext = contextManager->getContext();
-        EGLSurface eglSurface = surfaceManager->getSurface();
+        EGLSurface eglSurface = surfaceManager ? surfaceManager->getSurface() : EGL_NO_SURFACE;
 
 // カレントに設定できなければ例外を投げる
         if( !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ) {

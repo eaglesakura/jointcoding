@@ -42,7 +42,9 @@ class DeviceLock {
      */
     void lockDevice() {
         if(!device) {
+            jclog("device not found");
             locked = jcfalse;
+            lock.reset();
             return;
         }
 
@@ -52,14 +54,14 @@ class DeviceLock {
         // 専有が現在のスレッドと違うのならば、ロックリクエストを送る
         if(!current_thread) {
             device->incLockRequest();
-        }
-
-        // まずはロックを占有権を取得する
-        lock.reset(new MutexLock(device->getGPUMutex()));
-
-        // ロックが完了したので、現在のスレッドと違っていたならばロックリクエスト数を解放する
-        if( !current_thread ) {
+            {
+                // Mutex占有権を取得する
+                lock.reset(new MutexLock(device->getGPUMutex()));
+            }
             device->decLockRequest();
+        } else {
+            // Mutex占有権を取得する
+            lock.reset(new MutexLock(device->getGPUMutex()));
         }
 
 // contextとthreadを結びつける
@@ -67,6 +69,7 @@ class DeviceLock {
 
 // ロックに失敗したら、専有も解除する
         if( !locked ) {
+            jclog("lock failed");
             lock.reset();
         }
     }
