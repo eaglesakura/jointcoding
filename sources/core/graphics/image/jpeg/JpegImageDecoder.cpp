@@ -7,8 +7,8 @@
 #include    "jcException.h"
 #include    "jcJpegImageDecoder.h"
 #include    "jcMath.h"
-#include "oss/jpeg/jpeglib.h"
-#include "oss/jpeg/jerror.h"
+#include    "jpeg/jpeglib.h"
+#include    "jpeg/jerror.h"
 
 namespace jc {
 

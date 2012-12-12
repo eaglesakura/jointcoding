@@ -10,8 +10,8 @@
 
 #include "jointcoding.h"
 #include "JCInputStream.h"
-#include "oss/jpeg/jpeglib.h"
-#include "oss/jpeg/jerror.h"
+#include "jpeg/jpeglib.h"
+#include "jpeg/jerror.h"
 
 namespace jc {
 
