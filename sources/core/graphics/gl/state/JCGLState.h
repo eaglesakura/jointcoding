@@ -29,7 +29,7 @@ namespace gl {
  */
 #define UNIFORM_DISABLE_INDEX -1
 
-#define  STATE_NO_CHECK
+// #define  STATE_NO_CHECK
 
 /**
  * GLのステート情報を保持する。
@@ -175,8 +175,24 @@ class GLState: public Object {
          * GL_DEPTH_TEST
          */
         jcboolean depthtest;
-
     } enableContext;
+
+    struct {
+        /**
+         * ブレンド有効・無効設定
+         */
+        jcboolean enable;
+
+        /**
+         * source
+         */
+        GLint src;
+
+        /**
+         * dst
+         */
+        GLint dst;
+    } blendContext;
 
     struct {
         /**
@@ -209,7 +225,7 @@ public:
     /**
      * glClear()呼び出し
      */
-    inline void clear(const u32 flags) {
+    inline void clear(const u32 flags = (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)) {
         glClear(flags);
     }
 
@@ -222,17 +238,39 @@ public:
 #ifndef STATE_NO_CHECK
         if (temp != clearContext.clearColor) {
 #endif
-        // 色が違うからコマンド呼び出し
-        glClearColor(r, g, b, a);
+            // 色が違うからコマンド呼び出し
+            glClearColor(r, g, b, a);
 
-        // 最後に呼び出した色を保存
-        clearContext.clearColor = temp;
+            // 最後に呼び出した色を保存
+            clearContext.clearColor = temp;
 
-        return jctrue;
+            return jctrue;
 #ifndef STATE_NO_CHECK
-    }
-    return jcfalse;
+        }
+        return jcfalse;
 #endif
+    }
+
+    /**
+     * ブレンド状態を更新する
+     */
+    inline jcboolean blendEnable(const jcboolean enable) {
+        if (!blendContext.enable != enable) {
+            glEnable(GL_BLEND);
+            return jctrue;
+        }
+        return jcfalse;
+    }
+
+    /**
+     * ブレンディング設定を行う
+     */
+    inline jcboolean blendFunc(const GLint sfactor, const GLint dfactor) {
+        if (blendContext.src != sfactor || blendContext.dst != dfactor) {
+            glBlendFunc(sfactor, dfactor);
+            return jctrue;
+        }
+        return jcfalse;
     }
 
     /**
@@ -247,12 +285,12 @@ public:
 #ifndef STATE_NO_CHECK
         if (!viewportContext.equalsLTRB(left, top, right, bottom)) {
 #endif
-        glViewport(x, y, width, height);
-        viewportContext.setXYWH(x, y, width, height);
-        return jctrue;
+            glViewport(x, y, width, height);
+            viewportContext.setXYWH(x, y, width, height);
+            return jctrue;
 #ifndef STATE_NO_CHECK
-    }
-    return jcfalse;
+        }
+        return jcfalse;
 #endif
     }
 
@@ -266,14 +304,14 @@ public:
 #ifndef STATE_NO_CHECK
         if (bindBufferContext.buffers[index] != buffer) {
 #endif
-        // バッファが一致しないから呼び出す
-        glBindBuffer(target, buffer);
-        // バッファを保存する
-        bindBufferContext.buffers[index] = buffer;
-        return jctrue;
+            // バッファが一致しないから呼び出す
+            glBindBuffer(target, buffer);
+            // バッファを保存する
+            bindBufferContext.buffers[index] = buffer;
+            return jctrue;
 #ifndef STATE_NO_CHECK
-    }
-    return jcfalse;
+        }
+        return jcfalse;
 #endif
     }
 
@@ -309,13 +347,13 @@ public:
 #ifndef STATE_NO_CHECK
         if (unit != textureContext.active) {
 #endif
-        textureContext.active = unit;
-        glActiveTexture(unit);
+            textureContext.active = unit;
+            glActiveTexture(unit);
 
-        return jctrue;
+            return jctrue;
 #ifndef STATE_NO_CHECK
-    }
-    return jcfalse;
+        }
+        return jcfalse;
 #endif
     }
 
@@ -439,12 +477,12 @@ public:
 #ifndef STATE_NO_CHECK
         if (!vertexAttrContext.buffers[index].enable) {
 #endif
-        vertexAttrContext.buffers[index].enable = jctrue;
-        glEnableVertexAttribArray(index);
-        return jctrue;
+            vertexAttrContext.buffers[index].enable = jctrue;
+            glEnableVertexAttribArray(index);
+            return jctrue;
 #ifndef STATE_NO_CHECK
-    }
-    return jcfalse;
+        }
+        return jcfalse;
 #endif
     }
 
@@ -457,12 +495,12 @@ public:
 #ifndef STATE_NO_CHECK
         if (vertexAttrContext.buffers[index].enable) {
 #endif
-        vertexAttrContext.buffers[index].enable = jcfalse;
-        glDisableVertexAttribArray(index);
-        return jcfalse;
+            vertexAttrContext.buffers[index].enable = jcfalse;
+            glDisableVertexAttribArray(index);
+            return jcfalse;
 #ifndef STATE_NO_CHECK
-    }
-    return jcfalse;
+        }
+        return jcfalse;
 #endif
     }
 

@@ -25,6 +25,12 @@ GLState::GLState() {
             zeromemory((void*) &vertexAttrContext.buffers[i].pointerData, sizeof(VertexAttributePointerData));
         }
     }
+    // blend
+    {
+        blendContext.enable = jcfalse;
+        blendContext.src = GL_ONE;
+        blendContext.dst = GL_ZERO;
+    }
     // enable
     {
         enableContext.depthtest = jcfalse;
@@ -124,6 +130,12 @@ void GLState::syncContext() {
         GLint xywh[4] = { 0 };
         glGetIntegerv(GL_VIEWPORT, xywh);
         viewportContext.setXYWH(xywh[0], xywh[1], xywh[2], xywh[3]);
+    }
+    // blend情報を取得する
+    {
+        blendContext.enable = glIsEnabled(GL_BLEND);
+        blendContext.src = 0;
+        blendContext.dst = 0;
     }
     // enable情報を取得する
     {
