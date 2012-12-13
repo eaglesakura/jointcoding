@@ -100,14 +100,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>jni/android</name>
+			<name>jni/sources</name>
 			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/platforms/android</locationURI>
-		</link>
-		<link>
-			<name>jni/core</name>
-			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/core</locationURI>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

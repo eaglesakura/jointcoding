@@ -27,11 +27,8 @@
 							<builder buildPath="${workspace_loc:/jointcoding-android-lib}/jni" id="com.android.builder.812885030" incrementalBuildTarget="" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
 							<tool id="com.android.gcc.compiler.809811966" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<option id="com.android.gcc.option.includePath.843722761" superClass="com.android.gcc.option.includePath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${ANDROID_NDK_HOME}/sources/cxx-stl/stlport/stlport/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ANDROID_NDK_HOME}/platforms/android-14/arch-arm/usr/include/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ANDROID_NDK_HOME}/sources/cpufeatures&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/oss-includes&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/oss&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
 								</option>
 								<inputType id="com.android.gcc.inputType.1695227160" superClass="com.android.gcc.inputType"/>
 							</tool>
