@@ -98,7 +98,7 @@ void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s3
 
     // 変更前のテクスチャを保持しておく
     {
-        const u32 old_bindedTextureIndex = shaderContext.bindedTextureIndex;
+        const s32 old_bindedTextureIndex = shaderContext.bindedTextureIndex;
         // テクスチャ番号を設定する
         shaderContext.bindedTextureIndex = image->bind();
         if (old_bindedTextureIndex != shaderContext.bindedTextureIndex) {

@@ -32,7 +32,7 @@ void __logDebugF(const LogType_e type, const charactor* __file, const char* fmt,
             __android_log_vprint(LOG_TYPES[type], __file, fmt, ap);
         }
 #endif // endif ANDROID
-#ifdef BUILD_iOS
+#if defined(BUILD_iOS) || defined(BUILD_MacOSX)
         {
             printf("%s | ", __file); // ファイル名出力
             vprintf(fmt, ap);// 通常ログ出力

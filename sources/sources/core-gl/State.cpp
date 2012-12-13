@@ -121,7 +121,7 @@ void GLState::syncContext() {
     glFinish();
     // 描画色を取得する
     {
-        GLfixed colors[4] = { 0 };
+        s32 colors[4] = { 0 };
         glGetIntegerv(GL_COLOR_CLEAR_VALUE, (GLint*) colors);
         this->clearContext.clearColor.RGBAf(fixed2float(colors[0]), fixed2float(colors[1]), fixed2float(colors[2]), fixed2float(colors[3]));
     }
@@ -159,7 +159,7 @@ void GLState::syncContext() {
     // Attrに設定されている情報を取得する
     {
         const u32 maxAttr = min<u32>(GPUCapacity::getMaxVertexAttributes(), MAX_VERTEX_ATTRIBUTE);
-        for (int i = 0; i < maxAttr; ++i) {
+        for (u32 i = 0; i < maxAttr; ++i) {
             // ショートカット用
             VertexAttributePointerData *attr = &vertexAttrContext.buffers[i].pointerData;
             GLint temp = 0;
@@ -216,7 +216,7 @@ void GLState::print(const charactor* file, const s32 line) const {
     // Attrに設定されている情報を取得する
     {
         const u32 maxAttr = min<u32>(GPUCapacity::getMaxVertexAttributes(), MAX_VERTEX_ATTRIBUTE);
-        for (int i = 0; i < maxAttr; ++i) {
+        for (u32 i = 0; i < maxAttr; ++i) {
             // ショートカット用
             const VertexAttributePointerData *attr = &vertexAttrContext.buffers[i].pointerData;
             jclogf("glVertexAttribPointer(index = %d, size = %d, type = %d, normalized = %s, stride = %d, ptr = 0x%X ) = %s",
@@ -224,7 +224,7 @@ void GLState::print(const charactor* file, const s32 line) const {
             // インデックス
                     i,
                     // 属性データ出力
-                    attr->size, attr->type, attr->normalized ? "true" : "false", attr->stride, (s32) attr->ptr,
+                    attr->size, attr->type, attr->normalized ? "true" : "false", attr->stride, attr->ptr,
                     /// enable出力
                     vertexAttrContext.buffers[i].enable ? "enable" : "disable");
         }

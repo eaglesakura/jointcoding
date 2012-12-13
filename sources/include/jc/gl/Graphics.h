@@ -37,8 +37,9 @@ public:
 
     /**
      * 画面を指定色でクリアする
+     * RGBAそれぞれGLfixed相当として扱う
      */
-    virtual void cleari(const GLfixed r, const GLfixed g, const GLfixed b, const GLfixed a);
+    virtual void cleari(const s32 r, const s32 g, const s32 b, const s32 a);
 
     /**
      * 画面を指定色でクリアする

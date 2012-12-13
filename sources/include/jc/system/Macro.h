@@ -8,6 +8,14 @@
 #ifndef JCMACRO_H_
 #define JCMACRO_H_
 
+
+/**
+ * BUILD_XXXでプラットフォームを示す。
+ *
+ * BUILD_Android
+ * BUILD_iOS
+ * BUILD_MacOSX
+ */
 // ECLIPSE認識のため、デフォルトで__ANDROID__チェックを行う
 #ifndef __APPLE__
 #ifndef __ANDROID__
@@ -16,7 +24,9 @@
 #endif  // __APPLE__
 // 定数設定
 #ifdef  __APPLE__
+#ifndef BUILD_MacOSX
 #define BUILD_iOS 1
+#endif
 #endif
 
 // ANDROIDモード

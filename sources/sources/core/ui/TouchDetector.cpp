@@ -21,7 +21,7 @@ TouchDetector::~TouchDetector() {
  * IDを指定してポイント取得する
  */
 MTouchPoint TouchDetector::getTouchPointFromId(s32 id) {
-    for (int i = 0; i < points.size(); ++i) {
+    for (int i = 0; i < (int)points.size(); ++i) {
         if (points[i]->getId() == id) {
             return points[i];
         }
@@ -51,7 +51,7 @@ void TouchDetector::removeTouchPointFromId(s32 id) {
  * インデックスを指定してポイント取得する
  */
 MTouchPoint TouchDetector::getTouchPointFromIndex(s32 index) {
-    if (index >= 0 && index < points.size()) {
+    if (index >= 0 && index < (int)points.size()) {
         return points[index];
     }
 

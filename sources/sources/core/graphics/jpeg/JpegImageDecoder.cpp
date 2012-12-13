@@ -110,7 +110,7 @@ s32 JpegImageDecoder::decode() {
         // 読みこませる最終位置
         const s32 readEnd = cInfo.output_scanline + onceLine;
         JSAMPROW *rows = rowPointers.get();
-        while (cInfo.output_scanline < readEnd) {
+        while (cInfo.output_scanline < (JDIMENSION)readEnd) {
             s32 start = cInfo.output_scanline;
             if (!jpeg_read_scanlines(&cInfo, rows, readEnd - start)) {
                 throw create_exception_t(JpegDecodeException, JpegDecodeException_PixelDecodeingFailed);

@@ -88,12 +88,12 @@ class GLState: public Object {
          * ただし、それがハードウェアとして対応しているかは問わない
          * GL_TEXTURE0〜GL_TEXTURE31に対応
          */
-        GLint textures[MAX_TEXTURE_UNIT];
+        GLuint textures[MAX_TEXTURE_UNIT];
 
         /**
          * アクティブ化されているテクスチャユニットを保持する
          */
-        GLenum active;
+        s32 active;
     } textureContext;
 
     /**
@@ -348,7 +348,7 @@ public:
 
         // 違うユニットがアクティブ化されていたら、アクティブにし直す
 #ifndef STATE_NO_CHECK
-        if (unit != textureContext.active) {
+        if (unit != (s32)textureContext.active) {
 #endif
             textureContext.active = unit;
             glActiveTexture(unit);

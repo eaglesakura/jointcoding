@@ -23,7 +23,7 @@ GLGraphics::GLGraphics(MEGLProtocol egl) {
 GLGraphics::~GLGraphics() {
 }
 
-void GLGraphics::cleari(const GLfixed r, const GLfixed g, const GLfixed b, const GLfixed a) {
+void GLGraphics::cleari(const s32 r, const s32 g, const s32 b, const s32 a) {
     getState()->clearColorf(fixed2float(r), fixed2float(g), fixed2float(b), fixed2float(a));
     getState()->clear(clearFlags);
 }

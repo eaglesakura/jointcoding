@@ -64,7 +64,7 @@ void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, con
     if (!this->alloced) {
         this->alloced = jctrue;
 
-        if (lineHeader == 0 && lineNum == height) {
+        if (lineHeader == 0 && lineNum == (s32)height) {
             // 一度に転送しきれる場合は全て転送してしまう
             glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, width, height, 0, srcPixelFormat, srcPixelType, src);
             finished = jctrue;

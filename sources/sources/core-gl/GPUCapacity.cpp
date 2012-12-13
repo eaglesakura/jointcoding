@@ -7,6 +7,7 @@
 #include    "jc/gl/GL.h"
 #include    "jc/gl/GPUCapacity.h"
 #include    "jc/system/StringUtil.h"
+#include    "jc/collection/OrderAccessList.h"
 #include    <vector>
 
 namespace jc {
@@ -73,7 +74,7 @@ static void initialize() {
         String tempExtensions = (const charactor*) glGetString(GL_EXTENSIONS);
         split(tempExtensions, " ", &temp);
 
-        for (s32 i = 0; i < temp.size(); ++i) {
+        for (int i = 0; i < (int)temp.size(); ++i) {
             extensions.add(temp[i]);
         }
     }
@@ -81,8 +82,17 @@ static void initialize() {
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, (GLint*) &maxVertexAttrbs);
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, (GLint*) &maxTextureUnits);
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, (GLint*) &maxTextureSize);
+#ifdef GL_MAX_VERTEX_UNIFORM_VECTORS
     glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, (GLint*) &maxUniformVectorsVs);
+#else
+    maxUniformVectorsVs = 128;
+#endif
+
+#ifdef GL_MAX_FRAGMENT_UNIFORM_VECTORS
     glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, (GLint*) &maxUniformVectorsFs);
+#else
+    maxUniformVectorsFs = 128;
+#endif
 
     jclog("------------ GPU ------------");
     {
