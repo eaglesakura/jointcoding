@@ -12,7 +12,7 @@
 #include    "boost/timer.hpp"
 #include    "jc/model/Object.h"
 #include    "jc/mem/SmartPtr.h"
-#include    "jcTouchEventProtocol.h"
+#include    "protocol/jcTouchEventProtocol.h"
 
 namespace jc {
 

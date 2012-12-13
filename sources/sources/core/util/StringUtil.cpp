@@ -38,7 +38,7 @@ s32 split(String origin, String delim, jc_varray<String> *result) {
     // 分割はboostを利用する
     boost::split(temp, str, boost::is_any_of(dlm));
 
-    for (s32 i = 0; i < temp.size(); ++i) {
+    for (int i = 0; i < (int)temp.size(); ++i) {
         result->push_back(temp[i].c_str());
     }
 
