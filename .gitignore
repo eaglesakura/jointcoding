@@ -28,3 +28,9 @@ iOS/
 # .classpath
 # .project
 test.temp/
+
+
+# fbx-tool
+fbx-tool/Debug
+fbx-tool/Release
+

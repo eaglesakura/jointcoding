@@ -4,9 +4,10 @@
  *  Created on: 2012/06/28
  *      Author: Takeshi
  */
-#include    "jc/system/StringUtil.h"
+#include    "jointcoding.h"
 #include    <string>
-#include    <boost/algorithm/string.hpp>
+#include    "jc/system/StringUtil.h"
+#include    "boost/algorithm/string.hpp"
 
 
 /**
@@ -30,7 +31,7 @@ namespace jc {
  * @param delim 分割用の文字列
  * @param result 格納先のベクター
  */
-s32 split(String origin, String delim, jc_varray<String> *result) {
+::jc::s32 split(String origin, String delim, jc_varray<String> *result) {
     const std::string &str = origin.get_native<std::string>();
     const std::string &dlm = delim.get_native<std::string>();
     jc_varray<std::string> temp;
