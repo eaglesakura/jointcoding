@@ -29,6 +29,7 @@
 								<option id="com.android.gcc.option.includePath.843722761" superClass="com.android.gcc.option.includePath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ANDROID_NDK_HOME}/sources/cxx-stl/stlport/stlport&quot;"/>
 								</option>
 								<inputType id="com.android.gcc.inputType.1695227160" superClass="com.android.gcc.inputType"/>
 							</tool>
