@@ -26,17 +26,17 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>jointcoding/core</name>
+			<name>jointcoding-includes/include</name>
+			<type>2</type>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources/include</locationURI>
+		</link>
+		<link>
+			<name>jointcoding-sources/core</name>
 			<type>2</type>
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/sources/core</locationURI>
 		</link>
 		<link>
-			<name>jointcoding/core-fbx</name>
-			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/sources/core-fbx</locationURI>
-		</link>
-		<link>
-			<name>jointcoding/protocol</name>
+			<name>jointcoding-sources/protocol</name>
 			<type>2</type>
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/gen/protocol</locationURI>
 		</link>

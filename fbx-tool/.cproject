@@ -38,6 +38,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug.693739673" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug">
 								<option id="gnu.both.asm.option.include.paths.468322093" name="インクルード・パス (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.526799359" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -49,12 +50,13 @@
 									<listOptionValue builtIn="false" value="BUILD_MacOSX=1"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.866472117" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${FBX_SDK_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen/protocol&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
 									<listOptionValue builtIn="false" value="/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.2.1"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.47764112" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -65,18 +67,14 @@
 									<listOptionValue builtIn="false" value="BUILD_MacOSX=1"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.paths.319590618" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen/protocol&quot;"/>
-									<listOptionValue builtIn="false" value="/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1164872099" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="jointcoding"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="libs"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="jointcoding-sources"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
@@ -111,6 +109,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.release.1026886956" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.release">
 								<option id="gnu.both.asm.option.include.paths.1253817092" name="インクルード・パス (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.966701644" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -123,6 +122,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.1918032741" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1696463483" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -137,13 +137,15 @@
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen/protocol&quot;"/>
 									<listOptionValue builtIn="false" value="/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.657984815" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="jointcoding"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="jointcoding-includes"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="jointcoding-sources"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="libs"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
