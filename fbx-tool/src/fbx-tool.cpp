@@ -8,11 +8,15 @@
 
 #include "jointcoding.h"
 
+void testFunction();
+
 int main(int argv, char *args[]) {
     jclog("hello fbx-tool!!");
     jclogf("args(%d)", argv);
     for( int i = 0; i < argv; ++i ) {
         jclogf("arg[i] = %s", i, args[i]);
     }
+
+    testFunction();
 	return 0;
 }

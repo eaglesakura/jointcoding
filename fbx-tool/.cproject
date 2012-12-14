@@ -23,6 +23,13 @@
 							<builder buildPath="${workspace_loc:/fbx-tool/Debug}" id="cdt.managedbuild.target.gnu.builder.macosx.exe.debug.270043684" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make ビルダー" superClass="cdt.managedbuild.target.gnu.builder.macosx.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug.1081223743" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug.37459199" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug">
+								<option id="macosx.cpp.link.option.libs.629518293" name="ライブラリー (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="fbxsdk-2013.3"/>
+								</option>
+								<option id="macosx.cpp.link.option.shared.288739227" name="共用 (-dynamiclib)" superClass="macosx.cpp.link.option.shared" value="false" valueType="boolean"/>
+								<option id="macosx.cpp.link.option.paths.507299669" name="ライブラリー検索パス (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${FBX_SDK_HOME}/lib/gcc4/ub/&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.1023401763" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -43,6 +50,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.866472117" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FBX_SDK_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen/protocol&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
 									<listOptionValue builtIn="false" value="/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include"/>
@@ -68,6 +76,7 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="jointcoding"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="libs"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
@@ -135,6 +144,7 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="jointcoding"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="libs"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
@@ -146,7 +156,14 @@
 		<project id="fbx-tool.cdt.managedbuild.target.macosx.exe.269407168" name="実行可能" projectType="cdt.managedbuild.target.macosx.exe"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/fbx-tool"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/fbx-tool"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.2059908590;cdt.managedbuild.config.gnu.macosx.exe.debug.2059908590.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.1404019854;cdt.managedbuild.tool.gnu.c.compiler.input.1164872099">
@@ -155,10 +172,10 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.1395372813;cdt.managedbuild.config.macosx.exe.release.1395372813.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.release.9501599;cdt.managedbuild.tool.gnu.c.compiler.input.657984815">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.2059908590;cdt.managedbuild.config.gnu.macosx.exe.debug.2059908590.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug.1065148272;cdt.managedbuild.tool.gnu.cpp.compiler.input.47764112">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.1395372813;cdt.managedbuild.config.macosx.exe.release.1395372813.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release.705572123;cdt.managedbuild.tool.gnu.cpp.compiler.input.1696463483">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.1395372813;cdt.managedbuild.config.macosx.exe.release.1395372813.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release.705572123;cdt.managedbuild.tool.gnu.cpp.compiler.input.1696463483">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.2059908590;cdt.managedbuild.config.gnu.macosx.exe.debug.2059908590.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug.1065148272;cdt.managedbuild.tool.gnu.cpp.compiler.input.47764112">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
