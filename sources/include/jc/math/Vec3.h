@@ -51,7 +51,7 @@ struct Vector3 {
     /**
      * 減算を行う
      */
-    Vector2<T>& operator-=(const Vector3 &v) {
+    Vector3<T>& operator-=(const Vector3 &v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
@@ -61,7 +61,7 @@ struct Vector3 {
     /**
      * スカラー演算を行う
      */
-    Vector2<T> operator*=(const T scalar) {
+    Vector3<T> operator*=(const T scalar) {
         x *= scalar;
         y *= scalar;
         z *= scalar;
@@ -71,12 +71,19 @@ struct Vector3 {
     /**
      * 除算を行う
      */
-    Vector2<T> operator/=(const T div) {
+    Vector3<T> operator/=(const T div) {
         x /= div;
         y /= div;
         z /= div;
         return (*this);
     }
+
+    void    set( const T _x, const T _y, const T _z) {
+        x = _x;
+        y = _y;
+        z = _z;
+    }
+
 
     /**
      * 同一性チェック

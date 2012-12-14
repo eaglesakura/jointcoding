@@ -5,25 +5,15 @@
  */
 
 #include    "jointcoding-fbx.h"
-#include    "jcfbx/mem/SmartFBXObject.h"
-#include    "jc/io/FileInputStream.h"
+#include    "jcfbx/FbxImportManager.h"
 
 using namespace jc;
+using namespace jc::fbx;
 
 void testFunction() {
 
-    jc::SmartFBXObject<KFbxSdkManager> manager(KFbxSdkManager::Create());
-    jc::SmartFBXObject<KFbxImporter> importer(KFbxImporter::Create(manager.get(), ""));
+    jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("sample.fbx");
 
-    try {
-        MInputStream is(new FileInputStream("sample.fbx"));
-        jclogf("stream open ok(%x)", is.get());
-    }
-    catch( Exception &e ) {
-        jclog("stream open ng");
-    }
-
-    importer.reset();
-    manager.reset();
+    manager->importFromSceneName(NULL);
 }
 

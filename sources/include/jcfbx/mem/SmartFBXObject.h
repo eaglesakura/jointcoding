@@ -11,6 +11,7 @@
 #include    "jc/mem/SmartPtr.h"
 
 namespace jc {
+namespace fbx {
 
 template<typename T>
 void delete_fbx(T *p) {
@@ -26,7 +27,7 @@ class SmartFBXObject {
     jc_sp<T> fbxObj;
 
 public:
-    SmartFBXObject(T *p) {
+    SmartFBXObject(T *p = NULL) {
         reset(p);
     }
 
@@ -35,6 +36,7 @@ public:
     }
 
     virtual ~SmartFBXObject() {
+        fbxObj.reset();
     }
 
     void reset( T *p = NULL ) {
@@ -70,6 +72,8 @@ public:
         return this->fbxObj != right.fbxObj;
     }
 };
+
+}
 
 }
 

@@ -156,7 +156,7 @@ EXCEPTION_CLASS(JavaMethodException, Exception);
  * IOException
  */
 class IOException;
-EXCEPTION_CLASS(IOException, RuntimeException);
+EXCEPTION_CLASS(IOException, Exception);
 
 /**
  * ファイルが見つからなかった
@@ -232,6 +232,32 @@ enum EGLException_e {
      * コンテキストのデタッチに失敗
      */
     EGLException_ContextDetachFailed,
+};
+
+/**
+ * Fbx例外
+ */
+class FbxException;
+EXCEPTION_CLASS(FbxException, Exception);
+
+/**
+ * Fbx例外の種類
+ */
+enum FbxException_e {
+    /**
+     * シーン読み込み失敗
+     */
+    FbxException_SceneImportFailed,
+
+    /**
+     * ファイル初期化に失敗した
+     */
+    FbxException_FileInitilizeFailed,
+
+    /**
+     * Rootノードが見つからなかった
+     */
+    FbxException_RootNodeNotFound,
 };
 
 /**

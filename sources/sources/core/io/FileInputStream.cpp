@@ -11,18 +11,18 @@
 
 namespace jc {
 
-FileInputStream::FileInputStream(const String &fileName) {
+FileInputStream::FileInputStream(const String &fileName, jcboolean *completed) {
     file = fopen((char*) fileName.c_str(), "rb");
-    if(!file) {
-        throw create_exception(FileNotFoundException, "file not found!!");
+    if (completed) {
+        (*completed) = (file != NULL);
     }
     setAutoClose(true);
 }
 
-FileInputStream::FileInputStream(const charactor *fileName) {
+FileInputStream::FileInputStream(const charactor *fileName, jcboolean *completed) {
     file = fopen((char*) fileName, "rb");
-    if(!file) {
-        throw create_exception(FileNotFoundException, "file not found!!");
+    if (completed) {
+        (*completed) = (file != NULL);
     }
     setAutoClose(true);
 }

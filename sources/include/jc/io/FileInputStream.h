@@ -33,8 +33,8 @@ class FileInputStream: public InputStream {
 
     void init();
 public:
-    FileInputStream(const String &fileName);
-    FileInputStream(const charactor* fileName);
+    FileInputStream(const String &fileName, jcboolean *completed);
+    FileInputStream(const charactor* fileName, jcboolean *completed);
     FileInputStream(FILE* fp);
     virtual ~FileInputStream();
 
