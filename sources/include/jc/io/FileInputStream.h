@@ -52,24 +52,24 @@ public:
         return autoClose;
     }
 
-    virtual s32 read(u8 *result, s32 size, Exception *exception);
+    virtual s32 read(u8 *result, s32 size);
 
     /**
      * 指定バイト数読み取りヘッダを飛ばす
      */
-    virtual s32 skip(s32 bytes, Exception *exception);
+    virtual s32 skip(s32 bytes);
 
     /**
      * 読み取り可能な残容量を取得する。
      */
-    virtual s32 available() const {
+    virtual s32 available() {
         return size;
     }
 
     /**
      * ストリームを閉じる
      */
-    virtual void close(Exception *exception);
+    virtual void close();
 };
 
 }

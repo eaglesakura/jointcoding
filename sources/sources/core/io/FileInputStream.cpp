@@ -13,11 +13,17 @@ namespace jc {
 
 FileInputStream::FileInputStream(const String &fileName) {
     file = fopen((char*) fileName.c_str(), "rb");
+    if(!file) {
+        throw create_exception(FileNotFoundException, "file not found!!");
+    }
     setAutoClose(true);
 }
 
 FileInputStream::FileInputStream(const charactor *fileName) {
     file = fopen((char*) fileName, "rb");
+    if(!file) {
+        throw create_exception(FileNotFoundException, "file not found!!");
+    }
     setAutoClose(true);
 }
 FileInputStream::FileInputStream(FILE* fp) {
@@ -26,7 +32,7 @@ FileInputStream::FileInputStream(FILE* fp) {
 }
 
 FileInputStream::~FileInputStream() {
-    close(NULL);
+    close();
 }
 
 void FileInputStream::init() {
@@ -43,18 +49,18 @@ void FileInputStream::init() {
     this->size = (size - current);
 }
 
-s32 FileInputStream::read(u8 *result, s32 size, Exception *e) {
+s32 FileInputStream::read(u8 *result, s32 size) {
     s32 readed = fread(result, 1, size, file);
     return readed;
 }
 
-s32 FileInputStream::skip(s32 bytes, Exception *e) {
+s32 FileInputStream::skip(s32 bytes) {
     bytes = min(size, bytes);
     s32 result = fseek(file, bytes, SEEK_CUR);
     return result;
 }
 
-void FileInputStream::close(Exception *exception) {
+void FileInputStream::close() {
     if (file != NULL && isAutoClose()) {
         fclose(file);
         file = NULL;
