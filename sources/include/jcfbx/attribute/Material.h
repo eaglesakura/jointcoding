@@ -7,6 +7,9 @@
 #ifndef JCFBXMATERIAL_H_
 #define JCFBXMATERIAL_H_
 
+#include "jointcoding.h"
+#include "jc/graphics/Color.h"
+
 namespace jc {
 namespace fbx {
 
@@ -14,32 +17,31 @@ namespace fbx {
  * 属性情報
  */
 class Material {
-    /**
-     * 利用するテクスチャ番号を保存する
-     */
-    s32 textureNum;
 public:
-    Material() {
-        textureNum = 0;
-    }
-
-    virtual ~Material() {
-
-    }
+    /**
+     * テクスチャ名
+     */
+    String textureName;
 
     /**
-     * テクスチャ番号を設定する
+     *
      */
-    virtual void setTextureNumber(s32 set) {
-        textureNum = set;
-    }
+    jc::Color diffuse;
 
     /**
-     * テクスチャ番号を取得する
+     *
      */
-    virtual s32 getTextureNumber() const {
-        return textureNum;
-    }
+    jc::Color ambient;
+
+    /**
+     *
+     */
+    jc::Color emissive;
+
+    /**
+     * マテリアル名そのもの
+     */
+    String name;
 };
 
 }

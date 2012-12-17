@@ -6,6 +6,8 @@
 
 #include "jcfbx/node/Mesh.h"
 #include "jc/math/Math.h"
+#include "jcfbx/attribute/VertexContainer.h"
+#include "jcfbx/attribute/IndicesContainer.h"
 
 namespace jc {
 namespace fbx {
@@ -21,12 +23,24 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
     // まずは頂点情報をまとめあげる
     {
         KFbxMesh *mesh = meshNode->GetMesh();
-        VertexContainer vertices;
-        Mesh::createPositions(&vertices.positions, mesh);
-        Mesh::createCoords((std::vector<Vector2f>*) &vertices.coords, mesh);
-        Mesh::createNormals(&vertices.normals, mesh);
 
-        jclogf("pos(%d) uv(%d) normal(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size());
+        // 頂点情報
+        VertexContainer vertices;
+        // ポリゴン情報
+        IndicesContainer indices;
+
+        // 頂点情報を整理する
+        {
+            Mesh::createPositions(&vertices.positions, mesh);
+            Mesh::createCoords((std::vector<Vector2f>*) &vertices.coords, mesh);
+            Mesh::createNormals(&vertices.normals, mesh);
+        }
+        // ポリゴン情報を整理する
+        {
+            Mesh::createMaterials(&indices.materials, mesh);
+        }
+
+        jclogf("pos(%d) uv(%d) normal(%d) mat(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size(), indices.materials.size());
     }
 }
 
@@ -105,6 +119,46 @@ void Mesh::createCoords(std::vector<Vector2f> *result, KFbxMesh *mesh) {
                 throw create_exception(RuntimeException, "refMode Not Support");
             }
         }
+    }
+}
+
+void Mesh::createMaterials(std::vector<Material> *result, KFbxMesh *mesh) {
+    const s32 materialNum = mesh->GetNode()->GetMaterialCount();
+
+    if (materialNum == 0) {
+        result->push_back(Material());
+    }
+
+    for (s32 i = 0; i < materialNum; ++i) {
+        KFbxSurfaceMaterial *material = mesh->GetNode()->GetMaterial(i);
+        Material m;
+
+        m.name = material->GetName();
+        if (material->GetClassId().Is(KFbxSurfaceLambert::ClassId)) {
+            KFbxSurfaceLambert* mat = (KFbxSurfaceLambert*) material;
+            m.ambient.RGBAf(mat->Ambient.Get()[0], mat->Ambient.Get()[1], mat->Ambient.Get()[2], (float) mat->AmbientFactor);
+            m.diffuse.RGBAf(mat->Diffuse.Get()[0], mat->Diffuse.Get()[1], mat->Diffuse.Get()[2], (float) mat->DiffuseFactor);
+            m.emissive.RGBAf(mat->Emissive.Get()[0], mat->Emissive.Get()[1], mat->Emissive.Get()[2], (float) mat->EmissiveFactor);
+        } else if (material->GetClassId().Is(KFbxSurfacePhong::ClassId)) {
+            KFbxSurfacePhong* mat = (KFbxSurfacePhong*) material;
+
+            m.ambient.RGBAf(mat->Ambient.Get()[0], mat->Ambient.Get()[1], mat->Ambient.Get()[2], (float) mat->AmbientFactor);
+            m.diffuse.RGBAf(mat->Diffuse.Get()[0], mat->Diffuse.Get()[1], mat->Diffuse.Get()[2], (float) mat->DiffuseFactor);
+            m.emissive.RGBAf(mat->Emissive.Get()[0], mat->Emissive.Get()[1], mat->Emissive.Get()[2], (float) mat->EmissiveFactor);
+        }
+        KFbxProperty prop = material->FindProperty(KFbxSurfaceMaterial::sDiffuse);
+        const s32 texNum = prop.GetSrcObjectCount<KFbxTexture>();
+        if (texNum) {
+            KFbxTexture *texture = prop.GetSrcObject<KFbxTexture>(0);
+            if (texture && strlen(texture->GetName())) {
+                m.textureName = texture->GetName();
+
+
+                jclogf("texture(%s)", m.textureName.c_str());
+            }
+        }
+
+        result->push_back(m);
     }
 }
 
