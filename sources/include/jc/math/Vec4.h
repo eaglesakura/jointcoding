@@ -13,7 +13,7 @@
 namespace jc {
 
 template<typename T>
-struct Vector4 {
+struct _Vector4 {
     /**
      * X座標を示す
      */
@@ -37,7 +37,7 @@ struct Vector4 {
     /**
      * 各座標を指定する
      */
-    Vector4(const T _x = 0, const T _y = 0, const T _z = 0, const T _w = 0) {
+    _Vector4(const T _x = 0, const T _y = 0, const T _z = 0, const T _w = 0) {
         x = _x;
         y = _y;
         z = _z;
@@ -47,7 +47,7 @@ struct Vector4 {
     /**
      * 加算を行う
      */
-    Vector4<T>& operator+=(const Vector4 &v) {
+    _Vector4<T>& operator+=(const _Vector4 &v) {
         x += v.x;
         y += v.y;
         z += v.z;
@@ -58,7 +58,7 @@ struct Vector4 {
     /**
      * 減算を行う
      */
-    Vector4<T>& operator-=(const Vector4 &v) {
+    _Vector4<T>& operator-=(const _Vector4 &v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
@@ -69,7 +69,7 @@ struct Vector4 {
     /**
      * スカラー演算を行う
      */
-    Vector4<T> operator*=(const T scalar) {
+    _Vector4<T> operator*=(const T scalar) {
         x *= scalar;
         y *= scalar;
         z *= scalar;
@@ -80,7 +80,7 @@ struct Vector4 {
     /**
      * 除算を行う
      */
-    Vector4<T> operator/=(const T div) {
+    _Vector4<T> operator/=(const T div) {
         x /= div;
         y /= div;
         z /= div;
@@ -91,7 +91,7 @@ struct Vector4 {
     /**
      * 同一性チェック
      */
-    bool operator==(const Vector4<T> &v) {
+    bool operator==(const _Vector4<T> &v) {
         return equals(x, v.x) && equals(y, v.y) && equals(z, v.z) && equals(w, v.w);
     }
 
@@ -117,7 +117,7 @@ struct Vector4 {
      * @param p
      * @return
      */
-    T length(const Vector4<T> &p) const {
+    T length(const _Vector4<T> &p) const {
         const double tx = x - p.x;
         const double ty = y - p.y;
         const double tz = z - p.z;
@@ -150,12 +150,12 @@ struct Vector4 {
 /**
  * signed int のベクトル
  */
-typedef Vector4<s32> Vector4i;
+typedef _Vector4<s32> Vector4i;
 
 /**
  * 浮動小数のベクトル
  */
-typedef Vector4<float> Vector4f;
+typedef _Vector4<float> Vector4f;
 
 }
 

@@ -13,7 +13,7 @@
 namespace jc {
 
 template<typename T>
-struct Vector3 {
+struct _Vector3 {
     /**
      * X座標を示す
      */
@@ -32,7 +32,7 @@ struct Vector3 {
     /**
      * 各座標を指定する
      */
-    Vector3(const T _x = 0, const T _y = 0, const T _z = 0) {
+    _Vector3(const T _x = 0, const T _y = 0, const T _z = 0) {
         x = _x;
         y = _y;
         z = _z;
@@ -41,7 +41,7 @@ struct Vector3 {
     /**
      * 加算を行う
      */
-    Vector3<T>& operator+=(const Vector3 &v) {
+    _Vector3<T>& operator+=(const _Vector3 &v) {
         x += v.x;
         y += v.y;
         z += v.z;
@@ -51,7 +51,7 @@ struct Vector3 {
     /**
      * 減算を行う
      */
-    Vector3<T>& operator-=(const Vector3 &v) {
+    _Vector3<T>& operator-=(const _Vector3 &v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
@@ -61,7 +61,7 @@ struct Vector3 {
     /**
      * スカラー演算を行う
      */
-    Vector3<T> operator*=(const T scalar) {
+    _Vector3<T> operator*=(const T scalar) {
         x *= scalar;
         y *= scalar;
         z *= scalar;
@@ -71,7 +71,7 @@ struct Vector3 {
     /**
      * 除算を行う
      */
-    Vector3<T> operator/=(const T div) {
+    _Vector3<T> operator/=(const T div) {
         x /= div;
         y /= div;
         z /= div;
@@ -88,14 +88,14 @@ struct Vector3 {
     /**
      * 同一性チェック
      */
-    bool operator==(const Vector3<T> &v) {
+    bool operator==(const _Vector3<T> &v) {
         return equals(x, v.x) && equals(y, v.y) && equals(z, v.z);
     }
 
     /**
      * 同一性チェック
      */
-    bool operator!=(const Vector3<T> &v) {
+    bool operator!=(const _Vector3<T> &v) {
         return !equals(x, v.x) || !equals(y, v.y) || !equals(z, v.z);
     }
 
@@ -114,7 +114,7 @@ struct Vector3 {
      * @param p
      * @return
      */
-    T length(const Vector3<T> &p) const {
+    T length(const _Vector3<T> &p) const {
         const double tx = x - p.x;
         const double ty = y - p.y;
         const double tz = z - p.z;
@@ -145,12 +145,12 @@ struct Vector3 {
 /**
  * signed int のベクトル
  */
-typedef Vector3<s32> Vector3i;
+typedef _Vector3<s32> Vector3i;
 
 /**
  * 浮動小数のベクトル
  */
-typedef Vector3<float> Vector3f;
+typedef _Vector3<float> Vector3f;
 
 }
 

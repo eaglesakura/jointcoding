@@ -4,14 +4,18 @@
  *  Created on: 2012/12/14
  */
 
-#include    "jcfbx/Node.h"
+#include    "jcfbx/node/Node.h"
+#include    "jcfbx/node/Mesh.h"
 
 namespace jc {
 namespace fbx {
 
-Node::Node(Node* parent, s32 nodeNumber) {
-    this->parent = parent;
+Node::Node(KFbxNode *node, s32 nodeNumber) {
+    this->parent = NULL;
     this->nodeNumber = nodeNumber;
+
+    // デフォルトポーズを登録する
+    retisterDefaultTake(node);
 }
 
 Node::~Node() {
@@ -42,9 +46,6 @@ void Node::retisterDefaultTake(KFbxNode *node) {
             transform.scale.set((float) v[0], (float) v[1], (float) v[2]);
         }
     }
-
-    // ノード情報の出力
-    printNodeInfo(0);
 }
 
 /**
@@ -100,24 +101,24 @@ MNode Node::createInstance(KFbxNode *node, MNode parent, FbxImportManager *impor
             case KFbxNodeAttribute::eNull:
                 // TODO make NullNode
                 jclogf("NodeType(%d = eNull)", type);
+                result.reset(new Node(node, importManager->nextNodeId()));
                 break;
             case KFbxNodeAttribute::eMesh:
-                // TODO make MeshNode
                 jclogf("NodeType(%d = eMesh)", type);
+                result = Mesh::createInstance(node, parent, importManager);
                 break;
             case KFbxNodeAttribute::eSkeleton:
                 // TODO make SkeltonNode
                 jclogf("NodeType(%d = eSkelton)", type);
+                result.reset(new Node(node, importManager->nextNodeId()));
                 break;
             default:
                 jclogf("Not Support NodeType(%d)", type);
+                result.reset(new Node(node, importManager->nextNodeId()));
                 break;
         }
-    }
-
-    if (!result) {
-        result.reset(new Node(parent.get(), importManager->nextNodeId()));
-        result->retisterDefaultTake(node);
+    } else {
+        result.reset(new Node(node, importManager->nextNodeId()));
     }
 
     jclogf("childs(%d Nodes)", node->GetChildCount());

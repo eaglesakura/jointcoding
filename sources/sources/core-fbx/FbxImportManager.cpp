@@ -5,7 +5,7 @@
  */
 
 #include    "jcfbx/FbxImportManager.h"
-#include    "jcfbx/Node.h"
+#include    "jcfbx/node/Node.h"
 
 namespace jc {
 namespace fbx {

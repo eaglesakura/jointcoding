@@ -268,6 +268,11 @@ enum FbxException_e {
      * FbxFileとして認識出来なかった
      */
     FbxException_NoFbxFile,
+
+    /**
+     * Meshを持っていなかった
+     */
+    FbxException_NoMesh,
 };
 
 /**

@@ -15,7 +15,7 @@ enum EulerRotateOrder_e {
     /**
      * X->Y->Z順に適用
      */
-    EulerRotateOrder_XYZ,
+    EulerRotateOrder_XYZ = 0,
     /**
      * X->Z->Y順に適用
      */

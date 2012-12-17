@@ -73,7 +73,7 @@ protected:
      */
     EulerTransform transform;
 
-    Node(Node* parent, s32 nodeNumber);
+    Node(KFbxNode *node, s32 nodeNumber);
 
     /**
      * 初期姿勢を登録する
@@ -107,7 +107,7 @@ public:
     /**
      * 基底クラスはNULLノードとして扱う。
      */
-    virtual NodeType_e  getNodeType() {
+    virtual NodeType_e getNodeType() const {
         return NodeType_NULL;
     }
 
