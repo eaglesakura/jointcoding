@@ -12,8 +12,8 @@ using namespace jc::fbx;
 
 void testFunction() {
 
-    jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("sample.fbx");
+    jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("primitives.fbx");
 
-    manager->importFromSceneName(NULL);
+    manager->importFromSceneName("");
 }
 

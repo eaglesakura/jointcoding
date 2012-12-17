@@ -9,9 +9,11 @@
 
 #include    "jointcoding-fbx.h"
 
+
 namespace jc {
 namespace fbx {
 
+class Node;
 /**
  * FBXインポート時の管理を行う。
  * FBX1ファイルにつき、1インスタンスを利用する。
@@ -38,6 +40,11 @@ class FbxImportManager {
      */
     SmartFBXObject<KFbxScene> scene;
 
+    /**
+     * 構築したルートノード
+     */
+    jc_sp<jc::fbx::Node> convertedNode;
+
     FbxImportManager(KFbxSdkManager* sdkManager, KFbxImporter *importer);
 public:
     virtual ~FbxImportManager();
@@ -50,9 +57,10 @@ public:
     }
 
     /**
-     * シーン名から読み込む
+     * シーン名から読み込む.
+     * デフォルトシーンは NULL か ""
      */
-    virtual void importFromSceneName(const charactor* name = NULL);
+    virtual void importFromSceneName(const charactor* name);
 
     /**
      *

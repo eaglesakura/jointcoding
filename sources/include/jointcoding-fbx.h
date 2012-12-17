@@ -13,5 +13,6 @@
 
 #include    "fbxsdk.h"
 #include    "jcfbx/mem/SmartFBXObject.h"
+#include    "jcfbx/FbxImportManager.h"
 
 #endif /* JOINTCODING_FBX_H_ */

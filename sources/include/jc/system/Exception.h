@@ -258,6 +258,16 @@ enum FbxException_e {
      * Rootノードが見つからなかった
      */
     FbxException_RootNodeNotFound,
+
+    /**
+     * 既にノードが親を持っている
+     */
+    FbxException_NodeHasParent,
+
+    /**
+     * FbxFileとして認識出来なかった
+     */
+    FbxException_NoFbxFile,
 };
 
 /**

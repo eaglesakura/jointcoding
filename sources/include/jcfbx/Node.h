@@ -38,7 +38,12 @@ class Node;
 typedef jc_sp<Node> MNode;
 
 /**
- * FBXノード情報を管理しやすくする
+ * FBXノード情報の基底クラス。
+ *
+ * Node
+ *   L Frame
+ *   L Null
+ *   L Bone
  */
 class Node {
     /**
@@ -73,7 +78,12 @@ protected:
     /**
      * 初期姿勢を登録する
      */
-    void retisterDefaultTake(KFbxNode *node);
+    virtual void retisterDefaultTake(KFbxNode *node);
+
+    /**
+     * ノード状態をログ出力する
+     */
+    virtual void printNodeInfo(const s32 indent);
 
 public:
     virtual ~Node();
@@ -95,9 +105,16 @@ public:
     virtual void addChild(MNode node);
 
     /**
+     * 基底クラスはNULLノードとして扱う。
+     */
+    virtual NodeType_e  getNodeType() {
+        return NodeType_NULL;
+    }
+
+    /**
      * ノード情報を出力する
      */
-    static MNode createInstance(KFbxNode *node, MNode parent);
+    static MNode createInstance(KFbxNode *node, MNode parent, FbxImportManager *importManager);
 };
 
 }
