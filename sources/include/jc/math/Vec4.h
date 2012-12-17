@@ -98,7 +98,7 @@ struct _Vector4 {
     /**
      * 同一性チェック
      */
-    bool operator!=(const Vector2<T> &v) {
+    bool operator!=(const _Vector2<T> &v) {
         return !equals(x, v.x) || !equals(y, v.y) || !equals(z, v.z) || !equals(w, v.w);
     }
 

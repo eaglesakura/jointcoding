@@ -9,6 +9,7 @@
 
 #include "jcfbx/node/Node.h"
 #include "jcfbx/attribute/VertexContainer.h"
+#include <vector>
 
 namespace jc {
 namespace fbx {
@@ -20,12 +21,8 @@ typedef jc_sp<Mesh> MMesh;
  */
 class Mesh: public jc::fbx::Node {
 protected:
-    static s32 createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh);
-
-    /**
-     * 頂点情報
-     */
-    VertexContainer vertices;
+    static void createCoords(std::vector<Vector2f> *result, KFbxMesh *mesh);
+    static void createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh);
 
     Mesh(KFbxNode *meshNode, s32 nodeNumber);
 public:

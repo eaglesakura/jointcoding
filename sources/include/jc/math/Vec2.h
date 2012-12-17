@@ -14,7 +14,7 @@
 namespace jc {
 
 template<typename T>
-struct Vector2 {
+struct _Vector2 {
     /**
      * X座標を示す
      */
@@ -28,7 +28,7 @@ struct Vector2 {
     /**
      * 各座標を指定する
      */
-    Vector2(const T _x = 0, const T _y = 0) {
+    _Vector2(const T _x = 0, const T _y = 0) {
         x = _x;
         y = _y;
     }
@@ -36,7 +36,7 @@ struct Vector2 {
     /**
      * 加算を行う
      */
-    Vector2<T>& operator+=(const Vector2 &v) {
+    _Vector2<T>& operator+=(const _Vector2 &v) {
         x += v.x;
         y += v.y;
         return (*this);
@@ -45,7 +45,7 @@ struct Vector2 {
     /**
      * 減算を行う
      */
-    Vector2<T>& operator-=(const Vector2 &v) {
+    _Vector2<T>& operator-=(const _Vector2 &v) {
         x -= v.x;
         y -= v.y;
         return (*this);
@@ -54,7 +54,7 @@ struct Vector2 {
     /**
      * スカラー演算を行う
      */
-    Vector2<T> operator*=(const T scalar) {
+    _Vector2<T> operator*=(const T scalar) {
         x *= scalar;
         y *= scalar;
         return (*this);
@@ -63,7 +63,7 @@ struct Vector2 {
     /**
      * 除算を行う
      */
-    Vector2<T> operator/=(const T div) {
+    _Vector2<T> operator/=(const T div) {
         x /= div;
         y /= div;
         return (*this);
@@ -72,14 +72,14 @@ struct Vector2 {
     /**
      * 同一性チェック
      */
-    bool operator==(const Vector2<T> &v) {
+    bool operator==(const _Vector2<T> &v) {
         return equals(x, v.x) && equals(y, v.y);
     }
 
     /**
      * 同一性チェック
      */
-    bool operator!=(const Vector2<T> &v) {
+    bool operator!=(const _Vector2<T> &v) {
         return !equals(x, v.x) || !equals(y, v.y);
     }
 
@@ -98,7 +98,7 @@ struct Vector2 {
      * @param p
      * @return
      */
-    T length(const Vector2<T> &p) const {
+    T length(const _Vector2<T> &p) const {
         double tx = x - p.x, ty = y - p.y;
         return (T) sqrt((tx * tx) + (ty * ty));
     }
@@ -125,12 +125,12 @@ struct Vector2 {
 /**
  * signed int のベクトル
  */
-typedef Vector2<s32> Vector2i;
+typedef _Vector2<s32> Vector2i;
 
 /**
  * 浮動小数のベクトル
  */
-typedef Vector2<float> Vector2f;
+typedef _Vector2<float> Vector2f;
 
 }
 

@@ -12,7 +12,7 @@ using namespace jc::fbx;
 
 void testFunction() {
 
-    jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("primitives.fbx");
+    jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("sample.fbx");
 
     manager->importFromSceneName("");
 }
