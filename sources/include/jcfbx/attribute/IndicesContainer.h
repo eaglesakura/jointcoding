@@ -14,6 +14,17 @@
 namespace jc {
 namespace fbx {
 
+/**
+ * Fbxコンバート前三角情報
+ */
+struct FbxTriangle {
+    //! 必ず三角ポリで構成する。
+    s32 position[3]; //!<    位置・法線
+    s32 uv[3]; //!<    テクスチャ座標
+    s32 material; //!<    マテリアル番号
+    s32 frameID; //!<    所属フレームID
+};
+
 class Polygon {
     /**
      * 頂点インデックス

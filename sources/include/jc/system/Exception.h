@@ -273,6 +273,16 @@ enum FbxException_e {
      * Meshを持っていなかった
      */
     FbxException_NoMesh,
+
+    /**
+     * マテリアルを持っていなかった
+     */
+    FbxException_MaterialNotFound,
+
+    /**
+     * 配列外アクセス
+     */
+    FbxException_ArrayIndexBoundsException,
 };
 
 /**

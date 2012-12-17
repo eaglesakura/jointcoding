@@ -17,29 +17,30 @@
  * BUILD_MacOSX
  */
 // ECLIPSE認識のため、デフォルトで__ANDROID__チェックを行う
-#ifndef __APPLE__
-#ifndef __ANDROID__
-#define __ANDROID__
-#endif  // __ANDROID__
-#endif  // __APPLE__
-// 定数設定
-#ifdef  __APPLE__
+
 #ifndef BUILD_MacOSX
-#define BUILD_iOS 1
-#endif
-#endif
+    #ifndef __APPLE__
+        #ifndef __ANDROID__
+            #define __ANDROID__
+        #endif  // __ANDROID__
+    #endif  // __APPLE__
+    // 定数設定
+    #ifdef  __APPLE__
+        #define BUILD_iOS 1
+    #endif
 
-// ANDROIDモード
-#ifdef  __ANDROID__
-#ifndef BUILD_Android
-#define BUILD_Android 1
-#endif
+    // ANDROIDモード
+    #ifdef  __ANDROID__
+        #ifndef BUILD_Android
+            #define BUILD_Android 1
+        #endif
 
-#ifdef  __ARM_V7__
-#define BUILD_Android_ARMv7 1
-#else
-#define BUILD_Android_ARMv6 1
-#endif
+        #ifdef  __ARM_V7__
+            #define BUILD_Android_ARMv7 1
+        #else
+            #define BUILD_Android_ARMv6 1
+        #endif
+    #endif
 
 #endif
 

@@ -11,7 +11,7 @@
 #include <vector>
 #include "jc/math/Vec2.h"
 #include "jc/math/Vec3.h"
-#include "jcfbx/attribute/Material.h"
+#include "jcfbx/attribute/IndicesContainer.h"
 
 namespace jc {
 namespace fbx {
@@ -30,6 +30,7 @@ protected:
 
     // polygons
     static void createMaterials(std::vector<Material> *result, KFbxMesh *mesh);
+    static void createPolygonTables(std::vector<Polygon> *result, KFbxMesh *mesh);
 
     Mesh(KFbxNode *meshNode, s32 nodeNumber);
 public:
