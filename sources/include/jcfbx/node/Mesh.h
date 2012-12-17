@@ -23,6 +23,7 @@ class Mesh: public jc::fbx::Node {
 protected:
     static void createCoords(std::vector<Vector2f> *result, KFbxMesh *mesh);
     static void createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh);
+    static void createNormals(std::vector<Vector3f> *result, KFbxMesh *mesh);
 
     Mesh(KFbxNode *meshNode, s32 nodeNumber);
 public:

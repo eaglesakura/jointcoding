@@ -24,8 +24,9 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
         VertexContainer vertices;
         Mesh::createPositions(&vertices.positions, mesh);
         Mesh::createCoords((std::vector<Vector2f>*) &vertices.coords, mesh);
+        Mesh::createNormals(&vertices.normals, mesh);
 
-        jclogf("pos(%d) uv(%d)", vertices.positions.size(), vertices.coords.size());
+        jclogf("pos(%d) uv(%d) normal(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size());
     }
 }
 
@@ -38,6 +39,23 @@ MMesh Mesh::createInstance(KFbxNode *node, MNode parent, FbxImportManager *impor
     MMesh result(new Mesh(node, importManager->nextNodeId()));
 
     return result;
+}
+
+void Mesh::createNormals(std::vector<Vector3f> *result, KFbxMesh *mesh) {
+    const s32 layerNum = mesh->GetElementNormalCount();
+
+    for (s32 i = 0; i < layerNum; ++i) {
+        const KFbxLayerElementNormal *normals = mesh->GetElementNormal(i);
+        //! normal
+        if (normals && normals->GetReferenceMode() == KFbxLayerElement::eDirect) {
+            const s32 normalNum = normals->GetDirectArray().GetCount();
+            for (s32 k = 0; k < normalNum; ++k) {
+                FbxVector4 v = normals->GetDirectArray().GetAt(k);
+                result->push_back(Vector3f(v[0], v[1], v[2]));
+            }
+            return;
+        }
+    }
 }
 
 void Mesh::createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh) {
