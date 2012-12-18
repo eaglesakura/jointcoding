@@ -27,6 +27,7 @@ static void createBoneWeightArray(std::vector<float> *result, KFbxCluster *clust
         float weight = (float) origin[i];
         result->push_back(weight);
     }
+
 }
 
 ConvertedDeformer::ConvertedDeformer(KFbxCluster *cluster) {

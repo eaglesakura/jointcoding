@@ -28,6 +28,9 @@ struct ConvertedPolygon {
 };
 
 
+/**
+ * インデックスバッファを格納する。
+ */
 class IndicesContainer {
 public:
     /**

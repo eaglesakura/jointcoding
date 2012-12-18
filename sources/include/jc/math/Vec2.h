@@ -72,14 +72,14 @@ struct _Vector2 {
     /**
      * 同一性チェック
      */
-    bool operator==(const _Vector2<T> &v) {
+    bool operator==(const _Vector2<T> &v) const {
         return equals(x, v.x) && equals(y, v.y);
     }
 
     /**
      * 同一性チェック
      */
-    bool operator!=(const _Vector2<T> &v) {
+    bool operator!=(const _Vector2<T> &v) const {
         return !equals(x, v.x) || !equals(y, v.y);
     }
 

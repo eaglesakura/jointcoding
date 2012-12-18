@@ -78,24 +78,23 @@ struct _Vector3 {
         return (*this);
     }
 
-    void    set( const T _x, const T _y, const T _z) {
+    void set(const T _x, const T _y, const T _z) {
         x = _x;
         y = _y;
         z = _z;
     }
 
-
     /**
      * 同一性チェック
      */
-    bool operator==(const _Vector3<T> &v) {
+    bool operator==(const _Vector3<T> &v) const {
         return equals(x, v.x) && equals(y, v.y) && equals(z, v.z);
     }
 
     /**
      * 同一性チェック
      */
-    bool operator!=(const _Vector3<T> &v) {
+    bool operator!=(const _Vector3<T> &v) const {
         return !equals(x, v.x) || !equals(y, v.y) || !equals(z, v.z);
     }
 

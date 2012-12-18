@@ -6,11 +6,13 @@
 
 #include "jointcoding-fbx.h"
 #include <vector>
+#include "jcfbx/attribute/BoneWeight.h"
 #include "jcfbx/node/Mesh.h"
 #include "jc/math/Math.h"
 #include "jcfbx/attribute/VertexContainer.h"
 #include "jcfbx/attribute/IndicesContainer.h"
 #include "prv_FbxDeformer.h"
+#include "jcfbx/convert/VertexList.h"
 
 namespace jc {
 namespace fbx {
@@ -55,7 +57,12 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
             createPolygonList(&indices.polygons, mesh);
         }
 
-        jclogf("pos(%d) uv(%d) normal(%d) tri-poly(%d) mat(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size(), indices.polygons.size(), indices.materials.size());
+        jclogf("pos(%d) uv(%d) normal(%d) weight(%d) tri-poly(%d) mat(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size(), vertices.weights.size(), indices.polygons.size(), indices.materials.size());
+
+        // 実利用可能なように、頂点を最適化する
+        {
+            jc::fbx::FbxVertexTable vertexTable(vertices, indices);
+        }
     }
 }
 

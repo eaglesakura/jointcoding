@@ -16,7 +16,7 @@ namespace fbx {
  * ボーンの重み情報を管理する。
  */
 template<int WEIGHT_NUM>
-class BoneWeight {
+class _BoneWeight {
 public:
     /**
      * 参照するボーンのインデックス.
@@ -29,7 +29,7 @@ public:
      */
     float weights[WEIGHT_NUM];
 
-    BoneWeight() {
+    _BoneWeight() {
         for (int i = 0; i < WEIGHT_NUM; ++i) {
             indices[i] = -1;
             weights[i] = 0;
@@ -89,7 +89,7 @@ public:
 /**
  * シンプルなボーンウェイト情報
  */
-typedef BoneWeight<4> SimpleBoneWeight;
+typedef _BoneWeight<4> SimpleBoneWeight;
 
 }
 }

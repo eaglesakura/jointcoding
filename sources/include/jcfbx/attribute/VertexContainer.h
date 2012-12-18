@@ -7,7 +7,7 @@
 #ifndef VERTEXCONTAINER_H_
 #define VERTEXCONTAINER_H_
 
-#include    "jointcoding.h"
+#include    "jointcoding-fbx.h"
 #include    "jc/math/Vec3.h"
 #include    "jc/math/Vec2.h"
 #include    "jcfbx/attribute/BoneWeight.h"
@@ -15,31 +15,6 @@
 
 namespace jc {
 namespace fbx {
-
-/**
- * 頂点情報
- */
-class SimpleVertex {
-    /**
-     * 位置情報
-     */
-    Vector3f position;
-
-    /**
-     * 法線情報
-     */
-    Vector3f normal;
-
-    /**
-     * UV情報
-     */
-    Vector2f uv;
-
-    /**
-     * 重さ情報
-     */
-    SimpleBoneWeight weight;
-};
 
 /**
  * FBXの頂点を一元管理する
