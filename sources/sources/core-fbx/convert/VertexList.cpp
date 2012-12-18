@@ -41,7 +41,7 @@ FbxVertexTable::FbxVertexTable(const VertexContainer &vertices, const IndicesCon
 
     jclogf("    converted vertices(%d vertex)", this->vertices.size());
     for (int i = 0; i < (int) fragments.size(); ++i) {
-        jclogf("      material[%d] (%d faces)", i, fragments[i]->getPolygonCount());
+        jclogf("      material[%d] (%d faces %d bones)", i, fragments[i]->getPolygonCount(), fragments[i]->getBoneCount());
     }
 #if 0
     for (s32 i = 0; i < triangles.length(); ++i) {

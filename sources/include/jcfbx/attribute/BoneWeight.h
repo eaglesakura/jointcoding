@@ -21,7 +21,7 @@ public:
     /**
      * 参照するボーンのインデックス.
      */
-    s8 indices[WEIGHT_NUM];
+    u8 indices[WEIGHT_NUM];
 
     /**
      * ボーンの重み係数.
@@ -31,7 +31,7 @@ public:
 
     _BoneWeight() {
         for (int i = 0; i < WEIGHT_NUM; ++i) {
-            indices[i] = -1;
+            indices[i] = (u8)-1;
             weights[i] = 0;
         }
     }

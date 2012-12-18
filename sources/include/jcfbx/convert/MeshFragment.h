@@ -10,6 +10,7 @@
 #include    "jointcoding-fbx.h"
 #include    "jcfbx/convert/FbxVetex.h"
 #include    <vector>
+#include    <map>
 
 namespace jc {
 namespace fbx {
@@ -29,11 +30,32 @@ namespace fbx {
  *   L MeshFragment
  */
 class MeshFragment {
+
+    /**
+     * 既にボーンを使用済みか
+     */
+    jcboolean isUsingBone(u8 index);
+
+    /**
+     * 利用できるボーン数をオーバーする場合true
+     */
+    jcboolean isOverBone(const u8 *bones, const s32 bones_length);
+
+    /**
+     * １つのフラグメントが利用できる最大ボーン数
+     */
+    s32 maxBones;
+
 public:
     /**
      * 頂点インデックス
      */
     std::vector<u16> indices;
+
+    /**
+     * 使うボーン番号
+     */
+    std::map<u8, u8> useBoneIndices;
 
     /**
      *
@@ -56,6 +78,13 @@ public:
      */
     virtual s32 getPolygonCount() const {
         return indices.size() / 3;
+    }
+
+    /**
+     * 利用するボーン数を取得する
+     */
+    virtual s32 getBoneCount() const {
+        return useBoneIndices.size();
     }
 };
 
