@@ -17,6 +17,7 @@ namespace fbx {
  */
 template<int WEIGHT_NUM>
 class BoneWeight {
+public:
     /**
      * 参照するボーンのインデックス.
      */
@@ -85,11 +86,10 @@ class BoneWeight {
     }
 };
 
-
 /**
  * シンプルなボーンウェイト情報
  */
-typedef BoneWeight<2> SimpleBoneWeight;
+typedef BoneWeight<4> SimpleBoneWeight;
 
 }
 }

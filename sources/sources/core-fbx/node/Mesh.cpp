@@ -4,13 +4,26 @@
  *  Created on: 2012/12/17
  */
 
+#include "jointcoding-fbx.h"
+#include <vector>
 #include "jcfbx/node/Mesh.h"
 #include "jc/math/Math.h"
 #include "jcfbx/attribute/VertexContainer.h"
 #include "jcfbx/attribute/IndicesContainer.h"
+#include "prv_FbxDeformer.h"
 
 namespace jc {
 namespace fbx {
+
+// vertices
+static void createCoords(std::vector<Vector2f> *result, KFbxMesh *mesh);
+static void createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh);
+static void createNormals(std::vector<Vector3f> *result, KFbxMesh *mesh);
+static void createWeights(std::vector<SimpleBoneWeight> *result, const std::vector<Vector3f> &positions, KFbxMesh *mesh);
+
+// polygons
+static void createMaterials(std::vector<Material> *result, KFbxMesh *mesh);
+static void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *mesh);
 
 Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
         Node(meshNode, nodeNumber) {
@@ -31,17 +44,18 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
 
         // 頂点情報を整理する
         {
-            Mesh::createPositions(&vertices.positions, mesh);
-            Mesh::createCoords((std::vector<Vector2f>*) &vertices.coords, mesh);
-            Mesh::createNormals(&vertices.normals, mesh);
+            createPositions(&vertices.positions, mesh);
+            createCoords((std::vector<Vector2f>*) &vertices.coords, mesh);
+            createNormals(&vertices.normals, mesh);
+            createWeights(&vertices.weights, vertices.positions, mesh);
         }
         // ポリゴン情報を整理する
         {
-            Mesh::createMaterials(&indices.materials, mesh);
-            Mesh::createPolygonTables(&indices.polygons, mesh);
+            createMaterials(&indices.materials, mesh);
+            createPolygonList(&indices.polygons, mesh);
         }
 
-        jclogf("pos(%d) uv(%d) normal(%d) mat(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size(), indices.materials.size());
+        jclogf("pos(%d) uv(%d) normal(%d) tri-poly(%d) mat(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size(), indices.polygons.size(), indices.materials.size());
     }
 }
 
@@ -56,7 +70,7 @@ MMesh Mesh::createInstance(KFbxNode *node, MNode parent, FbxImportManager *impor
     return result;
 }
 
-void Mesh::createNormals(std::vector<Vector3f> *result, KFbxMesh *mesh) {
+void createNormals(std::vector<Vector3f> *result, KFbxMesh *mesh) {
     const s32 layerNum = mesh->GetElementNormalCount();
 
     for (s32 i = 0; i < layerNum; ++i) {
@@ -73,7 +87,10 @@ void Mesh::createNormals(std::vector<Vector3f> *result, KFbxMesh *mesh) {
     }
 }
 
-void Mesh::createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh) {
+/**
+ * 位置情報を列挙する
+ */
+static void createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh) {
     const s32 ctrlNum = mesh->GetControlPointsCount();
     KFbxVector4* points = mesh->GetControlPoints();
 
@@ -83,7 +100,10 @@ void Mesh::createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh) {
     }
 }
 
-void Mesh::createCoords(std::vector<Vector2f> *result, KFbxMesh *mesh) {
+/**
+ * UV情報を列挙する
+ */
+static void createCoords(std::vector<Vector2f> *result, KFbxMesh *mesh) {
     jclogf("  elementUV(%d)", mesh->GetElementUVCount());
 
     const s32 layerNum = mesh->GetElementUVCount();
@@ -123,13 +143,63 @@ void Mesh::createCoords(std::vector<Vector2f> *result, KFbxMesh *mesh) {
     }
 }
 
-void Mesh::createMaterials(std::vector<Material> *result, KFbxMesh *mesh) {
+static void createWeights(std::vector<SimpleBoneWeight> *result, const std::vector<Vector3f> &positions, KFbxMesh *mesh) {
+
+    const s32 deformerCount = mesh->GetDeformerCount(KFbxDeformer::eSkin);
+
+    jclogf("  has deformers(%d)", deformerCount);
+    if (!deformerCount) {
+        return;
+    }
+
+    result->clear();
+
+    // 位置数だけ必要になる
+    result->resize(positions.size());
+
+    for (int i = 0; i < deformerCount; ++i) {
+        KFbxSkin *skin = (KFbxSkin*) mesh->GetDeformer(i, KFbxDeformer::eSkin);
+
+        const s32 clusterCount = skin->GetClusterCount();
+        jclogf("  clusters(%d)", clusterCount);
+
+        //! クラスタ（ボーン）を取得する
+        for (int boneIndex = 0; boneIndex < clusterCount; ++boneIndex) {
+            KFbxCluster *cluster = skin->GetCluster(boneIndex);
+            const char* culsterName = cluster->GetName();
+
+            jclogf("    name(%s)", culsterName);
+
+            ConvertedDeformer deformer(cluster);
+            const int indices_size = deformer.indices.size();
+
+            // ウェイト情報を登録する
+            for (int vertexIndex = 0; vertexIndex < indices_size; ++vertexIndex) {
+                (*result)[deformer.indices[vertexIndex]].registerWegight(boneIndex, deformer.weights[vertexIndex]);
+            }
+        }
+    }
+
+    // 頂点ウェイトを正規化する
+    const int weight_size = result->size();
+    for (int i = 0; i < weight_size; ++i) {
+        (*result)[i].normalize();
+
+//        jclogf("    vertex[%d] weight(%d = %.3f, %d = %.3f, %d = %.3f, %d = %.3f)", i, (*result)[i].indices[0], (*result)[i].weights[0], (*result)[i].indices[1], (*result)[i].weights[1], (*result)[i].indices[2], (*result)[i].weights[2], (*result)[i].indices[3], (*result)[i].weights[3]);
+    }
+}
+
+/**
+ * マテリアルを列挙する
+ */
+static void createMaterials(std::vector<Material> *result, KFbxMesh *mesh) {
     const s32 materialNum = mesh->GetNode()->GetMaterialCount();
 
     if (materialNum == 0) {
         result->push_back(Material());
     }
 
+    // マテリアルを全て集積する
     for (s32 i = 0; i < materialNum; ++i) {
         KFbxSurfaceMaterial *material = mesh->GetNode()->GetMaterial(i);
         Material m;
@@ -154,10 +224,10 @@ void Mesh::createMaterials(std::vector<Material> *result, KFbxMesh *mesh) {
             if (texture && strlen(texture->GetName())) {
                 m.textureName = texture->GetName();
 
-                jclogf("  mat tex name(%s)", m.textureName.c_str());
             }
         }
 
+        jclogf("  mat(%s) tex name(%s)", m.name.c_str(), m.textureName.c_str());
         result->push_back(m);
     }
 }
@@ -195,7 +265,7 @@ static std::vector<s32> createMaterialIndexArray(KFbxMesh* mesh, s32 layerNum) {
     return result;
 }
 
-static void createFbxPolygonTable(std::vector<FbxTriangle> *result, KFbxMesh *mesh) {
+static void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *mesh) {
 
     // 必要なポリゴン数
     s32 triangleNum = getTriangleCount(mesh);
@@ -211,7 +281,6 @@ static void createFbxPolygonTable(std::vector<FbxTriangle> *result, KFbxMesh *me
     result->resize(triangleNum);
 
     //! 三角形の位置情報はインデックスで、UV情報はポリゴンごとに順に格納されている。
-    //! その違いは吸収せず、コンバートを行う。
     for (s32 i = 0; i < polyNum; ++i) {
         s32 size = mesh->GetPolygonSize(i);
         jc_sa< s32 > index(new s32[size]);
@@ -231,11 +300,13 @@ static void createFbxPolygonTable(std::vector<FbxTriangle> *result, KFbxMesh *me
             (*result)[current].position[1] = index[k + 2];
             (*result)[current].position[2] = index[k + 1];
             //! uv
-            (*result)[current].uv[0] = (uvIndex + 0);
-            (*result)[current].uv[1] = (uvIndex + k + 2);
-            (*result)[current].uv[2] = (uvIndex + k + 1);
+            (*result)[current].attributes[0] = (uvIndex + 0);
+            (*result)[current].attributes[1] = (uvIndex + k + 2);
+            (*result)[current].attributes[2] = (uvIndex + k + 1);
 
-            //! マテリアル番号
+//            jclogf("uvindex(%d, %d, %d)", (uvIndex + 0), (uvIndex + k + 2), (uvIndex + k + 1));
+
+//! マテリアル番号
             if ((s32) materialNumbers.size() <= i) {
                 throw create_exception_t(FbxException, FbxException_MaterialNotFound);
             }
@@ -252,12 +323,6 @@ static void createFbxPolygonTable(std::vector<FbxTriangle> *result, KFbxMesh *me
 
     jclogf("  FbxTriangles(%d)", result->size());
 }
-
-void Mesh::createPolygonTables(std::vector<Polygon> *result, KFbxMesh *mesh) {
-    std::vector<FbxTriangle> fbxTriangles;
-    createFbxPolygonTable(&fbxTriangles, mesh);
-}
-
 
 }
 }
