@@ -84,7 +84,7 @@ void Mesh::createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh) {
 }
 
 void Mesh::createCoords(std::vector<Vector2f> *result, KFbxMesh *mesh) {
-    jclogf("elementUV(%d)", mesh->GetElementUVCount());
+    jclogf("  elementUV(%d)", mesh->GetElementUVCount());
 
     const s32 layerNum = mesh->GetElementUVCount();
     for (s32 i = 0; i < layerNum; ++i) {
@@ -154,7 +154,7 @@ void Mesh::createMaterials(std::vector<Material> *result, KFbxMesh *mesh) {
             if (texture && strlen(texture->GetName())) {
                 m.textureName = texture->GetName();
 
-                jclogf("texture(%s)", m.textureName.c_str());
+                jclogf("  mat tex name(%s)", m.textureName.c_str());
             }
         }
 
@@ -195,7 +195,7 @@ static std::vector<s32> createMaterialIndexArray(KFbxMesh* mesh, s32 layerNum) {
     return result;
 }
 
-void Mesh::createPolygonTables(std::vector<Polygon> *result, KFbxMesh *mesh) {
+static void createFbxPolygonTable(std::vector<FbxTriangle> *result, KFbxMesh *mesh) {
 
     // 必要なポリゴン数
     s32 triangleNum = getTriangleCount(mesh);
@@ -207,8 +207,9 @@ void Mesh::createPolygonTables(std::vector<Polygon> *result, KFbxMesh *mesh) {
     s32 current = 0;
     s32 uvIndex = 0;
 
-    std::vector<FbxTriangle> fbxTriangles;
-    fbxTriangles.resize(triangleNum);
+    result->clear();
+    result->resize(triangleNum);
+
     //! 三角形の位置情報はインデックスで、UV情報はポリゴンごとに順に格納されている。
     //! その違いは吸収せず、コンバートを行う。
     for (s32 i = 0; i < polyNum; ++i) {
@@ -221,24 +222,24 @@ void Mesh::createPolygonTables(std::vector<Polygon> *result, KFbxMesh *mesh) {
 
         // 四角形ポリは三角形ポリに分解して登録する
         for (s32 k = 0; k < (size - 2); ++k) {
-            if (current >= (s32)fbxTriangles.size()) {
+            if (current >= (s32) result->size()) {
                 throw create_exception_t(FbxException, FbxException_ArrayIndexBoundsException);
             }
 
             //! 頂点インデックス
-            fbxTriangles[current].position[0] = index[0];
-            fbxTriangles[current].position[1] = index[k + 2];
-            fbxTriangles[current].position[2] = index[k + 1];
+            (*result)[current].position[0] = index[0];
+            (*result)[current].position[1] = index[k + 2];
+            (*result)[current].position[2] = index[k + 1];
             //! uv
-            fbxTriangles[current].uv[0] = (uvIndex + 0);
-            fbxTriangles[current].uv[1] = (uvIndex + k + 2);
-            fbxTriangles[current].uv[2] = (uvIndex + k + 1);
+            (*result)[current].uv[0] = (uvIndex + 0);
+            (*result)[current].uv[1] = (uvIndex + k + 2);
+            (*result)[current].uv[2] = (uvIndex + k + 1);
 
             //! マテリアル番号
-            if ((s32)materialNumbers.size() <= i) {
+            if ((s32) materialNumbers.size() <= i) {
                 throw create_exception_t(FbxException, FbxException_MaterialNotFound);
             }
-            fbxTriangles[current].material = materialNumbers[i];
+            (*result)[current].material = materialNumbers[i];
             current++;
         }
         uvIndex += size;
@@ -249,7 +250,14 @@ void Mesh::createPolygonTables(std::vector<Polygon> *result, KFbxMesh *mesh) {
         throw create_exception_t(FbxException, FbxException_ArrayIndexBoundsException);
     }
 
-    jclogf("FbxTriangles(%d)", fbxTriangles.size());
+    jclogf("  FbxTriangles(%d)", result->size());
 }
+
+void Mesh::createPolygonTables(std::vector<Polygon> *result, KFbxMesh *mesh) {
+    std::vector<FbxTriangle> fbxTriangles;
+    createFbxPolygonTable(&fbxTriangles, mesh);
+}
+
+
 }
 }
