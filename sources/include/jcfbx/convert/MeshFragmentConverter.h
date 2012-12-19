@@ -8,9 +8,12 @@
 #define JCFBXMESHFRAGMENT_H_
 
 #include    "jointcoding-fbx.h"
-#include    "jc/graphics/figure/mesh/Vertex.h"
+#include    "jc/graphics/figure/mesh/Figure.h"
 #include    <vector>
 #include    <map>
+
+#include    "jcfbx/attribute/IndicesContainer.h"
+#include    "jcfbx/attribute/VertexContainer.h"
 
 namespace jc {
 namespace fbx {
@@ -49,7 +52,7 @@ class MeshFragmentConverter {
     /**
      * 分割したコンテキスト
      */
-    std::vector< jc_sp<FragmentContext> > contexts;
+    std::vector< MFragmentContext > contexts;
 private:
 
     /**
@@ -74,16 +77,11 @@ protected:
      * 現在のデータから分離を行い、新たなフラグメントとして子を作成する。
      */
     virtual void separation();
-public:
-    /**
-     *
-     */
-    MeshFragmentConverter();
 
     /**
      *
      */
-    virtual ~MeshFragmentConverter();
+    MeshFragmentConverter();
 
     /**
      * インデックスバッファを追加する
@@ -96,6 +94,23 @@ public:
      */
     virtual s32 getPolygonCount(const int contextNumber) const {
         return contexts[contextNumber]->indices.size() / 3;
+    }
+
+    /**
+     * 共通のFigureFragmentに変換する
+     */
+    virtual MFigureMeshFragment createFigureFragment( ) const;
+
+    /**
+     * フラグメント全体のポリゴン数を取得する
+     */
+    virtual s32 getPolygonCount() const {
+        s32 result = 0;
+        for( int i = 0; i < (int)contexts.size(); ++i ) {
+            result += contexts[i]->indices.size();
+        }
+
+        return (result / 3);
     }
 
     /**
@@ -118,12 +133,23 @@ public:
     virtual s32 getContextCount() const {
         return contexts.size();
     }
+
+public:
+    /**
+     *
+     */
+    virtual ~MeshFragmentConverter();
+
+    /**
+     * FBX Mesh -> JointCoding Meshに変換を行う
+     */
+    static void convertMesh( std::vector< MFigureMeshFragment > *result, const VertexContainer &vertices, const IndicesContainer &indices );
 };
 
 /**
  * managed
  */
-typedef jc_sp<MeshFragmentConverter> MMeshFragment;
+typedef jc_sp<MeshFragmentConverter> MMeshFragmentConverter;
 
 }
 }

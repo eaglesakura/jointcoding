@@ -43,6 +43,8 @@ public:
     String name;
 };
 
+typedef jc_sp<FigureMaterial> MFigureMaterial;
+
 }
 
 #endif /* MATERIAL_H_ */

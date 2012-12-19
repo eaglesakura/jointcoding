@@ -12,7 +12,7 @@
 #include "jcfbx/attribute/VertexContainer.h"
 #include "jcfbx/attribute/IndicesContainer.h"
 #include "prv_FbxDeformer.h"
-#include "jcfbx/convert/VertexList.h"
+#include    "jcfbx/convert/MeshFragmentConverter.h"
 
 namespace jc {
 namespace fbx {
@@ -24,7 +24,7 @@ static void createNormals(std::vector<Vector3f> *result, KFbxMesh *mesh);
 static void createWeights(std::vector<SimpleBoneWeight> *result, const std::vector<Vector3f> &positions, KFbxMesh *mesh);
 
 // polygons
-static void createMaterials(std::vector<FigureMaterial> *result, KFbxMesh *mesh);
+static void createMaterials(std::vector<MFigureMaterial> *result, KFbxMesh *mesh);
 static void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *mesh);
 
 Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
@@ -59,10 +59,14 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
 
         jclogf("pos(%d) uv(%d) normal(%d) weight(%d) tri-poly(%d) mat(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size(), vertices.weights.size(), indices.polygons.size(), indices.materials.size());
 
-        // 実利用可能なように、頂点を最適化する
-        {
-            jc::fbx::FbxVertexTable vertexTable(vertices, indices);
-        }
+
+        // 実利用可能なように、メッシュ構造を最適化して完了
+        MeshFragmentConverter::convertMesh(&fragments, vertices, indices);
+        /*
+         {
+         jc::fbx::FbxVertexTable vertexTable(vertices, indices);
+         }
+         */
     }
 }
 
@@ -199,41 +203,41 @@ static void createWeights(std::vector<SimpleBoneWeight> *result, const std::vect
 /**
  * マテリアルを列挙する
  */
-static void createMaterials(std::vector<FigureMaterial> *result, KFbxMesh *mesh) {
+static void createMaterials(std::vector<MFigureMaterial> *result, KFbxMesh *mesh) {
     const s32 materialNum = mesh->GetNode()->GetMaterialCount();
 
     if (materialNum == 0) {
-        result->push_back(FigureMaterial());
+        throw create_exception_t(FbxException, FbxException_MaterialNotFound);
     }
 
     // マテリアルを全て集積する
     for (s32 i = 0; i < materialNum; ++i) {
         KFbxSurfaceMaterial *material = mesh->GetNode()->GetMaterial(i);
-        FigureMaterial m;
+        MFigureMaterial m(new FigureMaterial());
 
-        m.name = material->GetName();
+        m->name = material->GetName();
         if (material->GetClassId().Is(KFbxSurfaceLambert::ClassId)) {
             KFbxSurfaceLambert* mat = (KFbxSurfaceLambert*) material;
-            m.ambient.RGBAf(mat->Ambient.Get()[0], mat->Ambient.Get()[1], mat->Ambient.Get()[2], (float) mat->AmbientFactor);
-            m.diffuse.RGBAf(mat->Diffuse.Get()[0], mat->Diffuse.Get()[1], mat->Diffuse.Get()[2], (float) mat->DiffuseFactor);
-            m.emissive.RGBAf(mat->Emissive.Get()[0], mat->Emissive.Get()[1], mat->Emissive.Get()[2], (float) mat->EmissiveFactor);
+            m->ambient.RGBAf(mat->Ambient.Get()[0], mat->Ambient.Get()[1], mat->Ambient.Get()[2], (float) mat->AmbientFactor);
+            m->diffuse.RGBAf(mat->Diffuse.Get()[0], mat->Diffuse.Get()[1], mat->Diffuse.Get()[2], (float) mat->DiffuseFactor);
+            m->emissive.RGBAf(mat->Emissive.Get()[0], mat->Emissive.Get()[1], mat->Emissive.Get()[2], (float) mat->EmissiveFactor);
         } else if (material->GetClassId().Is(KFbxSurfacePhong::ClassId)) {
             KFbxSurfacePhong* mat = (KFbxSurfacePhong*) material;
 
-            m.ambient.RGBAf(mat->Ambient.Get()[0], mat->Ambient.Get()[1], mat->Ambient.Get()[2], (float) mat->AmbientFactor);
-            m.diffuse.RGBAf(mat->Diffuse.Get()[0], mat->Diffuse.Get()[1], mat->Diffuse.Get()[2], (float) mat->DiffuseFactor);
-            m.emissive.RGBAf(mat->Emissive.Get()[0], mat->Emissive.Get()[1], mat->Emissive.Get()[2], (float) mat->EmissiveFactor);
+            m->ambient.RGBAf(mat->Ambient.Get()[0], mat->Ambient.Get()[1], mat->Ambient.Get()[2], (float) mat->AmbientFactor);
+            m->diffuse.RGBAf(mat->Diffuse.Get()[0], mat->Diffuse.Get()[1], mat->Diffuse.Get()[2], (float) mat->DiffuseFactor);
+            m->emissive.RGBAf(mat->Emissive.Get()[0], mat->Emissive.Get()[1], mat->Emissive.Get()[2], (float) mat->EmissiveFactor);
         }
         KFbxProperty prop = material->FindProperty(KFbxSurfaceMaterial::sDiffuse);
         const s32 texNum = prop.GetSrcObjectCount<KFbxTexture>();
         if (texNum) {
             KFbxTexture *texture = prop.GetSrcObject<KFbxTexture>(0);
             if (texture && strlen(texture->GetName())) {
-                m.textureName = texture->GetName();
+                m->textureName = texture->GetName();
             }
         }
 
-        jclogf("  mat(%s) tex name(%s)", m.name.c_str(), m.textureName.c_str());
+        jclogf("  mat(%s) tex name(%s)", m->name.c_str(), m->textureName.c_str());
         result->push_back(m);
     }
 }

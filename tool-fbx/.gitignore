@@ -1,2 +1,4 @@
 *.fbx
 *.dylib
+Debug/
+Release/

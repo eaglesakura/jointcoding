@@ -12,6 +12,7 @@ namespace fbx {
  * 読み込んだFBXのraw情報をもとにして、頂点一覧を作成する
  */
 FbxVertexTable::FbxVertexTable(const VertexContainer &vertices, const IndicesContainer &indices) {
+#if 0
 
     /**
      *
@@ -81,7 +82,15 @@ FbxVertexTable::FbxVertexTable(const VertexContainer &vertices, const IndicesCon
             jclogf("        vertices(%d) poly(%d) bone(%d)", fragments[i]->getVerticesCount(k), fragments[i]->getPolygonCount(k), fragments[i]->getBoneCount(k));
         }
     }
-#if 0
+
+
+
+
+
+
+
+
+
     for (s32 i = 0; i < triangles.length(); ++i) {
         for (s32 k = 0; k < 3; ++k) {
             SmartPtr < FbxVertex > v = createVertex(&triangles[i], k);

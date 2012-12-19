@@ -13,7 +13,7 @@ using namespace jc::fbx;
 
 void testFunction() {
 
-    jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("sample-noskin.fbx");
+    jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("sample.fbx");
 
     try {
         manager->importFromSceneName("");

@@ -36,7 +36,7 @@ public:
     /**
      * 接続されたマテリアル情報
      */
-    std::vector<FigureMaterial> materials;
+    std::vector<MFigureMaterial> materials;
 
     /**
      * 接続されたポリゴン情報

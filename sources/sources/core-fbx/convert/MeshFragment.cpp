@@ -4,7 +4,7 @@
  *  Created on: 2012/12/18
  */
 
-#include    "jcfbx/convert/MeshFragment.h"
+#include    "jcfbx/convert/MeshFragmentConverter.h"
 
 namespace jc {
 namespace fbx {
@@ -130,12 +130,200 @@ void MeshFragmentConverter::addIndices(const std::vector<FigureVertex> &vertices
 }
 
 /**
+ * 直接的なボーンインデックスを、ピックアップテーブルのインデックスに変換する
+ */
+static u8 boneIndex2pickIndex(u8 *pBonePickTable, const u8 boneIndex) {
+    if (boneIndex == (u8) UNUSED_BONE) {
+        return (u8) 0;
+    }
+
+    u8 index = 0;
+    while (true) {
+        if ((*pBonePickTable) == boneIndex) {
+//            jclogf("    pickup(%d -> %d)", boneIndex, index);
+            return index;
+        }
+
+        ++index;
+        ++pBonePickTable;
+    }
+
+    // 通常、ここまで来ることはない
+    throw create_exception(RuntimeException, "Error!!");
+}
+
+/**
+ * 共通のFigureFragmentに変換する
+ */
+MFigureMeshFragment MeshFragmentConverter::createFigureFragment() const {
+    MFigureMeshFragment result(new FigureMeshFragment());
+
+    for (int i = 0; i < (int) contexts.size(); ++i) {
+        MFragmentContext figureContext = contexts[i];
+
+        jc_sp<FigureMeshFragment::DrawingContext > context(new FigureMeshFragment::DrawingContext());
+
+        // make weight
+        {
+            const s32 bonePickTable_length = figureContext->useBoneIndices.size();
+            u8 *pBonePickTable = new u8[bonePickTable_length];
+
+            int ptr = 0;
+            std::map<u8, u8>::iterator itr = figureContext->useBoneIndices.begin(), end = figureContext->useBoneIndices.end();
+
+            jclog("      ----- fragment begin -----");
+            while (itr != end) {
+                jclogf("      bone pick table[%d] = bone index %d", ptr, itr->first);
+                pBonePickTable[ptr++] = itr->first;
+                ++itr;
+            }
+            jclog("      ----- fragment begin -----");
+
+            context->bone_pick_table.reset(pBonePickTable);
+            context->bone_pick_table_length = bonePickTable_length;
+        }
+
+        // make vertices
+        {
+            const s32 vertices_length = figureContext->vertices.size();
+            FigureVertex *pVertices = new FigureVertex[vertices_length];
+
+            // copy
+            for (int k = 0; k < vertices_length; ++k) {
+                pVertices[k] = figureContext->vertices[k];
+
+                // bone index -> pick index
+                for (int weight_index = 0; weight_index < SIMPLE_BONE_NUM; ++weight_index) {
+                    pVertices[k].weight.indices[weight_index] = boneIndex2pickIndex(context->bone_pick_table.get(), pVertices[k].weight.indices[weight_index]);
+                }
+            }
+
+            context->vertices_length = vertices_length;
+            context->vertices.reset(pVertices);
+        }
+        // make indices
+        {
+            const s32 indices_length = figureContext->indices.size();
+            u16 *pIndices = new u16[indices_length];
+
+            // copy
+            for (int k = 0; k < indices_length; ++k) {
+                pIndices[i] = figureContext->indices[k];
+            }
+
+            context->indices_length = indices_length;
+            context->indices.reset(pIndices);
+        }
+
+        result->addDrawingContext(context);
+    }
+    return result;
+
+}
+
+/**
  * 現在のデータから分離を行い、新たなフラグメントとして子を作成する。
  */
 void MeshFragmentConverter::separation() {
 
     MFragmentContext nextContext(new FragmentContext());
     contexts.push_back(nextContext);
+}
+/**
+ * FBX Mesh -> JointCoding Meshに変換を行う
+ */
+void MeshFragmentConverter::convertMesh(std::vector<MFigureMeshFragment> *result, const VertexContainer &vertices, const IndicesContainer &indices) {
+
+    /**
+     *
+     * 最適化した頂点リスト
+     */
+    std::vector<FigureVertex> compact_vertices;
+
+    /**
+     * 最適化したインデックスリスト
+     */
+    std::vector<u32> compact_indices;
+
+    /**
+     * 一時的に格納しておくリスト
+     * 0 polyは描画の必要がないから登録しない
+     */
+    std::vector<MMeshFragmentConverter> converters;
+
+// マテリアル数だけフラグメントを構築する
+    for (int material_index = 0; material_index < (int) indices.materials.size(); ++material_index) {
+        converters.push_back(MMeshFragmentConverter(new MeshFragmentConverter()));
+    }
+
+// すべての頂点を結合して、最適化する
+    {
+        const int polygon_num = (int) indices.polygons.size();
+        for (int polygon_index = 0; polygon_index < polygon_num; ++polygon_index) {
+            const ConvertedPolygon &polygon = indices.polygons[polygon_index];
+
+            for (int k = 0; k < 3; ++k) {
+                FigureVertex v;
+                v.position = vertices.positions[polygon.position[k]];
+                if (vertices.weights.size()) {
+                    v.weight = vertices.weights[polygon.position[k]];
+                }
+
+                if (vertices.coords.size()) {
+                    v.uv = vertices.coords[polygon.attributes[k]];
+                }
+                if (vertices.normals.size()) {
+                    v.normal = vertices.normals[polygon.attributes[k]];
+                }
+                compact_indices.push_back(registerVertex(&compact_vertices, v));
+            }
+        }
+    }
+
+// 描画命令ごとにフラグメント化する
+// 一度に描画可能なボーン数(uniform vector)には制限があるため、適度な個数で分割する
+    {
+        int current = 0;
+        const int polygon_num = (int) indices.polygons.size();
+
+        for (int polygon_index = 0; polygon_index < polygon_num; ++polygon_index) {
+            const ConvertedPolygon &polygon = indices.polygons[polygon_index];
+
+            // マテリアルごとに登録するFragmentを拾う
+            MMeshFragmentConverter targetFragment = converters[polygon.material];
+
+            // ポリゴンを登録する
+            targetFragment->addIndices(compact_vertices, compact_indices[current + 0], compact_indices[current + 1], compact_indices[current + 2]);
+
+            // カレントを進める
+            current += 3;
+        }
+    }
+
+// ポリゴンが存在するフラグメントだけを返す
+    {
+        std::vector<MMeshFragmentConverter>::iterator itr = converters.begin(), end = converters.end();
+
+        int material_index = 0;
+        while (itr != end) {
+            if ((*itr)->getPolygonCount()) {
+
+                MFigureMeshFragment fragment = (*itr)->createFigureFragment();
+                fragment->setMaterial(indices.materials[material_index]);
+                result->push_back(fragment);
+            }
+            ++material_index;
+            ++itr;
+        }
+    }
+
+    jclogf("    converted vertices(%d fragments)", result->size());
+    for (int i = 0; i < (int) result->size(); ++i) {
+        jclogf("      material[%s] fragments(%d)", (*result)[i]->getMaterial()->name.c_str(), (*result)[i]->getDrawingContextCount());
+        for (int k = 0; k < (*result)[i]->getDrawingContextCount(); ++k) {
+//            jclogf("        vertices(%d) poly(%d) bone(%d)", (*result)[i]->getVerticesCount(k), (*result)[i]->getPolygonCount(k), (*result)[i]->getBoneCount(k));
+        }
+    }
 }
 
 }

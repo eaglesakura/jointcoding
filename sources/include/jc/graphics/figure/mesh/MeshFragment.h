@@ -55,12 +55,18 @@ public:
          * ボーン行列のピックアップテーブル
          * i番目の行列マトリクスは bone_matrix[ bonePickTable[i] ] を参照する
          */
-        jc_sa<u8> bonePickTable;
+        jc_sa<u8> bone_pick_table;
 
         /**
          * ボーンピックアップテーブルの長さ
          */
-        s32 bonePickTable_length;
+        s32 bone_pick_table_length;
+
+        DrawingContext() {
+            vertices_length = 0;
+            indices_length = 0;
+            bone_pick_table_length = 0;
+        }
     };
 private:
     /**
@@ -98,8 +104,21 @@ public:
     /**
      * 描画コンテキストを取得する
      */
-    virtual jc_sp<DrawingContext> getContext( const int index ) const {
+    virtual jc_sp<DrawingContext> getDrawingContext( const int index ) const {
         return contexts[index];
+    }
+
+    /**
+     * 三角ポリゴン数を数える
+     */
+    virtual int getPolygonCount() const {
+        int result = 0;
+        const int contexts_length = contexts.size();
+        for( int i = 0; i < contexts_length; ++i ) {
+            result += contexts[i]->indices_length;
+        }
+
+        return result / 3;
     }
 
     /**
@@ -109,7 +128,7 @@ public:
         return material;
     }
 
-    virtual void    setMaterial( jc_sp<MaterialType> material ) {
+    virtual void setMaterial( jc_sp<MaterialType> material ) {
         this->material = material;
     }
 };
