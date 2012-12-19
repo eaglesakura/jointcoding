@@ -15,6 +15,9 @@
 namespace jc {
 namespace fbx {
 
+class MeshFragment;
+typedef jc_sp<MeshFragment> MMeshFragment;
+
 /**
  * メッシュを構築する一部分を管理する。
  * この配下にあるメッシュは全て同一マテリアルで描画する。
@@ -46,7 +49,6 @@ class MeshFragment {
      */
     s32 maxBones;
 
-public:
     /**
      * 頂点インデックス
      */
@@ -56,7 +58,13 @@ public:
      * 使うボーン番号
      */
     std::map<u8, u8> useBoneIndices;
+protected:
 
+    /**
+     * 現在のデータから分離を行い、新たなフラグメントとして子を作成する。
+     */
+    void separation();
+public:
     /**
      *
      */
