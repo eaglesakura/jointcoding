@@ -25,7 +25,7 @@ public:
     /**
      * 指定バイト数のデータを書き込む
      */
-    virtual void write(u8 *src, s32 length);
+    virtual void write(const u8 *src, s32 length);
 
     /**
      * ストリームを閉じる

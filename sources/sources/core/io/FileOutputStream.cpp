@@ -15,6 +15,7 @@ FileOutputStream::FileOutputStream(const charactor *fileName) {
 
 FileOutputStream::FileOutputStream(const String &fileName) {
     fp = NULL;
+    initialize(fileName.c_str());
 }
 
 FileOutputStream::~FileOutputStream() {
@@ -28,7 +29,10 @@ void FileOutputStream::initialize(const charactor *name) {
 /**
  * 指定バイト数のデータを書き込む
  */
-void FileOutputStream::write(u8 *src, s32 length) {
+void FileOutputStream::write(const u8 *src, s32 length) {
+    if (!fp) {
+        throw create_exception(IOException, "FilePointer open failed");
+    }
     if (fwrite((void*) src, (size_t) length, 1, fp) != 0) {
         throw create_exception(IOException, "fwrite error");
     }
