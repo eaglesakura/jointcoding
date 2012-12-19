@@ -62,11 +62,6 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
 
         // 実利用可能なように、メッシュ構造を最適化して完了
         MeshFragmentConverter::convertMesh(&fragments, vertices, indices);
-        /*
-         {
-         jc::fbx::FbxVertexTable vertexTable(vertices, indices);
-         }
-         */
     }
 }
 

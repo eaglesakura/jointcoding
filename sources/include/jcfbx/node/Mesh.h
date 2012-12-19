@@ -38,6 +38,13 @@ public:
     }
 
     /**
+     * 構築しているフラグメント数を取得する
+     */
+    virtual s32 getFragmentCount() const {
+        return fragments.size();
+    }
+
+    /**
      * 基底クラスはMeshノード
      */
     virtual NodeType_e getNodeType() const {
