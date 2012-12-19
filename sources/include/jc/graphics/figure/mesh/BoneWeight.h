@@ -10,20 +10,25 @@
 #include "jointcoding.h"
 
 namespace jc {
-namespace fbx {
+
+enum {
+    /**
+     * 未使用のボーン
+     */
+    UNUSED_BONE = 0xFF,
+
+    /**
+     * シンプルに利用する場合のボーン数
+     */
+    SIMPLE_BONE_NUM = 4,
+};
 
 /**
  * ボーンの重み情報を管理する。
+ * １つのメッシュグループでボーンは256本(u8)に制限する
  */
 template<int WEIGHT_NUM>
 class _BoneWeight {
-    enum {
-        /**
-         * 未使用のボーン
-         */
-        UNUSED_BONE = 0xFF,
-    };
-
 public:
     /**
      * 参照するボーンのインデックス.
@@ -38,7 +43,7 @@ public:
 
     _BoneWeight() {
         for (int i = 0; i < WEIGHT_NUM; ++i) {
-            indices[i] = (u8)UNUSED_BONE;
+            indices[i] = (u8) UNUSED_BONE;
             weights[i] = 0;
         }
     }
@@ -51,7 +56,7 @@ public:
         s32 lowerWeightIndex = 0; // 最も小さいウェイト値のインデックス
         for (s32 i = 0; i < WEIGHT_NUM; ++i) {
             // 登録されていないインデックスがあればそこへ書き込む
-            if (indices[i] == (u8)UNUSED_BONE) {
+            if (indices[i] == (u8) UNUSED_BONE) {
                 indices[i] = boneIndex;
                 weights[i] = weight;
                 return;
@@ -86,7 +91,7 @@ public:
 
         for (s32 i = 0; i < WEIGHT_NUM; ++i) {
             weights[i] /= sum;
-            if (indices[i] == (u8)UNUSED_BONE) {
+            if (indices[i] == (u8) UNUSED_BONE) {
                 indices[i] = 0;
             }
         }
@@ -96,9 +101,8 @@ public:
 /**
  * シンプルなボーンウェイト情報
  */
-typedef _BoneWeight<4> SimpleBoneWeight;
+typedef _BoneWeight<SIMPLE_BONE_NUM> SimpleBoneWeight;
 
-}
 }
 
 #endif /* BONEWEIGHT_H_ */

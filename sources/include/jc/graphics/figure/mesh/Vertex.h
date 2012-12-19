@@ -9,14 +9,14 @@
 
 #include    "jc/math/Vec2.h"
 #include    "jc/math/Vec3.h"
-#include    "jcfbx/attribute/BoneWeight.h"
+#include    "jc/graphics/figure/mesh/BoneWeight.h"
 #include    <vector>
 
 namespace jc {
 namespace fbx {
 
 template<s32 WEIGHT_NUM>
-class _FbxVertex {
+class _SimpleVertex {
 public:
     /**
      * 位置情報
@@ -41,7 +41,7 @@ public:
     /**
      * 同一頂点である場合はtrueを返す
      */
-    bool equals(const _FbxVertex<WEIGHT_NUM> &v1) const {
+    bool equals(const _SimpleVertex<WEIGHT_NUM> &v1) const {
         if (position != v1.position) {
             return false;
         }
@@ -72,7 +72,7 @@ public:
 /**
  * デフォルトのシンプルな頂点情報
  */
-typedef _FbxVertex<4> FigureVertex;
+typedef _SimpleVertex<4> FigureVertex;
 
 /**
  * 頂点を登録し、インデックスを返す

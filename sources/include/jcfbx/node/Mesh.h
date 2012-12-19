@@ -7,27 +7,35 @@
 #ifndef JCFBXMESH_H_
 #define JCFBXMESH_H_
 
-#include "jcfbx/node/Node.h"
-#include <vector>
-#include "jc/math/Vec2.h"
-#include "jc/math/Vec3.h"
-#include "jcfbx/attribute/VertexContainer.h"
-#include "jcfbx/attribute/IndicesContainer.h"
+#include    "jcfbx/node/Node.h"
+#include    "jc/graphics/figure/mesh/Figure.h"
 
 namespace jc {
 namespace fbx {
 
 class Mesh;
 typedef jc_sp<Mesh> MMesh;
+
 /**
  * FBXから読み込んだメッシュ情報を管理する
  */
 class Mesh: public jc::fbx::Node {
 protected:
+    /**
+     * ビルドを行ったフラグメント情報
+     */
+    std::vector<MFigureMeshFragment> fragments;
 
     Mesh(KFbxNode *meshNode, s32 nodeNumber);
 public:
     virtual ~Mesh();
+
+    /**
+     * メッシュの断片を取得する
+     */
+    virtual MFigureMeshFragment getFragment(const int index) const {
+        return fragments[index];
+    }
 
     /**
      * 基底クラスはMeshノード

@@ -8,7 +8,7 @@
 #define JCFBXMESHFRAGMENT_H_
 
 #include    "jointcoding-fbx.h"
-#include    "jcfbx/convert/FbxVetex.h"
+#include    "jc/graphics/figure/mesh/Vertex.h"
 #include    <vector>
 #include    <map>
 
@@ -19,17 +19,8 @@ namespace fbx {
  * メッシュを構築する一部分を管理する。
  * この配下にあるメッシュは全て同一マテリアルで描画する。
  * 使用するボーン数が規程を超えた場合、複数に分割する
- * Mesh
- *   L MeshFragment
- *      L FragmentContext ( 1 draw call <= 32 bones )
- *      L FragmentContext ( 1 draw call <= 32 bones )
- *      L FragmentContext ( 1 draw call <= 32 bones )
- *   L MeshFragment
- *      L FragmentContext ( 1 draw call <= 32 bones )
- *   L MeshFragment
- *      L FragmentContext ( 1 draw call <= 32 bones )
  */
-class MeshFragment {
+class MeshFragmentConverter {
 
     /**
      * １つのフラグメントが利用できる最大ボーン数
@@ -87,12 +78,12 @@ public:
     /**
      *
      */
-    MeshFragment();
+    MeshFragmentConverter();
 
     /**
      *
      */
-    virtual ~MeshFragment();
+    virtual ~MeshFragmentConverter();
 
     /**
      * インデックスバッファを追加する
@@ -127,13 +118,12 @@ public:
     virtual s32 getContextCount() const {
         return contexts.size();
     }
-
 };
 
 /**
  * managed
  */
-typedef jc_sp<MeshFragment> MMeshFragment;
+typedef jc_sp<MeshFragmentConverter> MMeshFragment;
 
 }
 }

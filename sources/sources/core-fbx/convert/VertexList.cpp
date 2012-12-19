@@ -26,7 +26,7 @@ FbxVertexTable::FbxVertexTable(const VertexContainer &vertices, const IndicesCon
 
     // マテリアル数だけフラグメントを構築する
     for (int material_index = 0; material_index < (int) indices.materials.size(); ++material_index) {
-        fragments.push_back(MMeshFragment(new MeshFragment()));
+        fragments.push_back(MMeshFragment(new MeshFragmentConverter()));
     }
 
     // すべての頂点を結合して、最適化する

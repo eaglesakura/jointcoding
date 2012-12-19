@@ -9,7 +9,7 @@
 
 #include    "jointcoding-fbx.h"
 #include    "jc/math/Vec2.h"
-#include    "jcfbx/attribute/Material.h"
+#include    "jc/graphics/figure/mesh/Material.h"
 
 namespace jc {
 namespace fbx {
@@ -36,7 +36,7 @@ public:
     /**
      * 接続されたマテリアル情報
      */
-    std::vector<Material> materials;
+    std::vector<FigureMaterial> materials;
 
     /**
      * 接続されたポリゴン情報

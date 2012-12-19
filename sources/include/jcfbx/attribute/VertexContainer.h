@@ -10,7 +10,7 @@
 #include    "jointcoding-fbx.h"
 #include    "jc/math/Vec3.h"
 #include    "jc/math/Vec2.h"
-#include    "jcfbx/attribute/BoneWeight.h"
+#include    "jc/graphics/figure/mesh/BoneWeight.h"
 #include    <vector>
 
 namespace jc {

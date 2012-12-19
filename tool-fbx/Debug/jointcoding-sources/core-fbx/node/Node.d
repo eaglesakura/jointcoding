@@ -270,18 +270,16 @@ jointcoding-sources/core-fbx/node/Node.d \
   /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec3.h \
   /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/system/Macro.h \
   /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/node/Mesh.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/node/Node.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec2.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec3.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/VertexContainer.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jointcoding-fbx.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec3.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec2.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/BoneWeight.h \
+  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/graphics/figure/mesh/MeshFragment.h \
   /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jointcoding.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/IndicesContainer.h \
+  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/node/Node.h \
   /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/Material.h \
-  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/graphics/Color.h
+  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jointcoding.h \
+  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/graphics/Color.h \
+  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/convert/FbxVetex.h \
+  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec2.h \
+  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec3.h \
+  /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/BoneWeight.h
 
 /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/node/Node.h:
 
@@ -821,26 +819,22 @@ jointcoding-sources/core-fbx/node/Node.d \
 
 /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/node/Mesh.h:
 
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/node/Node.h:
-
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec2.h:
-
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec3.h:
-
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/VertexContainer.h:
-
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jointcoding-fbx.h:
-
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec3.h:
-
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec2.h:
-
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/BoneWeight.h:
+/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/graphics/figure/mesh/MeshFragment.h:
 
 /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jointcoding.h:
 
-/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/IndicesContainer.h:
+/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/node/Node.h:
 
 /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/Material.h:
 
+/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jointcoding.h:
+
 /Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/graphics/Color.h:
+
+/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/convert/FbxVetex.h:
+
+/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec2.h:
+
+/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jc/math/Vec3.h:
+
+/Users/yamashitatakeshi/workspaces/eclipse/github-public/jointcoding/sources/include/jcfbx/attribute/BoneWeight.h:

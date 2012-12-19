@@ -6,7 +6,7 @@
 
 #include "jointcoding-fbx.h"
 #include <vector>
-#include "jcfbx/attribute/BoneWeight.h"
+#include "jc/graphics/figure/mesh/BoneWeight.h"
 #include "jcfbx/node/Mesh.h"
 #include "jc/math/Math.h"
 #include "jcfbx/attribute/VertexContainer.h"
@@ -24,7 +24,7 @@ static void createNormals(std::vector<Vector3f> *result, KFbxMesh *mesh);
 static void createWeights(std::vector<SimpleBoneWeight> *result, const std::vector<Vector3f> &positions, KFbxMesh *mesh);
 
 // polygons
-static void createMaterials(std::vector<Material> *result, KFbxMesh *mesh);
+static void createMaterials(std::vector<FigureMaterial> *result, KFbxMesh *mesh);
 static void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *mesh);
 
 Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
@@ -199,17 +199,17 @@ static void createWeights(std::vector<SimpleBoneWeight> *result, const std::vect
 /**
  * マテリアルを列挙する
  */
-static void createMaterials(std::vector<Material> *result, KFbxMesh *mesh) {
+static void createMaterials(std::vector<FigureMaterial> *result, KFbxMesh *mesh) {
     const s32 materialNum = mesh->GetNode()->GetMaterialCount();
 
     if (materialNum == 0) {
-        result->push_back(Material());
+        result->push_back(FigureMaterial());
     }
 
     // マテリアルを全て集積する
     for (s32 i = 0; i < materialNum; ++i) {
         KFbxSurfaceMaterial *material = mesh->GetNode()->GetMaterial(i);
-        Material m;
+        FigureMaterial m;
 
         m.name = material->GetName();
         if (material->GetClassId().Is(KFbxSurfaceLambert::ClassId)) {
@@ -230,7 +230,6 @@ static void createMaterials(std::vector<Material> *result, KFbxMesh *mesh) {
             KFbxTexture *texture = prop.GetSrcObject<KFbxTexture>(0);
             if (texture && strlen(texture->GetName())) {
                 m.textureName = texture->GetName();
-
             }
         }
 

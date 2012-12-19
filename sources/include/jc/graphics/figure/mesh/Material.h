@@ -11,12 +11,11 @@
 #include "jc/graphics/Color.h"
 
 namespace jc {
-namespace fbx {
 
 /**
  * 属性情報
  */
-class Material {
+class FigureMaterial {
 public:
     /**
      * テクスチャ名
@@ -44,7 +43,6 @@ public:
     String name;
 };
 
-}
 }
 
 #endif /* MATERIAL_H_ */
