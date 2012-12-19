@@ -18,6 +18,10 @@ namespace fbx {
 
 /**
  * FBXの頂点を一元管理する
+ * FBXが保持していたままの配列のため、各配列数が一致するとは限らない。
+ *
+ * positions.size == weights.size
+ * normals.size == coords.size
  */
 class VertexContainer {
 public:

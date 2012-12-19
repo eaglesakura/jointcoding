@@ -12,36 +12,68 @@ namespace fbx {
  * 読み込んだFBXのraw情報をもとにして、頂点一覧を作成する
  */
 FbxVertexTable::FbxVertexTable(const VertexContainer &vertices, const IndicesContainer &indices) {
+
+    /**
+     *
+     * 最適化した頂点リスト
+     */
+    std::vector<FigureVertex> compact_vertices;
+
+    /**
+     * 最適化したインデックスリスト
+     */
+    std::vector<u32> compact_indices;
+
     // マテリアル数だけフラグメントを再構築する
-    for (int material_index = 0; material_index < (int)indices.materials.size(); ++material_index) {
+    for (int material_index = 0; material_index < (int) indices.materials.size(); ++material_index) {
         fragments.push_back(MMeshFragment(new MeshFragment()));
     }
 
-    const int polygon_num = (int) indices.polygons.size();
-    for (int polygon_index = 0; polygon_index < polygon_num; ++polygon_index) {
-        const ConvertedPolygon &polygon = indices.polygons[polygon_index];
-        u16 add_indices[] = { (u16) -1, (u16) -1, (u16) -1 };
+    // すべての頂点を結合して、最適化する
+    {
+        const int polygon_num = (int) indices.polygons.size();
+        for (int polygon_index = 0; polygon_index < polygon_num; ++polygon_index) {
+            const ConvertedPolygon &polygon = indices.polygons[polygon_index];
 
-        for (int k = 0; k < 3; ++k) {
-            SimpleVertex v;
-            v.position = vertices.positions[polygon.position[k]];
-            v.uv = vertices.coords[polygon.attributes[k]];
-            v.normal = vertices.normals[polygon.attributes[k]];
-            v.weight = vertices.weights[polygon.position[k]];
+            for (int k = 0; k < 3; ++k) {
+                FigureVertex v;
+                v.position = vertices.positions[polygon.position[k]];
+                v.uv = vertices.coords[polygon.attributes[k]];
+                v.normal = vertices.normals[polygon.attributes[k]];
+                v.weight = vertices.weights[polygon.position[k]];
 
-            add_indices[k] = (u16) registerVertex(v);
+                compact_indices.push_back(registerVertex(&compact_vertices, v));
+            }
         }
-
-        // マテリアルごとに登録するFragmentを拾う
-        MMeshFragment targetFragment = fragments[polygon.material];
-
-        // ポリゴンを登録する
-        targetFragment->addIndices(this->vertices, add_indices[0], add_indices[1], add_indices[2]);
     }
 
-    jclogf("    converted vertices(%d vertex)", this->vertices.size());
+    // 描画命令ごとにフラグメント化する
+    // 一度に描画可能なボーン数(uniform vector)には制限があるため、適度な個数で分割する
+    {
+        int current = 0;
+        const int polygon_num = (int) indices.polygons.size();
+
+        for (int polygon_index = 0; polygon_index < polygon_num; ++polygon_index) {
+            const ConvertedPolygon &polygon = indices.polygons[polygon_index];
+
+            // マテリアルごとに登録するFragmentを拾う
+            MMeshFragment targetFragment = fragments[polygon.material];
+
+            // ポリゴンを登録する
+            targetFragment->addIndices(compact_vertices, compact_indices[current + 0], compact_indices[current + 1], compact_indices[current + 2]);
+
+            // カレントを進める
+            current += 3;
+        }
+
+    }
+
+    jclogf("    converted vertices(%d vertex)", compact_vertices.size());
     for (int i = 0; i < (int) fragments.size(); ++i) {
-        jclogf("      material[%d] (%d faces %d bones)", i, fragments[i]->getPolygonCount(), fragments[i]->getBoneCount());
+        jclogf("      material[%d] fragments(%d)", i, fragments[i]->getContextCount());
+        for (int k = 0; k < fragments[i]->getContextCount(); ++k) {
+            jclogf("        vertices(%d) poly(%d) bone(%d)", fragments[i]->getVerticesCount(k), fragments[i]->getPolygonCount(k), fragments[i]->getBoneCount(k));
+        }
     }
 #if 0
     for (s32 i = 0; i < triangles.length(); ++i) {
@@ -77,20 +109,6 @@ FbxVertexTable::FbxVertexTable(const VertexContainer &vertices, const IndicesCon
 
 FbxVertexTable::~FbxVertexTable() {
 
-}
-
-s32 FbxVertexTable::registerVertex(const SimpleVertex &vertex) {
-    for (u32 i = 0; i < vertices.size(); ++i) {
-        if (vertex.equals(vertices[i])) {
-            //! 頂点が一致した
-//            jclogf("    vertex cached(%d)", i);
-            return i;
-        }
-    }
-
-    vertices.push_back(vertex);
-//    jclogf("    vertex created(%d)", vertices.size() - 1);
-    return (s32) (vertices.size() - 1);
 }
 
 }

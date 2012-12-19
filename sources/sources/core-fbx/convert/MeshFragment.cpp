@@ -13,8 +13,9 @@ namespace fbx {
  *
  */
 MeshFragment::MeshFragment() {
+    contexts.push_back(MFragmentContext(new FragmentContext()));
     // 最大で利用できるボーン数
-    maxBones = 12;
+    maxBones = 32;
 }
 
 /**
@@ -46,14 +47,16 @@ jcboolean MeshFragment::isOverBone(const u8 *bones, const s32 bones_length) {
         ++itr;
     }
 
-    return ((int) useBoneIndices.size() + newBones) > maxBones;
+    FragmentContext *pContext = getCurrentContext();
+    return ((int) pContext->useBoneIndices.size() + newBones) > maxBones;
 }
 
 /**
  * 既にボーンを使用済みか
  */
 jcboolean MeshFragment::isUsingBone(u8 index) {
-    std::map<u8, u8>::iterator itr = useBoneIndices.begin(), end = useBoneIndices.end();
+    FragmentContext *pContext = getCurrentContext();
+    std::map<u8, u8>::iterator itr = pContext->useBoneIndices.begin(), end = pContext->useBoneIndices.end();
 
     while (itr != end) {
 
@@ -70,28 +73,27 @@ jcboolean MeshFragment::isUsingBone(u8 index) {
 /**
  * インデックスバッファを追加する
  */
-void MeshFragment::addIndices(const std::vector<SimpleVertex> &vertices, const u16 p0, const u16 p1, const u16 p2) {
-
+void MeshFragment::addIndices(const std::vector<FigureVertex> &vertices, const u16 p0, const u16 p1, const u16 p2) {
     int ptr = 0;
     u8 bones[4 * 3] = { };
 
     // 利用するボーンを列挙する
     {
-        const SimpleVertex &vertex = vertices[p0];
+        const FigureVertex &vertex = vertices[p0];
         for (int i = 0; i < 4; ++i) {
             bones[ptr] = vertex.weight.indices[i];
             ++ptr;
         }
     }
     {
-        const SimpleVertex &vertex = vertices[p1];
+        const FigureVertex &vertex = vertices[p1];
         for (int i = 0; i < 4; ++i) {
             bones[ptr] = vertex.weight.indices[i];
             ++ptr;
         }
     }
     {
-        const SimpleVertex &vertex = vertices[p2];
+        const FigureVertex &vertex = vertices[p2];
         for (int i = 0; i < 4; ++i) {
             bones[ptr] = vertex.weight.indices[i];
             ++ptr;
@@ -99,16 +101,37 @@ void MeshFragment::addIndices(const std::vector<SimpleVertex> &vertices, const u
     }
 
     if (isOverBone(bones, 12)) {
-        jclog("bones over!!");
+        // 子を分離させる
+        separation();
     }
 
-    indices.push_back(p0);
-    indices.push_back(p1);
-    indices.push_back(p2);
+    // 頂点を登録する
+    FragmentContext *pContext = getCurrentContext();
+    {
+        const FigureVertex &vertex = vertices[p0];
+        pContext->indices.push_back(registerVertex(&pContext->vertices, vertex));
+    }
+    {
+        const FigureVertex &vertex = vertices[p1];
+        pContext->indices.push_back(registerVertex(&pContext->vertices, vertex));
+    }
+    {
+        const FigureVertex &vertex = vertices[p2];
+        pContext->indices.push_back(registerVertex(&pContext->vertices, vertex));
+    }
 
     for (int i = 0; i < 12; ++i) {
-        useBoneIndices.insert(std::map<u8, u8>::value_type(bones[i], bones[i]));
+        pContext->useBoneIndices.insert(std::map<u8, u8>::value_type(bones[i], bones[i]));
     }
+}
+
+/**
+ * 現在のデータから分離を行い、新たなフラグメントとして子を作成する。
+ */
+void MeshFragment::separation() {
+
+    MFragmentContext nextContext(new FragmentContext());
+    contexts.push_back(nextContext);
 }
 
 }

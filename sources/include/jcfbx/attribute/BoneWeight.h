@@ -17,6 +17,13 @@ namespace fbx {
  */
 template<int WEIGHT_NUM>
 class _BoneWeight {
+    enum {
+        /**
+         * 未使用のボーン
+         */
+        UNUSED_BONE = 0xFF,
+    };
+
 public:
     /**
      * 参照するボーンのインデックス.
@@ -31,7 +38,7 @@ public:
 
     _BoneWeight() {
         for (int i = 0; i < WEIGHT_NUM; ++i) {
-            indices[i] = (u8)-1;
+            indices[i] = (u8)UNUSED_BONE;
             weights[i] = 0;
         }
     }
@@ -42,9 +49,9 @@ public:
     inline void registerWegight(s32 boneIndex, float weight) {
         float lowerWeight = 99999.0f; // 最も小さいウェイト値
         s32 lowerWeightIndex = 0; // 最も小さいウェイト値のインデックス
-        for (s32 i = 0; i < 3; ++i) {
+        for (s32 i = 0; i < WEIGHT_NUM; ++i) {
             // 登録されていないインデックスがあればそこへ書き込む
-            if (indices[i] < 0) {
+            if (indices[i] == (u8)UNUSED_BONE) {
                 indices[i] = boneIndex;
                 weights[i] = weight;
                 return;
@@ -68,7 +75,7 @@ public:
      */
     inline void normalize() {
         float sum = 0.0f;
-        for (s32 i = 0; i < 3; ++i) {
+        for (s32 i = 0; i < WEIGHT_NUM; ++i) {
             sum += weights[i];
         }
 
@@ -77,9 +84,9 @@ public:
             return;
         }
 
-        for (s32 i = 0; i < 3; ++i) {
+        for (s32 i = 0; i < WEIGHT_NUM; ++i) {
             weights[i] /= sum;
-            if (indices[i] < 0) {
+            if (indices[i] == (u8)UNUSED_BONE) {
                 indices[i] = 0;
             }
         }

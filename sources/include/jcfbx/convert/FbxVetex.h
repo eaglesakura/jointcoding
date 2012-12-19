@@ -10,6 +10,7 @@
 #include    "jc/math/Vec2.h"
 #include    "jc/math/Vec3.h"
 #include    "jcfbx/attribute/BoneWeight.h"
+#include    <vector>
 
 namespace jc {
 namespace fbx {
@@ -65,12 +66,33 @@ public:
         //! 全情報合致
         return true;
     }
+
 };
 
 /**
  * デフォルトのシンプルな頂点情報
  */
-typedef _FbxVertex<4> SimpleVertex;
+typedef _FbxVertex<4> FigureVertex;
+
+/**
+ * 頂点を登録し、インデックスを返す
+ * 同一頂点が存在する場合はそのインデックスを返す。
+ * 同一頂点が存在しない場合は末尾に登録され、最後のindexが変える。
+ */
+inline s32 registerVertex(std::vector<FigureVertex> *result, const FigureVertex &vertex) {
+    for (u32 i = 0; i < result->size(); ++i) {
+        if (vertex.equals((*result)[i])) {
+            //! 頂点が一致した
+            //            jclogf("    vertex cached(%d)", i);
+            return i;
+        }
+    }
+
+    result->push_back(vertex);
+    //    jclogf("    vertex created(%d)", vertices.size() - 1);
+    return (s32) (result->size() - 1);
+}
+
 
 }
 }

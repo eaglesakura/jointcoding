@@ -17,17 +17,7 @@ namespace jc {
 namespace fbx {
 
 class FbxVertexTable {
-
-    /**
-     * 頂点を登録し、インデックスを返す
-     */
-    s32 registerVertex(const SimpleVertex &vertex);
 public:
-    /**
-     * 登録された頂点一覧
-     */
-    std::vector<SimpleVertex> vertices;
-
     /**
      * マテリアル断片
      * framents[material_index]で、マテリアルごとのフラグメントが手に入る。
@@ -40,6 +30,7 @@ public:
     FbxVertexTable(const VertexContainer &vertices, const IndicesContainer &indices);
 
     ~FbxVertexTable();
+
 };
 
 }
