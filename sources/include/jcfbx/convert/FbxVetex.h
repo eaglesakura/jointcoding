@@ -80,19 +80,22 @@ typedef _FbxVertex<4> FigureVertex;
  * 同一頂点が存在しない場合は末尾に登録され、最後のindexが変える。
  */
 inline s32 registerVertex(std::vector<FigureVertex> *result, const FigureVertex &vertex) {
-    for (u32 i = 0; i < result->size(); ++i) {
-        if (vertex.equals((*result)[i])) {
+
+    std::vector<FigureVertex>::iterator itr = result->begin(), end = result->end();
+    int index = 0;
+    while (itr != end) {
+        if (vertex.equals(*itr)) {
             //! 頂点が一致した
             //            jclogf("    vertex cached(%d)", i);
-            return i;
+            return index;
         }
+        ++index;
+        ++itr;
     }
-
     result->push_back(vertex);
     //    jclogf("    vertex created(%d)", vertices.size() - 1);
     return (s32) (result->size() - 1);
 }
-
 
 }
 }

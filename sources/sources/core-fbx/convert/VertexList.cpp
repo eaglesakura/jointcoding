@@ -24,7 +24,7 @@ FbxVertexTable::FbxVertexTable(const VertexContainer &vertices, const IndicesCon
      */
     std::vector<u32> compact_indices;
 
-    // マテリアル数だけフラグメントを再構築する
+    // マテリアル数だけフラグメントを構築する
     for (int material_index = 0; material_index < (int) indices.materials.size(); ++material_index) {
         fragments.push_back(MMeshFragment(new MeshFragment()));
     }
@@ -38,10 +38,16 @@ FbxVertexTable::FbxVertexTable(const VertexContainer &vertices, const IndicesCon
             for (int k = 0; k < 3; ++k) {
                 FigureVertex v;
                 v.position = vertices.positions[polygon.position[k]];
-                v.uv = vertices.coords[polygon.attributes[k]];
-                v.normal = vertices.normals[polygon.attributes[k]];
-                v.weight = vertices.weights[polygon.position[k]];
+                if (vertices.weights.size()) {
+                    v.weight = vertices.weights[polygon.position[k]];
+                }
 
+                if (vertices.coords.size()) {
+                    v.uv = vertices.coords[polygon.attributes[k]];
+                }
+                if (vertices.normals.size()) {
+                    v.normal = vertices.normals[polygon.attributes[k]];
+                }
                 compact_indices.push_back(registerVertex(&compact_vertices, v));
             }
         }
