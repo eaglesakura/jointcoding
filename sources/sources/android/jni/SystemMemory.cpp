@@ -60,6 +60,7 @@ void SystemMemory::gc() {
 
     std::list<gc_data>::iterator itr = targets.begin(), end = targets.end();
 
+    s32 erases = 0;
     while (itr != end) {
 
         if ((*itr)->monitor->exist()) {
@@ -69,8 +70,12 @@ void SystemMemory::gc() {
             // 監視対象が死んでいるなら、イテレータ対象を殺す。
             itr = targets.erase(itr);
             end = targets.end();
+
+            ++erases;
         }
     }
+
+    jclogf("JC-GC(%d objects)", erases);
 }
 
 }

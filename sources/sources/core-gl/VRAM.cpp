@@ -225,15 +225,25 @@ void _VRAM::dispose() {
  * 不要な資源を解放する。
  */
 void _VRAM::gc(const u32 gc_flags) {
+    int gc_objects = 0;
     for (s32 i = 0; i < VRAM_e_num; ++i) {
         if (has_flag(gc_flags, (0x1 << i))) {
-            // 解放ビットフラグを含んでいたら、解放を行う
-            function_tbl[i].delete_func((s32) dealloc_pool[i].size(), (u32*) &(dealloc_pool[i][0]));
+            if (!dealloc_pool[i].empty()) {
+                jclogf("delete start(type %d : %d objects)", i, dealloc_pool[i].size());
 
-            // プール解放
-            dealloc_pool[i].clear();
+                gc_objects += dealloc_pool[i].size();
+
+                // 解放ビットフラグを含んでいたら、解放を行う
+                function_tbl[i].delete_func((s32) dealloc_pool[i].size(), (u32*) &(dealloc_pool[i][0]));
+
+                // プール解放
+                dealloc_pool[i].clear();
+                jclogf("delete finish(type %d)", i);
+            }
         }
     }
+
+    jclogf("VRAM-GC(%d objects)", gc_objects);
 }
 
 }
