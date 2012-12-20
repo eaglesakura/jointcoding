@@ -39,7 +39,7 @@ public:
         /**
          * バーテックスバッファの長さ
          */
-        s32 vertices_length;
+        u32 vertices_length;
 
         /**
          * 描画対象のインデックスバッファ
@@ -49,7 +49,7 @@ public:
         /**
          * インデックスバッファの長さ
          */
-        s32 indices_length;
+        u32 indices_length;
 
         /**
          * ボーン行列のピックアップテーブル
@@ -60,7 +60,7 @@ public:
         /**
          * ボーンピックアップテーブルの長さ
          */
-        s32 bone_pick_table_length;
+        u32 bone_pick_table_length;
 
         DrawingContext() {
             vertices_length = 0;

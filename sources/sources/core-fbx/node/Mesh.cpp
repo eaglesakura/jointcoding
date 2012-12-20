@@ -14,6 +14,9 @@
 #include "prv_FbxDeformer.h"
 #include    "jcfbx/convert/MeshFragmentConverter.h"
 
+#include    "jc/io/FileOutputStream.h"
+#include    "jc/data/BinaryOutputStream.h"
+
 namespace jc {
 namespace fbx {
 
@@ -59,10 +62,49 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
 
         jclogf("pos(%d) uv(%d) normal(%d) weight(%d) tri-poly(%d) mat(%d)", vertices.positions.size(), vertices.coords.size(), vertices.normals.size(), vertices.weights.size(), indices.polygons.size(), indices.materials.size());
 
-
         // 実利用可能なように、メッシュ構造を最適化して完了
         MeshFragmentConverter::convertMesh(&fragments, vertices, indices);
+
+        // FIXME 試しに適当なデータを出力してみる
+        {
+            for (u32 i = 0; i < fragments.size(); ++i) {
+                MFigureMeshFragment fragment = fragments[i];
+                for (int ctx_index = 0; ctx_index < fragment->getDrawingContextCount(); ++ctx_index) {
+                    FigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx_index).get();
+
+                    {
+                        charactor verticdes_name[256] = "";
+                        sprintf(verticdes_name, "%s_mtl%d_ctx%d.vertices",  meshNode->GetName(), i, ctx_index);
+                        MOutputStream   os(new FileOutputStream(verticdes_name, NULL));
+                        MBinaryOutputStream stream(new BinaryOutputStream(os));
+
+                        // まずは位置情報だけを書いてちゃんと吐かれているか確認する
+                        stream->writeU32(pContext->vertices_length);
+                        for (u32 vert_index = 0; vert_index < pContext->vertices_length; ++vert_index) {
+                            FigureVertex &vertex = pContext->vertices[vert_index];
+
+                            stream->writeFixed32(vertex.position.x);
+                            stream->writeFixed32(vertex.position.y);
+                            stream->writeFixed32(vertex.position.z);
+                        }
+                    }
+                    {
+                        charactor indices_name[256] = "";
+                        sprintf(indices_name, "%s_mtl%d_ctx%d.indices", meshNode->GetName(), i, ctx_index);
+                        MOutputStream os(new FileOutputStream(indices_name, NULL));
+                        MBinaryOutputStream stream(new BinaryOutputStream(os));
+
+                        // まずは位置情報だけを書いてちゃんと吐かれているか確認する
+                        stream->writeU32(pContext->indices_length);
+                        for (u32 index = 0; index < pContext->indices_length; ++index) {
+                            stream->writeU16(pContext->indices[index]);
+                        }
+                    }
+                }
+            }
+        }
     }
+
 }
 
 Mesh::~Mesh() {
@@ -100,7 +142,7 @@ static void createPositions(std::vector<Vector3f> *result, KFbxMesh *mesh) {
     const s32 ctrlNum = mesh->GetControlPointsCount();
     KFbxVector4* points = mesh->GetControlPoints();
 
-    // 頂点を末尾へ追加する
+// 頂点を末尾へ追加する
     for (s32 i = 0; i < ctrlNum; ++i) {
         result->push_back(Vector3f(points[i][0], points[i][1], points[i][2]));
     }
@@ -160,7 +202,7 @@ static void createWeights(std::vector<SimpleBoneWeight> *result, const std::vect
 
     result->clear();
 
-    // 位置数だけ必要になる
+// 位置数だけ必要になる
     result->resize(positions.size());
 
     for (int i = 0; i < deformerCount; ++i) {
@@ -186,7 +228,7 @@ static void createWeights(std::vector<SimpleBoneWeight> *result, const std::vect
         }
     }
 
-    // 頂点ウェイトを正規化する
+// 頂点ウェイトを正規化する
     const int weight_size = result->size();
     for (int i = 0; i < weight_size; ++i) {
         (*result)[i].normalize();
@@ -205,7 +247,7 @@ static void createMaterials(std::vector<MFigureMaterial> *result, KFbxMesh *mesh
         throw create_exception_t(FbxException, FbxException_MaterialNotFound);
     }
 
-    // マテリアルを全て集積する
+// マテリアルを全て集積する
     for (s32 i = 0; i < materialNum; ++i) {
         KFbxSurfaceMaterial *material = mesh->GetNode()->GetMaterial(i);
         MFigureMaterial m(new FigureMaterial());
@@ -272,11 +314,11 @@ static std::vector<s32> createMaterialIndexArray(KFbxMesh* mesh, s32 layerNum) {
 
 static void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *mesh) {
 
-    // 必要なポリゴン数
+// 必要なポリゴン数
     s32 triangleNum = getTriangleCount(mesh);
-    // quadを含んだFBXポリゴン数
+// quadを含んだFBXポリゴン数
     s32 polyNum = mesh->GetPolygonCount();
-    //! マテリアル配列を作成する。
+//! マテリアル配列を作成する。
     std::vector<s32> materialNumbers = createMaterialIndexArray(mesh, 0);
 
     s32 current = 0;
@@ -285,7 +327,7 @@ static void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *m
     result->clear();
     result->resize(triangleNum);
 
-    //! 三角形の位置情報はインデックスで、UV情報はポリゴンごとに順に格納されている。
+//! 三角形の位置情報はインデックスで、UV情報はポリゴンごとに順に格納されている。
     for (s32 i = 0; i < polyNum; ++i) {
         s32 size = mesh->GetPolygonSize(i);
         jc_sa< s32 > index(new s32[size]);
@@ -321,7 +363,7 @@ static void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *m
         uvIndex += size;
     }
 
-    // 不具合
+// 不具合
     if (current != triangleNum) {
         throw create_exception_t(FbxException, FbxException_ArrayIndexBoundsException);
     }

@@ -9,7 +9,6 @@
 
 #include    "jointcoding-fbx.h"
 
-
 namespace jc {
 namespace fbx {
 
@@ -61,6 +60,13 @@ public:
      * デフォルトシーンは NULL か ""
      */
     virtual void importFromSceneName(const charactor* name);
+
+    /**
+     * 構築したノードを取得する
+     */
+    virtual jc_sp<Node> getConvertedRootNode() const {
+        return convertedNode;
+    }
 
     /**
      *
