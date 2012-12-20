@@ -8,8 +8,9 @@
 #ifndef JCGLINDEXBUFFEROBJECT_H_
 #define JCGLINDEXBUFFEROBJECT_H_
 
+#include    "jointcoding.h"
 #include    "jc/gl/VRAM.h"
-#include    "jc/gl/State.h"
+#include    "jc/gl/Device.h"
 
 namespace jc {
 namespace gl {

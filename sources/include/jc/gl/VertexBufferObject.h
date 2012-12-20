@@ -10,7 +10,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/gl/VRAM.h"
-#include    "jc/gl/State.h"
+#include    "jc/gl/Device.h"
 
 namespace jc {
 namespace gl {

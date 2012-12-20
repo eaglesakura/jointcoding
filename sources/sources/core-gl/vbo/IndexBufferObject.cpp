@@ -37,6 +37,14 @@ void IndexBufferObject::unbind() {
 }
 
 /**
+ * 解放を行う
+ */
+void IndexBufferObject::dispose() {
+    unbind();
+    indices.release();
+}
+
+/**
  * レンダリングを行う
  */
 void IndexBufferObject::rendering() {
