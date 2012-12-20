@@ -17,8 +17,8 @@ class FileOutputStream: public OutputStream {
 
     void initialize(const charactor *name);
 public:
-    FileOutputStream(const charactor *fileName);
-    FileOutputStream(const String &fileName);
+    FileOutputStream(const charactor *fileName, jcboolean *completed);
+    FileOutputStream(const String &fileName, jcboolean *completed);
 
     virtual ~FileOutputStream();
 

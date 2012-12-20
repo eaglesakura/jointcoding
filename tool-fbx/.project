@@ -36,6 +36,11 @@
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/sources/core</locationURI>
 		</link>
 		<link>
+			<name>jointcoding-sources/core-cpptest</name>
+			<type>2</type>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources/sources/core-cpptest</locationURI>
+		</link>
+		<link>
 			<name>jointcoding-sources/core-fbx</name>
 			<type>2</type>
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/sources/core-fbx</locationURI>
@@ -44,6 +49,11 @@
 			<name>jointcoding-sources/protocol</name>
 			<type>2</type>
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/gen/protocol</locationURI>
+		</link>
+		<link>
+			<name>jointcoding-tests/core</name>
+			<type>2</type>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources/tests/core</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

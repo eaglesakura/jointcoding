@@ -8,9 +8,7 @@
 #ifndef JCOUTPUTSTREAM_H_
 #define JCOUTPUTSTREAM_H_
 
-#include    "jc/system/Macro.h"
-#include    "jc/model/Object.h"
-#include    "jc/mem/SmartPtr.h"
+#include    "jointcoding.h"
 
 namespace jc {
 

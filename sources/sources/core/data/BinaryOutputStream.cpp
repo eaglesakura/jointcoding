@@ -5,6 +5,7 @@
  */
 
 #include    "jc/data/BinaryOutputStream.h"
+#include    "jc/math/Math.h"
 
 namespace jc {
 
@@ -43,15 +44,12 @@ void BinaryOutputStream::writeS32(const s32 data) {
 void BinaryOutputStream::writeS64(const s64 data) {
     stream->write((u8*) &data, sizeof(data));
 }
-
-#define toFixed( _float, bits )    ((int)( (double)_float * (double)bits))
 /**
  * 固定小数として書き出す。
  *
  */
-void BinaryOutputStream::writeFixed(const float data, const s32 bits) {
-    const s32 bit_contrl = 0x1 << bits;
-    writeS32(toFixed(data, bit_contrl) );
+void BinaryOutputStream::writeFixed32(const float data, const s32 bits) {
+    writeS32(real2fixed<float, s32>(data, bits));
 }
 
 /**
@@ -60,8 +58,9 @@ void BinaryOutputStream::writeFixed(const float data, const s32 bits) {
  * | (u16)data.char_length + 1 | (charactor)string + NULL |
  */
 void BinaryOutputStream::writeString(const String data) {
-    writeU16((s16) data.length());
-    stream->write((u8*) data.c_str(), data.length() + 1);
+    const u16 data_lenght = (data.length() + 1);
+    writeU16(data_lenght);
+    stream->write((u8*) data.c_str(), data_lenght);
 }
 
 /**
@@ -77,16 +76,16 @@ void BinaryOutputStream::writeByteArray(const void* data, const u32 bytes) {
  * データを書き込む。
  * float -> fixed変換を行なって書き込む。
  */
-void BinaryOutputStream::writeFloatArray(const float *data, const u32 data_length, const s32 bits) {
-    const s32 bit_contrl = 0x1 << bits;
-    s32 *data_array = new s32[data_length];
+void BinaryOutputStream::writeFixed32Array(const float *data, const u32 data_length, const s32 bits) {
+    fixed32 *data_array = new s32[data_length];
 
     // 全てfixed変換を行う
     for (u32 i = 0; i < data_length; ++i) {
-        data_array[i] = toFixed(data[i], bit_contrl);
+        data_array[i] = real2fixed<float, fixed32>(data[i], bits);
     }
 
-    writeByteArray(data_array, data_length);
+    writeU32(data_length);
+    stream->write((u8*) data_array, sizeof(fixed32) * data_length);
 
     SAFE_DELETE_ARRAY(data_array);
 }

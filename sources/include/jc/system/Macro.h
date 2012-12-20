@@ -83,7 +83,16 @@ namespace jc {
 typedef signed char s8;
 typedef signed short s16;
 typedef signed int s32;
+/**
+ * 固定小数値
+ */
+typedef signed int fixed32;
 typedef signed long long s64;
+
+/**
+ * 固定小数値
+ */
+typedef signed long long fixed64;
 
 typedef unsigned char u8;
 typedef unsigned short u16;

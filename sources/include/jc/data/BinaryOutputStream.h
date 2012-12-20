@@ -7,27 +7,21 @@
 #ifndef JCBINARYOUTPUTSTREAM_H_
 #define JCBINARYOUTPUTSTREAM_H_
 
+#include    "jointcoding.h"
 #include    "jc/io/OutputStream.h"
+#include    "jc/math/Math.h"
 
 namespace jc {
-
-enum {
-    /**
-     * OpenGL ESで利用する固定小数値
-     */
-    FIXED_BIT_GL = 16,
-
-    /**
-     * MascotCapsuleで利用する固定小数値
-     */
-    FIXED_BIT_MC = 12,
-};
 
 /**
  * バイナリデータの書き出しを行う。
  * 書き込んだデータは全てリトルエンディアンで格納される。
+ * BinaryInputStreamと対になる。
  */
-class BinaryOutputStream {
+class BinaryOutputStream: public Object {
+    /**
+     * 書き込み用の実ストリーム
+     */
     MOutputStream stream;
 public:
     BinaryOutputStream(MOutputStream os);
@@ -42,7 +36,7 @@ public:
      * 8bit整数を書き出す
      */
     virtual void writeU8(const u8 data) {
-        writeS8(const_cast<s8>(data));
+        writeS8(static_cast<s8>(data));
     }
 
     /**
@@ -54,7 +48,7 @@ public:
      * 16bit整数を書き出す
      */
     virtual void writeU16(const u16 data) {
-        writeS16(const_cast<s16>(data));
+        writeS16(static_cast<s16>(data));
     }
 
     /**
@@ -66,7 +60,7 @@ public:
      * 32bit整数を書き出す
      */
     virtual void writeU32(const u32 data) {
-        writeS32(const_cast<s32>(data));
+        writeS32(static_cast<s32>(data));
     }
 
     /**
@@ -78,18 +72,17 @@ public:
      * 64bit整数を書き出す
      */
     virtual void writeU64(const u64 data) {
-        writeS64(const_cast<s64>(data));
+        writeS64(static_cast<s64>(data));
     }
 
     /**
      * 固定小数として書き出す。
-     *
      */
-    virtual void writeFixed(const float data, const s32 bits = FIXED_BIT_GL);
+    virtual void writeFixed32(const float data, const s32 bits = FIXED_BIT_GL);
 
     /**
      * 文字列として書き出す。
-     * 頭2byteに文字数（＋NULL文字）、続くn byteに文字＋NULL終端が書き込まれる
+     * 頭2byteに文字数（＋NULL文字）、続く n byteに文字＋NULL終端が書き込まれる
      * | (u16)data.char_length + 1 | (charactor)string + NULL |
      */
     virtual void writeString(const String data);
@@ -103,9 +96,15 @@ public:
     /**
      * データを書き込む。
      * float -> fixed変換を行なって書き込む。
+     * | s32 bytes | fixed data array ... |
      */
-    virtual void writeFloatArray(const float *data, const u32 data_length, const s32 bits = FIXED_BIT_GL);
+    virtual void writeFixed32Array(const float *data, const u32 data_length, const s32 bits = FIXED_BIT_GL);
 };
+
+/**
+ * managed
+ */
+typedef jc_sp<BinaryOutputStream> MBinaryOutputStream;
 
 }
 

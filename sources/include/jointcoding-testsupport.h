@@ -14,7 +14,7 @@ namespace jc {
 /**
  * trueであることを宣言する
  */
-void __assertTrue(const charactor* file, const s32 line, const bool is, bool *success, const charactor* message);
+void __assertTrue(const ::jc::charactor* file, const ::jc::s32 line, const bool is, bool *success, const ::jc::charactor* message);
 
 /**
  * 共通部分

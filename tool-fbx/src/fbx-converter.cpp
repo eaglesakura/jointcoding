@@ -7,16 +7,20 @@
 //============================================================================
 
 #include "jointcoding.h"
+#include "jctest/CdtTestRunner.h"
 
 void testFunction();
 
 int main(int argv, char *args[]) {
     jclog("hello fbx-tool!!");
-    jclogf("args(%d)", argv);
-    for( int i = 0; i < argv; ++i ) {
-        jclogf("arg[i] = %s", i, args[i]);
-    }
 
-    testFunction();
+    jc::CdtTestRunner::initialize(argv, args);
+    {
+        add_unittest(testFunction);
+        void test_binaryOutput();   add_unittest(test_binaryOutput);
+    }
+    jc::CdtTestRunner::run();
+
+//    testFunction();
     return 0;
 }

@@ -54,15 +54,43 @@ inline jcboolean isPowerOfTwo(const T n) {
         return jcfalse;
     }
 
-
     for (s32 i = 0; i < BIT_SIZE; ++i) {
-        if( n == bit ) {
+        if (n == bit) {
             return jctrue;
         }
         bit <<= 1;
     }
 
     return jcfalse;
+}
+
+enum {
+    /**
+     * OpenGL ESで利用する固定小数値
+     */
+    FIXED_BIT_GL = 16,
+
+    /**
+     * MascotCapsuleで利用する固定小数値
+     */
+    FIXED_BIT_MC = 12,
+};
+/**
+ * 実数を固定小数に変換する
+ */
+template<typename InRealType, typename OutIntegerType>
+inline OutIntegerType real2fixed(const InRealType data, const s32 bits) {
+    const s32 mul = 0x1 << bits;
+    return (OutIntegerType) (((double) data) * (double) mul);
+}
+
+/**
+ * 固定小数を実数に変換する
+ */
+template<typename InIntegerType, typename OutRealType>
+inline OutRealType fixed2real(const InIntegerType data, const s32 bits) {
+    const s32 mul = 0x1 << bits;
+    return (OutRealType) (((double) data) / ((double) mul));
 }
 
 }
