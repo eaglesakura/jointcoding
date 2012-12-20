@@ -5,9 +5,10 @@
  */
 
 #include "jointcoding-android.h"
+#include "jointcoding-testsupport.h"
+#include "jcandroid/util/Utils.h"
 #include "jcJniTestSupport.h"
-#include "ndkUtils.h"
-#include "ndkTestSupport.h"
+#include    "ndkTestSupport.h"
 
 using namespace jc;
 using namespace ndk;

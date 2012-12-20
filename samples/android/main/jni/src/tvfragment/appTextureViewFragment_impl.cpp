@@ -6,7 +6,8 @@
 
 #include "jointcoding-android.h"
 #include "appTextureViewFragment.h"
-#include    "ndkNativeFragmentBase.h"
+
+#include    "jcandroid/fragment/NativeFragmentBase.h"
 
 using namespace ndk;
 class TextureViewFragmentNative: public NativeFragmentBase {

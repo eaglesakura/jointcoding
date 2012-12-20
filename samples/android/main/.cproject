@@ -31,9 +31,10 @@
 							<tool id="com.android.gcc.compiler.984862592" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<option id="com.android.gcc.option.includePath.1192535892" superClass="com.android.gcc.option.includePath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ANDROID_NDK_HOME}/sources/cxx-stl/stlport/stlport/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ANDROID_NDK_HOME}/platforms/android-14/arch-arm/usr/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ANDROID_NDK_HOME}/sources/cpufeatures&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
 								</option>
 								<inputType id="com.android.gcc.inputType.1594969635" superClass="com.android.gcc.inputType"/>
 							</tool>

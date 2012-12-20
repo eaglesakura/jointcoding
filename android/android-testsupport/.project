@@ -47,16 +47,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>jni/android-testsupport</name>
-			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/platforms/android-testsupport</locationURI>
-		</link>
-		<link>
-			<name>jni/core-testsupport</name>
-			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/core-testsupport</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

@@ -34,3 +34,5 @@ test.temp/
 fbx-tool/Debug
 fbx-tool/Release
 fbx-tool/*.fbx
+
+lint.xml

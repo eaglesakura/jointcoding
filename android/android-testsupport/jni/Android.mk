@@ -10,8 +10,8 @@ include $(JOINTCODING_HOME)/bin/android-make/types.mk
 include $(CLEAR_VARS)
 ############################       build sources       ###########################
 RELATIVITY_JC_PATH := $(shell ${JOINTCODING_HOME}/bin/abspath2rel.sh ${JOINTCODING_HOME})
-LOCAL_C_INCLUDES += $(shell find '$(RELATIVITY_JC_PATH)/sources/core-testsupport' -type d)
-LOCAL_C_INCLUDES += $(shell find '$(RELATIVITY_JC_PATH)/sources/platforms/android-testsupport' -type d)
+LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/sources/include
+LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/sources/gen
 LOCAL_C_INCLUDES += $(shell find '.' -type d)
 LOCAL_SRC_FILES += $(shell find '.' -name '*.c')
 LOCAL_SRC_FILES += $(shell find '.' -name '*.cpp')

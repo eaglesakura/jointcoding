@@ -5,7 +5,6 @@
  */
 #include "jointcoding-android.h"
 #include "ndkTestSupport.h"
-#include "ndkNDK.h"
 #include    "dlfcn.h"
 
 namespace jc {

@@ -7,8 +7,8 @@
 #ifndef NDKTESTSUPPORT_H_
 #define NDKTESTSUPPORT_H_
 
-#include    "jcTestSupport.h"
 #include    "jointcoding-android.h"
+#include    "jointcoding-testsupport.h"
 #include    "jcAssertError.h"
 
 namespace jc {

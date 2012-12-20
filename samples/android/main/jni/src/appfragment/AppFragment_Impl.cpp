@@ -4,6 +4,7 @@
  *  Created on: 2012/09/19
  */
 
+#if 0
 #include    "jointcoding-android.h"
 #include    "jcGL.h"
 #include    "jcThread.h"
@@ -237,3 +238,5 @@ JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_sample_hello_AppFragment_
 }
 
 }
+
+#endif
