@@ -83,7 +83,6 @@ void Quad::initialize() {
 
 // バッファ転送
     CLEAR_GL_ERROR
-    ;
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertices), g_vertices, GL_STATIC_DRAW);
     PRINT_GL_ERROR;
 }
@@ -125,7 +124,6 @@ void Quad::rendering() {
     }
 
     CLEAR_GL_ERROR
-    ;
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     PRINT_GL_ERROR;
 }

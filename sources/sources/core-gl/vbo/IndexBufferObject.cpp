@@ -5,15 +5,15 @@
  *      Author: Takeshi
  */
 
-#if 0
-#include "jc/gl/IndexBufferObject.h"
+#include    "jc/gl/IndexBufferObject.h"
 
 namespace jc {
 namespace gl {
 
-IndexBufferObject::IndexBufferObject(MGLState state) :
-        Resource(state) {
-    glGenBuffers(1, &indices);
+IndexBufferObject::IndexBufferObject(MDevice device) {
+    this->state = device->getState();
+    this->indices.alloc(device->getVRAM(), VRAM_Indices);
+    this->indices_length = 0;
 }
 
 IndexBufferObject::~IndexBufferObject() {
@@ -21,32 +21,29 @@ IndexBufferObject::~IndexBufferObject() {
 }
 
 /**
- * GLに関連付ける
+ * GLへ関連付ける
  */
 void IndexBufferObject::bind() {
-    state->bindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
+    state->bindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices.get());
 }
 
 /**
- * GLから切り離す
+ * GLとの関連付けを解除する
  */
 void IndexBufferObject::unbind() {
-    if (state->isBindedBuffer(GL_ELEMENT_ARRAY_BUFFER, indices)) {
+    if (state->isBindedBuffer(GL_ELEMENT_ARRAY_BUFFER, indices.get())) {
         state->bindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 }
 
 /**
- * リソースを開放する
+ * レンダリングを行う
  */
-void IndexBufferObject::dispose() {
-    if (indices) {
-        unbind();
-        glDeleteBuffers(1, &indices);
-        indices = 0;
-    }
+void IndexBufferObject::rendering() {
+    CLEAR_GL_ERROR
+    glDrawArrays(GL_TRIANGLES, 0, indices_length);
+    PRINT_GL_ERROR;
 }
 
 }
 }
-#endif

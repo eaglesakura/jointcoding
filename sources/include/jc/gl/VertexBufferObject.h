@@ -8,65 +8,70 @@
 #ifndef JCGLVERTEXBUFFEROBJECT_H_
 #define JCGLVERTEXBUFFEROBJECT_H_
 
-#if 0
-#include    "jc/gl/Resource.h"
+#include    "jointcoding.h"
+#include    "jc/gl/VRAM.h"
+#include    "jc/gl/State.h"
 
 namespace jc {
 namespace gl {
 
-/**
- * 1つのVBOを扱うクラス。
- */
-class VertexBufferObject: public Resource {
-protected:
+template<typename VertexType>
+class VertexBufferObject: public Object {
     /**
-     * 生成されたバッファ
+     * 確保したVBO
      */
-    GLuint buffer;
+    SharedResource vertices;
+
+    /**
+     * バッファ
+     */
+    MGLState state;
 public:
-    VertexBufferObject(MGLState state);
-    virtual ~VertexBufferObject();
+    VertexBufferObject(MDevice device) {
+        this->state = device->getState();
+        vertices.alloc(device->getVRAM(), VRAM_VertexBufferObject);
+    }
 
-    /**
-     * バッファを関連付ける
-     */
-    virtual void bind();
-
-    /**
-     * バッファを切り離す
-     */
-    virtual void unbind();
-
-    /**
-     * リソースの解放を行う
-     */
-    virtual void dispose();
-
+    virtual ~VertexBufferObject() {
+        dispose();
+    }
     /**
      * バッファにデータを転送する。
+     * 必ずbind()済みの状態で呼び出すこと
      * @param source 転送元のデータポインタ
-     * @param length ソースのバイト数
+     * @param length ソースの頂点数
      * @param suage GL_STATIC_DRAW | GL_STREAM_DRAW | GL_DYNAMIC_DRAW
      */
-    virtual void bufferData(const void* source, const u32 length, const GLenum usage) {
-        glBufferData(GL_ARRAY_BUFFER, length, source, usage);
+    virtual void bufferData(const VertexType *vertices, const u32 vertices_length, const GLenum usage) {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * vertices_length, (GLvoid*) vertices, usage);
     }
 
     /**
-     * 生成された頂点オブジェクトを取得する
+     * GLのステートへと関連付ける
      */
-    virtual GLuint getVertexBufferObject() const {
-        return buffer;
+    virtual void bind() {
+        state->bindBuffer(GL_ARRAY_BUFFER, vertices.get());
+    }
+
+    /**
+     * GLのステートから関連を外す
+     */
+    virtual void unbind() {
+        if (state->isBindedBuffer(GL_ARRAY_BUFFER, vertices.get())) {
+            state->bindBuffer(GL_ARRAY_BUFFER, 0);
+        }
+    }
+
+    /**
+     * 解放を行う
+     */
+    virtual void dispose() {
+        unbind();
+        vertices.release();
     }
 };
 
-/**
- * managed
- */
-typedef jc_sp<VertexBufferObject> MGLVertexBufferObject;
-
 }
 }
 
-#endif
 #endif /* JCGLVERTEXBUFFEROBJECT_H_ */
