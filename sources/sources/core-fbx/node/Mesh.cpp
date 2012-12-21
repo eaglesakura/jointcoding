@@ -97,6 +97,7 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
                         // まずは位置情報だけを書いてちゃんと吐かれているか確認する
                         stream->writeU32(pContext->indices_length);
                         for (u32 index = 0; index < pContext->indices_length; ++index) {
+//                            jclogf("indices[%d](%d)", (int)index, (int)pContext->indices[index]);
                             stream->writeU16(pContext->indices[index]);
                         }
                     }

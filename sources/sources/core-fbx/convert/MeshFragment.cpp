@@ -164,7 +164,7 @@ MFigureMeshFragment MeshFragmentConverter::createFigureFragment() const {
         jc_sp<FigureMeshFragment::DrawingContext > context(new FigureMeshFragment::DrawingContext());
 
         // make weight
-        {
+        if (!figureContext->useBoneIndices.empty()) {
             const s32 bonePickTable_length = figureContext->useBoneIndices.size();
             u8 *pBonePickTable = new u8[bonePickTable_length];
 
@@ -208,7 +208,8 @@ MFigureMeshFragment MeshFragmentConverter::createFigureFragment() const {
 
             // copy
             for (int k = 0; k < indices_length; ++k) {
-                pIndices[i] = figureContext->indices[k];
+//                jclogf("figureContext->indices[%d](%d)", k, figureContext->indices[k]);
+                pIndices[k] = figureContext->indices[k];
             }
 
             context->indices_length = indices_length;
@@ -229,6 +230,18 @@ void MeshFragmentConverter::separation() {
     MFragmentContext nextContext(new FragmentContext());
     contexts.push_back(nextContext);
 }
+
+void print_indices(MFigureMeshFragment fragment) {
+    for (int k = 0; k < fragment->getDrawingContextCount(); ++k) {
+        FigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(k).get();
+
+        for (u32 idx = 0; idx < pContext->indices_length; ++idx) {
+            jclogf("   indices[%d](%d)", idx, pContext->indices[idx]);
+        }
+//            jclogf("        vertices(%d) poly(%d) bone(%d)", (*result)[i]->getVerticesCount(k), (*result)[i]->getPolygonCount(k), (*result)[i]->getBoneCount(k));
+    }
+}
+
 /**
  * FBX Mesh -> JointCoding Meshに変換を行う
  */
@@ -309,6 +322,7 @@ void MeshFragmentConverter::convertMesh(std::vector<MFigureMeshFragment> *result
             if ((*itr)->getPolygonCount()) {
 
                 MFigureMeshFragment fragment = (*itr)->createFigureFragment();
+//                print_indices(fragment);
                 fragment->setMaterial(indices.materials[material_index]);
                 result->push_back(fragment);
             }
@@ -324,6 +338,7 @@ void MeshFragmentConverter::convertMesh(std::vector<MFigureMeshFragment> *result
 //            jclogf("        vertices(%d) poly(%d) bone(%d)", (*result)[i]->getVerticesCount(k), (*result)[i]->getPolygonCount(k), (*result)[i]->getBoneCount(k));
         }
     }
+
 }
 
 }

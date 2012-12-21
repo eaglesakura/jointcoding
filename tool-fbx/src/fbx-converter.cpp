@@ -15,7 +15,7 @@ int main(int argv, char *args[]) {
 
     jc::CdtTestRunner::initialize(argv, args);
     {
-//        add_unittest(testFunction);
+        add_unittest(testFunction);
         add_unittest(test_binaryOutput);
         add_unittest(test_matrix_transform);
         add_unittest(test_matrix_rotate);

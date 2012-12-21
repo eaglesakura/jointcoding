@@ -49,7 +49,7 @@ void IndexBufferObject::dispose() {
  */
 void IndexBufferObject::rendering() {
     CLEAR_GL_ERROR
-    glDrawArrays(GL_TRIANGLES, 0, indices_length);
+    glDrawElements(GL_TRIANGLES, indices_length, GL_UNSIGNED_SHORT, NULL);
     PRINT_GL_ERROR;
 }
 
