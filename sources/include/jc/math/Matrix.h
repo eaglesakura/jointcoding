@@ -198,6 +198,87 @@ struct Matrix {
             }
         }
     }
+
+    /**
+     * 視線変更行列を生成する。
+     * @param position 視線の起点位置
+     * @param look 視線の向かう位置
+     * @param up 上方向
+     *
+     * 3D行列のみ利用可能
+     */
+    inline void lookAt(const Vector3f position, const Vector3f look, const Vector3f up) {
+        Vector3f zaxis, xaxis, yaxis;
+
+        zaxis = position - look;
+        zaxis.normalize();
+        up.cross(zaxis, &xaxis);
+        xaxis.normalize();
+        zaxis.cross(xaxis, &yaxis);
+
+        {
+            m[0][0] = xaxis.x;
+            m[1][0] = xaxis.y;
+            m[2][0] = xaxis.z;
+            m[3][0] = -xaxis.dot(position);
+
+        }
+        {
+
+            m[0][1] = yaxis.x;
+            m[1][1] = yaxis.y;
+            m[2][1] = yaxis.z;
+            m[3][1] = -yaxis.dot(position);
+        }
+        {
+
+            m[0][2] = -zaxis.x;
+            m[1][2] = -zaxis.y;
+            m[2][2] = -zaxis.z;
+            m[3][2] = zaxis.dot(position);
+        }
+
+        // 一番右は持っている場合だけ
+        if (COLM == 4) {
+            m[0][3] = 0;
+            m[1][3] = 0;
+            m[2][3] = 0;
+            m[3][3] = 1;
+        }
+    }
+
+    /**
+     * 射影行列を作成する。
+     *
+     *
+     * @param near
+     * @param far
+     * @param fovY
+     * @param aspect
+     *
+     */
+    void projection(const float near, const float far, const float fovY, const float aspect) {
+        float h, w, Q;
+
+        float width_fov = (fovY * (aspect) / 360.0f), height_fov = (fovY / 360.0f);
+
+        w = (float) (1.0 / tan(width_fov * 0.5) / (PI * 2)); // 1/tan(x)
+        // ==
+        // cot(x)
+        h = (float) (1.0 / tan(height_fov * 0.5) / (PI * 2)); // 1/tan(x)
+        // ==
+        // cot(x)
+        Q = far / (far - near);
+
+        // clear
+        zeromemory(m, sizeof(m));
+
+        m[0][0] = w;
+        m[1][1] = h;
+        m[2][2] = Q;
+        m[3][2] = -Q * near;
+        m[2][3] = 1;
+    }
 };
 
 typedef Matrix<4, 3> Matrix4x3;

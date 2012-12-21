@@ -61,11 +61,18 @@ struct _Vector3 {
     /**
      * スカラー演算を行う
      */
-    _Vector3<T> operator*=(const T scalar) {
+    _Vector3<T>& operator*=(const T scalar) {
         x *= scalar;
         y *= scalar;
         z *= scalar;
         return (*this);
+    }
+
+    /**
+     * 減算を行う
+     */
+    _Vector3<T> operator-(const _Vector3<T> v) {
+        return _Vector3<T>(x - v.x, y - v.y, z - v.z);
     }
 
     /**
@@ -105,6 +112,43 @@ struct _Vector3 {
      */
     T length() const {
         return (T) sqrt(((double) x * (double) x) + ((double) y * (double) y) + ((double) z * (double) z));
+    }
+
+    /**
+     * 外積を取得する。
+     *
+     *
+     * @param v
+     * @param result
+     * @return
+     *
+     */
+    _Vector3<T>* cross(const _Vector3<T> &v, _Vector3<T> *result) const {
+        result->set((y * v.z) - (z * v.y), (z * v.x) - (x * v.z), (x * v.y) - (y * v.x));
+        return result;
+    }
+
+    /**
+     * 内積を取得する。
+     *
+     *
+     * @param v
+     * @return
+     *
+     */
+    T dot(const _Vector3<T> v) const {
+        return (x * v.x) + (y * v.y) + (z * v.z);
+    }
+
+    /**
+     * ベクトルの長さを正規化する
+     */
+    void normalize() {
+        const T _len = length();
+
+        x /= _len;
+        y /= _len;
+        z /= _len;
     }
 
     /**
