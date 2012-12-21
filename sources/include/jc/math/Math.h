@@ -93,5 +93,20 @@ inline OutRealType fixed2real(const InIntegerType data, const s32 bits) {
     return (OutRealType) (((double) data) / ((double) mul));
 }
 
+/**
+ * 円周率
+ */
+const double PI = 3.141592653589793;
+
+template<typename T>
+inline T degree2radian(const T degree) {
+    return (degree * PI) / 180;
+}
+
+template<typename T>
+inline T radian2degree(const T radian) {
+    return (radian * 180) / PI;
+}
+
 }
 #endif /* JCMATH_H_ */

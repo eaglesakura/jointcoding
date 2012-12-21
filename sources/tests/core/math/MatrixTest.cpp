@@ -55,3 +55,61 @@ void test_matrix_transform() {
         _assertEquals(v.z, tZ);
     }
 }
+
+void test_matrix_rotate() {
+    const float degree = 90;
+
+    // check 4x4
+    {
+        Matrix<4, 4> m;
+        Vector3f v(0, 1, 0);
+        m.rotate(1, 0, 0, degree);
+        m.multiply(v, &v);
+        m.print();
+
+        // transformの結果が正しいことをチェック
+        jclogf("rotate vec(%f, %f, %f)", v.x, v.y, v.z);
+
+        // matrixの移動が正しいことをチェック
+        // 上向きのベクトルをX回転90度させたら、Z方向に点は向いている
+        _assertTrue(jc::equals(0.0f, v.x));
+        _assertTrue(jc::equals(0.0f, v.y));
+        _assertTrue(jc::equals(-1.0f, v.z));
+    }
+    jclog("-----");
+    // check 4x4
+    {
+        Matrix<4, 4> m;
+        Vector3f v(1, 0, 0);
+        m.rotate(0, 1, 0, degree);
+        m.multiply(v, &v);
+        m.print();
+
+        // transformの結果が正しいことをチェック
+        jclogf("rotate vec(%f, %f, %f)", v.x, v.y, v.z);
+
+        // matrixの移動が正しいことをチェック
+        // 横向きのベクトルをY方向に90度傾けたら、Z方向に点は向いている
+        _assertTrue(jc::equals(0.0f, v.x));
+        _assertTrue(jc::equals(0.0f, v.y));
+        _assertTrue(jc::equals(1.0f, v.z));
+    }
+    jclog("-----");
+    // check 4x4
+    {
+        Matrix<4, 4> m;
+        Vector3f v(0, 1, 0);
+        m.rotate(0, 0, 1, degree);
+        m.multiply(v, &v);
+        m.print();
+
+        // transformの結果が正しいことをチェック
+        jclogf("rotate vec(%f, %f, %f)", v.x, v.y, v.z);
+
+        // matrixの移動が正しいことをチェック
+        // 上向きのベクトルをZ方向に90度傾けたら、X方向に点は向いている
+        _assertTrue(jc::equals(-1.0f, v.x));
+        _assertTrue(jc::equals(0.0f, v.y));
+        _assertTrue(jc::equals(0.0f, v.z));
+    }
+}
