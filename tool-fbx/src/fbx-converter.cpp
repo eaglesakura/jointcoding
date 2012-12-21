@@ -19,6 +19,8 @@ int main(int argv, char *args[]) {
         add_unittest(test_binaryOutput);
         add_unittest(test_matrix_transform);
         add_unittest(test_matrix_rotate);
+        add_unittest(test_matrix_scaling);
+        add_unittest(test_matrix_multiply);
     }
     jc::CdtTestRunner::run();
 

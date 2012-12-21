@@ -113,3 +113,147 @@ void test_matrix_rotate() {
         _assertTrue(jc::equals(0.0f, v.z));
     }
 }
+
+void test_matrix_scaling() {
+    const float scale_x = 1.0f;
+    const float scale_y = 2.0f;
+    const float scale_z = 0.5f;
+
+    // check 4x4
+    {
+        Matrix<4, 4> m;
+        Vector3f v(1, 2, 3);
+        m.scale(scale_x, scale_y, scale_z);
+        m.multiply(v, &v);
+        m.print();
+
+        // matrixの移動が正しいことをチェック
+        _assertEquals(m[0][0], scale_x);
+        _assertEquals(m[1][1], scale_y);
+        _assertEquals(m[2][2], scale_z);
+
+        // transformの結果が正しいことをチェック
+        _assertEquals(v.x, 1.0f * scale_x);
+        _assertEquals(v.y, 2.0f * scale_y);
+        _assertEquals(v.z, 3.0f * scale_z);
+    }
+
+    // check 4x3
+    {
+        Matrix<4, 3> m;
+        Vector3f v(1, 2, 3);
+        m.scale(scale_x, scale_y, scale_z);
+        m.multiply(v, &v);
+        m.print();
+
+        // matrixの移動が正しいことをチェック
+        _assertEquals(m[0][0], scale_x);
+        _assertEquals(m[1][1], scale_y);
+        _assertEquals(m[2][2], scale_z);
+
+        // transformの結果が正しいことをチェック
+        _assertEquals(v.x, 1.0f * scale_x);
+        _assertEquals(v.y, 2.0f * scale_y);
+        _assertEquals(v.z, 3.0f * scale_z);
+
+    }
+}
+
+void test_matrix_multiply() {
+
+    // check 4x4
+    {
+        Matrix4x4 before;
+        Matrix4x4 after;
+
+        before.translate(1, 2, 3);
+        after.scale(0.5f, 2.0f, 1.0f);
+
+        Matrix4x4 blend;
+
+        multiply(before, after, &blend);
+
+        Vector3f vec(0, 0, 0);
+
+        blend.multiply(vec, &vec);
+
+
+        blend.print();
+        jclogf("mult vec(%f, %f, %f)", vec.x, vec.y, vec.z);
+        _assertTrue(equals(0.5f, vec.x));
+        _assertTrue(equals(4.0f, vec.y));
+        _assertTrue(equals(3.0f, vec.z));
+    }
+
+    // check 4x4
+    {
+        Matrix4x4 before;
+        Matrix4x4 after;
+
+        before.scale(0.5f, 2.0f, 1.0f);
+        after.translate(1, 2, 3);
+
+        Matrix4x4 blend;
+
+        multiply(before, after, &blend);
+
+        Vector3f vec(1, 1, 1);
+
+        blend.multiply(vec, &vec);
+
+
+        blend.print();
+        jclogf("mult vec(%f, %f, %f)", vec.x, vec.y, vec.z);
+        _assertTrue(equals(1.0f + 0.5f, vec.x));
+        _assertTrue(equals(2.0f + 2.0f, vec.y));
+        _assertTrue(equals(3.0f + 1.0f, vec.z));
+    }
+
+    // check 4x3
+    {
+        Matrix4x3 before;
+        Matrix4x3 after;
+
+        before.translate(1, 2, 3);
+        after.scale(0.5f, 2.0f, 1.0f);
+
+        Matrix4x3 blend;
+
+        multiply(before, after, &blend);
+
+        Vector3f vec(0, 0, 0);
+
+        blend.multiply(vec, &vec);
+
+
+        blend.print();
+        jclogf("mult vec(%f, %f, %f)", vec.x, vec.y, vec.z);
+        _assertTrue(equals(0.5f, vec.x));
+        _assertTrue(equals(4.0f, vec.y));
+        _assertTrue(equals(3.0f, vec.z));
+    }
+
+    // check 4x3
+    {
+        Matrix4x3 before;
+        Matrix4x3 after;
+
+        before.scale(0.5f, 2.0f, 1.0f);
+        after.translate(1, 2, 3);
+
+        Matrix4x3 blend;
+
+        multiply(before, after, &blend);
+
+        Vector3f vec(1, 1, 1);
+
+        blend.multiply(vec, &vec);
+
+
+        blend.print();
+        jclogf("mult vec(%f, %f, %f)", vec.x, vec.y, vec.z);
+        _assertTrue(equals(1.0f + 0.5f, vec.x));
+        _assertTrue(equals(2.0f + 2.0f, vec.y));
+        _assertTrue(equals(3.0f + 1.0f, vec.z));
+    }
+}

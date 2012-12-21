@@ -49,10 +49,35 @@ struct Matrix {
     }
 
     /**
+     * 単位行列であることを確認する
+     */
+    inline jcboolean isIdentity() const {
+        for (int i = 0; i < ROW; ++i) {
+            for (int k = 0; k < COLM; ++k) {
+                if (i == k) {
+
+                    if (!equals(1.0f, m[i][k])) {
+                        return jcfalse;
+                    }
+
+                } else {
+
+                    if (!equals(0.0f, m[i][k])) {
+                        return jcfalse;
+                    }
+
+                }
+            }
+        }
+
+        return jctrue;
+    }
+
+    /**
      * ベクトルと行列の掛け算を行う
      * result == &originでも問題なく動作する
      */
-    inline Vector3f* multiply(const Vector3f &origin, Vector3f *result) {
+    inline Vector3f* multiply(const Vector3f &origin, Vector3f *result) const {
         result->set(
 //
                 // x
@@ -62,6 +87,33 @@ struct Matrix {
                 // z
                 m[0][2] * origin.x + m[1][2] * origin.y + m[2][2] * origin.z + m[3][2]);
         return result;
+    }
+
+    /**
+     * float[3]と行列の演算を行う
+     */
+    inline void multiply3(const float *origin3f, float w, float *result4f) const {
+
+        // x
+        result4f[0] = m[0][0] * origin3f[0] + m[1][0] * origin3f[1] + m[2][0] * origin3f[2] + m[3][0] * w;
+        // y
+        result4f[1] = m[0][1] * origin3f[0] + m[1][1] * origin3f[1] + m[2][1] * origin3f[2] + m[3][1] * w;
+        // z
+        result4f[2] = m[0][2] * origin3f[0] + m[1][2] * origin3f[1] + m[2][2] * origin3f[2] + m[3][2] * w;
+    }
+
+    /**
+     * float[3]と行列の演算を行う
+     */
+    inline void multiply4(const float *origin4f, float *result4f) const {
+        // x
+        result4f[0] = m[0][0] * origin4f[0] + m[1][0] * origin4f[1] + m[2][0] * origin4f[2] + m[3][0] * origin4f[3];
+        // y
+        result4f[1] = m[0][1] * origin4f[0] + m[1][1] * origin4f[1] + m[2][1] * origin4f[2] + m[3][1] * origin4f[3];
+        // z
+        result4f[2] = m[0][2] * origin4f[0] + m[1][2] * origin4f[1] + m[2][2] * origin4f[2] + m[3][2] * origin4f[3];
+        // w
+        result4f[3] = m[0][3] * origin4f[0] + m[1][3] * origin4f[1] + m[2][3] * origin4f[2] + m[3][3] * origin4f[3];
     }
 
     /**
@@ -107,7 +159,7 @@ struct Matrix {
         {
             m[2][0] = (XZ * (1.0f - _cos)) - Ysin;
             m[2][1] = (YZ * (1.0f - _cos)) + Xsin;
-            m[2][2] = (XY * (1.0f - _cos)) + _cos;
+            m[2][2] = (ZZ * (1.0f - _cos)) + _cos;
         }
     }
 
@@ -127,14 +179,14 @@ struct Matrix {
         return m[row];
     }
 
-    inline float get(const int row, const int colmn) {
+    inline float get(const int row, const int colmn) const {
         return m[row][colmn];
     }
 
     /**
      * 内容をデバッグ出力する
      */
-    inline void print() {
+    inline void print() const {
         for (int r = 0; r < ROW; ++r) {
             switch (COLM) {
                 case 3:
@@ -148,5 +200,41 @@ struct Matrix {
     }
 };
 
+typedef Matrix<4, 3> Matrix4x3;
+typedef Matrix<4, 4> Matrix4x4;
+
+/**
+ * 行列乗算を行う
+ */
+inline Matrix4x4* multiply(const Matrix4x4 &before, const Matrix4x4 &after, Matrix4x4 *result) {
+
+    // テンポラリ領域
+    float temp[4][4];
+
+    after.multiply4(before.m[0], temp[0]);
+    after.multiply4(before.m[1], temp[1]);
+    after.multiply4(before.m[2], temp[2]);
+    after.multiply4(before.m[3], temp[3]);
+
+    memcpy(result->m, temp, sizeof(temp));
+    return result;
+}
+
+/**
+ * 行列乗算を行う
+ */
+inline Matrix4x3* multiply(const Matrix4x3 &before, const Matrix4x3 &after, Matrix4x3 *result) {
+
+    // テンポラリ領域
+    float temp[4][3];
+
+    after.multiply3(before.m[0], 0, temp[0]);
+    after.multiply3(before.m[1], 0, temp[1]);
+    after.multiply3(before.m[2], 0, temp[2]);
+    after.multiply3(before.m[3], 1, temp[3]);
+
+    memcpy(result->m, temp, sizeof(temp));
+    return result;
+}
 }
 #endif /* JCMATRIX4X4_H_ */
