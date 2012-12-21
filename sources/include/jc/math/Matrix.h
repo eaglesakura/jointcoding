@@ -9,13 +9,24 @@
 #define JCMATRIX4X4_H_
 
 #include    "jc/system/Macro.h"
+#include    "jc/math/Vec3.h"
 namespace jc {
 
 /**
  * 4x4のOpenGL ES 2.0に最適化された行列クラスを扱う。
+ * 3D利用の場合
+ *     ROW    = 4
+ *     COLMN >= 3
+ *
+ *               → colmn
+ *         1 0 0 0
+ *         0 1 0 0
+ *     ↓  0 0 1 0
+ * row     0 0 0 1
  */
+template<s32 ROW, s32 COLM>
 struct Matrix {
-    float m[4][4];
+    float m[ROW][COLM];
 
     Matrix() {
         identity();
@@ -25,8 +36,8 @@ struct Matrix {
      * 単位行列に設定する
      */
     inline void identity() {
-        for (int i = 0; i < 4; ++i) {
-            for (int k = 0; k < 4; ++k) {
+        for (int i = 0; i < ROW; ++i) {
+            for (int k = 0; k < COLM; ++k) {
                 if (i == k) {
                     m[i][k] = 1.0f;
                 } else {
@@ -37,10 +48,56 @@ struct Matrix {
     }
 
     /**
+     * ベクトルと行列の掛け算を行う
+     * result == &originでも問題なく動作する
+     */
+    inline Vector3f* multiply(const Vector3f &origin, Vector3f *result) {
+        result->set(
+//
+                // x
+                m[0][0] * origin.x + m[1][0] * origin.y + m[2][0] * origin.z + m[3][0],
+                // y
+                m[0][1] * origin.x + m[1][1] * origin.y + m[2][1] * origin.z + m[3][1],
+                // z
+                m[0][2] * origin.x + m[1][2] * origin.y + m[2][2] * origin.z + m[3][2]);
+        return result;
+    }
+
+    /**
+     * 位置行列を管理する
+     */
+    inline Matrix& translate(const float x, const float y, const float z) {
+        m[3][0] = x;
+        m[3][1] = y;
+        m[3][2] = z;
+        return (*this);
+    }
+
+    /**
      *
      */
-    inline float* operator[](s32 index ) {
-        return m[index];
+    inline float* operator[](const int row) {
+        return m[row];
+    }
+
+    inline float get(const int row, const int colmn) {
+        return m[row][colmn];
+    }
+
+    /**
+     * 内容をデバッグ出力する
+     */
+    inline void print() {
+        for (int r = 0; r < ROW; ++r) {
+            switch (COLM) {
+                case 3:
+                    jclogf("  %d | %05.3f, %05.3f, %05.3f", r, m[r][0], m[r][1], m[r][2]);
+                    break;
+                case 4:
+                    jclogf("  %d | %05.3f, %05.3f, %05.3f, %05.3f", r, m[r][0], m[r][1], m[r][2], m[r][3]);
+                    break;
+            }
+        }
     }
 };
 
