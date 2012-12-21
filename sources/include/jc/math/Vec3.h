@@ -71,7 +71,7 @@ struct _Vector3 {
     /**
      * 減算を行う
      */
-    _Vector3<T> operator-(const _Vector3<T> v) {
+    _Vector3<T> operator-(const _Vector3<T> v) const {
         return _Vector3<T>(x - v.x, y - v.y, z - v.z);
     }
 

@@ -11,6 +11,8 @@
 #include    "jc/system/Macro.h"
 #include    "jc/math/Math.h"
 #include    "jc/math/Vec3.h"
+#include    "jc/mem/MemoryUtil.h"
+
 namespace jc {
 
 /**

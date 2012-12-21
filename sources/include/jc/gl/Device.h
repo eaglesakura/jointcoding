@@ -255,6 +255,13 @@ public:
         return context->getVRAM();
     }
 
+    /**
+     * サーフェイスのアスペクト比を取得する
+     */
+    virtual float getSurfaceAspect() const {
+        return (float) surface->getWidth() / (float) surface->getHeight();
+    }
+
     friend class DeviceLock;
 };
 
