@@ -53,6 +53,7 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     this->unifBlendColor = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
+    this->shaderContext.blendColor = Color::fromRGBAi(0, 0, 0, 0);
     this->initialize(device);
 }
 

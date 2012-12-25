@@ -28,7 +28,7 @@ void FigureDataOutputStream::initialize(const ModelerType_e modeler) {
     modelMatrix.identity();
     switch (modeler) {
         case ModelerType_3dsMax:
-//            modelMatrix.rotate(1, 0, 0, 90);
+            modelMatrix.rotate(1, 0, 0, 90);
             break;
         default:
             break;
@@ -48,7 +48,9 @@ void FigureDataOutputStream::writeVector3(const Vector3f &v, const jcboolean tra
     // 事前モデル行列を割り当てる
     modelMatrix.multiply(v, &temp);
 
-    this->writeFixed32Array((const float*) &v, 3, fixedbits);
+    this->writeFixed32(temp.x, fixedbits);
+    this->writeFixed32(temp.y, fixedbits);
+    this->writeFixed32(temp.z, fixedbits);
 }
 
 /**
@@ -70,7 +72,19 @@ void FigureDataOutputStream::writeVertices(const void* vertices, const u32 verti
  *
  */
 void FigureDataOutputStream::writeCoord(const Vector2f &v) {
-    this->writeFixed32Array((const float*) &v, 2, fixedbits);
+
+    switch (modeler) {
+        case ModelerType_3dsMax: {
+            this->writeFixed32(v.x, fixedbits);
+            this->writeFixed32(1.0f - v.y, fixedbits);
+        }
+            break;
+        default: {
+            this->writeFixed32(v.x, fixedbits);
+            this->writeFixed32(v.y, fixedbits);
+        }
+            break;
+    }
 }
 
 }
