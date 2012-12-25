@@ -78,6 +78,8 @@ struct Matrix {
     /**
      * ベクトルと行列の掛け算を行う
      * result == &originでも問題なく動作する
+     *
+     * COLMNが4以上ある場合、Wの正規化を行う
      */
     inline Vector3f* multiply(const Vector3f &origin, Vector3f *result) const {
         result->set(
@@ -88,6 +90,14 @@ struct Matrix {
                 m[0][1] * origin.x + m[1][1] * origin.y + m[2][1] * origin.z + m[3][1],
                 // z
                 m[0][2] * origin.x + m[1][2] * origin.y + m[2][2] * origin.z + m[3][2]);
+
+        if (COLM >= 4) {
+            const float w = m[0][3] * origin.x + m[1][3] * origin.y + m[2][3] * origin.z + m[3][3];
+            result->x /= w;
+            result->y /= w;
+            result->z /= w;
+        }
+
         return result;
     }
 

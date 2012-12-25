@@ -51,6 +51,11 @@ public:
         return NodeType_Mesh;
     }
 
+    /**
+     * 出力を行う
+     */
+    virtual void serialize(FbxExportManager *exportManager);
+
     static MMesh createInstance(KFbxNode *node, MNode parent, FbxImportManager *importManager);
 };
 

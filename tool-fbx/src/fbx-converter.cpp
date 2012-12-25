@@ -16,11 +16,15 @@ int main(int argv, char *args[]) {
     jc::CdtTestRunner::initialize(argv, args);
     {
         add_unittest(testFunction);
+
+
+#if 0
         add_unittest(test_binaryOutput);
         add_unittest(test_matrix_transform);
         add_unittest(test_matrix_rotate);
         add_unittest(test_matrix_scaling);
         add_unittest(test_matrix_multiply);
+#endif
     }
     jc::CdtTestRunner::run();
 

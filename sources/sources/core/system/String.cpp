@@ -9,9 +9,6 @@
 
 namespace jc {
 
-
-
-
 /**
  * ネイティブの文字列型。
  * 基本的にはstd::string。対応してなければ、適宜書き換える。
@@ -51,12 +48,12 @@ String String::operator+(const String &str) const {
     const string_t &a = this->native_string.as<string_t>();
     const string_t &b = str.native_string.as<string_t>();
 
-    return String( (a+b).c_str());
+    return String((a + b).c_str());
 }
 
-    /**
-     * 文字列加算
-     */
+/**
+ * 文字列加算
+ */
 String& String::operator+=(const String &str) {
     string_t &a = this->native_string.as<string_t>();
     const string_t &b = str.native_string.as<string_t>();
@@ -118,6 +115,21 @@ s32 String::indexOf(const charactor *str) const {
 String String::substring(const s32 begin, const s32 end) const {
     string_t str = _native->substr(begin, end);
     return String(str.c_str());
+}
+
+
+/**
+ * 文字列として取得する
+ */
+String String::format(const charactor *fmt, ...) {
+    jc_sa<charactor> temp(new charactor[strlen(fmt) + 256]);
+    va_list ap;
+    va_start(ap, fmt);
+    {
+        vsprintf(temp.get(), fmt, ap);
+    }
+    va_end(ap);
+    return String(temp.get());
 }
 
 }

@@ -11,6 +11,8 @@
 #include    "jc/math/EulerTransform.h"
 #include    <vector>
 
+#include    "jcfbx/output/FbxExportManager.h"
+
 namespace jc {
 namespace fbx {
 
@@ -110,6 +112,18 @@ public:
     virtual NodeType_e getNodeType() const {
         return NodeType_NULL;
     }
+
+    /**
+     * ノード名を取得する
+     */
+    virtual String getName() const {
+        return name;
+    }
+
+    /**
+     * 出力を行う
+     */
+    virtual void serialize(FbxExportManager *exportManager);
 
     /**
      * ノード情報を出力する

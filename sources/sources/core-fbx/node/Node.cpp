@@ -13,6 +13,7 @@ namespace fbx {
 Node::Node(KFbxNode *node, s32 nodeNumber) {
     this->parent = NULL;
     this->nodeNumber = nodeNumber;
+    this->name = node->GetName();
 
     // デフォルトポーズを登録する
     retisterDefaultTake(node);
@@ -85,6 +86,39 @@ void Node::addChild(MNode node) {
 
     node->parent = this;
     childs.push_back(node);
+}
+
+/**
+ * 出力を行う
+ */
+void Node::serialize(FbxExportManager *exportManager) {
+    MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.node", getNodeNumber()));
+
+    // ノードの基本情報
+    {
+        stream->writeString(getName()); // ノード名
+        stream->writeU16(getNodeNumber()); // ノード番号
+        stream->writeU16(getNodeType()); // ノード種別
+    }
+
+    // transform
+    {
+        stream->writeVector3(transform.scale);
+
+        {
+            stream->writeS8(transform.rotateType);
+            stream->writeVector3(transform.rotate);
+
+            // vec4としてreadできるように、4byte詰め物をする
+            stream->writeS32(0);
+        }
+        stream->writeVector3(transform.translate);
+    }
+
+    // 子ノードを出力
+    for (u32 i = 0; i < childs.size(); ++i) {
+        childs[i]->serialize(exportManager);
+    }
 }
 
 /**

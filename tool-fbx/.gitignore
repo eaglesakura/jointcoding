@@ -3,5 +3,9 @@
 Debug/
 Release/
 *.dat
+*.meshinfo
+*.node
 *.vertices
+*.normals
+*.coords
 *.indices

@@ -64,52 +64,86 @@ Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
 
         // 実利用可能なように、メッシュ構造を最適化して完了
         MeshFragmentConverter::convertMesh(&fragments, vertices, indices);
-
-        // FIXME 試しに適当なデータを出力してみる
-        {
-            for (u32 i = 0; i < fragments.size(); ++i) {
-                MFigureMeshFragment fragment = fragments[i];
-                for (int ctx_index = 0; ctx_index < fragment->getDrawingContextCount(); ++ctx_index) {
-                    FigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx_index).get();
-
-                    {
-                        charactor verticdes_name[256] = "";
-                        sprintf(verticdes_name, "%s_mtl%d_ctx%d.vertices",  meshNode->GetName(), i, ctx_index);
-                        MOutputStream   os(new FileOutputStream(verticdes_name, NULL));
-                        MBinaryOutputStream stream(new BinaryOutputStream(os));
-
-                        // まずは位置情報だけを書いてちゃんと吐かれているか確認する
-                        stream->writeU32(pContext->vertices_length);
-                        for (u32 vert_index = 0; vert_index < pContext->vertices_length; ++vert_index) {
-                            FigureVertex &vertex = pContext->vertices[vert_index];
-
-                            stream->writeFixed32(vertex.position.x);
-                            stream->writeFixed32(vertex.position.y);
-                            stream->writeFixed32(vertex.position.z);
-                        }
-                    }
-                    {
-                        charactor indices_name[256] = "";
-                        sprintf(indices_name, "%s_mtl%d_ctx%d.indices", meshNode->GetName(), i, ctx_index);
-                        MOutputStream os(new FileOutputStream(indices_name, NULL));
-                        MBinaryOutputStream stream(new BinaryOutputStream(os));
-
-                        // まずは位置情報だけを書いてちゃんと吐かれているか確認する
-                        stream->writeU32(pContext->indices_length);
-                        for (u32 index = 0; index < pContext->indices_length; ++index) {
-//                            jclogf("indices[%d](%d)", (int)index, (int)pContext->indices[index]);
-                            stream->writeU16(pContext->indices[index]);
-                        }
-                    }
-                }
-            }
-        }
     }
 
 }
 
 Mesh::~Mesh() {
 
+}
+
+/**
+ * 出力を行う
+ */
+void Mesh::serialize(FbxExportManager *exportManager) {
+
+    // メッシュ情報を出力
+    {
+        MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.meshinfo", getNodeNumber()));
+
+        stream->writeS8(getFragmentCount()); // マテリアル数
+
+        // マテリアルごとのコンテキスト数
+        for (int i = 0; i < getFragmentCount(); ++i) {
+            MFigureMeshFragment fragment = fragments[i];
+
+            stream->writeS8(fragment->getDrawingContextCount());
+        }
+    }
+
+    // メッシュ情報を出力
+    for (int i = 0; i < getFragmentCount(); ++i) {
+        MFigureMeshFragment fragment = fragments[i];
+        for (int ctx_index = 0; ctx_index < fragment->getDrawingContextCount(); ++ctx_index) {
+            FigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx_index).get();
+
+            const String name = String::format("node%03d_mtl%02d_ctx%02d.vertices", getNodeNumber(), i, ctx_index);
+            // 位置リスト
+            {
+                MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.vertices", name.c_str()));
+
+                // まずは位置情報だけを書いてちゃんと吐かれているか確認する
+                stream->writeU16(pContext->vertices_length);
+
+                // 頂点リストを書き出す
+                stream->writeVertices((const void*) pContext->vertices.get(), pContext->vertices_length, sizeof(FigureVertex));
+            }
+
+            // 法線リスト
+            {
+                MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.normals", name.c_str()));
+                // まずは位置情報だけを書いてちゃんと吐かれているか確認する
+                stream->writeU16(pContext->vertices_length);
+
+                // 頂点リストを書き出す
+                stream->writeVertices((const void*) (((u8*) pContext->vertices.get()) + sizeof(Vector3f)), pContext->vertices_length, sizeof(FigureVertex));
+            }
+
+            // UVリスト
+            {
+                MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.coords", name.c_str()));
+
+                // まずは位置情報だけを書いてちゃんと吐かれているか確認する
+                stream->writeU16(pContext->vertices_length);
+
+                // 頂点リストを書き出す
+                stream->writeVertices((const void*) (((u8*) pContext->vertices.get()) + sizeof(Vector3f) + sizeof(Vector3f)), pContext->vertices_length, sizeof(FigureVertex));
+            }
+
+            // インデックスリスト
+            {
+                MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.indices", name.c_str()));
+                stream->writeU16(pContext->indices_length);
+
+                for (u32 index = 0; index < pContext->indices_length; ++index) {
+                    stream->writeU16(pContext->indices[index]);
+                }
+            }
+        }
+    }
+
+    // ベース情報を出力
+    Node::serialize(exportManager);
 }
 
 MMesh Mesh::createInstance(KFbxNode *node, MNode parent, FbxImportManager *importManager) {

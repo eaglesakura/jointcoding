@@ -101,6 +101,11 @@ public:
     const T& get_native() const {
         return native_string.as<T>();
     }
+
+    /**
+     * フォーマットを指定してStringを作成する
+     */
+    static String format(const charactor *fmt, ...);
 };
 }
 

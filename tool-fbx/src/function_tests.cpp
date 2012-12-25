@@ -5,23 +5,39 @@
  */
 
 #include    "jointcoding-fbx.h"
-#include    "jcfbx/FbxImportManager.h"
 #include    "jc/system/Exception.h"
+#include    "jcfbx/FbxImportManager.h"
+#include    "jcfbx/output/FbxExportManager.h"
+#include    "jcfbx/node/Node.h"
 
 using namespace jc;
 using namespace jc::fbx;
 
 void testFunction() {
 
-    jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("sample.fbx");
+    MNode root;
 
-    try {
-        manager->importFromSceneName("");
-    } catch( Exception &e ) {
-        jcloge(e);
-        throw;
+    // インポート
+    {
+        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("sample.fbx");
+
+        try {
+            manager->importFromSceneName("");
+        } catch (Exception &e) {
+            jcloge(e);
+            throw;
+        }
+
+        root = manager->getConvertedRootNode();
     }
 
-    jclog("finished");
+    // エクスポート
+    jclogf("start export(%x)", root.get());
+    {
+        jc_sp<FbxExportManager> manager(new FbxExportManager());
+        root->serialize(manager.get());
+    }
+
+    jclog("convert finished");
 }
 

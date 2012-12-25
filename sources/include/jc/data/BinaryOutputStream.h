@@ -19,6 +19,7 @@ namespace jc {
  * BinaryInputStreamと対になる。
  */
 class BinaryOutputStream: public Object {
+protected:
     /**
      * 書き込み用の実ストリーム
      */
