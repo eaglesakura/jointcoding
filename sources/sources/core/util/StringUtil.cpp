@@ -9,7 +9,6 @@
 #include    "jc/system/StringUtil.h"
 #include    "boost/algorithm/string.hpp"
 
-
 /**
  * 可変長配列
  * 通常はstd::vector
@@ -37,13 +36,27 @@ namespace jc {
     jc_varray<std::string> temp;
 
     // 分割はboostを利用する
-    boost::split(temp, str, boost::is_any_of(dlm));
+        boost::split(temp, str, boost::is_any_of(dlm));
 
-    for (int i = 0; i < (int)temp.size(); ++i) {
-        result->push_back(temp[i].c_str());
+        for (int i = 0; i < (int)temp.size(); ++i) {
+            result->push_back(temp[i].c_str());
+        }
+
+        return temp.size();
     }
 
-    return temp.size();
+/**
+ * パスを分解し、ファイル名を取り出す。
+ * 取り出せなかった場合はそのまま帰す。
+ */
+const charactor* getFileName(const charactor *path) {
+    if (strchr(path, '/')) {
+        return strrchr(path, '/') + 1;
+    } else if (strchr(path, '\\')) {
+        return strrchr(path, '\\') + 1;
+    } else {
+        return path;
+    }
 }
 
 }

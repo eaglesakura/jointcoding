@@ -24,5 +24,11 @@ namespace jc {
  */
 s32 split(String origin, String delim, ::std::vector<String> *result);
 
+/**
+ * パスを分解し、ファイル名を取り出す。
+ * 取り出せなかった場合はそのまま帰す。
+ */
+const charactor* getFileName(const charactor *path);
+
 }
 #endif /* JCSTRINGUTIL_H_ */

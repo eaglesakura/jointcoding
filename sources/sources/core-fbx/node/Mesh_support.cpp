@@ -14,6 +14,8 @@
 #include "prv_FbxDeformer.h"
 #include    "jcfbx/convert/MeshFragmentConverter.h"
 
+#include    "jc/system/StringUtil.h"
+
 namespace jc {
 namespace fbx {
 
@@ -152,6 +154,7 @@ void createMaterials(std::vector<MFigureMaterial> *result, KFbxMesh *mesh) {
         MFigureMaterial m(new FigureMaterial());
 
         m->name = material->GetName();
+
         if (material->GetClassId().Is(KFbxSurfaceLambert::ClassId)) {
             KFbxSurfaceLambert* mat = (KFbxSurfaceLambert*) material;
             m->ambient.RGBAf(mat->Ambient.Get()[0], mat->Ambient.Get()[1], mat->Ambient.Get()[2], (float) mat->AmbientFactor);
@@ -165,11 +168,18 @@ void createMaterials(std::vector<MFigureMaterial> *result, KFbxMesh *mesh) {
             m->emissive.RGBAf(mat->Emissive.Get()[0], mat->Emissive.Get()[1], mat->Emissive.Get()[2], (float) mat->EmissiveFactor);
         }
         KFbxProperty prop = material->FindProperty(KFbxSurfaceMaterial::sDiffuse);
-        const s32 texNum = prop.GetSrcObjectCount<KFbxTexture>();
+        const s32 texNum = prop.GetSrcObjectCount<KFbxFileTexture>();
         if (texNum) {
-            KFbxTexture *texture = prop.GetSrcObject<KFbxTexture>(0);
-            if (texture && strlen(texture->GetName())) {
-                m->textureName = texture->GetName();
+            KFbxFileTexture *texture = prop.GetSrcObject<KFbxFileTexture>(0);
+            if (texture && texture->GetFileName()) {
+
+                m->textureName = getFileName(texture->GetFileName());
+                /*
+                 if (__getFileName(texture->GetFileName())) {
+                 m->textureName = __getFileName(texture->GetFileName());
+                 }else {
+                 }
+                 * */
             }
         }
 

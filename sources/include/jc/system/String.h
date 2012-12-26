@@ -66,6 +66,11 @@ public:
     String& operator=(const charactor* origin);
 
     /**
+     * map比較演算子
+     */
+    bool operator<(const String &b) const;
+
+    /**
      * 比較を行う
      */
     bool operator==(const String &r) const;

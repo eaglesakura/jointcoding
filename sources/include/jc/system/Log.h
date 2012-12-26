@@ -30,7 +30,11 @@ namespace jc {
  * __FILE__マクロからファイル名を取得する
  */
 inline charactor* __getFileName(const charactor* __file__) {
+#if ( defined(BUILD_MacOSX) || defined(BUILD_Android) || defined(BUILD_MacOSX) )
     return strrchr(__file__, '/') + 1;
+#else
+    return strrchr(__file__, '/') + 1;
+#endif
 }
 
 enum LogType_e {

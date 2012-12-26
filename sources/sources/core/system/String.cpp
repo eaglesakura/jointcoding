@@ -89,10 +89,19 @@ String& String::operator=(const charactor* origin) {
  * 比較を行う
  */
 bool String::operator==(const String &str) const {
-    const string_t&a = this->native_string.as<string_t>();
+    const string_t &a = this->native_string.as<string_t>();
     const string_t &b = str.native_string.as<string_t>();
 
     return a == b;
+}
+/**
+ * map比較演算子
+ */
+bool String::operator<(const String &str) const {
+    const string_t &a = this->native_string.as<string_t>();
+    const string_t &b = str.native_string.as<string_t>();
+
+    return a < b;
 }
 
 /**
@@ -116,7 +125,6 @@ String String::substring(const s32 begin, const s32 end) const {
     string_t str = _native->substr(begin, end);
     return String(str.c_str());
 }
-
 
 /**
  * 文字列として取得する
