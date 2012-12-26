@@ -99,6 +99,12 @@ void Node::serialize(FbxExportManager *exportManager) {
         stream->writeString(getName()); // ノード名
         stream->writeU16(getNodeNumber()); // ノード番号
         stream->writeU16(getNodeType()); // ノード種別
+
+        // 子ノード番号を書き出す
+        stream->writeU16((u16) childs.size());
+        for (u32 i = 0; i < childs.size(); ++i) {
+            stream->writeU16(childs[i]->getNodeNumber());
+        }
     }
 
     // transform

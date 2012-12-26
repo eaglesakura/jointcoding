@@ -36,6 +36,12 @@ enum EulerRotateOrder_e {
      * Z->Y->X順に適用
      */
     EulerRotateOrder_ZYX,
+
+    /**
+     * Ex.クォータニオンとして作成する
+     */
+    EulerRotateOrder_Quaternion = -1,
+
 };
 
 class EulerTransform {

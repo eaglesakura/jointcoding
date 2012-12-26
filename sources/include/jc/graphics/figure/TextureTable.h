@@ -15,12 +15,9 @@ namespace jc {
 template<typename TextureType>
 class TextureTable: public Object {
 
-    typedef jc_sp<TextureType> MTexture;
+    std::vector<jc_sp<TextureType> > value_array;
 
-    /**
-     * テクスチャのKey-Valueマップ
-     */
-    std::map<String, jc_sp<TextureType> > textures;
+    std::vector<String> key_array;
 
 public:
     TextureTable() {
@@ -32,27 +29,36 @@ public:
     }
 
     virtual void clear() {
-        textures.clear();
+        value_array.clear();
+        key_array.clear();
     }
 
     /**
      * 要素を追加する
      */
     virtual void put( const String &key, const jc_sp<TextureType> texture ) {
-        textures.insert( std::map<String, jc_sp<TextureType> >::value_type(key, texture) );
+        if(get(key) ) {
+            return;
+        }
+
+        key_array.push_back(key);
+        value_array.push_back(texture);
     }
 
     /**
      * テクスチャ要素を取得する
      */
-    virtual jc_sp<TextureType> get( const String &key) const {
-        std::map<String, jc_sp<TextureType> >::iterator itr = textures.find(key), end = textures.end();
+    virtual jc_sp<TextureType> get( const String &key) {
+        std::vector<String >::iterator itr = key_array.begin(), end = key_array.end();
 
-        if(itr == end) {
-            return jc_sp<TextureType>();
+        int index = 0;
+        while(itr != end) {
+            if(*itr == key) {
+                return value_array[index];
+            }
+            ++index;
         }
-
-        return (*itr);
+        return jc_sp<TextureType>();
     }
 };
 

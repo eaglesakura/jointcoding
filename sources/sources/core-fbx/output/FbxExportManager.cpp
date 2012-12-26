@@ -4,7 +4,7 @@
  *  Created on: 2012/12/25
  */
 
-#include    "jcfbx/output/FigureDataOutputStream.h"
+#include    "jc/graphics/figure/data/FigureDataOutputStream.h"
 #include    "jcfbx/output/FbxExportManager.h"
 #include    "jc/io/FileOutputStream.h"
 

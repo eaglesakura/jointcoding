@@ -8,7 +8,7 @@
 #define JCFBXMESHFRAGMENT_H_
 
 #include    "jointcoding-fbx.h"
-#include    "jc/graphics/figure/mesh/Figure.h"
+#include    "jc/graphics/figure/Figure.h"
 #include    <vector>
 #include    <map>
 

@@ -9,32 +9,13 @@
 
 #include    "jointcoding-fbx.h"
 #include    "jc/math/EulerTransform.h"
+#include    "jc/graphics/figure/Figure.h"
 #include    <vector>
 
 #include    "jcfbx/output/FbxExportManager.h"
 
 namespace jc {
 namespace fbx {
-
-enum NodeType_e {
-    /**
-     * NULLオブジェクト用
-     * 例えば、視線ターゲットやIKターゲットに利用する
-     */
-    NodeType_NULL,
-
-    /**
-     * 通常メッシュ
-     * アニメーションは存在しない、剛体情報
-     */
-    NodeType_Mesh,
-
-    /**
-     * スキンメッシュ情報
-     * スキニング値が存在する
-     */
-    NodeType_Skin,
-};
 
 class Node;
 typedef jc_sp<Node> MNode;

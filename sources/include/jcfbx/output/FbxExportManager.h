@@ -7,7 +7,7 @@
 #ifndef FBXEXPORTMANAGER_H_
 #define FBXEXPORTMANAGER_H_
 
-#include    "jcfbx/output/FigureDataOutputStream.h"
+#include    "jc/graphics/figure/data/FigureDataOutputStream.h"
 
 namespace jc {
 namespace fbx {

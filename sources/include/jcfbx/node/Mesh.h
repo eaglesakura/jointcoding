@@ -8,7 +8,7 @@
 #define JCFBXMESH_H_
 
 #include    "jcfbx/node/Node.h"
-#include    "jc/graphics/figure/mesh/Figure.h"
+#include    "jc/graphics/figure/Figure.h"
 
 namespace jc {
 namespace fbx {
