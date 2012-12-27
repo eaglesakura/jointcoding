@@ -11,3 +11,6 @@ Release/
 *.indices
 *.info
 *.material
+*.weight
+*.weightindices
+*.bonepicktable

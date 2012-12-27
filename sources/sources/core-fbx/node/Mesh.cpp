@@ -167,7 +167,58 @@ void Mesh::serialize(FbxExportManager *exportManager) {
                 }
             }
 
-            // インデックスリスト
+            // ボーン関連
+            {
+                // ボーンインデックス
+                {
+                    MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.weightindices", name.c_str()));
+
+                    stream->writeU16(pContext->vertices_length);
+
+                    // 1頂点に含まれるウェイト数
+                    stream->writeU8(SIMPLE_BONE_NUM);
+
+                    // ウェイトインデックスリストを書き出す
+                    for (u32 vert_index = 0; vert_index < pContext->vertices_length; ++vert_index) {
+                        for (int weight_index = 0; weight_index < SIMPLE_BONE_NUM; ++weight_index) {
+                            const u8 index = pContext->vertices[vert_index].weight.indices[weight_index];
+                            jclogf("  weight index(%d)", index);
+                            stream->writeU8(index);
+                        }
+                    }
+                }
+                // ボーンウェイト
+                {
+                    MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.weight", name.c_str()));
+
+                    stream->writeU16(pContext->vertices_length);
+                    // 1頂点に含まれるウェイト数
+                    stream->writeU8(SIMPLE_BONE_NUM);
+
+                    // ウェイトインデックスリストを書き出す
+                    for (u32 vert_index = 0; vert_index < pContext->vertices_length; ++vert_index) {
+                        for (int weight_index = 0; weight_index < SIMPLE_BONE_NUM; ++weight_index) {
+                            const float weight = pContext->vertices[vert_index].weight.weights[weight_index];
+
+                            jclogf("  weight(%f)", weight);
+                            stream->writeFixed32(weight);
+                        }
+                    }
+                }
+                // ボーンのピックアップテーブル
+                {
+                    MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.bonepicktable", name.c_str()));
+
+                    stream->writeU16(pContext->bone_pick_table_length);
+
+                    // ウェイトインデックスリストを書き出す
+                    for (u32 pick_index = 0; pick_index < pContext->bone_pick_table_length; ++pick_index) {
+                        stream->writeU8(pContext->bone_pick_table[pick_index]);
+                    }
+                }
+            }
+
+            // インデックスバッファ
             {
                 MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.indices", name.c_str()));
                 stream->writeU16(pContext->indices_length);

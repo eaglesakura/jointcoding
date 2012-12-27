@@ -19,7 +19,7 @@ void testFunction() {
 
     // インポート
     {
-        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("sample.fbx");
+        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("skin-anim.fbx");
 
         try {
             manager->importFromSceneName("");
