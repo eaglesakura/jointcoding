@@ -24,7 +24,7 @@ namespace jc {
  *   L MeshFragment( change material )
  *      L FragmentContext ( 1 draw call <= 32 bones )
  */
-template<typename VertexType, typename MaterialType>
+template<typename VertexType, typename MaterialType, typename VertexBufferType = jc_sa<VertexType>, typename IndexBufferType = jc_sa<u16> >
 class _MeshFragment {
 public:
     /**
@@ -34,7 +34,7 @@ public:
         /**
          * 描画対象の頂点配列
          */
-        jc_sa<VertexType> vertices;
+        VertexBufferType vertices;
 
         /**
          * バーテックスバッファの長さ
@@ -44,7 +44,7 @@ public:
         /**
          * 描画対象のインデックスバッファ
          */
-        jc_sa<u16> indices;
+        IndexBufferType indices;
 
         /**
          * インデックスバッファの長さ
@@ -99,6 +99,20 @@ public:
      */
     virtual void addDrawingContext( jc_sp<DrawingContext> context ) {
         contexts.push_back(context);
+    }
+
+    /**
+     * 描画コンテキスト数を再設定する
+     */
+    virtual void resizeDrawingContextCount(const u32 num) {
+        contexts.resize(num);
+
+        for( u32 i = 0; i < num; ++i ) {
+            jc_sp<DrawingContext> ctx = contexts[i];
+            if(!ctx) {
+                contexts[i].reset(new DrawingContext());
+            }
+        }
     }
 
     /**

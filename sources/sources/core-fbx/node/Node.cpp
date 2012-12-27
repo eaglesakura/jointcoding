@@ -171,5 +171,19 @@ MNode Node::createInstance(KFbxNode *node, MNode parent, FbxImportManager *impor
     return result;
 }
 
+/**
+ * thisを頂点として、管理しているノード数合計を返す。
+ * thisを持つため、>=1は必ず返却されることになる。
+ */
+u32 Node::getAllNodeCount() const {
+    u32 result = 1;
+
+    for (u32 i = 0; i < childs.size(); ++i) {
+        result += childs[i]->getAllNodeCount();
+    }
+
+    return result;
+}
+
 }
 }

@@ -14,8 +14,11 @@ namespace fbx {
 
 class Node;
 
-class FbxExportManager {
+class FbxExportManager: public Object {
 public:
+    FbxExportManager();
+
+    virtual ~FbxExportManager();
 
     /**
      * データ出力用のストリームを作成する
@@ -31,6 +34,11 @@ public:
     MFigureDataOutputStream createOutputStream(Node *current, const String &fileName) {
         return createOutputStream(current, fileName.c_str());
     }
+
+    /**
+     * 全ノードをシリアライズする。
+     */
+    virtual void serialize(jc_sp<Node> rootNode);
 };
 
 }

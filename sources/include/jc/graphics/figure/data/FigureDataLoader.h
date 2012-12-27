@@ -69,6 +69,20 @@ class FigureDataLoader: public Object {
 public:
 
     /**
+     * Figure情報を構築する
+     */
+    struct FigureInfo {
+        /**
+         * 全ノード数
+         */
+        u32 node_num;
+
+        FigureInfo() {
+            node_num = 0;
+        }
+    };
+
+    /**
      * ノード情報を構築する
      */
     struct NodeInfo {
@@ -132,7 +146,9 @@ public:
                 float z;
 
                 /**
-                 * W情報
+                 * w情報
+                 * オイラー角の場合、Wは常に0となる。
+                 * クォータニオンを利用している場合のみ利用する。
                  */
                 float w;
             }rotate;
@@ -197,6 +213,28 @@ public:
         }
     };
 
+    /**
+     * メッシュを構築するデータ
+     */
+    struct MeshData {
+        /**
+         * 読み込んだデータ。
+         * fixed -> float以外は基本的に無加工
+         */
+        jc_sp<void> data;
+
+        /**
+         * データの配列数。
+         * バイト数では無いため、バイト数が欲しい場合はsizeof(型) * data_lengthを行う。
+         */
+        u32 data_length;
+
+        /**
+         * データの種類
+         */
+        MeshDataType_e type;
+    };
+
     FigureDataLoader();
     virtual ~FigureDataLoader();
 
@@ -213,16 +251,34 @@ protected:
     virtual void loadNode( const s32 nodeNumber);
 
     /**
+     * 指定したメッシュ・コンテキストのデータを読み込む
+     * 読み込み後、完了メッセージを送る
+     */
+    virtual void loadMeshData( const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const MeshDataType_e type);
+
+    /**
+     * フィギュアの基本情報を読み込んだ後に呼び出される
+     * サブクラスではノード数分のメモリ確保等を行う。
+     */
+    virtual void onFigureInfoLoadComplete( const FigureInfo &figureInfo) {
+
+    }
+
+    /**
      * ノード情報を読み込んだ場合に呼び出される
      */
-    virtual void onNodeLoadComplete( const NodeInfo &nodeInfo ) = 0;
+    virtual void onNodeLoadComplete( const NodeInfo &nodeInfo ) {
+
+    }
 
     /**
      * onNodeLoaded()完了後、メッシュ情報を読み込んだ後に呼び出される
      *
      * @param load_request 読み込みを行うデータのリクエストを行う
      */
-    virtual void onMeshLoadComplete( const NodeInfo &nodeInfo, const MeshInfo &meshInfo, MeshDataRequest *load_request ) = 0;
+    virtual void onMeshInfoLoadComplete( const NodeInfo &nodeInfo, const MeshInfo &meshInfo, MeshDataRequest *load_request ) {
+
+    }
 
     /**
      * メッシュデータの読み込みを完了した
@@ -232,7 +288,33 @@ protected:
      * @param dataType 読み込みを行ったデータタイプ
      * @param loaded_data 読み込みを行ったデータ
      */
-    virtual void onMeshDataLoadComplete( const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const MeshDataType_e dataType, jc_sa<void*> loaded_data ) = 0;
+    virtual void onMeshDataLoadComplete( const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const MeshData &loaded ) {
+    }
+
+    /**
+     * 指定したコンテキストが全て読み込み終わった。
+     * サブクラスではVBO転送を期待する。
+     */
+    virtual void onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num) {
+    }
+
+    /**
+     * メッシュ内の1マテリアルを読み込み終わった。
+     * 1マテリアルは複数のコンテキストに分割して描画する必要がある。
+     */
+    virtual void onMeshMaterialLoadComplete( const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num) {
+    }
+
+    /**
+     * メッシュデータを読み込み終わった
+     */
+    virtual void onMeshLoadComplete(const FigureDataLoader::NodeInfo &nodeInfo, const FigureDataLoader::MeshInfo &meshInfo) {
+    }
+
+    /**
+     * 大本のインフォメーションを取得する
+     */
+    virtual MBinaryInputStream openFigureInfo() = 0;
 
     /**
      * ノードを読み込む

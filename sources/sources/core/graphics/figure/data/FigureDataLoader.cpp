@@ -22,6 +22,15 @@ FigureDataLoader::~FigureDataLoader() {
  */
 void FigureDataLoader::load() {
 
+    // load figure info
+    {
+        MBinaryInputStream  stream = openFigureInfo();
+        FigureInfo  figure;
+        figure.node_num = stream->readU32();
+
+        onFigureInfoLoadComplete(figure);
+    }
+
     // 最初のノードを読み込む
     loadNode(0);
 }
@@ -85,13 +94,118 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
             mesh.context_num[i] = stream->readS8();
         }
 
-        onMeshLoadComplete(node, mesh, &request);
+        onMeshInfoLoadComplete(node, mesh, &request);
+
+        // マテリアル数×コンテキスト数だけデータを読み込む
+        for (u32 i = 0; i < mesh.material_num; ++i) {
+            for (u32 k = 0; k < mesh.context_num[i]; ++k) {
+                // indices
+                {
+                    loadMeshData(node, mesh, i, k, MeshDataType_Indices);
+                }
+
+                // vertices
+                {
+                    loadMeshData(node, mesh, i, k, MeshDataType_Positions);
+                }
+
+                // coords
+                if (request.coords) {
+                    loadMeshData(node, mesh, i, k, MeshDataType_Coords);
+                }
+
+                // normals
+                if (request.normals) {
+                    loadMeshData(node, mesh, i, k, MeshDataType_Normals);
+                }
+
+                // コンテキストの全情報を読み込み終わった
+                // サブクラスでVBO転送を期待する
+                onMeshMaterialContextLoadComplete(node, mesh, i, k);
+            }
+
+            // 1マテリアルの情報を読み終わった
+            onMeshMaterialLoadComplete(node, mesh, i);
+        }
+
+        // メッシュ全体の読み込みが完了した
+        onMeshLoadComplete(node, mesh);
     }
 
     // 子も読み込む
     for (u32 i = 0; i < node.children_num; ++i) {
         loadNode(node.children[i]);
     }
+}
+/**
+ *
+ */
+void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const MeshDataType_e type) {
+    MBinaryInputStream stream = openMeshData(type, nodeInfo.number, material_num, context_num);
+    MeshData data;
+
+    jclogf("loadMeshData(%d-%d)", material_num, context_num);
+
+    data.type = type;
+    switch (type) {
+        case MeshDataType_Indices: {
+            data.data_length = stream->readU16();
+
+            u16 *ptr = (u16*) malloc(data.data_length * sizeof(u16));
+            data.data.reset((void*) ptr, free);
+
+            for (u32 i = 0; i < data.data_length; ++i) {
+                ptr[i] = stream->readU16();
+            }
+        }
+            break;
+        case MeshDataType_Positions: {
+            data.data_length = stream->readU16();
+
+            Vector3f *ptr = (Vector3f*) malloc(data.data_length * sizeof(Vector3f));
+            data.data.reset((void*) ptr, free);
+
+            for (u32 i = 0; i < data.data_length; ++i) {
+                ptr[i].x = stream->readFixed32();
+                ptr[i].y = stream->readFixed32();
+                ptr[i].z = stream->readFixed32();
+            }
+
+        }
+            break;
+        case MeshDataType_Coords: {
+            data.data_length = stream->readU16();
+
+            Vector2f *ptr = (Vector2f*) malloc(data.data_length * sizeof(Vector2f));
+            data.data.reset((void*) ptr, free);
+
+            for (u32 i = 0; i < data.data_length; ++i) {
+                ptr[i].x = stream->readFixed32();
+                ptr[i].y = stream->readFixed32();
+            }
+        }
+
+            break;
+        case MeshDataType_Normals: {
+            data.data_length = stream->readU16();
+
+            Vector3f *ptr = (Vector3f*) malloc(data.data_length * sizeof(Vector3f));
+            data.data.reset((void*) ptr, free);
+
+            for (u32 i = 0; i < data.data_length; ++i) {
+                ptr[i].x = stream->readFixed32();
+                ptr[i].y = stream->readFixed32();
+                ptr[i].z = stream->readFixed32();
+            }
+        }
+
+            break;
+
+        default:
+            throw create_exception(UnsupportedOperationException, "data type not support...");
+    }
+
+    onMeshDataLoadComplete(nodeInfo, meshInfo, material_num, context_num, data);
 }
 
 }

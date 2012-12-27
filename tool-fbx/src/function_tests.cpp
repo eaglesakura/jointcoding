@@ -35,7 +35,8 @@ void testFunction() {
     jclogf("start export(%x)", root.get());
     {
         jc_sp<FbxExportManager> manager(new FbxExportManager());
-        root->serialize(manager.get());
+
+        manager->serialize(root);
     }
 
     jclog("convert finished");

@@ -11,8 +11,35 @@
 #include    "jc/graphics/figure/TextureTable.h"
 #include    "jc/gl/TextureImage.h"
 
+#include    "jc/gl/IndexBufferObject.h"
+#include    "jc/gl/VertexBufferObject.h"
+
 namespace jc {
 namespace gl {
+
+struct GLFigureVertex {
+    /**
+     * 位置情報
+     */
+    Vector3f position;
+
+    /**
+     * 頂点のUV
+     */
+    Vector2f uv;
+};
+
+typedef VertexBufferObject<GLFigureVertex> FigureVertexBufferObject;
+
+/**
+ * FbxFigureを構築するメッシュ情報
+ */
+typedef _MeshFragment<GLFigureVertex, jc::FigureMaterial, jc_sp<FigureVertexBufferObject>, MIndexBufferObject> GLFigureMeshFragment;
+
+/**
+ * managed
+ */
+typedef jc_sp<GLFigureMeshFragment> MGLFigureMeshFragment;
 
 /**
  * フィギュア構築用のノード情報
@@ -39,7 +66,7 @@ public:
      * レンダリング用フラグメント情報
      * １フラグメント=１マテリアル
      */
-    std::vector<MFigureMeshFragment> renderingFragments;
+    std::vector<MGLFigureMeshFragment> renderingFragments;
 
     /**
      * レンダリング用マテリアル
@@ -65,13 +92,6 @@ class GLFigure: public Object {
 
 protected:
     /**
-     * 指定した番号のノードを取得する
-     */
-    inline FigureNode* getNode(const s32 nodeNumber) const {
-        return nodes[nodeNumber].get();
-    }
-
-    /**
      * ノードのレンダリングを行う
      */
     virtual void onNodeRendering(FigureNode *node);
@@ -79,6 +99,13 @@ public:
     GLFigure();
 
     virtual ~GLFigure();
+
+    /**
+     * 指定した番号のノードを取得する
+     */
+    inline FigureNode* getNodePtr(const s32 nodeNumber) const {
+        return nodes[nodeNumber].get();
+    }
 
     /**
      * レンダリングを開始する
@@ -90,8 +117,31 @@ public:
      * 不要な情報は切り捨ててもいい。
      */
     virtual void load(FigureDataLoader *loader);
+
+    /**
+     * セットアップしたノードをそのままコピーする
+     */
+    virtual void setNodes(const std::vector<MFigureNode> &origin) {
+        nodes = origin;
+    }
+
+    /**
+     * ノード数をリサイズする
+     */
+    virtual void resizeNodeCount(const u32 num) {
+        nodes.resize(num);
+        for (u32 i = 0; i < num; ++i) {
+            MFigureNode node = nodes[i];
+            if (!node) {
+                nodes[i].reset(new FigureNode());
+            }
+        }
+    }
 };
 
-}
+/**
+ * managed
+ */
+typedef jc_sp<GLFigure> MGLFigure;}
 }
 

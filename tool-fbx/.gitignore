@@ -9,3 +9,4 @@ Release/
 *.normals
 *.coords
 *.indices
+*.info

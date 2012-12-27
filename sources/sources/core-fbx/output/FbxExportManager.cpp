@@ -5,11 +5,22 @@
  */
 
 #include    "jc/graphics/figure/data/FigureDataOutputStream.h"
-#include    "jcfbx/output/FbxExportManager.h"
 #include    "jc/io/FileOutputStream.h"
+
+#include    "jcfbx/node/Node.h"
+#include    "jcfbx/output/FbxExportManager.h"
 
 namespace jc {
 namespace fbx {
+
+FbxExportManager::FbxExportManager() {
+
+}
+
+FbxExportManager::~FbxExportManager() {
+
+}
+
 
 /**
  * データ出力用のストリームを作成する
@@ -28,6 +39,25 @@ MFigureDataOutputStream FbxExportManager::createOutputStream(Node *current, cons
     MFigureDataOutputStream result(new FigureDataOutputStream(os));
     result->initialize(FigureDataOutputStream::ModelerType_3dsMax);
     return result;
+}
+
+/**
+ * 全ノードをシリアライズする。
+ */
+void FbxExportManager::serialize(MNode rootNode) {
+
+    {
+        // figure info
+        MFigureDataOutputStream stream = createOutputStream(rootNode.get(), "figure.info");
+
+        u32 allNode = rootNode->getAllNodeCount();
+        jclogf("all nodes(%d)", allNode);
+
+        // ノード数
+        stream->writeU32(rootNode->getAllNodeCount());
+    }
+
+    rootNode->serialize(this);
 }
 
 }

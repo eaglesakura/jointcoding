@@ -66,6 +66,11 @@ public:
     virtual void rendering();
 };
 
+/**
+ * managed
+ */
+typedef jc_sp<IndexBufferObject> MIndexBufferObject;
+
 }
 }
 

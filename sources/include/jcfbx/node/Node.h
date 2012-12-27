@@ -102,6 +102,12 @@ public:
     }
 
     /**
+     * thisを頂点として、管理しているノード数合計を返す。
+     * thisを持つため、>=1は必ず返却されることになる。
+     */
+    virtual u32 getAllNodeCount() const;
+
+    /**
      * 出力を行う
      */
     virtual void serialize(FbxExportManager *exportManager);
