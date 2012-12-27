@@ -173,7 +173,12 @@ void createMaterials(std::vector<MFigureMaterial> *result, KFbxMesh *mesh) {
             KFbxFileTexture *texture = prop.GetSrcObject<KFbxFileTexture>(0);
             if (texture && texture->GetFileName()) {
 
-                m->textureName = getFileName(texture->GetFileName());
+                String fileName = getFileName(texture->GetFileName());
+                s32 dot_index = fileName.indexOf(".");
+                if (dot_index > 0) {
+                    fileName = fileName.substring(0, dot_index);
+                }
+                m->textureName = fileName;
                 /*
                  if (__getFileName(texture->GetFileName())) {
                  m->textureName = __getFileName(texture->GetFileName());

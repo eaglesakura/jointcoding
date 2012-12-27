@@ -17,6 +17,9 @@
 namespace jc {
 namespace gl {
 
+/**
+ * GLフィギュア用の頂点情報
+ */
 struct GLFigureVertex {
     /**
      * 位置情報
@@ -29,6 +32,18 @@ struct GLFigureVertex {
     Vector2f uv;
 };
 
+class GLFigureMaterial: public FigureMaterial {
+public:
+    /**
+     * キャッシュしたテクスチャ.
+     * NULLの場合、テクスチャテーブルから持ちだしてくる。
+     */
+    MTextureImage texture;
+};
+
+/**
+ * VBO
+ */
 typedef VertexBufferObject<GLFigureVertex> FigureVertexBufferObject;
 
 /**
@@ -77,9 +92,56 @@ public:
 typedef jc_sp<FigureNode> MFigureNode;
 
 /**
+ * GLで利用するテクスチャテーブル
+ */
+typedef TextureTable<TextureImage> GLTextureTable;
+
+/**
+ * managed
+ */
+typedef jc_sp<GLTextureTable> MGLTextureTable;
+
+/**
  * 3D上に表示するフィギュアを構築する
  */
 class GLFigure: public Object {
+public:
+    /**
+     * 頂点のインデックス情報を渡す
+     * 利用しない場合はデフォルトのまま
+     */
+    struct ShaderParams {
+        struct {
+            /**
+             * 位置情報
+             */
+            s32 position;
+
+            /**
+             * UV
+             */
+            s32 uv;
+
+            /**
+             * 法線
+             */
+            s32 normals;
+
+        } attributes;
+
+        struct {
+            /**
+             * メインテクスチャのuniform値
+             */
+            s32 tex_0;
+        } uniforms;
+
+        ShaderParams() {
+            attributes.position = attributes.uv = attributes.normals = ATTRIBUTE_DISABLE_INDEX;
+            uniforms.tex_0 = UNIFORM_DISABLE_INDEX;
+        }
+    };
+private:
     /**
      * 全ノードは直線的に管理してしまう。
      */
@@ -88,17 +150,49 @@ class GLFigure: public Object {
     /**
      * テクスチャテーブル
      */
-    TextureTable<TextureImage> textures;
+    MGLTextureTable textures;
+
+    /**
+     * GL用デバイス
+     */
+    MDevice device;
+
+    /**
+     * 指定した番号のノードを描画・探索する
+     */
+    void _rendering(const u32 nodeNumber, const GLFigure::ShaderParams *params);
 
 protected:
+
     /**
      * ノードのレンダリングを行う
      */
-    virtual void onNodeRendering(FigureNode *node);
+    virtual void onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLFigure::ShaderParams *params);
 public:
     GLFigure();
 
     virtual ~GLFigure();
+
+    /**
+     * GL用デバイスを設定する
+     */
+    virtual void setDevice(const MDevice device) {
+        this->device = device;
+    }
+
+    /**
+     * GL用デバイスを取得する
+     */
+    virtual MDevice getDevice() const {
+        return device;
+    }
+
+    /**
+     * テクスチャ設定
+     */
+    virtual void setTextureTable(MGLTextureTable table) {
+        textures = table;
+    }
 
     /**
      * 指定した番号のノードを取得する
@@ -110,13 +204,7 @@ public:
     /**
      * レンダリングを開始する
      */
-    virtual void rendering();
-
-    /**
-     * フィギュアの情報を読み込む。
-     * 不要な情報は切り捨ててもいい。
-     */
-    virtual void load(FigureDataLoader *loader);
+    virtual void rendering(const GLFigure::ShaderParams *params);
 
     /**
      * セットアップしたノードをそのままコピーする

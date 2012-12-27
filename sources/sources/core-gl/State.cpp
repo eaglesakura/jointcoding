@@ -9,7 +9,6 @@
 #include    "jc/gl/GPUCapacity.h"
 #include    "jc/mem/MemoryUtil.h"
 
-
 namespace jc {
 namespace gl {
 
@@ -33,8 +32,12 @@ GLState::GLState() {
     }
     // enable
     {
-        enableContext.depthtest = jcfalse;
         enableContext.texture2d = jcfalse;
+    }
+    // depth
+    {
+        depthContext.enable = jcfalse;
+        depthContext.func = GL_LEQUAL;
     }
     // scissor
     {
@@ -139,8 +142,12 @@ void GLState::syncContext() {
     }
     // enable情報を取得する
     {
-        enableContext.depthtest = glIsEnabled(GL_DEPTH_TEST);
         enableContext.texture2d = glIsEnabled(GL_TEXTURE_2D);
+    }
+    // depth
+    {
+        depthContext.enable = glIsEnabled(GL_DEPTH_TEST);
+        glGetIntegerv(GL_DEPTH_FUNC, (GLint*) &depthContext.func);
     }
     // シザーテスト情報を取得する
     {
@@ -200,9 +207,15 @@ void GLState::print(const charactor* file, const s32 line) const {
     // enable情報を取得する
     {
         jclog("---- glEnable");
-        jclogf("glEnable %s = %s", "GL_DEPTH_TEST", enableContext.depthtest ? "Enable" : "Disable");
         jclogf("glEnable %s = %s", "GL_TEXTURE_2D", enableContext.texture2d ? "Enable" : "Disable");
         jclog("---- glEnable Complete");
+    }
+    // depth
+    {
+        jclog("---- glDepth");
+        jclogf("glEnable %s = %s", "GL_DEPTH_TEST", depthContext.enable ? "Enable" : "Disable");
+        jclogf("glDepthFunc(%d)", depthContext.func);
+        jclog("---- glDepth Complete");
     }
     // シェーダプログラム情報を取得する
     {

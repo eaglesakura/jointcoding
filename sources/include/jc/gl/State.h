@@ -170,12 +170,19 @@ class GLState: public Object {
          */
         jcboolean texture2d;
 
-        /**
-         * 深度テスト
-         * GL_DEPTH_TEST
-         */
-        jcboolean depthtest;
     } enableContext;
+
+    struct {
+        /**
+         * DepthFunc
+         */
+        GLint func;
+
+        /**
+         * test
+         */
+        jcboolean enable;
+    } depthContext;
 
     struct {
         /**
@@ -249,6 +256,30 @@ public:
         }
         return jcfalse;
 #endif
+    }
+
+    /**
+     * デプステストの有効・無効を設定する
+     */
+    inline jcboolean depthTestEnable(const jcboolean enable) {
+        if (depthContext.enable != enable) {
+            depthContext.enable = enable;
+            glEnable(GL_DEPTH_TEST);
+            return jctrue;
+        }
+        return jcfalse;
+    }
+
+    /**
+     * デプステストの関数を設定する
+     */
+    inline jcboolean depthFunc(const GLenum func) {
+        if (depthContext.func != func) {
+            depthContext.func = func;
+            glDepthFunc(func);
+            return jctrue;
+        }
+        return jcfalse;
     }
 
     /**
@@ -348,7 +379,7 @@ public:
 
         // 違うユニットがアクティブ化されていたら、アクティブにし直す
 #ifndef STATE_NO_CHECK
-        if (unit != (s32)textureContext.active) {
+        if (unit != (s32) textureContext.active) {
 #endif
             textureContext.active = unit;
             glActiveTexture(unit);
