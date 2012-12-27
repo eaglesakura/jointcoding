@@ -32,6 +32,9 @@ struct GLFigureVertex {
     Vector2f uv;
 };
 
+/**
+ * Figure用のマテリアル情報
+ */
 class GLFigureMaterial: public FigureMaterial {
 public:
     /**
@@ -39,6 +42,15 @@ public:
      * NULLの場合、テクスチャテーブルから持ちだしてくる。
      */
     MTextureImage texture;
+
+    /**
+     * テクスチャを使用する場合はjctrue
+     */
+    jcboolean use_texture;
+
+    GLFigureMaterial() {
+        use_texture = jcfalse;
+    }
 };
 
 /**
@@ -49,7 +61,7 @@ typedef VertexBufferObject<GLFigureVertex> FigureVertexBufferObject;
 /**
  * FbxFigureを構築するメッシュ情報
  */
-typedef _MeshFragment<GLFigureVertex, jc::FigureMaterial, jc_sp<FigureVertexBufferObject>, MIndexBufferObject> GLFigureMeshFragment;
+typedef _MeshFragment<GLFigureVertex, GLFigureMaterial, jc_sp<FigureVertexBufferObject>, MIndexBufferObject> GLFigureMeshFragment;
 
 /**
  * managed

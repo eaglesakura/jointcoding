@@ -165,6 +165,33 @@ public:
         }
     };
 
+    struct MaterialInfo {
+        /**
+         * マテリアル名
+         */
+        String name;
+
+        /**
+         * テクスチャ名
+         */
+        String texture_name;
+
+        /**
+         *
+         */
+        Color diffuse;
+
+        /**
+         *
+         */
+        Color ambient;
+
+        /**
+         *
+         */
+        Color emissive;
+    };
+
     /**
      * メッシュ情報を格納する
      */
@@ -173,6 +200,11 @@ public:
          * マテリアル数
          */
         u32 material_num;
+
+        /**
+         * 読み込んだマテリアル
+         */
+        std::vector<MaterialInfo> materials;
 
         /**
          * 各マテリアルごとのコンテキスト数
@@ -325,6 +357,11 @@ protected:
      * 指定したノードのメッシュ情報を読み込む
      */
     virtual MBinaryInputStream openMeshInfo(const s32 nodeNumber) = 0;
+
+    /*
+     * 指定したマテリアル情報を読み込む
+     */
+    virtual MBinaryInputStream openMaterialInfo(const s32 nodeNumber, const s32 materialNumber) = 0;
 
     /**
      * メッシュデータを読み込む。

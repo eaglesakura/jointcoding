@@ -94,6 +94,41 @@ void Mesh::serialize(FbxExportManager *exportManager) {
     // メッシュ情報を出力
     for (int i = 0; i < getFragmentCount(); ++i) {
         MFigureMeshFragment fragment = fragments[i];
+
+        // material
+        {
+            const String name = String::format("node%03d_mtl%02d.material", getNodeNumber(), i);
+            MFigureDataOutputStream stream = exportManager->createOutputStream(this, name);
+
+            // 出力対象のマテリアル
+            MFigureMaterial material = fragment->getMaterial();
+
+            stream->writeString(material->name);
+            stream->writeString(material->textureName);
+
+            // diffuse
+            {
+                stream->writeU8(material->diffuse.r());
+                stream->writeU8(material->diffuse.g());
+                stream->writeU8(material->diffuse.b());
+                stream->writeU8(material->diffuse.a());
+            }
+            // ambient
+            {
+                stream->writeU8(material->ambient.r());
+                stream->writeU8(material->ambient.g());
+                stream->writeU8(material->ambient.b());
+                stream->writeU8(material->ambient.a());
+            }
+            // emissive
+            {
+                stream->writeU8(material->emissive.r());
+                stream->writeU8(material->emissive.g());
+                stream->writeU8(material->emissive.b());
+                stream->writeU8(material->emissive.a());
+            }
+        }
+
         for (int ctx_index = 0; ctx_index < fragment->getDrawingContextCount(); ++ctx_index) {
             FigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx_index).get();
 

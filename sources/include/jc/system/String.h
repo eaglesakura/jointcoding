@@ -91,6 +91,11 @@ public:
     String substring(const s32 begin, const s32 end) const;
 
     /**
+     * 空文字だった場合、trueを返す
+     */
+    jcboolean empty() const;
+
+    /**
      * ネイティブクラスに変換して取得する
      * 変換は必ずJC_NATIVE_STRINGを利用しなければならない。
      */

@@ -10,3 +10,4 @@ Release/
 *.coords
 *.indices
 *.info
+*.material

@@ -25,7 +25,7 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
     const u32 material_num = node->renderingFragments.size();
     for (u32 mtl = 0; mtl < material_num; ++mtl) {
         MGLFigureMeshFragment fragment = node->renderingFragments[mtl];
-
+        jc_sp<GLFigureMaterial> material = fragment->getMaterial();
         const u32 context_num = fragment->getDrawingContextCount();
         for (u32 ctx = 0; ctx < context_num; ++ctx) {
             GLFigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx).get();
@@ -45,6 +45,28 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
                 const u32 attr_uv = params->attributes.uv;
                 state->enableVertexAttribArray(attr_uv);
                 state->vertexAttribPointer(attr_uv, 2, GL_FLOAT, GL_FALSE, sizeof(GLFigureVertex), NULL, sizeof(Vector3f));
+            }
+
+            // texture
+            if (params->uniforms.tex_0 != UNIFORM_DISABLE_INDEX && material->use_texture) {
+                const u32 unif_tex0 = params->uniforms.tex_0;
+
+                if (!material->texture) {
+                    material->texture = textures->get(material->textureName);
+
+                    // テクスチャが設定済みの場合、バインドする
+                    if (material->texture) {
+                        const s32 index = material->texture->bind();
+                        glUniform1i(unif_tex0, index);
+                    }
+                } else {
+                    // テクスチャが設定済みの場合、バインドする
+                    if (material->texture) {
+                        const s32 index = material->texture->bind();
+                        glUniform1i(unif_tex0, index);
+                    }
+                }
+
             }
 
             // rendering!

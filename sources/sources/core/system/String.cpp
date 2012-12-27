@@ -35,6 +35,14 @@ const s32 String::length() const {
 }
 
 /**
+ * 空文字だった場合、trueを返す
+ */
+jcboolean String::empty() const {
+    return _native->empty();
+}
+
+
+/**
  * C文字列を取得する
  */
 charactor const* String::c_str() const {

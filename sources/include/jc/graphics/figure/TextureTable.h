@@ -57,6 +57,7 @@ public:
                 return value_array[index];
             }
             ++index;
+            ++itr;
         }
         return jc_sp<TextureType>();
     }

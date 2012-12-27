@@ -24,8 +24,8 @@ void FigureDataLoader::load() {
 
     // load figure info
     {
-        MBinaryInputStream  stream = openFigureInfo();
-        FigureInfo  figure;
+        MBinaryInputStream stream = openFigureInfo();
+        FigureInfo figure;
         figure.node_num = stream->readU32();
 
         onFigureInfoLoadComplete(figure);
@@ -87,11 +87,46 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
 
     // メッシュ情報を読み込む
     if (node.type == NodeType_Mesh) {
-        MBinaryInputStream stream = openMeshInfo(nodeNumber);
-        mesh.material_num = stream->readS8();
-        mesh.context_num.reset(new u32[mesh.material_num]);
+
+        // load main
+        {
+            MBinaryInputStream stream = openMeshInfo(nodeNumber);
+            mesh.material_num = stream->readS8();
+
+            mesh.context_num.reset(new u32[mesh.material_num]);
+            for (u32 i = 0; i < mesh.material_num; ++i) {
+                mesh.context_num[i] = stream->readS8();
+            }
+        }
+
+        // load material
         for (u32 i = 0; i < mesh.material_num; ++i) {
-            mesh.context_num[i] = stream->readS8();
+            MBinaryInputStream stream = openMaterialInfo(nodeNumber, i);
+            FigureDataLoader::MaterialInfo material;
+
+            material.name = stream->readString();
+            material.texture_name = stream->readString();
+
+            {
+                material.diffuse.colors.tag.r = stream->readU8();
+                material.diffuse.colors.tag.g = stream->readU8();
+                material.diffuse.colors.tag.b = stream->readU8();
+                material.diffuse.colors.tag.a = stream->readU8();
+            }
+            {
+                material.ambient.colors.tag.r = stream->readU8();
+                material.ambient.colors.tag.g = stream->readU8();
+                material.ambient.colors.tag.b = stream->readU8();
+                material.ambient.colors.tag.a = stream->readU8();
+            }
+            {
+                material.emissive.colors.tag.r = stream->readU8();
+                material.emissive.colors.tag.g = stream->readU8();
+                material.emissive.colors.tag.b = stream->readU8();
+                material.emissive.colors.tag.a = stream->readU8();
+            }
+
+            mesh.materials.push_back(material);
         }
 
         onMeshInfoLoadComplete(node, mesh, &request);
