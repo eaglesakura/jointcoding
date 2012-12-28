@@ -8,7 +8,7 @@
 #define FBX_NODE_H_
 
 #include    "jointcoding-fbx.h"
-#include    "jc/math/EulerTransform.h"
+#include    "jc/math/Transform.h"
 #include    "jc/graphics/figure/Figure.h"
 #include    <vector>
 
@@ -54,7 +54,7 @@ protected:
     /**
      * 位置情報
      */
-    EulerTransform transform;
+    Transform transform;
 
     Node(KFbxNode *node, s32 nodeNumber);
 
@@ -78,7 +78,7 @@ public:
         return nodeNumber;
     }
 
-    virtual EulerTransform& getTransform() {
+    virtual Transform& getTransform() {
         return transform;
     }
 

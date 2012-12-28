@@ -39,7 +39,7 @@ void Node::retisterDefaultTake(KFbxNode *node) {
         // 回転情報
         {
             FbxDouble3 v = node->LclRotation.Get();
-            transform.rotate.set((float) v[0], (float) v[1], (float) v[2]);
+            transform.rotate.set((float) v[0], (float) v[1], (float) v[2], 0);
         }
         // 基本スケーリング
         {
@@ -113,7 +113,7 @@ void Node::serialize(FbxExportManager *exportManager) {
 
         {
             stream->writeS8(transform.rotateType);
-            stream->writeVector3(transform.rotate);
+            stream->writeVector3(*((Vector3f*)&transform.rotate));
 
             // vec4としてreadできるように、4byte詰め物をする
             stream->writeS32(0);
@@ -139,18 +139,14 @@ MNode Node::createInstance(KFbxNode *node, MNode parent, FbxImportManager *impor
         jclogf("NodeType(%d)", type);
         switch (type) {
             case KFbxNodeAttribute::eNull:
-                // TODO make NullNode
-                jclogf("NodeType(%d = eNull)", type);
+            case KFbxNodeAttribute::eSkeleton:
+                //
+                jclogf("NodeType(%d = DefaultNode)", type);
                 result.reset(new Node(node, importManager->nextNodeId()));
                 break;
             case KFbxNodeAttribute::eMesh:
                 jclogf("NodeType(%d = eMesh)", type);
                 result = Mesh::createInstance(node, parent, importManager);
-                break;
-            case KFbxNodeAttribute::eSkeleton:
-                // TODO make SkeltonNode
-                jclogf("NodeType(%d = eSkelton)", type);
-                result.reset(new Node(node, importManager->nextNodeId()));
                 break;
             default:
                 jclogf("Not Support NodeType(%d)", type);

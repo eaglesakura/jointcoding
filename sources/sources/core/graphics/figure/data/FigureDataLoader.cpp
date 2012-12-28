@@ -70,7 +70,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
             node.def_transform.scale.z = stream->readFixed32();
 
             // rotate
-            node.def_transform.rotate.order = (EulerRotateOrder_e) stream->readS8();
+            node.def_transform.rotate.order = (TransformRotateOrder_e) stream->readS8();
             node.def_transform.rotate.x = stream->readFixed32();
             node.def_transform.rotate.y = stream->readFixed32();
             node.def_transform.rotate.z = stream->readFixed32();

@@ -8,43 +8,44 @@
 #define EULERTRANSFORM_H_
 
 #include    "jc/math/Vec3.h"
+#include    "jc/math/Vec4.h"
 
 namespace jc {
 
-enum EulerRotateOrder_e {
+enum TransformRotateOrder_e {
     /**
      * X->Y->Z順に適用
      */
-    EulerRotateOrder_XYZ = 0,
+    TransformRotateOrder_XYZ = 0,
     /**
      * X->Z->Y順に適用
      */
-    EulerRotateOrder_XZY,
+    TransformRotateOrder_XZY,
     /**
      * Y->X->Z順に適用
      */
-    EulerRotateOrder_YXZ,
+    TransformRotateOrder_YXZ,
     /**
      * Y->Z->X順に適用
      */
-    EulerRotateOrder_YZX,
+    TransformRotateOrder_YZX,
     /**
      * Z->X->Y順に適用
      */
-    EulerRotateOrder_ZXY,
+    TransformRotateOrder_ZXY,
     /**
      * Z->Y->X順に適用
      */
-    EulerRotateOrder_ZYX,
+    TransformRotateOrder_ZYX,
 
     /**
      * Ex.クォータニオンとして作成する
      */
-    EulerRotateOrder_Quaternion = -1,
+    TransformRotateOrder_Quaternion = -1,
 
 };
 
-class EulerTransform {
+class Transform : public Object {
 public:
     /**
      * ノードの位置
@@ -54,24 +55,23 @@ public:
     /**
      * ノードの回転角
      */
-    Vector3f rotate;
+    Vector4f rotate;
 
     /**
      * 回転の適用順番を定義する
      */
-    EulerRotateOrder_e rotateType;
+    TransformRotateOrder_e rotateType;
 
     /**
      * ノードのスケーリング値
      */
     Vector3f scale;
 
-    EulerTransform() {
-        rotateType = EulerRotateOrder_XYZ;
+    Transform() {
+        rotateType = TransformRotateOrder_XYZ;
     }
 
-    ~EulerTransform() {
-
+    virtual ~Transform() {
     }
 };
 

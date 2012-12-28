@@ -12,12 +12,62 @@
 
 using namespace jc;
 
+void test_matrix_invert() {
+
+    for (int i = 0; i < 100; ++i) {
+        Matrix<4, 4> m;
+        Matrix<4, 4> inv;
+        Matrix<4, 4> blend;
+
+        m.rotate(0, 1, 0, i * 3);
+        m.translate(i * 1, i * 100, i * 10);
+
+        m.invert(&inv);
+
+        {
+
+            // blend
+            multiply(m, inv, &blend);
+            if (!blend.isIdentity()) {
+                jclogf("loop(%d)", i);
+                blend.print();
+            }
+
+            _assertTrue(blend.isIdentity(0.001f));
+        }
+    }
+
+    for (int i = 0; i < 100; ++i) {
+        Matrix<4, 3> m;
+        Matrix<4, 3> inv;
+        Matrix<4, 3> blend;
+
+        m.rotate(0, 1, 0, i * 3);
+        m.translate(i * 1, i * 100, i * 10);
+
+        m.invert(&inv);
+
+        {
+
+            // blend
+            multiply(m, inv, &blend);
+            if (!blend.isIdentity()) {
+                jclogf("loop(%d)", i);
+                blend.print();
+            }
+
+            _assertTrue(blend.isIdentity(0.001f));
+        }
+    }
+
+}
+
 void test_matrix_transform() {
     const float tX = 1;
     const float tY = 2;
     const float tZ = 3;
 
-    // check 4x4
+// check 4x4
     {
         Matrix<4, 4> m;
         Vector3f v;
@@ -36,7 +86,7 @@ void test_matrix_transform() {
         _assertEquals(v.z, tZ);
     }
 
-    // check 4x3
+// check 4x3
     {
         Matrix<4, 3> m;
         Vector3f v;
@@ -59,7 +109,7 @@ void test_matrix_transform() {
 void test_matrix_rotate() {
     const float degree = 90;
 
-    // check 4x4
+// check 4x4
     {
         Matrix<4, 4> m;
         Vector3f v(0, 1, 0);
@@ -77,7 +127,7 @@ void test_matrix_rotate() {
         _assertTrue(jc::equals(-1.0f, v.z));
     }
     jclog("-----");
-    // check 4x4
+// check 4x4
     {
         Matrix<4, 4> m;
         Vector3f v(1, 0, 0);
@@ -95,7 +145,7 @@ void test_matrix_rotate() {
         _assertTrue(jc::equals(1.0f, v.z));
     }
     jclog("-----");
-    // check 4x4
+// check 4x4
     {
         Matrix<4, 4> m;
         Vector3f v(0, 1, 0);
@@ -119,7 +169,7 @@ void test_matrix_scaling() {
     const float scale_y = 2.0f;
     const float scale_z = 0.5f;
 
-    // check 4x4
+// check 4x4
     {
         Matrix<4, 4> m;
         Vector3f v(1, 2, 3);
@@ -138,7 +188,7 @@ void test_matrix_scaling() {
         _assertEquals(v.z, 3.0f * scale_z);
     }
 
-    // check 4x3
+// check 4x3
     {
         Matrix<4, 3> m;
         Vector3f v(1, 2, 3);
@@ -161,7 +211,7 @@ void test_matrix_scaling() {
 
 void test_matrix_multiply() {
 
-    // check 4x4
+// check 4x4
     {
         Matrix4x4 before;
         Matrix4x4 after;
@@ -177,7 +227,6 @@ void test_matrix_multiply() {
 
         blend.multiply(vec, &vec);
 
-
         blend.print();
         jclogf("mult vec(%f, %f, %f)", vec.x, vec.y, vec.z);
         _assertTrue(equals(0.5f, vec.x));
@@ -185,7 +234,7 @@ void test_matrix_multiply() {
         _assertTrue(equals(3.0f, vec.z));
     }
 
-    // check 4x4
+// check 4x4
     {
         Matrix4x4 before;
         Matrix4x4 after;
@@ -200,7 +249,6 @@ void test_matrix_multiply() {
         Vector3f vec(1, 1, 1);
 
         blend.multiply(vec, &vec);
-
 
         blend.print();
         jclogf("mult vec(%f, %f, %f)", vec.x, vec.y, vec.z);
@@ -209,7 +257,7 @@ void test_matrix_multiply() {
         _assertTrue(equals(3.0f + 1.0f, vec.z));
     }
 
-    // check 4x3
+// check 4x3
     {
         Matrix4x3 before;
         Matrix4x3 after;
@@ -225,7 +273,6 @@ void test_matrix_multiply() {
 
         blend.multiply(vec, &vec);
 
-
         blend.print();
         jclogf("mult vec(%f, %f, %f)", vec.x, vec.y, vec.z);
         _assertTrue(equals(0.5f, vec.x));
@@ -233,7 +280,7 @@ void test_matrix_multiply() {
         _assertTrue(equals(3.0f, vec.z));
     }
 
-    // check 4x3
+// check 4x3
     {
         Matrix4x3 before;
         Matrix4x3 after;
@@ -248,7 +295,6 @@ void test_matrix_multiply() {
         Vector3f vec(1, 1, 1);
 
         blend.multiply(vec, &vec);
-
 
         blend.print();
         jclogf("mult vec(%f, %f, %f)", vec.x, vec.y, vec.z);

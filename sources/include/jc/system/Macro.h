@@ -158,8 +158,8 @@ inline T abs(const T v) {
  * 2つの浮動小数の同一性をそれなりにチェックする。
  * 演算誤差をある程度考慮する。
  */
-inline jcboolean equals(const float a, const float b) {
-    return abs<float>(a - b) < 0.000001f;
+inline jcboolean equals(const float a, const float b, const float _check = 0.000001f) {
+    return abs<float>(a - b) < _check;
 }
 
 /**

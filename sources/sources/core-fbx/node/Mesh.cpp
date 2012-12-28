@@ -182,7 +182,7 @@ void Mesh::serialize(FbxExportManager *exportManager) {
                     for (u32 vert_index = 0; vert_index < pContext->vertices_length; ++vert_index) {
                         for (int weight_index = 0; weight_index < SIMPLE_BONE_NUM; ++weight_index) {
                             const u8 index = pContext->vertices[vert_index].weight.indices[weight_index];
-                            jclogf("  weight index(%d)", index);
+//                            jclogf("  weight index(%d)", index);
                             stream->writeU8(index);
                         }
                     }
@@ -199,8 +199,7 @@ void Mesh::serialize(FbxExportManager *exportManager) {
                     for (u32 vert_index = 0; vert_index < pContext->vertices_length; ++vert_index) {
                         for (int weight_index = 0; weight_index < SIMPLE_BONE_NUM; ++weight_index) {
                             const float weight = pContext->vertices[vert_index].weight.weights[weight_index];
-
-                            jclogf("  weight(%f)", weight);
+//                            jclogf("  weight(%f)", weight);
                             stream->writeFixed32(weight);
                         }
                     }

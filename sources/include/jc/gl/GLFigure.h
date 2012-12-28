@@ -6,7 +6,7 @@
 
 #include    "jc/graphics/figure/Figure.h"
 
-#include    "jc/math/EulerTransform.h"
+#include    "jc/math/Transform.h"
 #include    "jc/graphics/figure/data/FigureDataLoader.h"
 #include    "jc/graphics/figure/TextureTable.h"
 #include    "jc/gl/TextureImage.h"
@@ -81,7 +81,7 @@ public:
     /**
      * ノードのデフォルト行列
      */
-    EulerTransform defTransform;
+    Transform defTransform;
 
     /**
      * ノード番号

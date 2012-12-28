@@ -27,12 +27,16 @@ namespace jc {
  *     ↓  0 0 1 0
  * row     0 0 0 1
  */
-template<s32 ROW, s32 COLM>
+template<s32 ROW, s32 COLM, typename T = float>
 struct Matrix {
-    float m[ROW][COLM];
+    T m[ROW][COLM];
 
     Matrix() {
         identity();
+    }
+
+    Matrix(const Matrix<ROW, COLM, T> &origin) {
+        memcpy((void*) m, (const void*) origin.m, sizeof(m));
     }
 
     /**
@@ -53,18 +57,20 @@ struct Matrix {
     /**
      * 単位行列であることを確認する
      */
-    inline jcboolean isIdentity() const {
+    inline jcboolean isIdentity(const float threshold = 0.001f) const {
         for (int i = 0; i < ROW; ++i) {
             for (int k = 0; k < COLM; ++k) {
                 if (i == k) {
 
-                    if (!equals(1.0f, m[i][k])) {
+                    if (!equals(1.0f, m[i][k], threshold)) {
+                        jclogf("m[%d][%d] = %f", i, k, m[i][k]);
                         return jcfalse;
                     }
 
                 } else {
 
-                    if (!equals(0.0f, m[i][k])) {
+                    if (!equals(0.0f, m[i][k], threshold)) {
+                        jclogf("m[%d][%d] = %f", i, k, m[i][k]);
                         return jcfalse;
                     }
 
@@ -290,6 +296,107 @@ struct Matrix {
         m[2][2] = Q;
         m[3][2] = -Q * near;
         m[2][3] = 1;
+    }
+
+private:
+    /*!
+     * 4x4行列の行列式の計算
+     *  | m[0]  m[1]  m[2]  m[3]  |
+     *  | m[4]  m[5]  m[6]  m[7]  |
+     *  | m[8]  m[9]  m[10] m[11] |
+     *  | m[12] m[13] m[14] m[15] |
+     * @param[in] m 元の行列
+     * @return 行列式の値
+     */
+    template<typename ORIGIN_TYPE>
+    static inline double calcDetMat4x4(const ORIGIN_TYPE* m) {
+        return m[0] * m[5] * m[10] * m[15] + m[0] * m[6] * m[11] * m[13] + m[0] * m[7] * m[9] * m[14] + m[1] * m[4] * m[11] * m[14] + m[1] * m[6] * m[8] * m[15] + m[1] * m[7] * m[10] * m[12] + m[2] * m[4] * m[9] * m[15] + m[2] * m[5] * m[11] * m[12] + m[2] * m[7] * m[8] * m[13] + m[3] * m[4] * m[10] * m[13] + m[3] * m[5] * m[8] * m[14] + m[3] * m[6] * m[9] * m[12] - m[0] * m[5] * m[11] * m[14]
+                - m[0] * m[6] * m[9] * m[15] - m[0] * m[7] * m[10] * m[13] - m[1] * m[4] * m[10] * m[15] - m[1] * m[6] * m[11] * m[12] - m[1] * m[7] * m[8] * m[14] - m[2] * m[4] * m[11] * m[13] - m[2] * m[5] * m[8] * m[15] - m[2] * m[7] * m[9] * m[12] - m[3] * m[4] * m[9] * m[14] - m[3] * m[5] * m[10] * m[12] - m[3] * m[6] * m[8] * m[13];
+    }
+
+    /*!
+     * 4x4行列の行列式の計算
+     *  | m[0]  m[1]  m[2]  m[3]  |
+     *  | m[4]  m[5]  m[6]  m[7]  |
+     *  | m[8]  m[9]  m[10] m[11] |
+     *  | m[12] m[13] m[14] m[15] |
+     * @param[in] m 元の行列
+     * @param[out] invm 逆行列
+     * @return 逆行列の存在
+     */
+    template<typename ORIGIN_TYPE>
+    inline void _invert(const ORIGIN_TYPE *m, T *invm) const {
+        double det = calcDetMat4x4<ORIGIN_TYPE>(m);
+
+        double inv_det = 1.0 / det;
+
+        int index = 0;
+        if (COLM == 4) {
+
+            invm[index++] = (T) (inv_det * (m[5] * m[10] * m[15] + m[6] * m[11] * m[13] + m[7] * m[9] * m[14] - m[5] * m[11] * m[14] - m[6] * m[9] * m[15] - m[7] * m[10] * m[13]));
+            invm[index++] = (T) (inv_det * (m[1] * m[11] * m[14] + m[2] * m[9] * m[15] + m[3] * m[10] * m[13] - m[1] * m[10] * m[15] - m[2] * m[11] * m[13] - m[3] * m[9] * m[14]));
+            invm[index++] = (T) (inv_det * (m[1] * m[6] * m[15] + m[2] * m[7] * m[13] + m[3] * m[5] * m[14] - m[1] * m[7] * m[14] - m[2] * m[5] * m[15] - m[3] * m[6] * m[13]));
+            invm[index++] = (T) (inv_det * (m[1] * m[7] * m[10] + m[2] * m[5] * m[11] + m[3] * m[6] * m[9] - m[1] * m[6] * m[11] - m[2] * m[7] * m[9] - m[3] * m[5] * m[10]));
+
+            invm[index++] = (T) (inv_det * (m[4] * m[11] * m[14] + m[6] * m[8] * m[15] + m[7] * m[10] * m[12] - m[4] * m[10] * m[15] - m[6] * m[11] * m[12] - m[7] * m[8] * m[14]));
+            invm[index++] = (T) (inv_det * (m[0] * m[10] * m[15] + m[2] * m[11] * m[12] + m[3] * m[8] * m[14] - m[0] * m[11] * m[14] - m[2] * m[8] * m[15] - m[3] * m[10] * m[12]));
+            invm[index++] = (T) (inv_det * (m[0] * m[7] * m[14] + m[2] * m[4] * m[15] + m[3] * m[6] * m[12] - m[0] * m[6] * m[15] - m[2] * m[7] * m[12] - m[3] * m[4] * m[14]));
+            invm[index++] = (T) (inv_det * (m[0] * m[6] * m[11] + m[2] * m[7] * m[8] + m[3] * m[4] * m[10] - m[0] * m[7] * m[10] - m[2] * m[4] * m[11] - m[3] * m[6] * m[8]));
+
+            invm[index++] = (T) (inv_det * (m[4] * m[9] * m[15] + m[5] * m[11] * m[12] + m[7] * m[8] * m[13] - m[4] * m[11] * m[13] - m[5] * m[8] * m[15] - m[7] * m[9] * m[12]));
+            invm[index++] = (T) (inv_det * (m[0] * m[11] * m[13] + m[1] * m[8] * m[15] + m[3] * m[9] * m[12] - m[0] * m[9] * m[15] - m[1] * m[11] * m[12] - m[3] * m[8] * m[13]));
+            invm[index++] = (T) (inv_det * (m[0] * m[5] * m[15] + m[1] * m[7] * m[12] + m[3] * m[4] * m[13] - m[0] * m[7] * m[13] - m[1] * m[4] * m[15] - m[3] * m[5] * m[12]));
+            invm[index++] = (T) (inv_det * (m[0] * m[7] * m[9] + m[1] * m[4] * m[11] + m[3] * m[5] * m[8] - m[0] * m[5] * m[11] - m[1] * m[7] * m[8] - m[3] * m[4] * m[9]));
+
+            invm[index++] = (T) (inv_det * (m[4] * m[10] * m[13] + m[5] * m[8] * m[14] + m[6] * m[9] * m[12] - m[4] * m[9] * m[14] - m[5] * m[10] * m[12] - m[6] * m[8] * m[13]));
+            invm[index++] = (T) (inv_det * (m[0] * m[9] * m[14] + m[1] * m[10] * m[12] + m[2] * m[8] * m[13] - m[0] * m[10] * m[13] - m[1] * m[8] * m[14] - m[2] * m[9] * m[12]));
+            invm[index++] = (T) (inv_det * (m[0] * m[6] * m[13] + m[1] * m[4] * m[14] + m[2] * m[5] * m[12] - m[0] * m[5] * m[14] - m[1] * m[6] * m[12] - m[2] * m[4] * m[13]));
+            invm[index++] = (T) (inv_det * (m[0] * m[5] * m[10] + m[1] * m[6] * m[8] + m[2] * m[4] * m[9] - m[0] * m[6] * m[9] - m[1] * m[4] * m[10] - m[2] * m[5] * m[8]));
+
+        } else {
+
+            invm[index++] = (T) (inv_det * (m[5] * m[10] * m[15] + m[6] * m[11] * m[13] + m[7] * m[9] * m[14] - m[5] * m[11] * m[14] - m[6] * m[9] * m[15] - m[7] * m[10] * m[13]));
+            invm[index++] = (T) (inv_det * (m[1] * m[11] * m[14] + m[2] * m[9] * m[15] + m[3] * m[10] * m[13] - m[1] * m[10] * m[15] - m[2] * m[11] * m[13] - m[3] * m[9] * m[14]));
+            invm[index++] = (T) (inv_det * (m[1] * m[6] * m[15] + m[2] * m[7] * m[13] + m[3] * m[5] * m[14] - m[1] * m[7] * m[14] - m[2] * m[5] * m[15] - m[3] * m[6] * m[13]));
+//            invm[index++] = (T) (inv_det * (m[1] * m[7] * m[10] + m[2] * m[5] * m[11] + m[3] * m[6] * m[9] - m[1] * m[6] * m[11] - m[2] * m[7] * m[9] - m[3] * m[5] * m[10]));
+
+            invm[index++] = (T) (inv_det * (m[4] * m[11] * m[14] + m[6] * m[8] * m[15] + m[7] * m[10] * m[12] - m[4] * m[10] * m[15] - m[6] * m[11] * m[12] - m[7] * m[8] * m[14]));
+            invm[index++] = (T) (inv_det * (m[0] * m[10] * m[15] + m[2] * m[11] * m[12] + m[3] * m[8] * m[14] - m[0] * m[11] * m[14] - m[2] * m[8] * m[15] - m[3] * m[10] * m[12]));
+            invm[index++] = (T) (inv_det * (m[0] * m[7] * m[14] + m[2] * m[4] * m[15] + m[3] * m[6] * m[12] - m[0] * m[6] * m[15] - m[2] * m[7] * m[12] - m[3] * m[4] * m[14]));
+//            invm[index++] = (T) (inv_det * (m[0] * m[6] * m[11] + m[2] * m[7] * m[8] + m[3] * m[4] * m[10] - m[0] * m[7] * m[10] - m[2] * m[4] * m[11] - m[3] * m[6] * m[8]));
+
+            invm[index++] = (T) (inv_det * (m[4] * m[9] * m[15] + m[5] * m[11] * m[12] + m[7] * m[8] * m[13] - m[4] * m[11] * m[13] - m[5] * m[8] * m[15] - m[7] * m[9] * m[12]));
+            invm[index++] = (T) (inv_det * (m[0] * m[11] * m[13] + m[1] * m[8] * m[15] + m[3] * m[9] * m[12] - m[0] * m[9] * m[15] - m[1] * m[11] * m[12] - m[3] * m[8] * m[13]));
+            invm[index++] = (T) (inv_det * (m[0] * m[5] * m[15] + m[1] * m[7] * m[12] + m[3] * m[4] * m[13] - m[0] * m[7] * m[13] - m[1] * m[4] * m[15] - m[3] * m[5] * m[12]));
+//            invm[index++] = (T) (inv_det * (m[0] * m[7] * m[9] + m[1] * m[4] * m[11] + m[3] * m[5] * m[8] - m[0] * m[5] * m[11] - m[1] * m[7] * m[8] - m[3] * m[4] * m[9]));
+
+            invm[index++] = (T) (inv_det * (m[4] * m[10] * m[13] + m[5] * m[8] * m[14] + m[6] * m[9] * m[12] - m[4] * m[9] * m[14] - m[5] * m[10] * m[12] - m[6] * m[8] * m[13]));
+            invm[index++] = (T) (inv_det * (m[0] * m[9] * m[14] + m[1] * m[10] * m[12] + m[2] * m[8] * m[13] - m[0] * m[10] * m[13] - m[1] * m[8] * m[14] - m[2] * m[9] * m[12]));
+            invm[index++] = (T) (inv_det * (m[0] * m[6] * m[13] + m[1] * m[4] * m[14] + m[2] * m[5] * m[12] - m[0] * m[5] * m[14] - m[1] * m[6] * m[12] - m[2] * m[4] * m[13]));
+//            invm[index++] = (T) (inv_det * (m[0] * m[5] * m[10] + m[1] * m[6] * m[8] + m[2] * m[4] * m[9] - m[0] * m[6] * m[9] - m[1] * m[4] * m[10] - m[2] * m[5] * m[8]));
+
+        }
+
+    }
+
+public:
+
+    /**
+     * 逆行列を計算し、resultに格納する
+     */
+    inline void invert(Matrix<ROW, COLM> *result) const {
+        Matrix<4, 4> temp;
+        for (int i = 0; i < ROW; ++i) {
+            for (int k = 0; k < COLM; ++k) {
+                temp.m[i][k] = m[i][k];
+            }
+        }
+
+        _invert<float>((const float*) temp.m, (float*) result->m);
+    }
+
+    inline void invert() {
+        invert(this);
     }
 };
 

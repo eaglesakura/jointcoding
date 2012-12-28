@@ -9,7 +9,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/data/BinaryInputStream.h"
-#include    "jc/math/EulerTransform.h"
+#include    "jc/math/Transform.h"
 #include    "jc/math/Vec3.h"
 #include    "jc/math/Vec4.h"
 #include    "jc/graphics/figure/Figure.h"
@@ -128,7 +128,7 @@ public:
                 /**
                  * 回転のオーダー
                  */
-                EulerRotateOrder_e order;
+                TransformRotateOrder_e order;
 
                 /**
                  * x

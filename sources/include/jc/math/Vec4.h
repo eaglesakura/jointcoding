@@ -4,8 +4,8 @@
  *  Created on: 2012/10/03
  */
 
-#ifndef JCVEC3_H_
-#define JCVEC3_H_
+#ifndef JCVEC4_H_
+#define JCVEC4_H_
 
 #include "jc/system/Macro.h"
 #include <math.h>
@@ -98,7 +98,7 @@ struct _Vector4 {
     /**
      * 同一性チェック
      */
-    bool operator!=(const _Vector2<T> &v) {
+    bool operator!=(const _Vector4<T> &v) {
         return !equals(x, v.x) || !equals(y, v.y) || !equals(z, v.z) || !equals(w, v.w);
     }
 
@@ -108,7 +108,7 @@ struct _Vector4 {
      * @return
      */
     T length() const {
-        return (T) sqrt(((double) x * (double) x) + ((double) y * (double) y) + ((double) z * (double) z) + ((double)w * (double)w));
+        return (T) sqrt(((double) x * (double) x) + ((double) y * (double) y) + ((double) z * (double) z) + ((double) w * (double) w));
     }
 
     /**
@@ -137,6 +137,16 @@ struct _Vector4 {
         const double tz = z - pz;
         const double tw = w - pw;
         return (T) sqrt((tx * tx) + (ty * ty) + (tz * tz) + (tw * tw));
+    }
+
+    /**
+     * 値を設定する
+     */
+    void set(const T X, const T Y, const T Z, const T W) {
+        x = X;
+        y = Y;
+        z = Z;
+        w = W;
     }
 
     /**
