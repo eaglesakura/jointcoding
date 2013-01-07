@@ -150,33 +150,88 @@ void Node::registerAnimations() {
  * 出力を行う
  */
 void Node::serialize(FbxExportManager *exportManager) {
-    MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.node", getNodeNumber()));
 
     // ノードの基本情報
     {
-        stream->writeString(getName()); // ノード名
-        stream->writeU16(getNodeNumber()); // ノード番号
-        stream->writeU16(getNodeType()); // ノード種別
+        MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.node", getNodeNumber()));
 
-        // 子ノード番号を書き出す
-        stream->writeU16((u16) childs.size());
-        for (u32 i = 0; i < childs.size(); ++i) {
-            stream->writeU16(childs[i]->getNodeNumber());
+        {
+            stream->writeString(getName()); // ノード名
+            stream->writeU16(getNodeNumber()); // ノード番号
+            stream->writeU16(getNodeType()); // ノード種別
+
+            // 子ノード番号を書き出す
+            stream->writeU16((u16) childs.size());
+            for (u32 i = 0; i < childs.size(); ++i) {
+                stream->writeU16(childs[i]->getNodeNumber());
+            }
+        }
+
+        // transform
+        {
+            stream->writeVector3(transform.scale);
+
+            {
+                stream->writeS8(transform.rotateType);
+                stream->writeVector3(*((Vector3f*) &transform.rotate));
+
+                // vec4としてreadできるように、4byte詰め物をする
+                stream->writeS32(0);
+            }
+            stream->writeVector3(transform.translate);
         }
     }
 
-    // transform
-    {
-        stream->writeVector3(transform.scale);
-
+    // animation
+    if (!animator.empty()) {
         {
-            stream->writeS8(transform.rotateType);
-            stream->writeVector3(*((Vector3f*) &transform.rotate));
+            MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.anim_t", getNodeNumber()));
+            const std::vector<TranslateKey> &keys = animator.getTranslates();
 
-            // vec4としてreadできるように、4byte詰め物をする
-            stream->writeS32(0);
+            // キーフレーム数
+            stream->writeU16((u16) keys.size());
+
+            // 全キー
+            for (size_t i = 0; i < keys.size(); ++i) {
+                const TranslateKey &key = keys[i];
+
+                stream->writeU16((u16) key.frame);
+                stream->writeVector3(key.value);
+            }
         }
-        stream->writeVector3(transform.translate);
+        {
+            MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.anim_r", getNodeNumber()));
+            const std::vector<RotateKey> &keys = animator.getRotates();
+
+            // キーフレーム数
+            stream->writeU16((u16) keys.size());
+
+            // 全キー
+            for (size_t i = 0; i < keys.size(); ++i) {
+                const RotateKey &key = keys[i];
+
+                stream->writeU16((u16) key.frame);
+
+                // rotate = vector4
+                stream->writeVector3(Vector3f(key.value.x, key.value.y, key.value.z));
+                stream->writeFixed32(0);
+            }
+        }
+        {
+            MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.anim_s", getNodeNumber()));
+            const std::vector<ScaleKey> &keys = animator.getScales();
+
+            // キーフレーム数
+            stream->writeU16((u16) keys.size());
+
+            // 全キー
+            for (size_t i = 0; i < keys.size(); ++i) {
+                const ScaleKey &key = keys[i];
+
+                stream->writeU16((u16) key.frame);
+                stream->writeVector3(key.value);
+            }
+        }
     }
 
     // 子ノードを出力

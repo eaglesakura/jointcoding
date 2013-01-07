@@ -91,6 +91,13 @@ public:
     }
 
     /**
+     * アニメーションが一切設定されていない場合はtrue
+     */
+    virtual jcboolean empty() {
+        return translates.empty() && rotates.empty() && scales.empty();
+    }
+
+    /**
      * アニメーションの最大フレーム数を取得する
      * 各パラメータはNULLチェックして返す。
      */
@@ -117,6 +124,27 @@ public:
         if (result_all) {
             (*result_all) = max_frame;
         }
+    }
+
+    /**
+     * 位置アニメーション一覧を取得する
+     */
+    const std::vector<TranslateKey>& getTranslates() const {
+        return translates;
+    }
+
+    /**
+     * 回転アニメーション一覧を取得する
+     */
+    const std::vector<RotateKey>& getRotates() const {
+        return rotates;
+    }
+
+    /**
+     * スケーリングキー一覧を取得する
+     */
+    const std::vector<ScaleKey>& getScales() const {
+        return scales;
     }
 
     /**
