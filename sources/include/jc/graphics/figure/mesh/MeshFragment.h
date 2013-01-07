@@ -24,7 +24,7 @@ namespace jc {
  *   L MeshFragment( change material )
  *      L FragmentContext ( 1 draw call <= 32 bones )
  */
-template<typename VertexType, typename MaterialType, typename VertexBufferType = jc_sa<VertexType>, typename IndexBufferType = jc_sa<u16> >
+template<typename VertexType, typename MaterialType, typename VertexBufferType = jc_sa<VertexType>, typename IndexBufferType = jc_sa<u16>, typename BonePickTableType = u8 >
 class _MeshFragment {
 public:
     /**
@@ -53,9 +53,9 @@ public:
 
         /**
          * ボーン行列のピックアップテーブル
-         * i番目の行列マトリクスは bone_matrix[ bonePickTable[i] ] を参照する
+         * i番目の行列マトリクスは bone_matrix( or linked Node Matrix)[ bonePickTable[i] ] を参照する
          */
-        jc_sa<u8> bone_pick_table;
+        jc_sa<BonePickTableType> bone_pick_table;
 
         /**
          * ボーンピックアップテーブルの長さ

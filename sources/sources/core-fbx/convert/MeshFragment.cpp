@@ -15,7 +15,7 @@ namespace fbx {
 MeshFragmentConverter::MeshFragmentConverter() {
     contexts.push_back(MFragmentContext(new FragmentContext()));
     // 最大で利用できるボーン数
-    maxBones = 32;
+    maxBones = 28;
 }
 
 /**

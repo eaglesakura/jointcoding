@@ -30,6 +30,16 @@ struct GLFigureVertex {
      * 頂点のUV
      */
     Vector2f uv;
+
+    /**
+     * ボーンのインデックス
+     */
+    float bone_indices[SIMPLE_BONE_NUM];
+
+    /**
+     * ボーンの重み情報
+     */
+    float bone_weights[SIMPLE_BONE_NUM];
 };
 
 /**
@@ -61,7 +71,7 @@ typedef VertexBufferObject<GLFigureVertex> FigureVertexBufferObject;
 /**
  * FbxFigureを構築するメッシュ情報
  */
-typedef _MeshFragment<GLFigureVertex, GLFigureMaterial, jc_sp<FigureVertexBufferObject>, MIndexBufferObject> GLFigureMeshFragment;
+typedef _MeshFragment<GLFigureVertex, GLFigureMaterial, jc_sp<FigureVertexBufferObject>, MIndexBufferObject, u16> GLFigureMeshFragment;
 
 /**
  * managed
@@ -99,6 +109,16 @@ public:
      * レンダリング用マテリアル
      */
     std::vector<MFigureMaterial> materials;
+
+    /**
+     * デフォルトテイクの逆行列情報
+     */
+    Matrix4x4 matrix_default_invert;
+
+    /**
+     * 現在の行列
+     */
+    Matrix4x4 matrix_current_world;
 };
 
 typedef jc_sp<FigureNode> MFigureNode;
@@ -174,6 +194,11 @@ private:
      */
     void _rendering(const u32 nodeNumber, const GLFigure::ShaderParams *params);
 
+    /**
+     * 逆行列を作成する
+     */
+    void _initializeInvertMatrices(const u32 nodeNumber, Matrix4x4 parent);
+
 protected:
 
     /**
@@ -237,6 +262,14 @@ public:
             }
         }
     }
+
+    /**
+     * 各ノードの逆行列を作成する.
+     * 初回に一度だけ呼び出せばいい。
+     *
+     * 各頂点はglobal行列適用済みのため、一度逆行列を通してローカルに落とし込んだ後、再度現在のボーンに合わせて行列を当てる必要がある。
+     */
+    virtual void initializeInvertMatrices();
 };
 
 /**

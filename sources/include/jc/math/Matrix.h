@@ -428,6 +428,7 @@ public:
     inline float* operator[](const int row) const {
         return (float*) m[row];
     }
+
 };
 
 typedef Matrix<4, 3> Matrix4x3;
@@ -436,7 +437,7 @@ typedef Matrix<4, 4> Matrix4x4;
 /**
  * 行列乗算を行う
  */
-inline Matrix4x4* multiply(const Matrix4x4 &before, const Matrix4x4 &after, Matrix4x4 *result) {
+inline static Matrix<4, 4>* multiply(const Matrix<4, 4> &before, const Matrix<4, 4> &after, Matrix<4, 4> *result) {
 
     // テンポラリ領域
     float temp[4][4];
@@ -453,7 +454,7 @@ inline Matrix4x4* multiply(const Matrix4x4 &before, const Matrix4x4 &after, Matr
 /**
  * 行列乗算を行う
  */
-inline Matrix4x3* multiply(const Matrix4x3 &before, const Matrix4x3 &after, Matrix4x3 *result) {
+inline static Matrix<4, 3>* multiply(const Matrix<4, 3> &before, const Matrix<4, 3> &after, Matrix<4, 3> *result) {
 
     // テンポラリ領域
     float temp[4][3];
@@ -466,5 +467,6 @@ inline Matrix4x3* multiply(const Matrix4x3 &before, const Matrix4x3 &after, Matr
     memcpy(result->m, temp, sizeof(temp));
     return result;
 }
+
 }
 #endif /* JCMATRIX4X4_H_ */

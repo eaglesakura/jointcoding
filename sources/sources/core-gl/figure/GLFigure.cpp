@@ -98,5 +98,37 @@ void GLFigure::rendering(const GLFigure::ShaderParams *params) {
     _rendering(0, params);
 }
 
+/**
+ * 各ノードの逆行列を作成する.
+ * 初回に一度だけ呼び出せばいい。
+ *
+ * 各頂点はglobal行列適用済みのため、一度逆行列を通してローカルに落とし込んだ後、再度現在のボーンに合わせて行列を当てる必要がある。
+ */
+void GLFigure::initializeInvertMatrices() {
+    _initializeInvertMatrices(0, Matrix4x4());
+}
+/**
+ * 逆行列を作成する
+ */
+void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, Matrix4x4 parent) {
+    FigureNode *node = getNodePtr(nodeNumber);
+
+    // make local
+    Matrix4x4 local;
+    node->defTransform.getMatrix(&local);
+
+    // make global
+    // 現在の行列 = デフォルトのワールド行列とする
+    multiply(local, parent, &node->matrix_current_world);
+
+    // invert!!
+    node->matrix_current_world.invert(&node->matrix_default_invert);
+
+    // 子を作成する
+    for (u32 i = 0; i < node->children.size(); ++i) {
+        _initializeInvertMatrices(node->children[i], node->matrix_current_world);
+    }
+}
+
 }
 }

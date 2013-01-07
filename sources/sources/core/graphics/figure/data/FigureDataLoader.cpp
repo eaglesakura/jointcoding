@@ -33,6 +33,8 @@ void FigureDataLoader::load() {
 
     // 最初のノードを読み込む
     loadNode(0);
+
+    onLoadCompleted();
 }
 /**
  * 指定した番号のノードを読み込む
@@ -154,6 +156,13 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
                     loadMeshData(node, mesh, i, k, MeshDataType_Normals);
                 }
 
+                // bone weight
+                if (request.bone_weight) {
+                    loadMeshData(node, mesh, i, k, MeshDataType_BoneWeight);
+                    loadMeshData(node, mesh, i, k, MeshDataType_BoneIndices);
+                    loadMeshData(node, mesh, i, k, MeshDataType_BonePickTables);
+                }
+
                 // コンテキストの全情報を読み込み終わった
                 // サブクラスでVBO転送を期待する
                 onMeshMaterialContextLoadComplete(node, mesh, i, k);
@@ -231,6 +240,46 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
                 ptr[i].x = stream->readFixed32();
                 ptr[i].y = stream->readFixed32();
                 ptr[i].z = stream->readFixed32();
+            }
+        }
+            break;
+        case MeshDataType_BoneIndices: {
+            data.data_length = stream->readU16();
+
+            // １頂点に含まれるbone weightの数
+            const int weight_num = stream->readU8();
+
+            u8 *ptr = (u8*) malloc(data.data_length * weight_num);
+            data.data.reset((void*) ptr, free);
+
+            for (u32 i = 0; i < (data.data_length * weight_num); ++i) {
+                ptr[i] = stream->readU8();
+            }
+        }
+            break;
+
+        case MeshDataType_BoneWeight: {
+            data.data_length = stream->readU16();
+
+            // １頂点に含まれるbone weightの数
+            const int weight_num = stream->readU8();
+
+            float *ptr = (float*) malloc(data.data_length * weight_num * sizeof(float));
+            data.data.reset((void*) ptr, free);
+
+            for (u32 i = 0; i < (data.data_length * weight_num); ++i) {
+                ptr[i] = stream->readFixed32();
+            }
+        }
+            break;
+        case MeshDataType_BonePickTables: {
+            data.data_length = stream->readU16();
+
+            u16 *ptr = (u16*) malloc(data.data_length * sizeof(u16));
+            data.data.reset((void*) ptr, free);
+
+            for (u32 i = 0; i < (data.data_length); ++i) {
+                ptr[i] = stream->readU16();
             }
         }
 

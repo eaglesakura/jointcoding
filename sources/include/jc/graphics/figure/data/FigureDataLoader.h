@@ -277,6 +277,14 @@ public:
     virtual void load();
 
 protected:
+
+    /**
+     * 読み込むべきフィギュアデータの読み込みが完了した
+     */
+    virtual void onLoadCompleted() {
+
+    }
+
     /**
      * 指定した番号のノードを読み込む
      */

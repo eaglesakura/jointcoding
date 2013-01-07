@@ -9,6 +9,7 @@
 
 #include    "jc/math/Vec3.h"
 #include    "jc/math/Vec4.h"
+#include    "jc/math/Matrix.h"
 
 namespace jc {
 
@@ -45,7 +46,7 @@ enum TransformRotateOrder_e {
 
 };
 
-class Transform : public Object {
+class Transform: public Object {
 public:
     /**
      * ノードの位置
@@ -68,11 +69,65 @@ public:
     Vector3f scale;
 
     Transform() {
+        scale.set(1, 1, 1);
         rotateType = TransformRotateOrder_XYZ;
     }
 
     virtual ~Transform() {
     }
+
+
+    /**
+     * thisを構築する行列を作成する
+     */
+    template<typename MatrixType>
+    MatrixType* getMatrix(MatrixType *result) const {
+        MatrixType temp;
+        result->identity();
+
+        if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f) {
+            result->scale(scale.x, scale.y, scale.z);
+        }
+
+        //! x
+        if (rotate.x != 0.0f) {
+            temp.rotate(1.0f, 0.0f, 0.0f, rotate.x);
+            multiply(*result, temp, result);
+        }
+
+        //! y
+        if (rotate.y != 0.0f) {
+            temp.identity();
+            temp.rotate(0.0f, 1.0f, 0.0f, rotate.y);
+            multiply(*result, temp, result);
+        }
+
+        //! z
+        if (rotate.z != 0.0f) {
+            temp.identity();
+            temp.rotate(0.0f, 0.0f, 1.0f, rotate.z);
+            multiply(*result, temp, result);
+        }
+
+        // position
+        {
+            temp.identity();
+            temp.translate(translate.x, translate.y, translate.z);
+            multiply(*result, temp, result);
+        }
+
+        return result;
+    }
+    /**
+     * thisを構築する行列の逆行列を取得する
+     */
+    template<typename MatrixType>
+    MatrixType* getMatrixInvert(MatrixType *result) const {
+        getMatrix<MatrixType>(result);
+        result->invert();
+        return result;
+    }
+
 };
 
 }
