@@ -7,6 +7,7 @@
 #ifndef ANIMATOR_H_
 #define ANIMATOR_H_
 
+#include "jc/math/Math.h"
 #include "jc/math/Transform.h"
 #include <vector>
 
@@ -25,6 +26,15 @@ struct KeyFrame {
      * キーフレームに打ち込むパラメータ
      */
     Type value;
+
+    KeyFrame() {
+        frame = 0;
+    }
+
+    KeyFrame(const u32 frame, const Type &value) {
+        this->frame = frame;
+        this->value = value;
+    }
 };
 
 /**
@@ -113,31 +123,62 @@ public:
      * アニメーションの現在の状態を取得する
      */
     inline void getTransform(const Wrap_e wrap, Transform *result) const {
-        result->translate = translates[0];
-        result->rotate = rotates[0];
-        result->scale = scales[0];
+        result->translate = translates[0].value;
+        result->rotate = rotates[0].value;
+        result->scale = scales[0].value;
     }
 
     /**
      * 移動キーを挿入する
      */
-    virtual void addTranslateAnimation(const TranslateKey &key) {
+    virtual jcboolean addTranslateAnimation(const TranslateKey &key) {
+        // ラストキーと同じ？
+        if (translates.size() > 1) {
+            if (translates[translates.size() - 1].value == key.value) {
+                translates[translates.size() - 1] = key;
+//                jclogf("    some translate key(%d)", key.frame);
+                return jcfalse;
+            }
+        }
+
+//        jclogf("    new translate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
         translates.push_back(key);
+        return jctrue;
     }
 
     /**
      * 回転キーを挿入する
      */
-    virtual void addRotateAnimation(const RotateKey &key) {
-        rotates.push_back(key);
-    }
+    virtual jcboolean addRotateAnimation(const RotateKey &key) {
+        // ラストキーと同じ？
+        if (rotates.size() > 1) {
+            if (rotates[rotates.size() - 1].value == key.value) {
+                rotates[rotates.size() - 1] = key;
+//                jclogf("    some rotate key(%d)", key.frame);
+                return jcfalse;
+            }
+        }
 
+//        jclogf("    new rotate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
+        rotates.push_back(key);
+        return jctrue;
+    }
 
     /**
      * スケーリングキーを挿入する
      */
-    virtual void addScaleAnimation(const ScaleKey &key) {
+    virtual jcboolean addScaleAnimation(const ScaleKey &key) {
+        // ラストキーと同じ？
+        if (scales.size() > 1) {
+            if (scales[scales.size() - 1].value == key.value) {
+                scales[scales.size() - 1] = key;
+//                jclogf("    some scale key(%d)", key.frame);
+                return jcfalse;
+            }
+        }
+//        jclogf("    new scale key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
         scales.push_back(key);
+        return jctrue;
     }
 };
 

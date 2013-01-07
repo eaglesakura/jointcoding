@@ -298,6 +298,28 @@ struct Matrix {
         m[2][3] = 1;
     }
 
+    /**
+     * 行列をthisへコピーする
+     */
+    inline void copy(const Matrix<4, 4> &origin) {
+        for (int r = 0; r < ROW; ++r) {
+            for (int c = 0; c < min(COLM, 4); ++c) {
+                m[r][c] = origin.m[r][c];
+            }
+        }
+    }
+
+    /**
+     * 行列をthisへコピーする
+     */
+    inline void copy(const Matrix<4, 3> &origin) {
+        for (int r = 0; r < ROW; ++r) {
+            for (int c = 0; c < min(COLM, 3); ++c) {
+                m[r][c] = origin.m[r][c];
+            }
+        }
+    }
+
 private:
     /*!
      * 4x4行列の行列式の計算
@@ -315,7 +337,8 @@ private:
     }
 
     /*!
-     * 4x4行列の行列式の計算
+     * 4x4行列の行列式の計算.
+     * inputされる行列は必ず4x4としてコピーされた状態で作成される。
      *  | m[0]  m[1]  m[2]  m[3]  |
      *  | m[4]  m[5]  m[6]  m[7]  |
      *  | m[8]  m[9]  m[10] m[11] |
@@ -397,6 +420,13 @@ public:
 
     inline void invert() {
         invert(this);
+    }
+
+    /**
+     * 配列への直接アクセス
+     */
+    inline float* operator[](const int row) const {
+        return (float*) m[row];
     }
 };
 

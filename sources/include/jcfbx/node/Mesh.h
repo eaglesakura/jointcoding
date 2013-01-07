@@ -26,6 +26,13 @@ protected:
      */
     std::vector<MFigureMeshFragment> fragments;
 
+    /**
+     * ボーンとして接続されたノード番号
+     *
+     * boneNodeNumbers[ boneIndex ]がボーン行列として作用する
+     */
+    std::vector<s32> boneNodeNumbers;
+
     Mesh(KFbxNode *meshNode, s32 nodeNumber);
 public:
     virtual ~Mesh();
@@ -50,6 +57,12 @@ public:
     virtual NodeType_e getNodeType() const {
         return NodeType_Mesh;
     }
+
+    /**
+     * ボーンのリンクを再構築する
+     */
+    virtual void registerBones();
+
 
     /**
      * 出力を行う

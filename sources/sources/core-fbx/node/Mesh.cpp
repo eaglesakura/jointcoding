@@ -170,6 +170,8 @@ void Mesh::serialize(FbxExportManager *exportManager) {
             // ボーン関連
             {
                 // ボーンインデックス
+                // 各頂点に設定される、ボーンのインデックス情報
+                // SIMPLE_BONE_NUMの数だけ頂点にインデクスされる
                 {
                     MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.weightindices", name.c_str()));
 
@@ -206,13 +208,22 @@ void Mesh::serialize(FbxExportManager *exportManager) {
                 }
                 // ボーンのピックアップテーブル
                 {
-                    MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.bonepicktable", name.c_str()));
+                    MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("%s.bones", name.c_str()));
 
                     stream->writeU16(pContext->bone_pick_table_length);
 
                     // ウェイトインデックスリストを書き出す
                     for (u32 pick_index = 0; pick_index < pContext->bone_pick_table_length; ++pick_index) {
-                        stream->writeU8(pContext->bone_pick_table[pick_index]);
+                        // 使用したいボーンインデックス
+                        const u8 bone_number = pContext->bone_pick_table[pick_index];
+                        // 実際に使用するボーン番号
+                        if (bone_number >= boneNodeNumbers.size()) {
+                            throw create_exception(ArrayIndexBoundsException,"bone_number >= boneNodeNumbers.size()" );
+                        }
+                        const u16 using_bone_number = (u16)boneNodeNumbers[bone_number];
+
+                        // 実際に使用するボーン番号を直接吐き出す
+                        stream->writeU16(using_bone_number);
                     }
                 }
             }
@@ -231,6 +242,38 @@ void Mesh::serialize(FbxExportManager *exportManager) {
 
     // ベース情報を出力
     Node::serialize(exportManager);
+}
+
+/**
+ * ボーンのリンクを再構築する
+ */
+void Mesh::registerBones() {
+    // クラスターを実際のボーンオブジェクトにリンクさせる
+
+    KFbxMesh *mesh = fbxNode->GetMesh();
+    KFbxSkin *skin = (KFbxSkin*) mesh->GetDeformer(0, KFbxDeformer::eSkin);
+
+    const s32 clusterCount = skin->GetClusterCount();
+    jclogf("  clusters(%d)", clusterCount);
+
+    //! クラスタ（ボーン）を取得する
+    for (int boneIndex = 0; boneIndex < clusterCount; ++boneIndex) {
+        KFbxCluster *cluster = skin->GetCluster(boneIndex);
+
+        // クラスタのIDが存在することを確認する
+        const u64 linkNodeId = cluster->GetLink()->GetUniqueID();
+
+        Node *linkedNode = NULL;
+        if ((linkedNode = findNodeFromFbxUniqueId(linkNodeId)) == NULL) {
+            throw create_exception(RuntimeException, "Link Object is null...");
+        }
+
+        jclogf(" bone[%d] linked node(%d)", boneIndex, linkedNode->getNodeNumber());
+        boneNodeNumbers.push_back(linkedNode->getNodeNumber());
+    }
+
+    // 子も行う
+    Node::registerBones();
 }
 
 MMesh Mesh::createInstance(KFbxNode *node, MNode parent, FbxImportManager *importManager) {

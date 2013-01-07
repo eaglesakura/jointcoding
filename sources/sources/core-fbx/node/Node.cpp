@@ -14,6 +14,8 @@ Node::Node(KFbxNode *node, s32 nodeNumber) {
     this->parent = NULL;
     this->nodeNumber = nodeNumber;
     this->name = node->GetName();
+    this->fbxNode = node;
+    this->fbxUniqueId = node->GetUniqueID();
 
     // デフォルトポーズを登録する
     retisterDefaultTake(node);
@@ -89,6 +91,62 @@ void Node::addChild(MNode node) {
 }
 
 /**
+ * アニメーションを登録する
+ */
+void Node::registerAnimations() {
+    KFbxScene *scene = fbxNode->GetScene();
+
+    // アニメーション名を取得する
+    FbxArray<FbxString*> animationNames;
+    scene->FillAnimStackNameArray(animationNames);
+
+    KTime period;
+    //! 1フレーム単位の時間を取得
+    period.SetTime(0, 0, 0, 1, 0, scene->GetGlobalSettings().GetTimeMode());
+
+    if (animationNames.Size() == 0) {
+        jclog("animation not found...");
+        return;
+    }
+
+    KFbxTakeInfo *info = scene->GetTakeInfo(animationNames[0]->Buffer());
+
+    if (info) {
+        KTime start = info->mLocalTimeSpan.GetStart();
+        KTime end = info->mLocalTimeSpan.GetStop();
+
+        s32 startFrame = (s32) (start.Get() / period.Get());
+        s32 endFrame = (s32) (end.Get() / period.Get());
+
+        jclogf("    Node(%s) Frame %d -> %d", name.c_str(), startFrame, endFrame);
+
+        KFbxAnimEvaluator *evalutor = scene->GetEvaluator();
+
+        u32 translate_keys = 0;
+        u32 rotate_keys = 0;
+        u32 scale_keys = 0;
+
+        for (s32 i = startFrame; i < endFrame; ++i) {
+            KFbxVector4 translate = evalutor->GetNodeLocalTranslation(fbxNode, period * i);
+            KFbxVector4 rotate = evalutor->GetNodeLocalRotation(fbxNode, period * i);
+            KFbxVector4 scale = evalutor->GetNodeLocalScaling(fbxNode, period * i);
+
+            translate_keys += animator.addTranslateAnimation(TranslateKey(i, Vector3f(translate[0], translate[1], translate[2])));
+            rotate_keys += animator.addRotateAnimation(RotateKey(i, Vector4f(rotate[0], rotate[1], rotate[2], 0)));
+            scale_keys += animator.addScaleAnimation(ScaleKey(i, Vector3f(scale[0], scale[1], scale[2])));
+        }
+
+        jclogf("      node keys(T %d, R %d, S %d)", translate_keys, rotate_keys, scale_keys);
+    }
+    FbxArrayDelete(animationNames);
+
+    // 子も登録する
+    for (u32 i = 0; i < (u32) childs.size(); ++i) {
+        childs[i]->registerAnimations();
+    }
+}
+
+/**
  * 出力を行う
  */
 void Node::serialize(FbxExportManager *exportManager) {
@@ -113,7 +171,7 @@ void Node::serialize(FbxExportManager *exportManager) {
 
         {
             stream->writeS8(transform.rotateType);
-            stream->writeVector3(*((Vector3f*)&transform.rotate));
+            stream->writeVector3(*((Vector3f*) &transform.rotate));
 
             // vec4としてreadできるように、4byte詰め物をする
             stream->writeS32(0);

@@ -9,7 +9,7 @@
 #include "jointcoding.h"
 #include "jctest/CdtTestRunner.h"
 
-    #define RUN_TEST
+//    #define RUN_TEST
 
 int main(int argv, char *args[]) {
     jclog("hello fbx-tool!!");

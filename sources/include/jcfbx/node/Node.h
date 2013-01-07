@@ -10,6 +10,7 @@
 #include    "jointcoding-fbx.h"
 #include    "jc/math/Transform.h"
 #include    "jc/graphics/figure/Figure.h"
+#include    "jc/graphics/figure/animator/Animator.h"
 #include    <vector>
 
 #include    "jcfbx/output/FbxExportManager.h"
@@ -49,6 +50,21 @@ class Node {
      * 通常、通し番号
      */
     s32 nodeNumber;
+
+    /**
+     * FBXが割り当てた一意のID
+     */
+    u64 fbxUniqueId;
+
+    /**
+     * アニメーション管理クラス
+     */
+    Animator animator;
+protected:
+    /**
+     * FBX側のノード情報
+     */
+    KFbxNode *fbxNode;
 
 protected:
     /**
@@ -102,6 +118,45 @@ public:
     }
 
     /**
+     * 大本の親ノードを取得する
+     */
+    virtual Node* getRootNode() const {
+        Node *result = (Node*) this;
+
+        while (result->parent) {
+            result = result->parent;
+        }
+
+        return result;
+    }
+private:
+    virtual Node* findNodeFromFbxUniqueId(const Node *current, const u64 fbxUnique) const {
+        if (current->fbxUniqueId == fbxUnique) {
+            return (Node*) current;
+        }
+
+        for (u32 i = 0; i < current->childs.size(); ++i) {
+            Node *node = findNodeFromFbxUniqueId(current->childs[i].get(), fbxUnique);
+            if (node) {
+                return node;
+            }
+        }
+
+        // 見つからなかった
+        return NULL;
+    }
+
+public:
+    /**
+     * FBX UniqueIDを指定して取得する。
+     * 親も含めてツリー全体を探索する。
+     * 見つからなかった場合はNULLを返す。
+     */
+    virtual Node* findNodeFromFbxUniqueId(const u64 fbxUnique) const {
+        return findNodeFromFbxUniqueId(getRootNode(), fbxUnique);
+    }
+public:
+    /**
      * thisを頂点として、管理しているノード数合計を返す。
      * thisを持つため、>=1は必ず返却されることになる。
      */
@@ -111,6 +166,20 @@ public:
      * 出力を行う
      */
     virtual void serialize(FbxExportManager *exportManager);
+
+    /**
+     * ボーン階層を再構築する
+     */
+    virtual void registerBones() {
+        for (u32 i = 0; i < childs.size(); ++i) {
+            childs[i]->registerBones();
+        }
+    }
+
+    /**
+     * アニメーションを登録する
+     */
+    virtual void registerAnimations();
 
     /**
      * ノード情報を出力する

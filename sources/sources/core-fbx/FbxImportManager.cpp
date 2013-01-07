@@ -44,8 +44,15 @@ void FbxImportManager::importFromSceneName(const charactor *name) {
         throw create_exception_t(FbxException, FbxException_RootNodeNotFound);
     }
     jclogf("node import ok(%s)", name);
+
     // ノードの構築
     convertedNode = Node::createInstance(rootNode, MNode(), this);
+
+    // ボーンリンクの構築
+    convertedNode->registerBones();
+
+    // アニメーション作成
+    convertedNode->registerAnimations();
 }
 
 /**

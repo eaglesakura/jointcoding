@@ -57,6 +57,7 @@ void FbxExportManager::serialize(MNode rootNode) {
         stream->writeU32(rootNode->getAllNodeCount());
     }
 
+    // 全体をシリアライズする
     rootNode->serialize(this);
 }
 
