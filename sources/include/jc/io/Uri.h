@@ -22,14 +22,22 @@ class Uri {
      * URL本体
      */
     String uri;
+public:
 
     /**
-     * 直接的な作成は避ける
+     * 直接的な作成は避けるほうが無難
      */
     Uri(String uriString) {
         this->uri = uriString;
     }
-public:
+
+    /**
+     *
+     */
+    Uri() {
+
+    }
+
     /**
      * 代入演算は許可する
      */
@@ -75,9 +83,14 @@ public:
     /**
      * URI全文を取得する
      */
-    virtual String getUri() const {
+    virtual const String& getUri() const {
         return uri;
     }
+
+    /**
+     * パースを行う。
+     */
+    static Uri parse(const String &uri);
 
     /**
      * アセットからURIを生成する

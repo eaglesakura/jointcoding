@@ -21,7 +21,6 @@ FbxExportManager::~FbxExportManager() {
 
 }
 
-
 /**
  * データ出力用のストリームを作成する
  *

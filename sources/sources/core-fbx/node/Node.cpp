@@ -188,6 +188,9 @@ void Node::serialize(FbxExportManager *exportManager) {
             MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.anim_t", getNodeNumber()));
             const std::vector<TranslateKey> &keys = animator.getTranslates();
 
+            // 割り当てられたノード名
+            stream->writeString(name);
+
             // キーフレーム数
             stream->writeU16((u16) keys.size());
 
@@ -202,6 +205,9 @@ void Node::serialize(FbxExportManager *exportManager) {
         {
             MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.anim_r", getNodeNumber()));
             const std::vector<RotateKey> &keys = animator.getRotates();
+
+            // 割り当てられたノード名
+            stream->writeString(name);
 
             // キーフレーム数
             stream->writeU16((u16) keys.size());
@@ -220,6 +226,9 @@ void Node::serialize(FbxExportManager *exportManager) {
         {
             MFigureDataOutputStream stream = exportManager->createOutputStream(this, String::format("node%03d.anim_s", getNodeNumber()));
             const std::vector<ScaleKey> &keys = animator.getScales();
+
+            // 割り当てられたノード名
+            stream->writeString(name);
 
             // キーフレーム数
             stream->writeU16((u16) keys.size());

@@ -64,6 +64,13 @@ String Uri::getPath() const {
 }
 
 /**
+ * パースを行う。
+ */
+Uri Uri::parse(const String &uri) {
+    return Uri(uri);
+}
+
+/**
  * アセットからURIを生成する
  */
 Uri Uri::fromAssets(const String &path) {

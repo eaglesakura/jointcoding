@@ -8,8 +8,8 @@
 
 namespace jc {
 
-FigureDataLoader::FigureDataLoader() {
-
+FigureDataLoader::FigureDataLoader(MFigureDataFactory factory) {
+    this->factory = factory;
 }
 
 FigureDataLoader::~FigureDataLoader() {
@@ -24,7 +24,7 @@ void FigureDataLoader::load() {
 
     // load figure info
     {
-        MBinaryInputStream stream = openFigureInfo();
+        MBinaryInputStream stream = factory->openFigureInfo();
         FigureInfo figure;
         figure.node_num = stream->readU32();
 
@@ -47,7 +47,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
 
     // ノード情報を読み込む
     {
-        MBinaryInputStream stream = openNode(nodeNumber);
+        MBinaryInputStream stream = factory->openNode(nodeNumber);
 
         node.name = stream->readString();
         node.number = stream->readU16();
@@ -92,7 +92,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
 
         // load main
         {
-            MBinaryInputStream stream = openMeshInfo(nodeNumber);
+            MBinaryInputStream stream = factory->openMeshInfo(nodeNumber);
             mesh.material_num = stream->readS8();
 
             mesh.context_num.reset(new u32[mesh.material_num]);
@@ -103,7 +103,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
 
         // load material
         for (u32 i = 0; i < mesh.material_num; ++i) {
-            MBinaryInputStream stream = openMaterialInfo(nodeNumber, i);
+            MBinaryInputStream stream = factory->openMaterialInfo(nodeNumber, i);
             FigureDataLoader::MaterialInfo material;
 
             material.name = stream->readString();
@@ -185,7 +185,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
  *
  */
 void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const MeshDataType_e type) {
-    MBinaryInputStream stream = openMeshData(type, nodeInfo.number, material_num, context_num);
+    MBinaryInputStream stream = factory->openMeshData(type, nodeInfo.number, material_num, context_num);
     MeshData data;
 
     jclogf("loadMeshData(%d-%d)", material_num, context_num);
@@ -267,8 +267,20 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             float *ptr = (float*) malloc(data.data_length * weight_num * sizeof(float));
             data.data.reset((void*) ptr, free);
 
-            for (u32 i = 0; i < (data.data_length * weight_num); ++i) {
-                ptr[i] = stream->readFixed32();
+            int index = 0;
+            for (u32 i = 0; i < (data.data_length); ++i) {
+                float weight_sum = 0;
+                for (u32 k = 0; k < weight_num; ++k) {
+                    ptr[i * weight_num + k] = stream->readFixed32();
+
+                    // 合計値を計算する
+                    if (k) {
+                        weight_sum += ptr[i * weight_num + k];
+                    }
+                }
+
+                // index0のウェイト＝最も重みが強いウェイトに、ウェイトの誤差が集中するようにする
+                ptr[i * weight_num + 0] = 1.0f - weight_sum;
             }
         }
             break;

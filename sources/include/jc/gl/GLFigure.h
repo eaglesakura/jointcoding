@@ -9,6 +9,7 @@
 #include    "jc/math/Transform.h"
 #include    "jc/graphics/figure/data/FigureDataLoader.h"
 #include    "jc/graphics/figure/TextureTable.h"
+#include    "jc/graphics/figure/animator/AnimationClip.h"
 #include    "jc/gl/TextureImage.h"
 
 #include    "jc/gl/IndexBufferObject.h"
@@ -138,6 +139,12 @@ typedef jc_sp<GLTextureTable> MGLTextureTable;
  */
 class GLFigure: public Object {
 public:
+    enum {
+        /**
+         * 一度の描画で利用できるボーンの最大数
+         */
+        MAX_BONE_TABLE = 28
+    };
     /**
      * 頂点のインデックス情報を渡す
      * 利用しない場合はデフォルトのまま
@@ -175,11 +182,16 @@ public:
              * メインテクスチャのuniform値
              */
             s32 tex_0;
+
+            /**
+             * ボーンの頂点テーブル
+             */
+            s32 bones;
         } uniforms;
 
         ShaderParams() {
             attributes.position = attributes.uv = attributes.normals = attributes.weight = attributes.weight_indeices = ATTRIBUTE_DISABLE_INDEX;
-            uniforms.tex_0 = UNIFORM_DISABLE_INDEX;
+            uniforms.tex_0 = uniforms.bones = UNIFORM_DISABLE_INDEX;
         }
     };
 private:
@@ -197,6 +209,18 @@ private:
      * GL用デバイス
      */
     MDevice device;
+
+    /**
+     * 転送用のボーンテーブル
+     * pick tableを介してノードごとのMatrixを並べる
+     * node[ pick_table[index] ]のMatrixが格納される
+     */
+    Matrix4x4 bone_table[MAX_BONE_TABLE];
+
+    /**
+     * 指定したノード番号のボーンテーブルを用意する
+     */
+    void _enumBones(GLFigureMeshFragment *pFragment, GLFigureMeshFragment::DrawingContext *pContext);
 
     /**
      * 指定した番号のノードを描画・探索する
@@ -271,6 +295,12 @@ public:
             }
         }
     }
+
+    /**
+     * アニメーション情報に合わせて、ポーズを取らせる。
+     * 行列はAnimationClip側で計算するため、単純な行列置き換えのみを行う。
+     */
+    virtual void posing(AnimationClip *animation);
 
     /**
      * 各ノードの逆行列を作成する.

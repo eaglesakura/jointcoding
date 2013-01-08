@@ -210,6 +210,11 @@ public:
     }
 };
 
+/**
+ * managed
+ */
+typedef jc_sp<Animator> MAnimator;
+
 }
 
 #endif /* ANIMATOR_H_ */
