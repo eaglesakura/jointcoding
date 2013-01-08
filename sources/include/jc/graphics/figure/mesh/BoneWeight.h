@@ -95,6 +95,16 @@ public:
                 indices[i] = 0;
             }
         }
+
+        for (int i = 0; i < (WEIGHT_NUM - 1); ++i) {
+            for (int k = (i + 1); k < WEIGHT_NUM; ++k) {
+                if (weights[i] < weights[k]) {
+                    // 値が大きい方が若いインデックスに来て欲しい
+                    jc::swap(&weights[i], &weights[k]);
+                    jc::swap(&indices[i], &indices[k]);
+                }
+            }
+        }
     }
 };
 

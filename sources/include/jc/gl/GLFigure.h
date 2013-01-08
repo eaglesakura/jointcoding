@@ -155,10 +155,19 @@ public:
             s32 uv;
 
             /**
+             * 頂点ウェイトインデックス
+             */
+            s32 weight_indeices;
+
+            /**
+             * 頂点ウェイト
+             */
+            s32 weight;
+
+            /**
              * 法線
              */
             s32 normals;
-
         } attributes;
 
         struct {
@@ -169,7 +178,7 @@ public:
         } uniforms;
 
         ShaderParams() {
-            attributes.position = attributes.uv = attributes.normals = ATTRIBUTE_DISABLE_INDEX;
+            attributes.position = attributes.uv = attributes.normals = attributes.weight = attributes.weight_indeices = ATTRIBUTE_DISABLE_INDEX;
             uniforms.tex_0 = UNIFORM_DISABLE_INDEX;
         }
     };

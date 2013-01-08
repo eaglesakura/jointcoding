@@ -93,6 +93,7 @@ inline OutRealType fixed2real(const InIntegerType data, const s32 bits) {
     return (OutRealType) (((double) data) / ((double) mul));
 }
 
+
 /**
  * 円周率
  */

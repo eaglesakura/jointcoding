@@ -47,6 +47,21 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
                 state->vertexAttribPointer(attr_uv, 2, GL_FLOAT, GL_FALSE, sizeof(GLFigureVertex), NULL, sizeof(Vector3f));
             }
 
+            // weight
+            if (params->attributes.weight != ATTRIBUTE_DISABLE_INDEX
+
+//                    && params->attributes.weight_indeices != ATTRIBUTE_DISABLE_INDEX
+            ) {
+                const u32 attr_weight = params->attributes.weight;
+                const u32 attr_weight_indices = params->attributes.weight_indeices;
+
+                state->enableVertexAttribArray(attr_weight);
+                state->enableVertexAttribArray(attr_weight_indices);
+
+                state->vertexAttribPointer(attr_weight_indices, 4, GL_FLOAT, GL_FALSE, sizeof(GLFigureVertex), NULL, sizeof(Vector3f) + sizeof(Vector2f));
+                state->vertexAttribPointer(attr_weight, 4, GL_FLOAT, GL_FALSE, sizeof(GLFigureVertex), NULL, sizeof(Vector3f) + sizeof(Vector2f) + sizeof(Vector4f));
+            }
+
             // texture
             if (params->uniforms.tex_0 != UNIFORM_DISABLE_INDEX && material->use_texture) {
                 const u32 unif_tex0 = params->uniforms.tex_0;
