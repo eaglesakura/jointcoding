@@ -8,6 +8,8 @@
 namespace jc {
 namespace gl {
 
+#define TRANSFORM_LOCAL
+
 GLFigure::GLFigure() {
 
 }
@@ -22,8 +24,9 @@ GLFigure::~GLFigure() {
 void GLFigure::_enumBones(GLFigureMeshFragment *pFragment, GLFigureMeshFragment::DrawingContext *pContext) {
     for (u32 i = 0; i < pContext->bone_pick_table_length; ++i) {
 //        bone_table[i] = nodes[pContext->bone_pick_table[i]]->matrix_current_world;
-        const Matrix4x4 &bone = nodes[pContext->bone_pick_table[i]]->matrix_current_world;
-        const Matrix4x4 &bone_inv = nodes[pContext->bone_pick_table[i]]->matrix_default_invert;
+        const u32 node_nubmer = pContext->bone_pick_table[i];
+        const Matrix4x4 &bone = nodes[node_nubmer]->matrix_current_world;
+        const Matrix4x4 &bone_inv = nodes[node_nubmer]->matrix_default_invert;
         multiply(bone_inv, bone, &bone_table[i]);
     }
 }
@@ -44,7 +47,7 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
 
         // コンテキスト数だけ、同一マテリアルで描画する
         // FIXME 0番コンテキストだけを描画する
-        for (u32 ctx = 0; ctx < jc::min<u32>(1, context_num); ++ctx) {
+        for (u32 ctx = 0; ctx < context_num; ++ctx) {
             GLFigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx).get();
 
             pContext->vertices->bind();
@@ -139,12 +142,14 @@ void GLFigure::rendering(const GLFigure::ShaderParams *params) {
  */
 void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Matrix4x4 &parent) {
     FigureNode *node = getNodePtr(nodeNumber);
-    Matrix4x4 local;
-//    node->defTransform.getMatrix(&local);
-    animation->getMatrix(nodeNumber, &local);
 
-    // ワールドとして登録する
+#ifdef  TRANSFORM_LOCAL
+    Matrix4x4 local;
+    animation->getMatrix(nodeNumber, &local);
     multiply(local, parent, &node->matrix_current_world);
+#else
+    animation->getMatrix(nodeNumber, &node->matrix_current_world);
+#endif
 
     // 子を設定する
     for (u32 i = 0; i < node->children.size(); ++i) {
@@ -176,13 +181,13 @@ void GLFigure::initializeInvertMatrices() {
 void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &parent) {
     FigureNode *node = getNodePtr(nodeNumber);
 
-    // make local
+#ifdef  TRANSFORM_LOCAL
     Matrix4x4 local;
     node->defTransform.getMatrix(&local);
-
-    // make global
-    // 現在の行列 = デフォルトのワールド行列とする
     multiply(local, parent, &node->matrix_current_world);
+#else
+    node->defTransform.getMatrix(&node->matrix_current_world);
+#endif
 
     // invert!!
     node->matrix_current_world.invert(&node->matrix_default_invert);

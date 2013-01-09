@@ -13,7 +13,7 @@ namespace jc {
  */
 void AnimationClip::getMatrix(const u32 nodeNumber, Matrix4x4 *result) const {
     Transform temp;
-    animation->animations[nodeNumber].getTransform(Animator::Wrap_Loop, &temp);
+    animation->animations[nodeNumber].getTransform(Animator::Wrap_Loop, current, &temp);
 
 //    temp.translate.set(0, 0, 0);
 //    temp.rotate.set(0, 0, 0, 0);

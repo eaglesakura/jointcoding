@@ -106,7 +106,7 @@ public:
      * アニメーションの最大フレーム数を取得する
      * 各パラメータはNULLチェックして返す。
      */
-    inline void getAnimationRange(u32 *result_translate, u32 *result_rotate, u32 *result_scale, u32 *result_all) {
+    inline void getAnimationRange(u32 *result_translate, u32 *result_rotate, u32 *result_scale, u32 *result_all) const {
         const u32 max_translate = translates.empty() ? 0 : (translates[translates.size() - 1].frame);
         const u32 max_rotate = rotates.empty() ? 0 : (rotates[rotates.size() - 1].frame);
         const u32 max_scale = scales.empty() ? 0 : (scales[scales.size() - 1].frame);
@@ -155,16 +155,26 @@ public:
     /**
      * アニメーションの現在の状態を取得する
      */
-    inline void getTransform(const Wrap_e wrap, Transform *result) const {
-        result->translate = translates[0].value;
-        result->rotate = rotates[0].value;
-        result->scale = scales[0].value;
+    inline void getTransform(const Wrap_e wrap, const float frame, Transform *result) const {
+//        result->translate = translates[0].value;
+//        result->rotate = rotates[0].value;
+//        result->scale = scales[0].value;
+
+        u32 range_max = 0;
+        getAnimationRange(NULL, NULL, NULL, &range_max);
+        const float normalized_frame = (float) jc::minmax<u32>((u32)0, range_max - 1, (u32)frame);
+
+        result->translate = translates[(int) normalized_frame].value;
+        result->rotate = rotates[(int) normalized_frame].value;
+        result->scale = scales[(int) normalized_frame].value;
+
     }
 
     /**
      * 移動キーを挿入する
      */
     virtual jcboolean addTranslateAnimation(const TranslateKey &key) {
+#if 0
         // ラストキーと同じ？
         if (translates.size() > 1) {
             if (translates[translates.size() - 1].value == key.value) {
@@ -173,8 +183,8 @@ public:
                 return jcfalse;
             }
         }
-
-//        jclogf("    new translate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
+#endif
+        jclogf("    new translate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
         translates.push_back(key);
         return jctrue;
     }
@@ -183,6 +193,7 @@ public:
      * 回転キーを挿入する
      */
     virtual jcboolean addRotateAnimation(const RotateKey &key) {
+#if 0
         // ラストキーと同じ？
         if (rotates.size() > 1) {
             if (rotates[rotates.size() - 1].value == key.value) {
@@ -191,8 +202,8 @@ public:
                 return jcfalse;
             }
         }
-
-//        jclogf("    new rotate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
+#endif
+        jclogf("    new rotate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
         rotates.push_back(key);
         return jctrue;
     }
@@ -202,6 +213,7 @@ public:
      */
     virtual jcboolean addScaleAnimation(const ScaleKey &key) {
         // ラストキーと同じ？
+#if 0
         if (scales.size() > 1) {
             if (scales[scales.size() - 1].value == key.value) {
                 scales[scales.size() - 1] = key;
@@ -209,7 +221,8 @@ public:
                 return jcfalse;
             }
         }
-//        jclogf("    new scale key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
+#endif
+        jclogf("    new scale key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
         scales.push_back(key);
         return jctrue;
     }

@@ -33,19 +33,24 @@ void Node::retisterDefaultTake(KFbxNode *node) {
 
     // 基本姿勢
     {
+        FbxAMatrix matrix = node->GetScene()->GetEvaluator()->GetNodeLocalTransform(node);
+//        node->
         // 位置情報
         {
-            FbxDouble3 v = node->LclTranslation.Get();
+//            FbxDouble3 v = node->LclTranslation.Get();
+            FbxDouble4 v = matrix.GetT();
             transform.translate.set((float) v[0], (float) v[1], (float) v[2]);
         }
         // 回転情報
         {
-            FbxDouble3 v = node->LclRotation.Get();
+//            FbxDouble3 v = node->LclRotation.Get();
+            FbxDouble4 v = matrix.GetR();
             transform.rotate.set((float) v[0], (float) v[1], (float) v[2], 0);
         }
         // 基本スケーリング
         {
-            FbxDouble3 v = node->LclScaling.Get();
+//            FbxDouble3 v = node->LclScaling.Get();
+            FbxDouble4 v = matrix.GetS();
             transform.scale.set((float) v[0], (float) v[1], (float) v[2]);
         }
     }
@@ -118,9 +123,15 @@ void Node::registerAnimations() {
         s32 startFrame = (s32) (start.Get() / period.Get());
         s32 endFrame = (s32) (end.Get() / period.Get());
 
-        // FIXME!! 歩行アニメだけ取り出す
-        startFrame = 0;
-        endFrame = 120;
+        // FIXME!! モーション時間を限定
+        {
+            startFrame = 1;
+            endFrame = 120;
+
+            // wave
+            startFrame = 480;
+            endFrame = 600;
+        }
 
         jclogf("    Node(%s) Frame %d -> %d", name.c_str(), startFrame, endFrame);
 
@@ -131,9 +142,14 @@ void Node::registerAnimations() {
         u32 scale_keys = 0;
 
         for (s32 i = startFrame; i < endFrame; ++i) {
-            KFbxVector4 translate = evalutor->GetNodeLocalTranslation(fbxNode, period * i);
-            KFbxVector4 rotate = evalutor->GetNodeLocalRotation(fbxNode, period * i);
-            KFbxVector4 scale = evalutor->GetNodeLocalScaling(fbxNode, period * i);
+//            KFbxVector4 translate = evalutor->GetNodeLocalTranslation(fbxNode, period * i);
+//            KFbxVector4 rotate = evalutor->GetNodeLocalRotation(fbxNode, period * i);
+//            KFbxVector4 scale = evalutor->GetNodeLocalScaling(fbxNode, period * i);
+
+            FbxAMatrix matrix = evalutor->GetNodeLocalTransform(fbxNode, period * i);
+            KFbxVector4 translate = matrix.GetT();
+            KFbxVector4 rotate = matrix.GetR();
+            KFbxVector4 scale = matrix.GetS();
 
             translate_keys += animator.addTranslateAnimation(TranslateKey(i, Vector3f(translate[0], translate[1], translate[2])));
             rotate_keys += animator.addRotateAnimation(RotateKey(i, Vector4f(rotate[0], rotate[1], rotate[2], 0)));
