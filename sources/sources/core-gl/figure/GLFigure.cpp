@@ -21,7 +21,10 @@ GLFigure::~GLFigure() {
  */
 void GLFigure::_enumBones(GLFigureMeshFragment *pFragment, GLFigureMeshFragment::DrawingContext *pContext) {
     for (u32 i = 0; i < pContext->bone_pick_table_length; ++i) {
-        bone_table[i] = nodes[pContext->bone_pick_table[i]]->matrix_current_world;
+//        bone_table[i] = nodes[pContext->bone_pick_table[i]]->matrix_current_world;
+        const Matrix4x4 &bone = nodes[pContext->bone_pick_table[i]]->matrix_current_world;
+        const Matrix4x4 &bone_inv = nodes[pContext->bone_pick_table[i]]->matrix_default_invert;
+        multiply(bone_inv, bone, &bone_table[i]);
     }
 }
 
@@ -131,13 +134,30 @@ void GLFigure::rendering(const GLFigure::ShaderParams *params) {
 }
 
 /**
+ * アニメーションを当てる
+ */
+void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Matrix4x4 &parent) {
+    FigureNode *node = getNodePtr(nodeNumber);
+    Matrix4x4 local;
+//    node->defTransform.getMatrix(&local);
+    animation->getMatrix(nodeNumber, &local);
+
+    // ワールドとして登録する
+    multiply(local, parent, &node->matrix_current_world);
+
+    // 子を設定する
+    for (u32 i = 0; i < node->children.size(); ++i) {
+        _posing(animation, node->children[i], node->matrix_current_world);
+    }
+
+}
+
+/**
  * アニメーション情報に合わせて、ポーズを取らせる。
  * 行列はAnimationClip側で計算するため、単純な行列置き換えのみを行う。
  */
 void GLFigure::posing(AnimationClip *animation) {
-    for (u32 i = 0; i < nodes.size(); ++i) {
-        animation->getMatrix(i, &nodes[i]->matrix_current_world);
-    }
+    _posing(animation, 0, Matrix4x4());
 }
 
 /**
@@ -152,7 +172,7 @@ void GLFigure::initializeInvertMatrices() {
 /**
  * 逆行列を作成する
  */
-void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, Matrix4x4 parent) {
+void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &parent) {
     FigureNode *node = getNodePtr(nodeNumber);
 
     // make local
@@ -170,10 +190,6 @@ void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, Matrix4x4 parent)
     for (u32 i = 0; i < node->children.size(); ++i) {
         _initializeInvertMatrices(node->children[i], node->matrix_current_world);
     }
-
-    // invertした行列とWORLDをブレンドして完了
-    // つまりはidentityとなる。
-    node->matrix_current_world.identity();
 }
 
 }

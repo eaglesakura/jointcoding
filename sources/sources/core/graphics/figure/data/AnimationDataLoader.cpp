@@ -40,6 +40,7 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
                 keyFrame.value.y = stream->readFixed32();
                 keyFrame.value.z = stream->readFixed32();
 
+                jclogf("   frame[%d] translate(%f, %f, %f) = %s", keyFrame.frame, keyFrame.value.x, keyFrame.value.y, keyFrame.value.z, name.c_str());
                 // 現在のノードにキーフレームを書き込む
                 group->animations[i].addTranslateAnimation(keyFrame);
             }
@@ -59,6 +60,7 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
                 keyFrame.value.z = stream->readFixed32();
                 keyFrame.value.w = stream->readFixed32();
 
+                jclogf("   frame[%d] rotate(%f, %f, %f) = %s", keyFrame.frame, keyFrame.value.x, keyFrame.value.y, keyFrame.value.z, name.c_str());
                 // 現在のノードにキーフレームを書き込む
                 group->animations[i].addRotateAnimation(keyFrame);
             }
@@ -77,6 +79,9 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
                 keyFrame.value.y = stream->readFixed32();
                 keyFrame.value.z = stream->readFixed32();
 
+                // FIXME スケーリングが負の値？
+                keyFrame.value.set(1, 1, 1);
+                jclogf("   frame[%d] scale(%f, %f, %f) = %s", keyFrame.frame, keyFrame.value.x, keyFrame.value.y, keyFrame.value.z, name.c_str());
                 // 現在のノードにキーフレームを書き込む
                 group->animations[i].addScaleAnimation(keyFrame);
             }

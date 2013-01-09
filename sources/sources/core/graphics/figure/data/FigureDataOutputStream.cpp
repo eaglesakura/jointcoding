@@ -28,7 +28,7 @@ void FigureDataOutputStream::initialize(const ModelerType_e modeler) {
     modelMatrix.identity();
     switch (modeler) {
         case ModelerType_3dsMax:
-            modelMatrix.rotate(1, 0, 0, 90);
+//            modelMatrix.rotate(1, 0, 0, 90);
             break;
         default:
             break;
@@ -43,10 +43,10 @@ void FigureDataOutputStream::initialize(const ModelerType_e modeler) {
  * @param transform 頂点の位置を補正する場合true
  */
 void FigureDataOutputStream::writeVector3(const Vector3f &v, const jcboolean transform) {
-    Vector3f temp;
+    Vector3f temp(v);
 
     // 事前モデル行列を割り当てる
-    modelMatrix.multiply(v, &temp);
+//    modelMatrix.multiply(v, &temp);
 
     this->writeFixed32(temp.x, fixedbits);
     this->writeFixed32(temp.y, fixedbits);

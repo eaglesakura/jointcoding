@@ -267,10 +267,9 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             float *ptr = (float*) malloc(data.data_length * weight_num * sizeof(float));
             data.data.reset((void*) ptr, free);
 
-            int index = 0;
             for (u32 i = 0; i < (data.data_length); ++i) {
                 float weight_sum = 0;
-                for (u32 k = 0; k < weight_num; ++k) {
+                for (int k = 0; k < weight_num; ++k) {
                     ptr[i * weight_num + k] = stream->readFixed32();
 
                     // 合計値を計算する

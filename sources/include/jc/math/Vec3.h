@@ -38,6 +38,12 @@ struct _Vector3 {
         z = _z;
     }
 
+    _Vector3(const _Vector3<T> &origin) {
+        x = origin.x;
+        y = origin.y;
+        z = origin.z;
+    }
+
     /**
      * 加算を行う
      */

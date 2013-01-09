@@ -118,6 +118,10 @@ void Node::registerAnimations() {
         s32 startFrame = (s32) (start.Get() / period.Get());
         s32 endFrame = (s32) (end.Get() / period.Get());
 
+        // FIXME!! 歩行アニメだけ取り出す
+        startFrame = 0;
+        endFrame = 120;
+
         jclogf("    Node(%s) Frame %d -> %d", name.c_str(), startFrame, endFrame);
 
         KFbxAnimEvaluator *evalutor = scene->GetEvaluator();
@@ -173,7 +177,7 @@ void Node::serialize(FbxExportManager *exportManager) {
 
             {
                 stream->writeS8(transform.rotateType);
-                stream->writeVector3(*((Vector3f*) &transform.rotate));
+                stream->writeVector3(Vector3f(transform.rotate.x, transform.rotate.y, transform.rotate.z));
 
                 // vec4としてreadできるように、4byte詰め物をする
                 stream->writeS32(0);

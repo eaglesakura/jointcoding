@@ -144,6 +144,39 @@ struct Matrix {
     }
 
     /**
+     * X軸回転を行う
+     */
+    inline void rotateX(const float degree) {
+        const float _cos = ::cos(degree2radian(degree));
+        const float _sin = ::sin(degree2radian(degree));
+
+        m[1][1] = _cos;
+        m[1][2] = -_sin;
+        m[2][1] = _sin;
+        m[2][2] = _cos;
+    }
+
+    inline void rotateY(const float degree) {
+        const float _cos = ::cos(degree2radian(degree));
+        const float _sin = ::sin(degree2radian(degree));
+
+        m[0][0] = _cos;
+        m[0][2] = _sin;
+        m[2][0] = -_sin;
+        m[2][2] = _cos;
+    }
+
+    inline void rotateZ(const float degree) {
+        const float _cos = ::cos(degree2radian(degree));
+        const float _sin = ::sin(degree2radian(degree));
+
+        m[0][0] = _cos;
+        m[0][1] = -_sin;
+        m[1][0] = _sin;
+        m[1][1] = _cos;
+    }
+
+    /**
      * 回転行列を生成する
      *
      * XYZはそれぞれ回転軸、Wが回転量を示す。

@@ -80,9 +80,8 @@ public:
     /**
      * thisを構築する行列を作成する
      */
-    template<typename MatrixType>
-    MatrixType* getMatrix(MatrixType *result) const {
-        MatrixType temp;
+    Matrix4x4* getMatrix(Matrix4x4 *result) const {
+        Matrix4x4 temp;
         result->identity();
 
         if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f) {
@@ -91,21 +90,24 @@ public:
 
         //! x
         if (rotate.x != 0.0f) {
-            temp.rotate(1.0f, 0.0f, 0.0f, rotate.x);
+            temp.rotateX(rotate.x);
+//            temp.rotate(-1.0f, 0.0f, 0.0f, rotate.x);
             multiply(*result, temp, result);
         }
 
         //! y
         if (rotate.y != 0.0f) {
             temp.identity();
-            temp.rotate(0.0f, 1.0f, 0.0f, rotate.y);
+//            temp.rotate(0.0f, -1.0f, 0.0f, rotate.y);
+            temp.rotateY(rotate.y);
             multiply(*result, temp, result);
         }
 
         //! z
         if (rotate.z != 0.0f) {
             temp.identity();
-            temp.rotate(0.0f, 0.0f, 1.0f, rotate.z);
+//            temp.rotate(0.0f, 0.0f, -1.0f, rotate.z);
+            temp.rotateZ(rotate.z);
             multiply(*result, temp, result);
         }
 
@@ -116,14 +118,14 @@ public:
             multiply(*result, temp, result);
         }
 
+
         return result;
     }
     /**
      * thisを構築する行列の逆行列を取得する
      */
-    template<typename MatrixType>
-    MatrixType* getMatrixInvert(MatrixType *result) const {
-        getMatrix<MatrixType>(result);
+    Matrix4x4* getMatrixInvert(Matrix4x4 *result) const {
+        getMatrix(result);
         result->invert();
         return result;
     }

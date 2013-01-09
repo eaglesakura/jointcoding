@@ -31,6 +31,11 @@ struct KeyFrame {
         frame = 0;
     }
 
+    KeyFrame(const KeyFrame &origin) {
+        frame = origin.frame;
+        value = origin.value;
+    }
+
     KeyFrame(const u32 frame, const Type &value) {
         this->frame = frame;
         this->value = value;

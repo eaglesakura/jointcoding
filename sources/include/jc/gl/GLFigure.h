@@ -230,7 +230,12 @@ private:
     /**
      * 逆行列を作成する
      */
-    void _initializeInvertMatrices(const u32 nodeNumber, Matrix4x4 parent);
+    void _initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &parent);
+
+    /**
+     * アニメーションを当てる
+     */
+    void _posing(AnimationClip *animation, const u32 nodeNumber, const Matrix4x4 &parent);
 
 protected:
 

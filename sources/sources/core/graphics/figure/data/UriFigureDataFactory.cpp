@@ -7,6 +7,8 @@
 #include    "jc/graphics/figure/data/UriFigureDataFactory.h"
 #include    "jc/platform/Platform.h"
 
+#ifdef BUILD_Android
+
 namespace jc {
 
 /**
@@ -135,3 +137,5 @@ MBinaryInputStream UriFigureDataFactory::openAnimationData(const AnimationDataTy
 }
 
 }
+
+#endif
