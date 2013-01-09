@@ -43,7 +43,8 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
         const u32 context_num = fragment->getDrawingContextCount();
 
         // コンテキスト数だけ、同一マテリアルで描画する
-        for (u32 ctx = 0; ctx < context_num; ++ctx) {
+        // FIXME 0番コンテキストだけを描画する
+        for (u32 ctx = 0; ctx < jc::min<u32>(1, context_num); ++ctx) {
             GLFigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx).get();
 
             pContext->vertices->bind();

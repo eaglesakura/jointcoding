@@ -66,12 +66,17 @@ protected:
     /**
      * 既にボーンを使用済みか
      */
-    virtual jcboolean isUsingBone(u8 index);
+    virtual jcboolean isUsingBone( FragmentContext *checkContext,const u8 index);
 
     /**
      * 利用できるボーン数をオーバーする場合true
      */
-    virtual jcboolean isOverBone(const u8 *bones, const s32 bones_length);
+    virtual jcboolean isOverBone( FragmentContext *checkContext,const u8 *bones, const s32 bones_length);
+
+    /**
+     * 指定したボーンが利用できるコンテキストを探し出す
+     */
+    virtual FragmentContext* getBoneGroupContext(const u8 *bones, const s32 bones_length);
 
     /**
      * 現在のデータから分離を行い、新たなフラグメントとして子を作成する。

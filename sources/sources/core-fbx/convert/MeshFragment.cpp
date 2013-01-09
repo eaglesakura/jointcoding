@@ -28,7 +28,7 @@ MeshFragmentConverter::~MeshFragmentConverter() {
 /**
  * 利用できるボーン数をオーバーする場合true
  */
-jcboolean MeshFragmentConverter::isOverBone(const u8 *bones, const s32 bones_length) {
+jcboolean MeshFragmentConverter::isOverBone(FragmentContext *checkContext, const u8 *bones, const s32 bones_length) {
     std::map<u8, u8> temp;
 
     // ダブリを防止する
@@ -41,7 +41,7 @@ jcboolean MeshFragmentConverter::isOverBone(const u8 *bones, const s32 bones_len
 
     while (itr != end) {
         if (itr->first != UNUSED_BONE) {
-            if (!isUsingBone(itr->first)) {
+            if (!isUsingBone(checkContext, itr->first)) {
                 ++newBones;
             }
         }
@@ -49,20 +49,17 @@ jcboolean MeshFragmentConverter::isOverBone(const u8 *bones, const s32 bones_len
         ++itr;
     }
 
-    FragmentContext *pContext = getCurrentContext();
-    return ((int) pContext->useBoneIndices.size() + newBones) > maxBones;
+    return ((int) checkContext->useBoneIndices.size() + newBones) > maxBones;
 }
 
 /**
  * 既にボーンを使用済みか
  */
-jcboolean MeshFragmentConverter::isUsingBone(u8 boneIndex) {
-    FragmentContext *pContext = getCurrentContext();
-    std::map<u8, u8>::iterator itr = pContext->useBoneIndices.begin(), end = pContext->useBoneIndices.end();
+jcboolean MeshFragmentConverter::isUsingBone(FragmentContext *checkContext, const u8 index) {
+    std::map<u8, u8>::iterator itr = checkContext->useBoneIndices.begin(), end = checkContext->useBoneIndices.end();
 
     while (itr != end) {
-
-        if (itr->first == boneIndex) {
+        if (itr->first == index) {
             return jctrue;
         }
 
@@ -73,11 +70,24 @@ jcboolean MeshFragmentConverter::isUsingBone(u8 boneIndex) {
 }
 
 /**
+ * 指定したボーンが利用できるコンテキストを探し出す
+ */
+MeshFragmentConverter::FragmentContext* MeshFragmentConverter::getBoneGroupContext(const u8 *bones, const s32 bones_length) {
+    for (u32 i = 0; i < contexts.size(); ++i) {
+        if (!isOverBone(contexts[i].get(), bones, bones_length)) {
+            return contexts[i].get();
+        }
+    }
+
+    return NULL;
+}
+
+/**
  * インデックスバッファを追加する
  */
 void MeshFragmentConverter::addIndices(const std::vector<FigureVertex> &vertices, const u16 p0, const u16 p1, const u16 p2) {
     int ptr = 0;
-    u8 bones[4 * 3] = { };
+    u8 bones[4 * 3] = { 0 };
 
     // 利用するボーンを列挙する
     {
@@ -102,13 +112,12 @@ void MeshFragmentConverter::addIndices(const std::vector<FigureVertex> &vertices
         }
     }
 
-    if (isOverBone(bones, 12)) {
-        // 子を分離させる
-        separation();
-    }
-
     // 頂点を登録する
-    FragmentContext *pContext = getCurrentContext();
+    FragmentContext *pContext = getBoneGroupContext(bones, 12);
+    if (!pContext) {
+        separation();
+        pContext = getCurrentContext();
+    }
     {
         const FigureVertex &vertex = vertices[p0];
         pContext->indices.push_back(registerVertex(&pContext->vertices, vertex));
