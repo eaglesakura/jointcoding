@@ -85,6 +85,11 @@ typedef jc_sp<GLFigureMeshFragment> MGLFigureMeshFragment;
 class FigureNode {
 public:
     /**
+     * ノード名
+     */
+    String name;
+
+    /**
      * 子ノードのID
      */
     std::vector<s32> children;

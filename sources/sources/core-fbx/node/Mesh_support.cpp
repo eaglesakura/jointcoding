@@ -145,7 +145,10 @@ void createMaterials(std::vector<MFigureMaterial> *result, KFbxMesh *mesh) {
     const s32 materialNum = mesh->GetNode()->GetMaterialCount();
 
     if (materialNum == 0) {
-        throw create_exception_t(FbxException, FbxException_MaterialNotFound);
+        MFigureMaterial temp(new FigureMaterial());
+        temp->name = "NO_MATERIAL";
+        result->push_back(temp);
+        return;
     }
 
 // マテリアルを全て集積する
@@ -269,9 +272,11 @@ void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *mesh) {
 
 //! マテリアル番号
             if ((s32) materialNumbers.size() <= i) {
-                throw create_exception_t(FbxException, FbxException_MaterialNotFound);
+                (*result)[current].material = 0;
+//                throw create_exception_t(FbxException, FbxException_MaterialNotFound);
+            } else {
+                (*result)[current].material = materialNumbers[i];
             }
-            (*result)[current].material = materialNumbers[i];
             current++;
         }
         uvIndex += size;

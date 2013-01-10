@@ -38,19 +38,19 @@ void Node::retisterDefaultTake(KFbxNode *node) {
         // 位置情報
         {
 //            FbxDouble3 v = node->LclTranslation.Get();
-            FbxDouble4 v = matrix.GetT();
+            FbxDouble4 v = node->EvaluateLocalTranslation();
             transform.translate.set((float) v[0], (float) v[1], (float) v[2]);
         }
         // 回転情報
         {
 //            FbxDouble3 v = node->LclRotation.Get();
-            FbxDouble4 v = matrix.GetR();
+            FbxDouble4 v = node->EvaluateLocalRotation();
             transform.rotate.set((float) v[0], (float) v[1], (float) v[2], 0);
         }
         // 基本スケーリング
         {
 //            FbxDouble3 v = node->LclScaling.Get();
-            FbxDouble4 v = matrix.GetS();
+            FbxDouble4 v = node->EvaluateLocalScaling();
             transform.scale.set((float) v[0], (float) v[1], (float) v[2]);
         }
     }
@@ -124,6 +124,7 @@ void Node::registerAnimations() {
         s32 endFrame = (s32) (end.Get() / period.Get());
 
         // FIXME!! モーション時間を限定
+        /*
         {
             startFrame = 1;
             endFrame = 120;
@@ -132,6 +133,7 @@ void Node::registerAnimations() {
             startFrame = 480;
             endFrame = 600;
         }
+        */
 
         jclogf("    Node(%s) Frame %d -> %d", name.c_str(), startFrame, endFrame);
 
@@ -147,9 +149,9 @@ void Node::registerAnimations() {
 //            KFbxVector4 scale = evalutor->GetNodeLocalScaling(fbxNode, period * i);
 
             FbxAMatrix matrix = evalutor->GetNodeLocalTransform(fbxNode, period * i);
-            KFbxVector4 translate = matrix.GetT();
-            KFbxVector4 rotate = matrix.GetR();
-            KFbxVector4 scale = matrix.GetS();
+            KFbxVector4 translate = fbxNode->EvaluateLocalTranslation(period * i);
+            KFbxVector4 rotate = fbxNode->EvaluateLocalRotation(period * i);
+            KFbxVector4 scale = fbxNode->EvaluateLocalScaling(period * i);
 
             translate_keys += animator.addTranslateAnimation(TranslateKey(i, Vector3f(translate[0], translate[1], translate[2])));
             rotate_keys += animator.addRotateAnimation(RotateKey(i, Vector4f(rotate[0], rotate[1], rotate[2], 0)));
