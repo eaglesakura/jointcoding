@@ -47,10 +47,13 @@ void FigureDataOutputStream::writeVector3(const Vector3f &v, const jcboolean tra
 
     // 事前モデル行列を割り当てる
 //    modelMatrix.multiply(v, &temp);
+    {
+    }
 
-    this->writeFixed32(temp.x, fixedbits);
-    this->writeFixed32(temp.y, fixedbits);
+    // FIXME ひとまず、昔作ったプログラムに合わせて出力修正
+    this->writeFixed32(-temp.x, fixedbits);
     this->writeFixed32(temp.z, fixedbits);
+    this->writeFixed32(-temp.y, fixedbits);
 }
 
 /**

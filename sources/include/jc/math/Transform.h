@@ -96,14 +96,14 @@ public:
             rotateX.rotateX(rotate.x);
         }
 
-        //! y
-        if (rotate.y != 0.0f) {
-            rotateY.rotateY(rotate.y);
-        }
-
         //! z
         if (rotate.z != 0.0f) {
             rotateZ.rotateZ(rotate.z);
+        }
+
+        //! y
+        if (rotate.y != 0.0f) {
+            rotateY.rotateY(rotate.y);
         }
 
         // position
@@ -112,8 +112,8 @@ public:
         }
 
         multiply(scale_m, rotateX, result);
-        multiply(*result, rotateY, result);
         multiply(*result, rotateZ, result);
+        multiply(*result, rotateY, result);
         multiply(*result, translate_m, result);
 
         return result;

@@ -19,8 +19,8 @@ void testFunction() {
 
     // インポート
     {
-//        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("skin-anim.fbx");
-        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("pipe.fbx");
+        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("skin-anim.fbx");
+//        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("pipe.fbx");
 
         try {
             manager->importFromSceneName("");

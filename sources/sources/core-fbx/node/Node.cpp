@@ -33,7 +33,6 @@ void Node::retisterDefaultTake(KFbxNode *node) {
 
     // 基本姿勢
     {
-        FbxAMatrix matrix = node->GetScene()->GetEvaluator()->GetNodeLocalTransform(node);
 //        node->
         // 位置情報
         {
@@ -129,9 +128,9 @@ void Node::registerAnimations() {
         s32 endFrame = (s32) (end.Get() / period.Get());
 
         // FIXME!! モーション時間を限定
+         startFrame = 0;
+         endFrame = jc::min(120, endFrame);
         /*
-         startFrame = 1;
-         endFrame = 120;
          {
 
          // wave
@@ -197,15 +196,23 @@ void Node::serialize(FbxExportManager *exportManager) {
         // transform
         {
             stream->writeVector3(transform.scale);
-
+//            stream->writeFixed32(transform.scale.x);
+//            stream->writeFixed32(transform.scale.z);
+//            stream->writeFixed32(transform.scale.y);
             {
                 stream->writeS8(transform.rotateType);
                 stream->writeVector3(Vector3f(transform.rotate.x, transform.rotate.y, transform.rotate.z));
+//                stream->writeFixed32(transform.rotate.x);
+//                stream->writeFixed32(transform.rotate.z);
+//                stream->writeFixed32(transform.rotate.y);
 
                 // vec4としてreadできるように、4byte詰め物をする
                 stream->writeS32(0);
             }
             stream->writeVector3(transform.translate);
+//            stream->writeFixed32(transform.translate.x);
+//            stream->writeFixed32(transform.translate.z);
+//            stream->writeFixed32(transform.translate.y);
         }
     }
 
@@ -227,6 +234,9 @@ void Node::serialize(FbxExportManager *exportManager) {
 
                 stream->writeU16((u16) key.frame);
                 stream->writeVector3(key.value);
+//                stream->writeFixed32(key.value.x);
+//                stream->writeFixed32(key.value.y);
+//                stream->writeFixed32(key.value.z);
             }
         }
         {
@@ -247,6 +257,9 @@ void Node::serialize(FbxExportManager *exportManager) {
 
                 // rotate = vector4
                 stream->writeVector3(Vector3f(key.value.x, key.value.y, key.value.z));
+//                stream->writeFixed32(key.value.x);
+//                stream->writeFixed32(key.value.y);
+//                stream->writeFixed32(key.value.z);
                 stream->writeFixed32(0);
             }
         }
@@ -266,6 +279,10 @@ void Node::serialize(FbxExportManager *exportManager) {
 
                 stream->writeU16((u16) key.frame);
                 stream->writeVector3(key.value);
+//                stream->writeFixed32(key.value.x);
+//                stream->writeFixed32(key.value.y);
+//                stream->writeFixed32(key.value.z);
+
             }
         }
     }

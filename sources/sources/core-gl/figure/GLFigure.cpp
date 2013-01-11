@@ -75,7 +75,6 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
             // texture
             if (params->uniforms.tex_0 != UNIFORM_DISABLE_INDEX && material->use_texture) {
                 const u32 unif_tex0 = params->uniforms.tex_0;
-
                 if (!material->texture) {
                     material->texture = textures->get(material->textureName);
 
@@ -149,7 +148,6 @@ void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Mat
     Matrix4x4 local;
     animation->getMatrix(nodeNumber, &local);
     multiply(local, parent, &node->matrix_current_world);
-//    multiply(parent, local, &node->matrix_current_world);
 #else
     animation->getMatrix(nodeNumber, &node->matrix_current_world);
 #endif
@@ -172,10 +170,8 @@ void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &
 
 #ifdef  TRANSFORM_LOCAL
     Matrix4x4 local;
-    node->defTransform.rotate.y = -node->defTransform.rotate.y;
     node->defTransform.getMatrix(&local);
     multiply(local, parent, &node->matrix_current_world);
-//    multiply(parent, local, &node->matrix_current_world);
 #else
     node->defTransform.getMatrix(&node->matrix_current_world);
 #endif
