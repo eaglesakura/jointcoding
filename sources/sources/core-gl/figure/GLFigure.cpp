@@ -19,19 +19,6 @@ GLFigure::~GLFigure() {
 }
 
 /**
- * 指定したノード番号のボーンテーブルを用意する
- */
-void GLFigure::_enumBones(GLFigureMeshFragment *pFragment, GLFigureMeshFragment::DrawingContext *pContext) {
-    for (u32 i = 0; i < pContext->bone_pick_table_length; ++i) {
-//        bone_table[i] = nodes[pContext->bone_pick_table[i]]->matrix_current_world;
-        const u32 node_nubmer = pContext->bone_pick_table[i];
-        const Matrix4x4 &bone = nodes[node_nubmer]->matrix_current_world;
-        const Matrix4x4 &bone_inv = nodes[node_nubmer]->matrix_default_invert;
-        multiply(bone_inv, bone, &bone_table[i]);
-    }
-}
-
-/**
  * ノードのレンダリングを行う
  */
 void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLFigure::ShaderParams *params) {
@@ -46,7 +33,6 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
         const u32 context_num = fragment->getDrawingContextCount();
 
         // コンテキスト数だけ、同一マテリアルで描画する
-        // FIXME 0番コンテキストだけを描画する
         for (u32 ctx = 0; ctx < context_num; ++ctx) {
             GLFigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx).get();
 
@@ -105,9 +91,7 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
                         glUniform1i(unif_tex0, index);
                     }
                 }
-
             }
-
             // rendering!
             pContext->indices->rendering();
         }
@@ -138,6 +122,24 @@ void GLFigure::rendering(const GLFigure::ShaderParams *params) {
 }
 
 /**
+ * 指定したノード番号のボーンテーブルを用意する
+ */
+void GLFigure::_enumBones(GLFigureMeshFragment *pFragment, GLFigureMeshFragment::DrawingContext *pContext) {
+    for (u32 i = 0; i < pContext->bone_pick_table_length; ++i) {
+//        bone_table[i] = nodes[pContext->bone_pick_table[i]]->matrix_current_world;
+
+        const u32 node_nubmer = pContext->bone_pick_table[i];
+
+//        jclogf("bone table[%d] <- node number[%d]", i, node_nubmer);
+
+        MFigureNode bone_node = nodes[node_nubmer];
+        const Matrix4x4 &bone = bone_node->matrix_current_world;
+        const Matrix4x4 &bone_inv = bone_node->matrix_default_invert;
+
+        multiply(bone_inv, bone, &bone_table[i]);
+    }
+}
+/**
  * アニメーションを当てる
  */
 void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Matrix4x4 &parent) {
@@ -147,6 +149,7 @@ void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Mat
     Matrix4x4 local;
     animation->getMatrix(nodeNumber, &local);
     multiply(local, parent, &node->matrix_current_world);
+//    multiply(parent, local, &node->matrix_current_world);
 #else
     animation->getMatrix(nodeNumber, &node->matrix_current_world);
 #endif
@@ -155,7 +158,42 @@ void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Mat
     for (u32 i = 0; i < node->children.size(); ++i) {
         _posing(animation, node->children[i], node->matrix_current_world);
     }
+}
 
+/**
+ * 逆行列を作成する
+ */
+void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &parent) {
+    FigureNode *node = getNodePtr(nodeNumber);
+
+    // 親の行列と逆行列を保存する
+    node->matrix_parent_default = parent;
+    node->matrix_parent_default.invert(&node->matrix_parent_invert);
+
+#ifdef  TRANSFORM_LOCAL
+    Matrix4x4 local;
+    node->defTransform.rotate.y = -node->defTransform.rotate.y;
+    node->defTransform.getMatrix(&local);
+    multiply(local, parent, &node->matrix_current_world);
+//    multiply(parent, local, &node->matrix_current_world);
+#else
+    node->defTransform.getMatrix(&node->matrix_current_world);
+#endif
+
+    // invert!!
+    node->matrix_current_world.invert(&node->matrix_default_invert);
+//    local.invert(&node->matrix_default_invert);
+
+    {
+        Vector3f v;
+        node->matrix_current_world.multiply(v, &v);
+        jclogf("    initialize node[%d] position(%f, %f, %f)", nodeNumber, v.x, v.y, v.z);
+    }
+
+// 子を作成する
+    for (u32 i = 0; i < node->children.size(); ++i) {
+        _initializeInvertMatrices(node->children[i], node->matrix_current_world);
+    }
 }
 
 /**
@@ -175,28 +213,5 @@ void GLFigure::posing(AnimationClip *animation) {
 void GLFigure::initializeInvertMatrices() {
     _initializeInvertMatrices(0, Matrix4x4());
 }
-/**
- * 逆行列を作成する
- */
-void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &parent) {
-    FigureNode *node = getNodePtr(nodeNumber);
-
-#ifdef  TRANSFORM_LOCAL
-    Matrix4x4 local;
-    node->defTransform.getMatrix(&local);
-    multiply(local, parent, &node->matrix_current_world);
-#else
-    node->defTransform.getMatrix(&node->matrix_current_world);
-#endif
-
-    // invert!!
-    node->matrix_current_world.invert(&node->matrix_default_invert);
-
-    // 子を作成する
-    for (u32 i = 0; i < node->children.size(); ++i) {
-        _initializeInvertMatrices(node->children[i], node->matrix_current_world);
-    }
-}
-
 }
 }

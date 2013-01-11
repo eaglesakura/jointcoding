@@ -76,48 +76,45 @@ public:
     virtual ~Transform() {
     }
 
-
     /**
      * thisを構築する行列を作成する
      */
     Matrix4x4* getMatrix(Matrix4x4 *result) const {
-        Matrix4x4 temp;
+        Matrix4x4 scale_m;
+        Matrix4x4 rotateX;
+        Matrix4x4 rotateY;
+        Matrix4x4 rotateZ;
+        Matrix4x4 translate_m;
         result->identity();
 
         if (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f) {
-            result->scale(scale.x, scale.y, scale.z);
+            scale_m.scale(scale.x, scale.y, scale.z);
         }
 
         //! x
         if (rotate.x != 0.0f) {
-            temp.rotateX(rotate.x);
-//            temp.rotate(-1.0f, 0.0f, 0.0f, rotate.x);
-            multiply(*result, temp, result);
+            rotateX.rotateX(rotate.x);
         }
 
         //! y
         if (rotate.y != 0.0f) {
-            temp.identity();
-//            temp.rotate(0.0f, -1.0f, 0.0f, rotate.y);
-            temp.rotateY(rotate.y);
-            multiply(*result, temp, result);
+            rotateY.rotateY(rotate.y);
         }
 
         //! z
         if (rotate.z != 0.0f) {
-            temp.identity();
-//            temp.rotate(0.0f, 0.0f, -1.0f, rotate.z);
-            temp.rotateZ(rotate.z);
-            multiply(*result, temp, result);
+            rotateZ.rotateZ(rotate.z);
         }
 
         // position
         {
-            temp.identity();
-            temp.translate(translate.x, translate.y, translate.z);
-            multiply(*result, temp, result);
+            translate_m.translate(translate.x, translate.y, translate.z);
         }
 
+        multiply(scale_m, rotateX, result);
+        multiply(*result, rotateY, result);
+        multiply(*result, rotateZ, result);
+        multiply(*result, translate_m, result);
 
         return result;
     }

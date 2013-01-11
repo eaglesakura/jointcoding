@@ -40,18 +40,22 @@ void Node::retisterDefaultTake(KFbxNode *node) {
 //            FbxDouble3 v = node->LclTranslation.Get();
             FbxDouble4 v = node->EvaluateLocalTranslation();
             transform.translate.set((float) v[0], (float) v[1], (float) v[2]);
+
+            jclogf("    node[%s] translate(%f, %f, %f) + (%f)", name.c_str(), v[0], v[1], v[2], v[3]);
         }
         // 回転情報
         {
 //            FbxDouble3 v = node->LclRotation.Get();
             FbxDouble4 v = node->EvaluateLocalRotation();
             transform.rotate.set((float) v[0], (float) v[1], (float) v[2], 0);
+            jclogf("    node[%s] rotate(%f, %f, %f) + (%f)", name.c_str(), v[0], v[1], v[2], v[3]);
         }
         // 基本スケーリング
         {
 //            FbxDouble3 v = node->LclScaling.Get();
             FbxDouble4 v = node->EvaluateLocalScaling();
             transform.scale.set((float) v[0], (float) v[1], (float) v[2]);
+            jclogf("   node[%s] scale(%f, %f, %f) + (%f)", name.c_str(), v[0], v[1], v[2], v[3]);
         }
     }
 }
@@ -99,6 +103,7 @@ void Node::addChild(MNode node) {
  * アニメーションを登録する
  */
 void Node::registerAnimations() {
+
     KFbxScene *scene = fbxNode->GetScene();
 
     // アニメーション名を取得する
@@ -125,15 +130,15 @@ void Node::registerAnimations() {
 
         // FIXME!! モーション時間を限定
         /*
-        {
-            startFrame = 1;
-            endFrame = 120;
+         startFrame = 1;
+         endFrame = 120;
+         {
 
-            // wave
-            startFrame = 480;
-            endFrame = 600;
-        }
-        */
+         // wave
+         startFrame = 480;
+         endFrame = 600;
+         }
+         */
 
         jclogf("    Node(%s) Frame %d -> %d", name.c_str(), startFrame, endFrame);
 

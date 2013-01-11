@@ -121,7 +121,7 @@ struct Matrix {
     }
 
     /**
-     * float[3]と行列の演算を行う
+     * float[4]と行列の演算を行う
      */
     inline void multiply4(const float *origin4f, float *result4f) const {
         // x
@@ -435,6 +435,40 @@ private:
 
     }
 
+    /**
+     * 行列乗算を行う
+     */
+    inline static Matrix<4, 4>* multiply(const Matrix<4, 4> &before, const Matrix<4, 4> &after, Matrix<4, 4> *result) {
+
+        // テンポラリ領域
+        float temp[4][4];
+
+        after.multiply4(before.m[0], temp[0]);
+        after.multiply4(before.m[1], temp[1]);
+        after.multiply4(before.m[2], temp[2]);
+        after.multiply4(before.m[3], temp[3]);
+
+        memcpy(result->m, temp, sizeof(temp));
+        return result;
+    }
+
+    /**
+     * 行列乗算を行う
+     */
+    inline static Matrix<4, 3>* multiply(const Matrix<4, 3> &before, const Matrix<4, 3> &after, Matrix<4, 3> *result) {
+
+        // テンポラリ領域
+        float temp[4][3];
+
+        after.multiply3(before.m[0], 0, temp[0]);
+        after.multiply3(before.m[1], 0, temp[1]);
+        after.multiply3(before.m[2], 0, temp[2]);
+        after.multiply3(before.m[3], 1, temp[3]);
+
+        memcpy(result->m, temp, sizeof(temp));
+        return result;
+    }
+
 public:
 
     /**
@@ -449,6 +483,7 @@ public:
         }
 
         _invert<float>((const float*) temp.m, (float*) result->m);
+
     }
 
     inline void invert() {

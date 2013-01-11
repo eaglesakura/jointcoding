@@ -48,8 +48,8 @@
 								<option id="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level.1137213572" name="デバッグ・レベル" superClass="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.880806599" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FBX_SDK_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FBX_SDK_HOME}/include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.87496329" name="定義済みのシンボル (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="BUILD_MaxOSX=1"/>
@@ -61,8 +61,8 @@
 								<option id="gnu.c.compiler.macosx.exe.debug.option.debugging.level.2146778500" name="デバッグ・レベル" superClass="gnu.c.compiler.macosx.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.63083863" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${FBX_SDK_HOME}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JOINTCODING_HOME}/sources/gen&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${FBX_SDK_HOME}/include&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1604353469" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="BUILD_MaxOSX=1"/>

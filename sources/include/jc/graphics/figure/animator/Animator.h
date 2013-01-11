@@ -183,8 +183,8 @@ public:
                 return jcfalse;
             }
         }
-#endif
         jclogf("    new translate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
+#endif
         translates.push_back(key);
         return jctrue;
     }
@@ -202,8 +202,8 @@ public:
                 return jcfalse;
             }
         }
-#endif
         jclogf("    new rotate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
+#endif
         rotates.push_back(key);
         return jctrue;
     }
@@ -221,8 +221,8 @@ public:
                 return jcfalse;
             }
         }
-#endif
         jclogf("    new scale key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
+#endif
         scales.push_back(key);
         return jctrue;
     }

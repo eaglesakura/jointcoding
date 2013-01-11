@@ -23,9 +23,12 @@ LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/core-gl/ -
 # android sources
 LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/android/ -name '*.c')
 LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/android/ -name '*.cpp')
+LOCAL_SRC_FILES := 
 ############################    build sources finish   ###########################
 # 設定は共通のmakefileに任せる
 # マクロを追加したい場合は適宜行う
+
 LOCAL_MODULE    := $(JOINTCODING_LIB_MODULE)
-include $(JOINTCODING_HOME)/bin/android-make/jointcoding-lib-Android.mk
+#include $(JOINTCODING_HOME)/bin/android-make/jointcoding-lib-Android.mk
+include $(BUILD_SHARED_LIBRARY)
 #################################################################################
