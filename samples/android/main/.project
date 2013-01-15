@@ -3,7 +3,6 @@
 	<name>jointcoding-samples</name>
 	<comment></comment>
 	<projects>
-		<project>jointcoding-android-lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -47,4 +46,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>jni/sources</name>
+			<type>2</type>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

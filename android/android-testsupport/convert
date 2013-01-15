@@ -1,0 +1,15 @@
+#! /bin/sh
+
+if [ ! -e AndroidManifest.xml ]; then
+    echo "is not Android Project directory..."
+    exit 1
+fi
+
+ANDROID_VERSION=android-15
+OUTPUT_PATH=../../sources/
+
+#
+echo "android classes --------------"
+java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin" --output "${OUTPUT_PATH}/gen/android-testsupport" --library "${ANDROID_HOME}/platforms/${ANDROID_VERSION}/android.jar" "./bin/classes"  | grep "export"
+
+

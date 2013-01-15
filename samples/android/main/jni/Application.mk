@@ -4,5 +4,5 @@
 ## setup
 include $(JOINTCODING_HOME)/bin/android-make/types.mk
 #################################################################################
-APP_MODULES := $(JOINTCODING_APP_MODULE)
+APP_MODULES := $(JOINTCODING_FULLAPP_MODULE)
 include $(JOINTCODING_HOME)/bin/android-make/jointcoding-Application.mk

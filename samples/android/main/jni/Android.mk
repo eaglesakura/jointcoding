@@ -7,13 +7,29 @@ include $(JOINTCODING_HOME)/bin/android-make/types.mk
 #################################################################################
 ## start build
 include $(CLEAR_VARS)
-############################       build sources       ###########################
+
+############################       build core sources       ###########################
+# gen sources
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/gen/ -name '*.cpp')
+
+# core sources
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/core/ -name '*.c')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/core/ -name '*.cpp')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/core-gl/ -name '*.cpp')
+
+# android sources
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/android/ -name '*.c')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/android/ -name '*.cpp')
+
+############################       build  app sources       ###########################
 LOCAL_C_INCLUDES += $(shell find '.' -type d)
 LOCAL_SRC_FILES += $(shell find '.' -name '*.c')
 LOCAL_SRC_FILES += $(shell find '.' -name '*.cpp')
-############################    build sources finish   ###########################
+############################         build sources finish   ###########################
 # 設定は共通のmakefileに任せる
 # マクロを追加したい場合は適宜行う
-LOCAL_MODULE    := $(JOINTCODING_APP_MODULE)
-include $(JOINTCODING_HOME)/bin/android-make/jointcoding-app-Android.mk
+# LOCAL_MODULE    := $(JOINTCODING_APP_MODULE)
+LOCAL_MODULE	:= $(JOINTCODING_FULLAPP_MODULE)
+
+include $(JOINTCODING_HOME)/bin/android-make/jointcoding-full-app-Android.mk
 #################################################################################
