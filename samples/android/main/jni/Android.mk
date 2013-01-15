@@ -13,13 +13,14 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/gen/ -name '*.cpp')
 
 # core sources
-LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/core/ -name '*.c')
-LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/core/ -name '*.cpp')
-LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/core-gl/ -name '*.cpp')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/core/ -name '*.c')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/core/ -name '*.cpp')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/core-gl/ -name '*.c')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/core-gl/ -name '*.cpp')
 
 # android sources
-LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/android/ -name '*.c')
-LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/sources/android/ -name '*.cpp')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/platform-android/ -name '*.c')
+LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/platform-android/ -name '*.cpp')
 
 ############################       build  app sources       ###########################
 LOCAL_C_INCLUDES += $(shell find '.' -type d)

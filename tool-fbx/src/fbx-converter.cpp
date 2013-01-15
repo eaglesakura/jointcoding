@@ -7,7 +7,7 @@
 //============================================================================
 
 #include "jointcoding.h"
-#include "jctest/CdtTestRunner.h"
+#include "jctest/cdt/CdtTestRunner.h"
 
 //    #define RUN_TEST
 

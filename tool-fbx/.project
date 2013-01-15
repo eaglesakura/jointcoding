@@ -26,24 +26,19 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>jointcoding-includes/include</name>
-			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/include</locationURI>
-		</link>
-		<link>
 			<name>jointcoding-sources/core</name>
 			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/sources/core</locationURI>
-		</link>
-		<link>
-			<name>jointcoding-sources/core-cpptest</name>
-			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/sources/core-cpptest</locationURI>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources/core</locationURI>
 		</link>
 		<link>
 			<name>jointcoding-sources/core-fbx</name>
 			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/sources/core-fbx</locationURI>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources/core-fbx</locationURI>
+		</link>
+		<link>
+			<name>jointcoding-sources/platform-cdt-testsupport</name>
+			<type>2</type>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources/platform-cdt-testsupport</locationURI>
 		</link>
 		<link>
 			<name>jointcoding-sources/protocol</name>
@@ -51,9 +46,9 @@
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/gen/protocol</locationURI>
 		</link>
 		<link>
-			<name>jointcoding-tests/core</name>
+			<name>jointcoding-tests/core-test</name>
 			<type>2</type>
-			<locationURI>$%7BJOINTCODING_HOME%7D/sources/tests/core</locationURI>
+			<locationURI>$%7BJOINTCODING_HOME%7D/sources/core-test</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
