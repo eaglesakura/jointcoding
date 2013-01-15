@@ -79,7 +79,8 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
                 keyFrame.value.y = stream->readFixed32();
                 keyFrame.value.z = stream->readFixed32();
 
-//                keyFrame.value.set(1, 1, 1);
+                // FIXME スケーリング値をリセットしないと正常に表示されない。出力時のミス？
+                keyFrame.value.set(1, 1, 1);
 //                jclogf("   frame[%d] scale(%f, %f, %f) = %s", keyFrame.frame, keyFrame.value.x, keyFrame.value.y, keyFrame.value.z, name.c_str());
                 // 現在のノードにキーフレームを書き込む
                 group->animations[i].addScaleAnimation(keyFrame);

@@ -128,8 +128,8 @@ void Node::registerAnimations() {
         s32 endFrame = (s32) (end.Get() / period.Get());
 
         // FIXME!! モーション時間を限定
-         startFrame = 0;
-         endFrame = jc::min(120, endFrame);
+         startFrame = 1;
+//         endFrame = jc::min(120, endFrame);
         /*
          {
 
@@ -141,18 +141,11 @@ void Node::registerAnimations() {
 
         jclogf("    Node(%s) Frame %d -> %d", name.c_str(), startFrame, endFrame);
 
-        KFbxAnimEvaluator *evalutor = scene->GetEvaluator();
-
         u32 translate_keys = 0;
         u32 rotate_keys = 0;
         u32 scale_keys = 0;
 
         for (s32 i = startFrame; i < endFrame; ++i) {
-//            KFbxVector4 translate = evalutor->GetNodeLocalTranslation(fbxNode, period * i);
-//            KFbxVector4 rotate = evalutor->GetNodeLocalRotation(fbxNode, period * i);
-//            KFbxVector4 scale = evalutor->GetNodeLocalScaling(fbxNode, period * i);
-
-            FbxAMatrix matrix = evalutor->GetNodeLocalTransform(fbxNode, period * i);
             KFbxVector4 translate = fbxNode->EvaluateLocalTranslation(period * i);
             KFbxVector4 rotate = fbxNode->EvaluateLocalRotation(period * i);
             KFbxVector4 scale = fbxNode->EvaluateLocalScaling(period * i);

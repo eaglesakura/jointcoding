@@ -180,11 +180,13 @@ void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &
     node->matrix_current_world.invert(&node->matrix_default_invert);
 //    local.invert(&node->matrix_default_invert);
 
+#if 0
     {
         Vector3f v;
         node->matrix_current_world.multiply(v, &v);
         jclogf("    initialize node[%d] position(%f, %f, %f)", nodeNumber, v.x, v.y, v.z);
     }
+#endif
 
 // 子を作成する
     for (u32 i = 0; i < node->children.size(); ++i) {
