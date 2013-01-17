@@ -4,22 +4,22 @@
  *  Created on: 2013/01/17
  */
 
-#include    "jc/data/FileArchiveInputStream.h"
+#include    "jc/data/FileArchiveImporter.h"
 
 namespace jc {
 
-FileArchiveInputStream::FileArchiveInputStream() {
+FileArchiveImporter::FileArchiveImporter() {
 
 }
 
-FileArchiveInputStream::~FileArchiveInputStream() {
+FileArchiveImporter::~FileArchiveImporter() {
 
 }
 
 /**
  * 初期化を行う
  */
-void FileArchiveInputStream::initialize(MInputStream stream) {
+void FileArchiveImporter::initialize(MInputStream stream) {
     const s32 file_size = stream->available();
     MBinaryInputStream reader(new BinaryInputStream(stream));
 
@@ -48,13 +48,15 @@ void FileArchiveInputStream::initialize(MInputStream stream) {
         stream->read((u8*) info.file_name, sizeof(info.file_name));
         info.file_head = reader->readU32();
         info.file_length = reader->readU32();
+
+        archives.push_back(info);
     }
 }
 
 /**
  * ファイルの読み込みを開始する
  */
-jcboolean FileArchiveInputStream::findFile(const String &file_name, ArchiveInfo *result) {
+jcboolean FileArchiveImporter::findFile(const String &file_name, ArchiveInfo *result) {
 
     for (u32 i = 0; i < archives.size(); ++i) {
         if (strcmp(archives[i].file_name, file_name.c_str()) == 0) {

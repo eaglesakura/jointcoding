@@ -17,6 +17,7 @@ FileInputStream::FileInputStream(const String &fileName, jcboolean *completed) {
         (*completed) = (file != NULL);
     }
     setAutoClose(true);
+    init();
 }
 
 FileInputStream::FileInputStream(const charactor *fileName, jcboolean *completed) {
@@ -25,10 +26,12 @@ FileInputStream::FileInputStream(const charactor *fileName, jcboolean *completed
         (*completed) = (file != NULL);
     }
     setAutoClose(true);
+    init();
 }
 FileInputStream::FileInputStream(FILE* fp) {
     file = fp;
     setAutoClose(false);
+    init();
 }
 
 FileInputStream::~FileInputStream() {
@@ -47,6 +50,9 @@ void FileInputStream::init() {
 
     // 現在位置から全体サイズを引いたら残量
     this->size = (size - current);
+
+    //
+    fseek(file, current, SEEK_SET);
 }
 
 s32 FileInputStream::read(u8 *result, s32 size) {

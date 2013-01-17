@@ -12,15 +12,15 @@
 
 namespace jc {
 
-class FileArchiveInputStream: public Object {
+class FileArchiveImporter: public Object {
     /**
      * アーカイブ済みのファイル一覧
      */
     std::vector<ArchiveInfo> archives;
 
 public:
-    FileArchiveInputStream();
-    virtual ~FileArchiveInputStream();
+    FileArchiveImporter();
+    virtual ~FileArchiveImporter();
 
     /**
      * 初期化を行う
@@ -32,7 +32,19 @@ public:
      */
     virtual jcboolean findFile(const String &file_name, ArchiveInfo *result);
 
+    /**
+     * ファイル数を取得する
+     */
+    virtual u32 getFileCount() const {
+        return archives.size();
+    }
 };
+
+/**
+ * managed
+ */
+typedef jc_sp<FileArchiveImporter> MFileArchiveImporter;
+
 }
 
 #endif /* FILEARCHIVEINPUTSTREAM_H_ */
