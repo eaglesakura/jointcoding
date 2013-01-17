@@ -95,27 +95,27 @@ private:
     /**
      * フレーム数が low_ptr <= frame <= high_ptr となるフレームを探し出す。
      */
-    template<typename T>
-    inline void findFrames(std::vector<T> &key_list, const u32 frame, T** low_ptr, T** high_ptr) {
-        (*low_ptr) = &(key_list[0]);
+    template<typename T, typename VectorType>
+    static inline void findFrames(const std::vector<T> &key_list, const u32 frame, KeyFrame<VectorType> **low_ptr, KeyFrame<VectorType> **high_ptr) {
+        (*low_ptr) = (KeyFrame<VectorType>*)&(key_list[0]);
         for (u32 i = 0; i < key_list.size(); ++i) {
             if (key_list[i].frame <= frame) {
                 // フレームが欲しいフレームを超えてないなら、次をチェックする
-                (*low_ptr) = &(key_list[i]);
+                (*low_ptr) = (KeyFrame<VectorType>*)&(key_list[i]);
             } else {
                 // フレームが欲しいフレームを超えたら、最後にチェックしたフレームを返す
-                (*high_ptr) = &(key_list[i]);
+                (*high_ptr) = (KeyFrame<VectorType>*)&(key_list[i]);
                 return;
             }
         }
 
-        (*high_ptr) = &(key_list[key_list.size() - 1]);
+        (*high_ptr) = (KeyFrame<VectorType>*)&(key_list[key_list.size() - 1]);
     }
 
     template<typename T, typename VectorType>
-    inline void calc_frame(const std::vector<T> &key_list, const float frame, VectorType* result) {
-        T *low_frame = NULL;
-        T *high_frame = NULL;
+    static inline void calc_frame(const std::vector<T> &key_list, const float frame, VectorType* result) {
+        KeyFrame<VectorType> *low_frame = NULL;
+        KeyFrame<VectorType> *high_frame = NULL;
 
         findFrames(key_list, (u32) frame, &low_frame, &high_frame);
 
@@ -227,6 +227,9 @@ public:
             }
         }
 
+        calc_frame<TranslateKey, Vector3f>(translates, frame, &result->translate);
+//        calc_frame<RotateKey, Vector4f>(rotates, frame, &result->rotate);
+//        calc_frame<ScaleKey, Vector3f>(scales, frame, &result->scale);
 //        result->translate = translates[(int) normalized_frame].value;
 //        result->rotate = rotates[(int) normalized_frame].value;
 //        result->scale = scales[(int) normalized_frame].value;
