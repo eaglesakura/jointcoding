@@ -28,8 +28,12 @@
 							</builder>
 							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug.1095361686" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"/>
 							<tool command="g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GLDErrorParser" id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug.1294839714" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug">
-								<option id="macosx.cpp.link.option.libs.1705798006" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs"/>
-								<option id="macosx.cpp.link.option.paths.612712702" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths"/>
+								<option id="macosx.cpp.link.option.libs.1705798006" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="fbxsdk-2013.3"/>
+								</option>
+								<option id="macosx.cpp.link.option.paths.612712702" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${FBX_SDK_HOME}/lib/gcc4/ub/&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.999969664" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

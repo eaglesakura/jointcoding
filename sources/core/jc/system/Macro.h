@@ -51,6 +51,24 @@
 #define NULL ((void *)0)
 #endif
 #endif // NULL
+
+
+#ifndef BUILD_Android
+/**
+ * NDK_DEBUG=1の場合、NDEBUGフラグが立たないためDEBUGを立てる。
+ */
+#ifndef NDEBUG
+#define DEBUG
+#endif
+
+#else
+
+#ifndef NDEBUG
+#define DEBUG
+#endif
+
+#endif
+
 /**
  * 安全にdeleteを行う
  */
