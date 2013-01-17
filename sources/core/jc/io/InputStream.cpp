@@ -13,7 +13,7 @@ namespace jc {
 /**
  * バイト配列に変換する。
  */ //
-jc_sa<u8> InputStream::toByteArray(jc_sp<InputStream> is) {
+jc_sa<u8> InputStream::toByteArray(jc_sp<InputStream> is, u32 *result_length) {
 
     MMemoryBlock buffer(new MemoryBlock(is->available()));
     const u32 BUFFER_LENGTH = 1024 * 8;
@@ -30,6 +30,10 @@ jc_sa<u8> InputStream::toByteArray(jc_sp<InputStream> is) {
     // バッファを切り詰める
     buffer->compact();
 
+    if(result_length) {
+        *result_length = buffer->getLength();
+    }
+
     return buffer->getSharedBuffer();
 }
 
@@ -41,7 +45,6 @@ String InputStream::toText(MInputStream is) {
     jc_sa<u8> temp(new u8[BUFFER_LENGTH]);
     s32 readed = 0;
     MMemoryBlock buffer(new MemoryBlock(BUFFER_LENGTH));
-
 
     // 読み込めるだけ読み込む
     while ((readed = is->read(temp.get(), BUFFER_LENGTH)) > 0) {

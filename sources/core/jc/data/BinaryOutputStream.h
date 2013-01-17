@@ -95,6 +95,12 @@ public:
     virtual void writeByteArray(const void* data, const u32 bytes);
 
     /**
+     * データを直接、長さ保持せずに書き込む
+     * | data array ... |
+     */
+    virtual void writeRawByteArray(const void* data, const u32 bytes);
+
+    /**
      * データを書き込む。
      * float -> fixed変換を行なって書き込む。
      * | s32 bytes | fixed data array ... |

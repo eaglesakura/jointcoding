@@ -57,7 +57,7 @@ public:
     /**
      * バイト配列に変換する。
      */
-    static jc_sa<u8> toByteArray(jc_sp<InputStream> is);
+    static jc_sa<u8> toByteArray(jc_sp<InputStream> is, u32 *result_length = NULL);
 
     /**
      * テキストに変換する

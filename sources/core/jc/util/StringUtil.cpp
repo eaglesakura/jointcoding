@@ -59,4 +59,15 @@ const charactor* getFileName(const charactor *path) {
     }
 }
 
+/**
+ * パスを分解し、ファイル名を取り出す。
+ * 取り出せなかった場合はそのまま帰す。
+ */
+const charactor* getFileExt(const charactor *path) {
+    if (strchr(path, '.')) {
+        return strrchr(path, '.') + 1;
+    }
+    return NULL;
+}
+
 }

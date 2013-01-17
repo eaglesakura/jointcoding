@@ -105,9 +105,9 @@ public:
     virtual u32 readFixed32Array(jc_sa<float> *result_data, u32 *result_data_length, const s32 bits = FIXED_BIT_GL );
 };
 
-/**
- * managed
- */
+    /**
+     * managed
+     */
 typedef jc_sp<BinaryInputStream> MBinaryInputStream;
 
 }

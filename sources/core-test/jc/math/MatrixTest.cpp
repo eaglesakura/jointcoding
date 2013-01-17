@@ -12,7 +12,7 @@
 
 using namespace jc;
 
-void test_matrix_invert() {
+TESTFUNCTION void test_matrix_invert() {
 
     for (int i = 0; i < 100; ++i) {
         Matrix<4, 4> m;

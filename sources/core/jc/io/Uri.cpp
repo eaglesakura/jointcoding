@@ -7,6 +7,7 @@
 
 #include    "jc/io/Uri.h"
 #include    "protocol/jcUriProtocol.h"
+#include    "jc/system/StringUtil.h"
 
 namespace jc {
 /*
@@ -62,6 +63,21 @@ String Uri::getPath() const {
     }
     return "";
 }
+
+/**
+ * ファイル名を取得する
+ */
+String Uri::getFileName() const {
+    return  jc::getFileName(uri.c_str());
+}
+/**
+ * ファイル拡張子を取得する
+ */
+String Uri::getFileExt() const {
+    return jc::getFileExt(uri.c_str());
+}
+
+
 
 /**
  * パースを行う。

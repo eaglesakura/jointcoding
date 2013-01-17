@@ -20,7 +20,7 @@ using namespace jc;
 /**
  * BinaryInput/OutputStreamを利用してファイル読み書きを行い、正しいデータが入出力出来る事を確認する。
  */
-void test_binaryOutput() {
+TESTFUNCTION void test_binaryOutput() {
     const s8 s8_data = 1;
     const s16 s16_data = 0xFF00 | 2;
     const s32 s32_data = 0xFFEEDD | 4;

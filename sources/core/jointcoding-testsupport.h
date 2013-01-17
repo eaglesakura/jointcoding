@@ -19,7 +19,7 @@ void __assertTrue(const ::jc::charactor* file, const ::jc::s32 line, const bool 
 /**
  * 共通部分
  */
-#define __JC_ASSERT(is, msg) { bool __success__ = false; __assertTrue(jc::__getFileName(__FILE__), __LINE__, is == true, &__success__, msg); if(!__success__){ return; } }
+#define __JC_ASSERT(is, msg) { bool __success__ = false; ::jc::__assertTrue(jc::__getFileName(__FILE__), __LINE__, is == true, &__success__, msg); if(!__success__){ return; } }
 
 /**
  * trueであることを宣言する

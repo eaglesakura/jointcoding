@@ -11,6 +11,7 @@
 #include	"jointcoding.h"
 #include	"jc/io/Uri.h"
 #include    "jc/io/InputStream.h"
+#include    "jc/io/File.h"
 
 namespace jc {
 
@@ -27,6 +28,11 @@ public:
      * 読み込み用のストリームを開く。
      */
     virtual MInputStream openInputStream(const Uri &uri);
+
+    /**
+     * 特定ディレクトリ内のファイルを開く
+     */
+    virtual u32 listFiles(const Uri base_uri, std::vector<File> *result);
 
 protected:
     virtual MInputStream openAsset(const String fileName) = 0;

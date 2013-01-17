@@ -11,7 +11,7 @@
 
 using namespace jc;
 
-void test_string_hashMap() {
+TESTFUNCTION void test_string_hashMap() {
     std::map<String, int> temp;
 
     temp.insert(std::map<String, int>::value_type("0", 100));

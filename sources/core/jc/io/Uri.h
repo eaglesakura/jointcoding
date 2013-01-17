@@ -81,6 +81,16 @@ public:
     virtual String getPath() const;
 
     /**
+     * ファイル名を取得する
+     */
+    virtual String getFileName() const;
+
+    /**
+     * ファイル拡張子を取得する
+     */
+    virtual String getFileExt() const;
+
+    /**
      * URI全文を取得する
      */
     virtual const String& getUri() const {

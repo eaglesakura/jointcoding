@@ -30,5 +30,11 @@ s32 split(String origin, String delim, ::std::vector<String> *result);
  */
 const charactor* getFileName(const charactor *path);
 
+/**
+ * パスを分解し、ファイル拡張子を取り出す。
+ * 取り出せなかった場合、NULLを返す。
+ */
+const charactor* getFileExt(const charactor *path);
+
 }
 #endif /* JCSTRINGUTIL_H_ */
