@@ -173,10 +173,10 @@ typedef _Vector4<float> Vector4f;
 template<typename T>
 inline _Vector4<T>* lerp(const _Vector4<T> &before, const _Vector4<T> &after, const float weight, _Vector4<T> *result) {
 
-    const T x = (before.x * weight) + (after.x * (1.0f - weight));
-    const T y = (before.y * weight) + (after.y * (1.0f - weight));
-    const T z = (before.z * weight) + (after.z * (1.0f - weight));
-    const T w = (before.w * weight) + (after.w * (1.0f - weight));
+    const T x = (after.x * weight) + (before.x * (1.0f - weight));
+    const T y = (after.y * weight) + (before.y * (1.0f - weight));
+    const T z = (after.z * weight) + (before.z * (1.0f - weight));
+    const T w = (after.w * weight) + (before.w * (1.0f - weight));
 
     result->x = x;
     result->y = y;

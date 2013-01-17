@@ -228,8 +228,8 @@ public:
         }
 
         calc_frame<TranslateKey, Vector3f>(translates, frame, &result->translate);
-//        calc_frame<RotateKey, Vector4f>(rotates, frame, &result->rotate);
-//        calc_frame<ScaleKey, Vector3f>(scales, frame, &result->scale);
+        calc_frame<RotateKey, Vector4f>(rotates, frame, &result->rotate);
+        calc_frame<ScaleKey, Vector3f>(scales, frame, &result->scale);
 //        result->translate = translates[(int) normalized_frame].value;
 //        result->rotate = rotates[(int) normalized_frame].value;
 //        result->scale = scales[(int) normalized_frame].value;
