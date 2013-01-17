@@ -76,6 +76,61 @@ class Animator: public Object {
      * スケーリング情報
      */
     std::vector<ScaleKey> scales;
+
+private:
+
+    template<typename T>
+    inline jcboolean add_key(std::vector<T> *key_list, const T &key) {
+        // ラストキーと同じ？
+        if (key_list->size() > 1) {
+            if ((*key_list)[key_list->size() - 1].value == key.value) {
+                (*key_list)[key_list->size() - 1] = key;
+                return jcfalse;
+            }
+        }
+        key_list->push_back(key);
+        return jctrue;
+    }
+
+    /**
+     * フレーム数が low_ptr <= frame <= high_ptr となるフレームを探し出す。
+     */
+    template<typename T>
+    inline void findFrames(std::vector<T> &key_list, const u32 frame, T** low_ptr, T** high_ptr) {
+        (*low_ptr) = &(key_list[0]);
+        for (u32 i = 0; i < key_list.size(); ++i) {
+            if (key_list[i].frame <= frame) {
+                // フレームが欲しいフレームを超えてないなら、次をチェックする
+                (*low_ptr) = &(key_list[i]);
+            } else {
+                // フレームが欲しいフレームを超えたら、最後にチェックしたフレームを返す
+                (*high_ptr) = &(key_list[i]);
+                return;
+            }
+        }
+
+        (*high_ptr) = &(key_list[key_list.size() - 1]);
+    }
+
+    template<typename T, typename VectorType>
+    inline void calc_frame(const std::vector<T> &key_list, const float frame, VectorType* result) {
+        T *low_frame = NULL;
+        T *high_frame = NULL;
+
+        findFrames(key_list, (u32) frame, &low_frame, &high_frame);
+
+        // ２つのフレームの差分
+        const float frame_length = high_frame->frame - low_frame->frame;
+        // 現在のフレームの差
+        const float current_frame_position = frame - low_frame->frame;
+
+        // フレームの長さと、経過時間からウェイトを取得する
+        const float frame_weight = frame_length > 0.0f ? current_frame_position / frame_length : 0;
+
+        // ２つのフレームを補間する
+        lerp(low_frame->value, high_frame->value, frame_weight, result);
+    }
+
 public:
     enum Wrap_e {
         /**
@@ -156,75 +211,46 @@ public:
      * アニメーションの現在の状態を取得する
      */
     inline void getTransform(const Wrap_e wrap, const float frame, Transform *result) const {
-//        result->translate = translates[0].value;
-//        result->rotate = rotates[0].value;
-//        result->scale = scales[0].value;
-
         u32 range_max = 0;
         getAnimationRange(NULL, NULL, NULL, &range_max);
-        const float normalized_frame = (float) jc::minmax<u32>((u32)0, range_max - 1, (u32)frame);
 
-        result->translate = translates[(int) normalized_frame].value;
-        result->rotate = rotates[(int) normalized_frame].value;
-        result->scale = scales[(int) normalized_frame].value;
+        float normalized_frame = 0;
+        if (wrap == Wrap_Stop) {
+            normalized_frame = (float) jc::minmax<u32>((u32) 0, range_max - 1, (u32) frame);
+        } else /* if (wrap == Wrap_Loop) */{
+            while (normalized_frame < 0) {
+                normalized_frame += (float) range_max;
+            }
 
+            while (normalized_frame >= range_max) {
+                normalized_frame -= (float) range_max;
+            }
+        }
+
+//        result->translate = translates[(int) normalized_frame].value;
+//        result->rotate = rotates[(int) normalized_frame].value;
+//        result->scale = scales[(int) normalized_frame].value;
     }
 
     /**
      * 移動キーを挿入する
      */
     virtual jcboolean addTranslateAnimation(const TranslateKey &key) {
-#if 0
-        // ラストキーと同じ？
-        if (translates.size() > 1) {
-            if (translates[translates.size() - 1].value == key.value) {
-                translates[translates.size() - 1] = key;
-//                jclogf("    some translate key(%d)", key.frame);
-                return jcfalse;
-            }
-        }
-        jclogf("    new translate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
-#endif
-        translates.push_back(key);
-        return jctrue;
+        return add_key(&translates, key);
     }
 
     /**
      * 回転キーを挿入する
      */
     virtual jcboolean addRotateAnimation(const RotateKey &key) {
-#if 0
-        // ラストキーと同じ？
-        if (rotates.size() > 1) {
-            if (rotates[rotates.size() - 1].value == key.value) {
-                rotates[rotates.size() - 1] = key;
-//                jclogf("    some rotate key(%d)", key.frame);
-                return jcfalse;
-            }
-        }
-        jclogf("    new rotate key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
-#endif
-        rotates.push_back(key);
-        return jctrue;
+        return add_key(&rotates, key);
     }
 
     /**
      * スケーリングキーを挿入する
      */
     virtual jcboolean addScaleAnimation(const ScaleKey &key) {
-        // ラストキーと同じ？
-#if 0
-        if (scales.size() > 1) {
-            if (scales[scales.size() - 1].value == key.value) {
-                scales[scales.size() - 1] = key;
-//                jclogf("    some scale key(%d)", key.frame);
-                return jcfalse;
-            }
-        }
-        jclogf("    new scale key(%d)(%f, %f, %f)", key.frame, key.value.x, key.value.y, key.value.z);
-#endif
-        scales.push_back(key);
-        return jctrue;
+        return add_key(&scales, key);
     }
 };
 

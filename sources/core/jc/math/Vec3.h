@@ -189,6 +189,7 @@ struct _Vector3 {
     T& operator[](const s32 index) {
         return ((T*) this)[index];
     }
+
 };
 
 /**
@@ -200,6 +201,23 @@ typedef _Vector3<s32> Vector3i;
  * 浮動小数のベクトル
  */
 typedef _Vector3<float> Vector3f;
+
+/**
+ * ２ベクトルを線形補間する
+ */
+template<typename T>
+inline _Vector3<T>* lerp(const _Vector3<T> &before, const _Vector3<T> &after, const float weight, _Vector3<T> *result) {
+
+    const T x = (before.x * weight) + (after.x * (1.0f - weight));
+    const T y = (before.y * weight) + (after.y * (1.0f - weight));
+    const T z = (before.z * weight) + (after.z * (1.0f - weight));
+
+    result->x = x;
+    result->y = y;
+    result->z = z;
+
+    return result;
+}
 
 }
 

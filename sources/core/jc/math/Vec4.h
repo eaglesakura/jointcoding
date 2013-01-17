@@ -167,6 +167,25 @@ typedef _Vector4<s32> Vector4i;
  */
 typedef _Vector4<float> Vector4f;
 
+/**
+ * ２ベクトルを線形補間する
+ */
+template<typename T>
+inline _Vector4<T>* lerp(const _Vector4<T> &before, const _Vector4<T> &after, const float weight, _Vector4<T> *result) {
+
+    const T x = (before.x * weight) + (after.x * (1.0f - weight));
+    const T y = (before.y * weight) + (after.y * (1.0f - weight));
+    const T z = (before.z * weight) + (after.z * (1.0f - weight));
+    const T w = (before.w * weight) + (after.w * (1.0f - weight));
+
+    result->x = x;
+    result->y = y;
+    result->z = z;
+    result->w = w;
+
+    return result;
+}
+
 }
 
 #endif /* JCVEC3_H_ */
