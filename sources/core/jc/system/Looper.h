@@ -31,12 +31,12 @@ class LooperTask {
      * ルーパーを実行させる時刻。
      * この時間を過ぎていない場合、実行させない
      */
-    time runningTime;
+    jctime runningTime;
 public:
     /**
      * 開始時刻を指定して実行させる
      */
-    LooperTask(MRunnable runnable, time running) {
+    LooperTask(MRunnable runnable, jctime running) {
         this->runnable = runnable;
         this->runningTime = running;
     }
@@ -63,7 +63,7 @@ public:
      * 実行時刻を過ぎていたらtrue
      */
     jcboolean isRuntime() const {
-        time now = Timer::currentTime();
+        jctime now = Timer::currentTime();
         return now >= runningTime;
     }
 
