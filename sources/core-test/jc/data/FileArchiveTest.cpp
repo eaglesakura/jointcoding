@@ -34,7 +34,7 @@ static std::vector<File> listFiles() {
             //anim
             ext == "anim_r" || ext == "anim_t" || ext == "anim_s"
             // figure
-                    || ext == "info" || ext == "node" || ext == "meshinfo" || ext == "bones" || ext == "coords" || ext == "indices" || ext == "normals" || ext == "weight" || ext == "weightindices" || ext == "material") {
+                    || ext == "info" || ext == "node" || ext == "meshinfo" || ext == "bones" || ext == "vertices" || ext == "coords" || ext == "indices" || ext == "normals" || ext == "weight" || ext == "weightindices" || ext == "material") {
 //                jclogf("path = %s", dp->d_name);
                 result.push_back(file);
             }

@@ -16,11 +16,29 @@ namespace jc {
  * アーカイブ済みのファイル情報
  */
 struct ArchiveInfo {
+
+    enum {
+        /**
+         * ファイル名の文字数
+         */
+        FILENAME_SIZE = 42,
+
+        /**
+         * ファイルバージョン
+         */
+        FILEVERSION = 0x1,
+
+        /**
+         * sizeof値
+         */
+        SIZEOF = sizeof(charactor) * FILENAME_SIZE + sizeof(u32) + sizeof(u32),
+    };
+
     /**
      * ファイル名
      * 41文字以内で登録する
      */
-    charactor file_name[42];
+    charactor file_name[FILENAME_SIZE];
 
     /**
      * ヘッダとなるファイルポインタ位置
@@ -37,11 +55,6 @@ struct ArchiveInfo {
         file_head = file_length = 0;
     }
 };
-
-/**
- * ファイルのアーカイブバージョン
- */
-const u32 FILEARCHIVE_VERSION = 0x1;
 
 }
 

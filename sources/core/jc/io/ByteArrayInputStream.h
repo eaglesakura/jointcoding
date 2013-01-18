@@ -14,27 +14,21 @@ namespace jc {
 class ByteArrayInputStream: public InputStream {
     jc_sa<u8> raw_array;
 
-    s32 head_position;
-    s32 buffer_length;
     s32 readable;
+    u8* current_ptr;
 
-    u8* current_ptr() {
-        return raw_array.get() + head_position + (buffer_length - readable);
-    }
 public:
 
     ByteArrayInputStream( jc_sa<u8> raw_array, u32 length ) {
         this->raw_array = raw_array;
         this->readable = (s32)length;
-        this->head_position = 0;
-        this->buffer_length = length;
+        this->current_ptr = raw_array.get();
     }
 
-    ByteArrayInputStream( jc_sa<u8> raw_array, u32 begin, u32 end) {
+    ByteArrayInputStream( jc_sa<u8> raw_array, const u32 begin, const u32 length) {
         this->raw_array = raw_array;
-        this->readable = (s32)buffer_length;
-        this->head_position = begin;
-        this->buffer_length = end - begin;
+        this->readable = (s32)length;
+        this->current_ptr = raw_array.get() + begin;
     }
 
     /**
@@ -43,8 +37,10 @@ public:
      */
     virtual s32 read(u8* result, s32 size) {
         size = min(size, readable);
-        memcpy(result, current_ptr(), size);
+//        jclogf(" read size(%d)", size);
+        memcpy(result, current_ptr, size);
         readable -= size;
+        current_ptr += size;
 
         return size;
     }
@@ -54,6 +50,7 @@ public:
      */
     virtual s32 skip(s32 bytes) {
         readable -= bytes;
+        current_ptr += bytes;
         return bytes;
     }
 

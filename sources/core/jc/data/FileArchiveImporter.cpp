@@ -26,8 +26,8 @@ void FileArchiveImporter::initialize(MInputStream stream) {
     // まずはヘッダを読み込む
     {
         const u32 file_version = reader->readU32();
-        if (file_version != FILEARCHIVE_VERSION) {
-            throw create_exception(RuntimeException, "FileVersion Not Support");
+        if (file_version != ArchiveInfo::FILEVERSION) {
+            throw create_exception(IOException, "FileVersion Not Support");
         }
     }
 
@@ -40,15 +40,16 @@ void FileArchiveImporter::initialize(MInputStream stream) {
     jclogf("archive files(%d)", file_num);
 
     // ファイルのインフォメーションを読み込む
-    stream->skip(-4 - sizeof(ArchiveInfo) * file_num);
+    stream->skip(-4 - ArchiveInfo::SIZEOF * file_num);
 
     for (u32 i = 0; i < file_num; ++i) {
         ArchiveInfo info;
 
-        stream->read((u8*) info.file_name, sizeof(info.file_name));
+        stream->read((u8*) info.file_name, sizeof(charactor) * ArchiveInfo::FILENAME_SIZE);
         info.file_head = reader->readU32();
         info.file_length = reader->readU32();
 
+        jclogf("archived[%d] (%s) offset[%d] -> length[%d]", i, info.file_name, info.file_head, info.file_length);
         archives.push_back(info);
     }
 }

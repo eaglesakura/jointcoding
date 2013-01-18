@@ -34,7 +34,7 @@ FileArchiveOutputStream::~FileArchiveOutputStream() {
  * ヘッダを書き込む
  */
 void FileArchiveOutputStream::write_header() {
-    stream->writeU32(FILEARCHIVE_VERSION);
+    stream->writeU32(ArchiveInfo::FILEVERSION);
     write_pointer = 4;
 }
 
@@ -60,6 +60,8 @@ void FileArchiveOutputStream::beginFile(const String &file_name) {
     strcpy(current_file.file_name, file_name.c_str());
     current_file.file_length = 0;
     current_file.file_head = write_pointer;
+
+    file_writing = jctrue;
 }
 
 /**
@@ -68,6 +70,7 @@ void FileArchiveOutputStream::beginFile(const String &file_name) {
 void FileArchiveOutputStream::endFile() {
     archives.push_back(current_file);
 
+    file_writing = jcfalse;
     jclogf("  archive(%s) %d -> %d", current_file.file_name, current_file.file_head, (current_file.file_head + current_file.file_length));
 }
 

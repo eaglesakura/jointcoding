@@ -8,12 +8,44 @@
 #define ARCHIVEFIGUREDATAFACTORY_H_
 
 #include    "jc/graphics/figure/data/FigureDataFactory.h"
+#include    "jc/data/FileArchiveImporter.h"
+#include    "jc/io/Uri.h"
 
 namespace jc {
 
 class ArchiveFigureDataFactory: public FigureDataFactory {
+    struct {
+        /**
+         * アーカイブを解答した
+         */
+        jc_sa<u8> buffer;
+
+        /**
+         * アーカイブのサイズ
+         */
+        u32 length;
+    }raw_archive;
+
+    /**
+     * アーカイブデータ
+     */
+    MFileArchiveImporter archives;
+
+    /**
+     * 入力ストリームを作成する
+     */
+    MBinaryInputStream makeStream(const String &name);
 
 public:
+    ArchiveFigureDataFactory();
+
+    virtual ~ArchiveFigureDataFactory();
+
+    /**
+     * 初期化を行う
+     */
+    virtual void initialize(const Uri &archive_uri);
+
     /**
      * 大本のインフォメーションを取得する
      */
