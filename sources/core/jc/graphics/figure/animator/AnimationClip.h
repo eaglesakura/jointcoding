@@ -54,32 +54,21 @@ class AnimationClip: public Object {
      * 設定は0〜(end - start)の範囲で行う
      */
     float current;
+
+    /**
+     * アニメーションのラップタイプ
+     */
+    Animator::Wrap_e wrap;
 public:
     /**
      *
      */
-    AnimationClip(MAnimationGroup animation) {
-        this->animation = animation;
-        current = 0;
-        range.start = 0;
-
-        for (u32 i = 0; i < animation->animations_length; ++i) {
-            u32 end = 0;
-            animation->animations[i].getAnimationRange(NULL, NULL, NULL, &end);
-
-            range.end = jc::max(range.end, end);
-        }
-    }
+    AnimationClip(MAnimationGroup animation);
 
     /**
      * アニメーションレンジを指定してクリップを作成する
      */
-    AnimationClip(MAnimationGroup animation, const u32 start, const u32 end) {
-        this->animation = animation;
-        range.start = start;
-        current = 0;
-        range.end = end;
-    }
+    AnimationClip(MAnimationGroup animation, const u32 start, const u32 end);
 
     virtual ~AnimationClip() {
     }

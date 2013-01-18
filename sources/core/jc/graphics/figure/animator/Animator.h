@@ -166,6 +166,7 @@ public:
         const u32 max_rotate = rotates.empty() ? 0 : (rotates[rotates.size() - 1].frame);
         const u32 max_scale = scales.empty() ? 0 : (scales[scales.size() - 1].frame);
 
+//        jclogf("max(%d, %d, %d)", max_translate, max_rotate, max_scale);
         // 最大フレーム数
         const u32 max_frame = jc::max(jc::max(max_translate, max_rotate), max_scale);
 
@@ -210,29 +211,10 @@ public:
     /**
      * アニメーションの現在の状態を取得する
      */
-    inline void getTransform(const Wrap_e wrap, const float frame, Transform *result) const {
-        u32 range_max = 0;
-        getAnimationRange(NULL, NULL, NULL, &range_max);
-
-        float normalized_frame = 0;
-        if (wrap == Wrap_Stop) {
-            normalized_frame = (float) jc::minmax<u32>((u32) 0, range_max - 1, (u32) frame);
-        } else /* if (wrap == Wrap_Loop) */{
-            while (normalized_frame < 0) {
-                normalized_frame += (float) range_max;
-            }
-
-            while (normalized_frame >= range_max) {
-                normalized_frame -= (float) range_max;
-            }
-        }
-
+    inline void getTransform(const float frame, Transform *result) const {
         calc_frame<TranslateKey, Vector3f>(translates, frame, &result->translate);
         calc_frame<RotateKey, Vector4f>(rotates, frame, &result->rotate);
         calc_frame<ScaleKey, Vector3f>(scales, frame, &result->scale);
-//        result->translate = translates[(int) normalized_frame].value;
-//        result->rotate = rotates[(int) normalized_frame].value;
-//        result->scale = scales[(int) normalized_frame].value;
     }
 
     /**
