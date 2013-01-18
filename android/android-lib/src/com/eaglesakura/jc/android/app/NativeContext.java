@@ -74,6 +74,7 @@ public class NativeContext {
     /**
      * 不要なメモリの整理を行う。
      */
+    @JCMethod
     public static void gc() {
         System.gc();
         nativeGC();

@@ -110,6 +110,11 @@ public:
      */
     static Thread* newThread(MRunnable runnable);
 
+    /**
+     * GCを行う。
+     * プラットフォーム固有の管理メモリ等を解放する
+     */
+    static void gc();
 };
 
 }

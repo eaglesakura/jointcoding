@@ -4,6 +4,9 @@
  *  Created on: 2012/12/19
  */
 
+#ifndef __GLFIGURE_H__
+#define __GLFIGURE_H__
+
 #include    "jc/graphics/figure/Figure.h"
 
 #include    "jc/math/Transform.h"
@@ -334,6 +337,9 @@ public:
 /**
  * managed
  */
-typedef jc_sp<GLFigure> MGLFigure;}
+typedef jc_sp<GLFigure> MGLFigure;
+
+}
 }
 
+#endif // __GLFIGURE_H__

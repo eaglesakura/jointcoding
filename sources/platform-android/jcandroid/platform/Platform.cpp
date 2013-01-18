@@ -46,4 +46,11 @@ Thread* Platform::newThread(MRunnable runnable) {
     return new ndk::JavaJointThread(runnable);
 }
 
+/**
+ * GCを行う。
+ * プラットフォーム固有の管理メモリ等を解放する
+ */
+void Platform::gc() {
+    ndk::NativeContext::gc();
+}
 }
