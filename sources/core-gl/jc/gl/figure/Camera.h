@@ -70,7 +70,6 @@ public:
         result->identity();
         result->lookAt(position, look, up);
 
-
         {
             Matrix4x4 prj;
             prj.projection(near, far, fovY, aspect);
@@ -78,6 +77,24 @@ public:
         }
 
         return result;
+    }
+
+    virtual void setPosition(const float x, const float y, const float z) {
+        position.set(x, y, z);
+    }
+
+    virtual void setLook(const float x, const float y, const float z) {
+        look.set(x, y, z);
+    }
+
+    virtual void setFovY(const float set) {
+        this->fovY = set;
+    }
+
+    virtual void setProjection(const float near, const float far, const float aspect) {
+        this->near = near;
+        this->far = far;
+        this->aspect = aspect;
     }
 };
 

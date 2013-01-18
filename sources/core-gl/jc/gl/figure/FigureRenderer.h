@@ -108,6 +108,11 @@ public:
     virtual void bindCamera();
 };
 
+/**
+ * managed
+ */
+typedef jc_sp<FigureRenderer> MFigureRenderer;
+
 }
 }
 

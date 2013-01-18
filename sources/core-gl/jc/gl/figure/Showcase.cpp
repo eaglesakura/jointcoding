@@ -29,6 +29,14 @@ void Showcase::rendering(FigureRenderer *render) const {
     }
 
     // update world matrix
+    {
+        Matrix4x4 world;
+        transform.getMatrix(&world);
+
+        glUniformMatrix4fv(render->getWorldUniformLocation(), 1, GL_FALSE, (float*)&world);
+    }
+
+    figure->rendering(render->getShaderParams().get());
 }
 
 }

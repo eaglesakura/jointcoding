@@ -90,6 +90,11 @@ public:
     virtual void rendering(FigureRenderer *render) const;
 };
 
+/**
+ * managed
+ */
+typedef jc_sp<Showcase> MShowcase;
+
 }
 }
 
