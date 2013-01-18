@@ -46,6 +46,9 @@ enum TransformRotateOrder_e {
 
 };
 
+/**
+ * 位置を決めるための行列生成器
+ */
 class Transform: public Object {
 public:
     /**

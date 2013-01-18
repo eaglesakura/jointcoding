@@ -3,7 +3,7 @@
  *
  *  Created on: 2012/12/26
  */
-#include    "jc/gl/GLFigure.h"
+#include    "jc/gl/figure/GLFigure.h"
 
 namespace jc {
 namespace gl {
@@ -125,12 +125,7 @@ void GLFigure::rendering(const GLFigure::ShaderParams *params) {
  */
 void GLFigure::_enumBones(GLFigureMeshFragment *pFragment, GLFigureMeshFragment::DrawingContext *pContext) {
     for (u32 i = 0; i < pContext->bone_pick_table_length; ++i) {
-//        bone_table[i] = nodes[pContext->bone_pick_table[i]]->matrix_current_world;
-
         const u32 node_nubmer = pContext->bone_pick_table[i];
-
-//        jclogf("bone table[%d] <- node number[%d]", i, node_nubmer);
-
         MFigureNode bone_node = nodes[node_nubmer];
         const Matrix4x4 &bone = bone_node->matrix_current_world;
         const Matrix4x4 &bone_inv = bone_node->matrix_default_invert;
@@ -144,13 +139,9 @@ void GLFigure::_enumBones(GLFigureMeshFragment *pFragment, GLFigureMeshFragment:
 void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Matrix4x4 &parent) {
     FigureNode *node = getNodePtr(nodeNumber);
 
-#ifdef  TRANSFORM_LOCAL
     Matrix4x4 local;
     animation->getMatrix(nodeNumber, &local);
     multiply(local, parent, &node->matrix_current_world);
-#else
-    animation->getMatrix(nodeNumber, &node->matrix_current_world);
-#endif
 
     // 子を設定する
     for (u32 i = 0; i < node->children.size(); ++i) {
@@ -163,32 +154,14 @@ void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Mat
  */
 void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &parent) {
     FigureNode *node = getNodePtr(nodeNumber);
-
-    // 親の行列と逆行列を保存する
-    node->matrix_parent_default = parent;
-    node->matrix_parent_default.invert(&node->matrix_parent_invert);
-
-#ifdef  TRANSFORM_LOCAL
     Matrix4x4 local;
     node->defTransform.getMatrix(&local);
     multiply(local, parent, &node->matrix_current_world);
-#else
-    node->defTransform.getMatrix(&node->matrix_current_world);
-#endif
 
     // invert!!
     node->matrix_current_world.invert(&node->matrix_default_invert);
-//    local.invert(&node->matrix_default_invert);
 
-#if 0
-    {
-        Vector3f v;
-        node->matrix_current_world.multiply(v, &v);
-        jclogf("    initialize node[%d] position(%f, %f, %f)", nodeNumber, v.x, v.y, v.z);
-    }
-#endif
-
-// 子を作成する
+    // 子を作成する
     for (u32 i = 0; i < node->children.size(); ++i) {
         _initializeInvertMatrices(node->children[i], node->matrix_current_world);
     }

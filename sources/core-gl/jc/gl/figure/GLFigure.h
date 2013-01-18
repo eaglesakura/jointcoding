@@ -128,16 +128,6 @@ public:
      * 現在の行列
      */
     Matrix4x4 matrix_current_world;
-
-    /**
-     * 親の行列
-     */
-    Matrix4x4 matrix_parent_default;
-
-    /**
-     * 親の逆行列
-     */
-    Matrix4x4 matrix_parent_invert;
 };
 
 typedef jc_sp<FigureNode> MFigureNode;

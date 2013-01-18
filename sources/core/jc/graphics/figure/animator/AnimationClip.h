@@ -95,6 +95,13 @@ public:
     }
 
     /**
+     * 現在のフレームを取得する
+     */
+    virtual float getCurrentFrame() const {
+        return current;
+    }
+
+    /**
      * 行列を取得する。
      */
     virtual void getMatrix(const u32 nodeNumber, Matrix4x4 *result) const;
