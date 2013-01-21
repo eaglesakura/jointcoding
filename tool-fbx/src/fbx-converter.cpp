@@ -9,7 +9,7 @@
 #include "jointcoding.h"
 #include "jctest/cdt/CdtTestRunner.h"
 
-#define RUN_TEST
+//#define RUN_TEST
 
 int main(int argv, char *args[]) {
     jclog("hello fbx-tool!!");
@@ -19,6 +19,7 @@ int main(int argv, char *args[]) {
 
 #ifndef RUN_TEST
         add_unittest(testFunction);
+        add_unittest(test_makeFileArchive);
 #else
         add_unittest(test_binaryOutput);
         add_unittest(test_matrix_transform);

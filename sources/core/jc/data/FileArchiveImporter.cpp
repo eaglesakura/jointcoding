@@ -49,7 +49,7 @@ void FileArchiveImporter::initialize(MInputStream stream) {
         info.file_head = reader->readU32();
         info.file_length = reader->readU32();
 
-        jclogf("archived[%d] (%s) offset[%d] -> length[%d]", i, info.file_name, info.file_head, info.file_length);
+//        jclogf("archived[%d] (%s) offset[%d] -> length[%d]", i, info.file_name, info.file_head, info.file_length);
         archives.push_back(info);
     }
 }
