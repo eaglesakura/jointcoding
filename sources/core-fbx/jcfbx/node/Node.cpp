@@ -128,7 +128,7 @@ void Node::registerAnimations() {
         s32 endFrame = (s32) (end.Get() / period.Get());
 
         // FIXME!! モーション時間を限定
-         startFrame = 1;
+//         startFrame = 1;
 //         endFrame = jc::min(120, endFrame);
         /*
          {

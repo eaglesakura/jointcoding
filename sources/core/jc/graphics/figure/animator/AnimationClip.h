@@ -84,7 +84,7 @@ public:
      * 現在のアニメーションを更に分割して、新しいアニメーションにする。
      */
     virtual jc_sp<AnimationClip> slice(const u32 start, const u32 end) const {
-        return jc_sp<AnimationClip>(new AnimationClip(animation, range.start + start, range.end + end));
+        return jc_sp<AnimationClip>(new AnimationClip(animation, start, end));
     }
 
     /**
@@ -99,6 +99,13 @@ public:
      */
     virtual float getCurrentFrame() const {
         return current;
+    }
+
+    /**
+     * アニメーションのフレーム数を取得する
+     */
+    virtual float getAnimationLength() const {
+        return range.end - range.start;
     }
 
     /**

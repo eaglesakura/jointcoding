@@ -33,8 +33,8 @@ AnimationClip::AnimationClip(MAnimationGroup animation, const u32 start, const u
     this->animation = animation;
     this->wrap = Animator::Wrap_Loop;
     range.start = start;
-    current = 0;
     range.end = end;
+    current = 0;
 }
 
 /**

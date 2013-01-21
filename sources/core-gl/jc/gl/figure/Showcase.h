@@ -55,19 +55,46 @@ public:
     }
 
     /**
-     *
+     * アニメーションを設定する
      */
     virtual void setAnimation(const MAnimationClip animation) {
         this->animation.clip = animation;
     }
 
     /**
+     * アニメーションフレームを設定する
+     */
+    virtual void setAnimationFrame(const float frame) {
+        this->animation.clip->setCurrentFrame(frame);
+    }
+
+    /**
+     * アニメーションの時刻オフセットを設定する
+     */
+    virtual void setAnimationOffset(const float offset) {
+        this->animation.offset = offset;
+    }
+
+    /**
+     * アニメーションを取得する
+     */
+    virtual MAnimationClip getAnimation() const {
+        return this->animation.clip;
+    }
+
+    /**
      * アニメーションを進める。
      */
-    virtual void nextAnimation() {
+    virtual jcboolean nextAnimation() {
         if (animation.clip) {
-            animation.clip->setCurrentFrame(animation.clip->getCurrentFrame() + animation.offset);
+            const float next_frame = animation.clip->getCurrentFrame() + animation.offset;
+            animation.clip->setCurrentFrame(next_frame);
+
+            // anim finish?
+            return next_frame >= animation.clip->getAnimationLength();
         }
+
+        return jctrue;
     }
 
     /**
