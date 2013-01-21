@@ -174,6 +174,14 @@ class GLState: public Object {
 
     struct {
         /**
+         * alpha enable
+         */
+        jcboolean enable;
+
+    } alphaContext;
+
+    struct {
+        /**
          * DepthFunc
          */
         GLint func;
@@ -389,6 +397,22 @@ public:
         }
         return jcfalse;
 #endif
+    }
+
+    /**
+     * ALPHAテストの変更を行う
+     */
+    inline jcboolean alphaEnable(const jcboolean enable) {
+        if (enable != alphaContext.enable) {
+            if (enable) {
+                glEnable(GL_ALPHA);
+            }else {
+                glDisable(GL_ALPHA);
+            }
+            return jctrue;
+        }
+
+        return jcfalse;
     }
 
     /**

@@ -4,8 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>JointCodingForAndroid</project>
-		<project>jointcoding-android-testsupport</project>
-		<project>jointcoding-android-lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
