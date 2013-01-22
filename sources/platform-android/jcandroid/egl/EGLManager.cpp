@@ -72,7 +72,7 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
         jcboolean backToDefault = false;
 #if 1
         if( NativeContext::isUIThread() ) {
-            jclog("egl -> UIThread");
+//            jclog("egl -> UIThread");
             eglDisplay = androidEGL.display;
             eglContext = androidEGL.context;
             eglReadSurface = androidEGL.readSurface;

@@ -56,17 +56,18 @@ MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const
  * シェーダーの作成を行う。
  */
 MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charactor* sourceCode) {
-    CLEAR_GL_ERROR;
+    CLEAR_GL_ERROR
+    ;
     // シェーダオブジェクトを作成
     SharedResource shader;
     shader.alloc(vram, type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader);
 
     // シェーダソースを設定
-    glShaderSource(shader.get(), 1, &sourceCode, NULL);
-
+    const s32 src_length = strlen(sourceCode);
+    jclogf("source chars = %d", src_length);
+    glShaderSource(shader.get(), 1, &sourceCode, &src_length);
     // コンパイル
     glCompileShader(shader.get());
-
     // エラーチェック
     if (GLState::printShaderError(shader.get(), GL_COMPILE_STATUS)) {
         shader.release();

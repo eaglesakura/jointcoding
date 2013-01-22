@@ -90,6 +90,8 @@ jcboolean GLState::printShaderError(const GLuint shaderObject, const GLint statu
             jc_sa<charactor> message( new charactor[infoLen] );
             glGetShaderInfoLog(shaderObject, infoLen, NULL, message.get());
             jclogf("shader error :: %s", message.get());
+        } else {
+            jclog("comple error not info...");
         }
         return jctrue;
     }

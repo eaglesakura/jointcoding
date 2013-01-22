@@ -115,6 +115,16 @@ struct _Vector2 {
     }
 
     /**
+     * ベクトルの長さを正規化する
+     */
+    void normalize() {
+        const T _len = length();
+
+        x /= _len;
+        y /= _len;
+    }
+
+    /**
      * 配列風のアクセスを提供する
      */
     T& operator[](const s32 index) {
@@ -131,6 +141,24 @@ typedef _Vector2<s32> Vector2i;
  * 浮動小数のベクトル
  */
 typedef _Vector2<float> Vector2f;
+
+/**
+ * ２ベクトルを線形補間する
+ * 0.0 = before
+ * 1.0 = after
+ * となる。
+ */
+template<typename T>
+inline _Vector2<T>* lerp(const _Vector2<T> &before, const _Vector2<T> &after, const float weight, _Vector2<T> *result) {
+
+    const T x = (after.x * weight) + (before.x * (1.0f - weight));
+    const T y = (after.y * weight) + (before.y * (1.0f - weight));
+
+    result->x = x;
+    result->y = y;
+
+    return result;
+}
 
 }
 

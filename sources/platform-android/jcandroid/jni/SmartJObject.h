@@ -12,6 +12,8 @@
 #include    "jcandroid/ndk-support.h"
 #include    "jni.h"
 
+// #define JOBJECT_LOG_OUT
+
 namespace ndk {
 
 inline jobject change_globalref(JNIEnv *env, jobject obj) {
@@ -68,7 +70,9 @@ protected:
     virtual void release() {
         CALL_JNIENV();
         if (globalRef) {
+#ifdef JOBJECT_LOG_OUT
             jclogf("delete globalRef(%x)", obj);
+#endif
             env->DeleteGlobalRef(obj);
             env->DeleteGlobalRef(clazz);
             globalRef = jcfalse;
@@ -178,7 +182,9 @@ public:
             obj = (T)change_globalref( env, obj );
             clazz = (jclass) change_globalref(env,(jobject) clazz);
             globalRef = true;
+#ifdef JOBJECT_LOG_OUT
             jclogf("add globalRef(%x)", obj);
+#endif
         }
         return this;
     }

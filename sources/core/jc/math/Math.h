@@ -93,11 +93,56 @@ inline OutRealType fixed2real(const InIntegerType data, const s32 bits) {
     return (OutRealType) (((double) data) / ((double) mul));
 }
 
+/**
+ * 360度系の正規化を行う。
+ *
+ *
+ * @param now
+ * @return
+ *
+ */
+template<typename T>
+inline T normalizeDegree(T now) {
+    while (now < 0) {
+        now += 360.0f;
+    }
+
+    while (now >= 360) {
+        now -= 360;
+    }
+
+    return now;
+}
+
 
 /**
  * 円周率
  */
 const double PI = 3.141592653589793;
+
+/**
+ * centerから見たpositionが何度になるか360度系で返す。
+ * １２時の方向が0度で、反時計回りに角度を進ませる。
+ * @param center
+ * @param position
+ * @return
+ */
+template<typename VectorType>
+float getAngleDegree2D(const VectorType &center, const VectorType &position) {
+    float result = 0;
+
+    VectorType temp(position.x - center.x, center.y - position.y);
+    if (temp.length() == 0) {
+        return 0;
+    }
+    temp.normalize();
+
+    result = (float) (atan2(temp.y, temp.x) / PI);
+    result /= 2;
+    result -= 0.25f;
+
+    return normalizeDegree(result * 360.0f);
+}
 
 template<typename T>
 inline T degree2radian(const T degree) {
