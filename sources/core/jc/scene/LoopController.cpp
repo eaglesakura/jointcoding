@@ -14,7 +14,7 @@ LoopController::LoopController() {
     frameBeginTime = Timer::currentTime();
     frameRate = 60;
     onceFrameTimeMs = 1000 / frameRate;
-    elapsed_sec = 1000.0 / (double) frameRate;
+    elapsed_sec = (double)onceFrameTimeMs/ 1000.0;
 }
 
 LoopController::~LoopController() {
@@ -26,9 +26,9 @@ LoopController::~LoopController() {
  */
 void LoopController::beginFrame() {
     frameBeginTime = Timer::currentTime();
-    double elapsed_ms = (double) Timer::lapseTimeMs(beforeFrameFinishTime, frameBeginTime);
+    const double elapsed_ms = (double) Timer::lapseTimeMs(beforeFrameFinishTime, frameBeginTime);
     // 経過時間を秒単位に変換する
-    elapsed_ms = elapsed_ms / 1000.0f;
+    elapsed_sec = elapsed_ms / 1000.0f;
 }
 
 /**
@@ -41,7 +41,7 @@ void LoopController::endFrame(u32 *result_frame_timems, u32 *result_sleep_timems
     beforeFrameFinishTime = Timer::currentTime();
 
     // 1フレームの所要時間を計算する
-    const u32 frame_time = Timer::lapseTimeMs(frameBeginTime);
+    const u32 frame_time = Timer::lapseTimeMs(frameBeginTime, beforeFrameFinishTime);
     if (result_frame_timems) {
         *result_frame_timems = frame_time;
     }
