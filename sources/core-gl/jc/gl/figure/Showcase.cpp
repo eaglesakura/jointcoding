@@ -10,11 +10,33 @@ namespace jc {
 namespace gl {
 
 Showcase::Showcase() {
-    animation.offset = 1.0f;
+    animation.speed = 1.0f;
+    animation.originRate = 30;
 }
 
 Showcase::~Showcase() {
 
+}
+
+/**
+ * アニメーションを進める。
+ */
+jcboolean Showcase::nextAnimation(const MLoopController controller) {
+    if (animation.clip) {
+        // １秒間に進めるフレーム数
+        const float anim_offet_sec = (float) animation.originRate * animation.speed;
+
+        // このフレームｄねおオフセットに変更
+        const float frame_offset = controller->sec2frame(anim_offet_sec);
+
+        const float next_frame = animation.clip->getCurrentFrame() + frame_offset;
+        animation.clip->setCurrentFrame(next_frame);
+
+        // anim finish?
+        return next_frame >= animation.clip->getAnimationLength();
+    }
+
+    return jcfalse;
 }
 
 /**
@@ -33,7 +55,7 @@ void Showcase::rendering(FigureRenderer *render) const {
         Matrix4x4 world;
         transform.getMatrix(&world);
 
-        glUniformMatrix4fv(render->getWorldUniformLocation(), 1, GL_FALSE, (float*)&world);
+        glUniformMatrix4fv(render->getWorldUniformLocation(), 1, GL_FALSE, (float*) &world);
     }
 
     figure->rendering(render->getShaderParams().get());

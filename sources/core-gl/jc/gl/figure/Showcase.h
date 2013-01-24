@@ -11,6 +11,7 @@
 #include    "jc/math/Transform.h"
 #include    "jc/gl/figure/FigureRenderer.h"
 #include    "jc/graphics/figure/animator/AnimationClip.h"
+#include    "jc/scene/LoopController.h"
 
 namespace jc {
 namespace gl {
@@ -35,7 +36,12 @@ class Showcase: public Object {
          * アニメーションのオフセット値。
          * 通常1.0
          */
-        float offset;
+        float speed;
+
+        /**
+         * アニメーション作成時のフレームレート
+         */
+        u32 originRate;
     } animation;
 
     /**
@@ -69,10 +75,17 @@ public:
     }
 
     /**
+     * 元モデル作成時のフレームレートを設定する。
+     */
+    virtual void setAnimationFrameRate(const u32 rate) {
+        this->animation.originRate = rate;
+    }
+
+    /**
      * アニメーションの時刻オフセットを設定する
      */
-    virtual void setAnimationOffset(const float offset) {
-        this->animation.offset = offset;
+    virtual void setAnimationSpeed(const float speed) {
+        this->animation.speed = speed;
     }
 
     /**
@@ -85,17 +98,7 @@ public:
     /**
      * アニメーションを進める。
      */
-    virtual jcboolean nextAnimation() {
-        if (animation.clip) {
-            const float next_frame = animation.clip->getCurrentFrame() + animation.offset;
-            animation.clip->setCurrentFrame(next_frame);
-
-            // anim finish?
-            return next_frame >= animation.clip->getAnimationLength();
-        }
-
-        return jctrue;
-    }
+    virtual jcboolean nextAnimation(const MLoopController controller);
 
     /**
      *
