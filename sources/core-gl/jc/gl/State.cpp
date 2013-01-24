@@ -39,10 +39,6 @@ GLState::GLState() {
         depthContext.enable = jcfalse;
         depthContext.func = GL_LEQUAL;
     }
-    // alpha
-    {
-        alphaContext.enable = jcfalse;
-    }
     // scissor
     {
         scissorContext.box.setXYWH(0, 0, 0, 0);
@@ -155,10 +151,6 @@ void GLState::syncContext() {
         depthContext.enable = glIsEnabled(GL_DEPTH_TEST);
         glGetIntegerv(GL_DEPTH_FUNC, (GLint*) &depthContext.func);
     }
-    // enable
-    {
-        alphaContext.enable = glIsEnabled(GL_ALPHA);
-    }
     // シザーテスト情報を取得する
     {
         scissorContext.enable = glIsEnabled(GL_SCISSOR_TEST);
@@ -226,12 +218,6 @@ void GLState::print(const charactor* file, const s32 line) const {
         jclogf("glEnable %s = %s", "GL_DEPTH_TEST", depthContext.enable ? "Enable" : "Disable");
         jclogf("glDepthFunc(%d)", depthContext.func);
         jclog("---- glDepth Complete");
-    }
-    // alpha
-    {
-        jclog("---- glAlpha");
-        jclogf("glEnable %s = %s", "GL_ALPHA", alphaContext.enable ? "Enable" : "Disable");
-        jclog("---- glAlpha Complete");
     }
     // シェーダプログラム情報を取得する
     {

@@ -13,6 +13,65 @@
 using namespace jc;
 using namespace jc::gl;
 
+namespace {
+
+/**
+ * エラーを出力する
+ * GL_NOERROR以外だったらjctrueを返す
+ */
+jcboolean printEGLError(const charactor* file, const s32 line, GLenum error) {
+    if (error == EGL_SUCCESS) {
+        return jcfalse;
+    }
+#if 0
+
+#define EGL_NOT_INITIALIZED     0x3001
+#define EGL_BAD_ACCESS          0x3002
+#define EGL_BAD_ALLOC           0x3003
+#define EGL_BAD_ATTRIBUTE       0x3004
+#define EGL_BAD_CONFIG          0x3005
+#define EGL_BAD_CONTEXT         0x3006
+#define EGL_BAD_CURRENT_SURFACE     0x3007
+#define EGL_BAD_DISPLAY         0x3008
+#define EGL_BAD_MATCH           0x3009
+#define EGL_BAD_NATIVE_PIXMAP       0x300A
+#define EGL_BAD_NATIVE_WINDOW       0x300B
+#define EGL_BAD_PARAMETER       0x300C
+#define EGL_BAD_SURFACE         0x300D
+#define EGL_CONTEXT_LOST        0x300E
+
+#endif
+#define LOG_EGL( error_enum )    case error_enum: ::jc::__logDebugF(error_enum != EGL_SUCCESS ? LogType_Alert : LogType_Debug, ::jc::__getFileName(file), "L %d | %s", line, #error_enum); return error != EGL_SUCCESS ? jctrue : jcfalse;
+    switch (error) {
+        LOG_EGL(EGL_NOT_INITIALIZED);
+        LOG_EGL(EGL_BAD_ACCESS);
+        LOG_EGL(EGL_BAD_ALLOC);
+        LOG_EGL(EGL_BAD_ATTRIBUTE);
+        LOG_EGL(EGL_BAD_CONFIG);
+        LOG_EGL(EGL_BAD_CONTEXT);
+        LOG_EGL(EGL_BAD_CURRENT_SURFACE);
+        LOG_EGL(EGL_BAD_DISPLAY);
+        LOG_EGL(EGL_BAD_MATCH);
+        LOG_EGL(EGL_BAD_NATIVE_PIXMAP);
+        LOG_EGL(EGL_BAD_NATIVE_WINDOW);
+        LOG_EGL(EGL_BAD_PARAMETER);
+        LOG_EGL(EGL_BAD_SURFACE);
+        LOG_EGL(EGL_CONTEXT_LOST);
+    }
+
+    jclogf("EGL unknown error = 0x%x", error);
+    return jctrue;
+}
+
+/**
+ * GLのエラー出力を行う
+ */
+jcboolean printEGLError(const charactor* file, const s32 line) {
+    return printEGLError(file, line, eglGetError());
+}
+
+}
+
 namespace ndk {
 
 EGLManager::EGLManager() {
@@ -22,6 +81,9 @@ EGLManager::EGLManager() {
         jclogf("egl display = %x", display);
         EGLint major, minor;
         eglInitialize(display, &major, &minor);
+        if (printEGLError(__FILE__, __LINE__)) {
+            throw create_exception(RuntimeException, "eglInitialize Error");
+        }
         jclogf("EGL Version = %d.%d", major, minor);
     }
 }
@@ -61,6 +123,7 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 
 // カレントに設定できなければ例外を投げる
         if( !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ) {
+            printEGLError(__FILE__, __LINE__);
             throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
         }
     } else {
@@ -83,9 +146,11 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 
         // コンテキストとサーフェイスが揃っていないから、設定できない
         if( !eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext) ) {
+            printEGLError(__FILE__, __LINE__);
             if(backToDefault) {
                 // zeroにも戻せない
                 if(!eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
+                    printEGLError(__FILE__, __LINE__);
                     throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
                 }
             }
@@ -101,7 +166,17 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
  */
 jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
     EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(displaySurface.get());
-    return eglSwapBuffers(display, surfaceManager->getSurface());
+    const EGLSurface targetSurface = surfaceManager->getSurface();
+    const EGLSurface currentSurface = eglGetCurrentSurface(EGL_DRAW);
+    if (currentSurface != targetSurface) {
+//        jclogf("current surface(%x) != app surface(%x)", currentSurface, targetSurface);
+        return jcfalse;
+    }
+    jcboolean result = eglSwapBuffers(display, targetSurface);
+    if( printEGLError(__FILE__, __LINE__) ) {
+        jclogf("Bad Surface(%x)", targetSurface);
+    }
+    return result;
 }
 /**
  * 現在のEGLパラメーターを一時的に格納する
@@ -124,6 +199,7 @@ void EGLManager::stashEGLCurrents() {
 void EGLManager::dispose() {
     if (display) {
         eglTerminate(display);
+        printEGLError(__FILE__, __LINE__);
     }
     display = NULL;
 }

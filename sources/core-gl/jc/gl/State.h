@@ -174,14 +174,6 @@ class GLState: public Object {
 
     struct {
         /**
-         * alpha enable
-         */
-        jcboolean enable;
-
-    } alphaContext;
-
-    struct {
-        /**
          * DepthFunc
          */
         GLint func;
@@ -272,7 +264,11 @@ public:
     inline jcboolean depthTestEnable(const jcboolean enable) {
         if (depthContext.enable != enable) {
             depthContext.enable = enable;
-            glEnable(GL_DEPTH_TEST);
+            if (enable) {
+                glEnable(GL_DEPTH_TEST);
+            } else {
+                glDisable(GL_DEPTH_TEST);
+            }
             return jctrue;
         }
         return jcfalse;
@@ -399,21 +395,6 @@ public:
 #endif
     }
 
-    /**
-     * ALPHAテストの変更を行う
-     */
-    inline jcboolean alphaEnable(const jcboolean enable) {
-        if (enable != alphaContext.enable) {
-            if (enable) {
-                glEnable(GL_ALPHA);
-            }else {
-                glDisable(GL_ALPHA);
-            }
-            return jctrue;
-        }
-
-        return jcfalse;
-    }
 
     /**
      * 現在アクティブになっているテクスチャの番号を取得する。
