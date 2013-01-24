@@ -40,7 +40,7 @@ class GLState: public Object {
         /**
          * テクスチャユニットの最大数
          */
-        MAX_TEXTURE_UNIT = 32,
+        MAX_TEXTURE_UNIT = 16,
 
         /**
          * GL_ARRAY_BUFFERの値を取り出したい
@@ -62,7 +62,7 @@ class GLState: public Object {
          * 頂点情報の最大値
          * 仕様上の最大であり、実機ではGPUの設定が優先される。
          */
-        MAX_VERTEX_ATTRIBUTE = 32,
+        MAX_VERTEX_ATTRIBUTE = 16,
     };
 
     /**

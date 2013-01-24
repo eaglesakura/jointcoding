@@ -3,7 +3,7 @@
  *
  *  Created on: 2012/12/10
  */
-#include    "jc/graphics/SceneGraph.h"
+#include    "jc/scene/SceneGraph.h"
 #include    "jc/system/Exception.h"
 
 namespace jc {

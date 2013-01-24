@@ -41,6 +41,13 @@ public:
         const jctime now = currentTime();
         return (now - t).total_milliseconds();
     }
+
+    /**
+     * beforeからafterの経過時間をミリ秒単位で取得する
+     */
+    inline static s32 lapseTimeMs(const jctime &before, const jctime &after) {
+        return (after - before).total_milliseconds();
+    }
 };
 }
 
