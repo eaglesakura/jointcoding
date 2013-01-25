@@ -54,6 +54,18 @@ public class FieldConverter extends ConverterBase {
     }
 
     /**
+     * ヘッダのプロトタイプ用の識別子を取得する
+     * @return
+     */
+    public String getFieldPrototype() {
+        if (jniType == JniArgmentType.String) {
+            return typeName;
+        } else {
+            return "const " + typeName;
+        }
+    }
+
+    /**
      * 変数名を取得する
      * @return
      */

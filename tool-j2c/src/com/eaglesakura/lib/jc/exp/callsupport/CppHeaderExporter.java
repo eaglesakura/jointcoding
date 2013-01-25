@@ -367,7 +367,7 @@ public class CppHeaderExporter extends CppClassInfomationBase {
 
     private String getFieldPrototype(FieldConverter field) {
         StringWriter writer = new StringWriter();
-        writer.append("static const ").append(field.getCppTypeName()).append(" ").append(field.getName()).append(";");
+        writer.append("static ").append(field.getFieldPrototype()).append(" ").append(field.getName()).append(";");
         writer.flush();
         return writer.getBuffer().toString();
     }

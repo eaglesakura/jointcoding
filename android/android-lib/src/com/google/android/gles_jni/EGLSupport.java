@@ -12,6 +12,7 @@ import android.graphics.SurfaceTexture;
 import android.util.Log;
 
 import com.eaglesakura.jc.android.resource.jni.Pointer;
+import com.eaglesakura.jc.android.thread.UIHandler;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -83,4 +84,37 @@ public class EGLSupport {
         // surfaceからmEGLSurfaceを取り出す
         return getIntFieldNative(surface.getClass(), surface, "mEGLSurface");
     }
+
+    /**
+     * UIスレッドで強制的にmake currentを外してもらう
+     * @param display
+     * @param draw_surface
+     * @param read_surface
+     * @param context
+     */
+    @JCMethod
+    public static void unlockEGLMakeCurrent(final int display, final int draw_surface, final int read_surface,
+            final int context) {
+        if (!UIHandler.isUIThread()) {
+            UIHandler.postUI(new Runnable() {
+                @Override
+                public void run() {
+                    unlockEGLMakeCurrent(display, draw_surface, read_surface, context);
+                }
+            });
+        }
+
+        unlockEGLMakeCurrentNative(display, draw_surface, read_surface, context);
+    }
+
+    /**
+     * eglMakeCurrentするだけ。
+     * @param display
+     * @param draw_surface
+     * @param read_surface
+     * @param context
+     */
+    @JCMethod(
+              nativeMethod = true)
+    static native void unlockEGLMakeCurrentNative(int display, int draw_surface, int read_surface, int context);
 }

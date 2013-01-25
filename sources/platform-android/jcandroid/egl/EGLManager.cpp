@@ -9,6 +9,7 @@
 #include    "jcandroid/egl/EGLImpl.h"
 #include    <vector>
 #include    "android-classes/ndkNativeContext.h"
+#include    "android-gclasses/EGLSupport.h"
 
 using namespace jc;
 using namespace jc::gl;
@@ -143,16 +144,17 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
             backToDefault = true;
         }
 #endif
-
         // コンテキストとサーフェイスが揃っていないから、設定できない
         if( !eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext) ) {
-            printEGLError(__FILE__, __LINE__);
             if(backToDefault) {
                 // zeroにも戻せない
                 if(!eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
                     printEGLError(__FILE__, __LINE__);
                     throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
                 }
+            } else {
+                printEGLError(__FILE__, __LINE__);
+                EGLSupport::unlockEGLMakeCurrent((jint)eglDisplay, (jint)EGL_NO_SURFACE, (jint)EGL_NO_SURFACE, (jint)EGL_NO_CONTEXT);
             }
         }
     }
@@ -173,7 +175,7 @@ jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
         return jcfalse;
     }
     jcboolean result = eglSwapBuffers(display, targetSurface);
-    if( printEGLError(__FILE__, __LINE__) ) {
+    if (printEGLError(__FILE__, __LINE__)) {
         jclogf("Bad Surface(%x)", targetSurface);
     }
     return result;

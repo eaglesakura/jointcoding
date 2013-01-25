@@ -169,7 +169,7 @@ public class CppImplExporter extends CppClassInfomationBase {
 
     private String getCallImpl(FieldConverter field) {
         StringWriter writer = new StringWriter();
-        writer.append("const ").append(field.getCppTypeName()).append(" ");
+        writer.append(field.getFieldPrototype()).append(" ");
         writer.append(converter.getClassName()).append("::").append(field.getName()).append(" = ")
                 .append(field.getValue());
         writer.append(";");
