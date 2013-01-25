@@ -14,5 +14,9 @@ namespace ndk {
  */
 String j2String(jstring);
 
+/**
+ * charactor*からjstringへ変換する
+ */
+jstring c2jstring(const charactor *str);
 
 }

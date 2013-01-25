@@ -8,7 +8,6 @@
 #include    "jni.h"
 #include    "jcandroid/util/utils.h"
 
-
 namespace ndk {
 
 /**
@@ -22,6 +21,13 @@ String j2String(jstring jStr) {
     env->ReleaseStringUTFChars(jStr, str);
 
     return result;
+}
+/**
+ * charactor*からjstringへ変換する
+ */
+jstring c2jstring(const charactor *str) {
+    CALL_JNIENV();
+    return env->NewStringUTF(str);
 }
 
 }

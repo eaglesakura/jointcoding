@@ -1,6 +1,7 @@
 package com.eaglesakura.lib.jc.exp.callsupport;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.eaglesakura.lib.jc.JCUtil;
@@ -10,6 +11,7 @@ import com.eaglesakura.lib.jc.imp.FieldConverter;
 import com.eaglesakura.lib.jc.imp.MethodConverter;
 import com.eaglesakura.lib.jc.imp.MethodConverter.Argment;
 import com.eaglesakura.lib.jc.type.JniArgmentType;
+import com.eaglesakura.lib.jc.type.JniMethodResultType;
 
 /**
  * C++用のヘッダを書き込むエクスポーター
@@ -178,6 +180,11 @@ public class CppHeaderExporter extends CppClassInfomationBase {
                     writer.add(";").newline();
                     writer.indent().append(getMethodPrototype(method, true));
                     writer.add(";").newline();
+
+                    if (hasStringArgment(method)) {
+                        writer.indent().append(getMethodPrototype_strSupport(method));
+                        writer.newline();
+                    }
                 }
             }
         }
@@ -194,6 +201,118 @@ public class CppHeaderExporter extends CppClassInfomationBase {
         }
     }
 
+    /**
+     * 
+     * @param method
+     * @return
+     */
+    private boolean hasStringArgment(MethodConverter method) {
+        if (converter.isProtocolMode()) {
+            return false;
+        }
+
+        for (int i = 0; i < method.getArgmentNum(); ++i) {
+            Argment arg = method.getArgment(i);
+            JniArgmentType type = JniArgmentType.getType(arg.getType().getSimpleName());
+            if (type == JniArgmentType.String) {
+                // stringを含んでいる
+                return true;
+            }
+        }
+
+        // stringを含んでいない
+        return false;
+    }
+
+    /**
+     * jstringを引数に含む場合、charactor*からの変換を行うようなサポートを行う
+     * @param method
+     * @return
+     */
+    private String getMethodPrototype_strSupport(MethodConverter method) {
+        String result = "";
+
+        result += "virtual ";
+        result += JCUtil.toCppType(method.getResultType());
+        result += " ";
+        result += method.getName();
+        result += "(";
+
+        // 与える引数のリスト
+        List<String> argList = new ArrayList<String>();
+
+        // jstring化する引数名一覧
+        List<String> makeList = new ArrayList<String>();
+
+        for (int i = 0; i < method.getArgmentNum(); ++i) {
+            Argment arg = method.getArgment(i);
+            JniArgmentType type = JniArgmentType.getType(arg.getType().getSimpleName());
+            if (type == JniArgmentType.String) {
+                result += "const ::jc::charactor*";
+                argList.add(arg.getName() + "_j");
+                makeList.add(arg.getName());
+            } else {
+                result += JCUtil.toCppType(arg.getType());
+                argList.add(arg.getName());
+            }
+            result += " ";
+            result += arg.getName();
+
+            // 最後の1つでなければ、","で引数を繋げる
+            if (i != (method.getArgmentNum() - 1)) {
+                result += ", ";
+            }
+        }
+
+        result += ") { CALL_JNIENV(); ";
+        // 変換実装を追加
+        {
+            for (String cnv : makeList) {
+                result += " jstring " + cnv + "_j = ::ndk::c2jstring(" + cnv + "); ";
+            }
+
+            JniArgmentType resultJniType = JniArgmentType.getType(method.getResultType().getSimpleName());
+            JniMethodResultType call = resultJniType.getResultType();
+
+            // Voidメソッド以外ならば、戻り値を保存
+            if (call != JniMethodResultType.Void) {
+                result += call.name() + " _result = ";
+            }
+
+            // 呼び出し
+            {
+                result += method.getName() + "( ";
+                for (int i = 0; i < argList.size(); ++i) {
+                    result += argList.get(i);
+                    if (i < (argList.size() - 1)) {
+                        result += ", ";
+                    }
+                }
+                result += "); ";
+            }
+
+            // 作成したjstringを解放
+            for (String cnv : makeList) {
+                result += " env->DeleteLocalRef(" + cnv + "_j); ";
+            }
+
+            // Voidメソッド以外ならば、return
+            if (call != JniMethodResultType.Void) {
+                result += "return " + call.name() + "_result;";
+            }
+
+        }
+        result += "}";
+
+        return result;
+    }
+
+    /**
+     * メソッドのプロトタイプ宣言を取得する
+     * @param method
+     * @param isSupport
+     * @return
+     */
     private String getMethodPrototype(MethodConverter method, boolean isSupport) {
         String result = "";
 

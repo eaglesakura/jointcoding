@@ -335,7 +335,7 @@ public enum JniArgmentType {
 
         @Override
         public java.lang.String getFieldType() {
-            return "::jc::charactor*";
+            return "const ::jc::charactor*";
         }
     },
 

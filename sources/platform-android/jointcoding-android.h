@@ -29,5 +29,6 @@ using namespace jc;
 #include	"jcandroid/jni/JniWrapper.h"
 #include    "jcandroid/jni/JniArray.h"
 #include    "android-classes/ndkJniException.h"
+#include    "jcandroid/util/Utils.h"
 
 #endif /* JOINTCODING_ANDROID_H_ */
