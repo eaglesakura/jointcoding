@@ -18,6 +18,8 @@
 #include    "jc/gl/IndexBufferObject.h"
 #include    "jc/gl/VertexBufferObject.h"
 
+#include    <vector>
+
 namespace jc {
 namespace gl {
 
@@ -62,10 +64,25 @@ public:
      */
     jcboolean use_texture;
 
+    struct {
+        /**
+         * レンダリング時のUオフセット
+         */
+        float u;
+
+        /**
+         * レンダリング時のVオフセット
+         */
+        float v;
+    } offset;
+
     GLFigureMaterial() {
         use_texture = jcfalse;
+        offset.u = offset.v = 0;
     }
 };
+
+typedef jc_sp<GLFigureMaterial> MGLFigureMaterial;
 
 /**
  * VBO
@@ -113,11 +130,6 @@ public:
      * １フラグメント=１マテリアル
      */
     std::vector<MGLFigureMeshFragment> renderingFragments;
-
-    /**
-     * レンダリング用マテリアル
-     */
-    std::vector<MFigureMaterial> materials;
 
     /**
      * デフォルトテイクの逆行列情報
@@ -195,11 +207,16 @@ public:
              * ボーンの頂点テーブル
              */
             s32 bones;
+
+            /**
+             * UVオフセット値
+             */
+            s32 uv_offset;
         } uniforms;
 
         ShaderParams() {
             attributes.position = attributes.uv = attributes.normals = attributes.weight = attributes.weight_indeices = ATTRIBUTE_DISABLE_INDEX;
-            uniforms.tex_0 = uniforms.bones = UNIFORM_DISABLE_INDEX;
+            uniforms.tex_0 = uniforms.bones = uniforms.uv_offset = UNIFORM_DISABLE_INDEX;
         }
     };
 private:
@@ -207,6 +224,11 @@ private:
      * 全ノードは直線的に管理してしまう。
      */
     std::vector<MFigureNode> nodes;
+
+    /**
+     * マテリアルキャッシュ
+     */
+    std::vector<MGLFigureMaterial> materials;
 
     /**
      * テクスチャテーブル
@@ -316,12 +338,24 @@ public:
     virtual void posing(AnimationClip *animation);
 
     /**
+     * レンダリング時のUV値オフセットを設定する
+     */
+    virtual void setUVOffset(const String &mat_name, const float u, const float v);
+
+    /**
      * 各ノードの逆行列を作成する.
      * 初回に一度だけ呼び出せばいい。
      *
      * 各頂点はglobal行列適用済みのため、一度逆行列を通してローカルに落とし込んだ後、再度現在のボーンに合わせて行列を当てる必要がある。
      */
     virtual void initializeInvertMatrices();
+
+    /**
+     * マテリアルを登録する。
+     * 同一名・同一テクスチャのマテリアルがあれば、そのマテリアルを返してshareできるようにする。
+     * 無い場合はキャッシュに新規登録し、oldをそのまま返す。
+     */
+    virtual MGLFigureMaterial putMaterial(const MGLFigureMaterial old);
 };
 
 /**

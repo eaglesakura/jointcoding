@@ -42,6 +42,7 @@ class FigureRenderer: public Object {
      * look & projection行列
      */
     s32 unif_look_prj;
+
 public:
     FigureRenderer();
 

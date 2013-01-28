@@ -36,6 +36,7 @@ void FigureRenderer::initialize( MDevice device, const Uri &vertexShader, const 
     params->attributes.weight = shader->getAttribLocation("attr_weight");
     params->uniforms.tex_0 = shader->getUniformLocation("unif_tex");
     params->uniforms.bones = shader->getUniformLocation("unif_bones");
+    params->uniforms.uv_offset = shader->getUniformLocation("unif_uv_offset");
 
     unif_world = shader->getUniformLocation("unif_world");
     unif_look_prj = shader->getUniformLocation("unif_look_prj");

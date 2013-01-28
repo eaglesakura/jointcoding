@@ -52,6 +52,11 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
                 state->enableVertexAttribArray(attr_uv);
                 state->vertexAttribPointer(attr_uv, 2, GL_FLOAT, GL_FALSE, sizeof(GLFigureVertex), NULL, sizeof(Vector3f));
             }
+            // uv offset
+            if(params->uniforms.uv_offset != UNIFORM_DISABLE_INDEX) {
+                const u32 unif_uv_offset = params->uniforms.uv_offset;
+                glUniform2f(unif_uv_offset, material->offset.u, material->offset.v);
+            }
 
             // weight
             if (params->attributes.weight != ATTRIBUTE_DISABLE_INDEX && params->attributes.weight_indeices != ATTRIBUTE_DISABLE_INDEX && params->uniforms.bones != UNIFORM_DISABLE_INDEX) {
@@ -184,5 +189,43 @@ void GLFigure::posing(AnimationClip *animation) {
 void GLFigure::initializeInvertMatrices() {
     _initializeInvertMatrices(0, Matrix4x4());
 }
+
+/**
+ * レンダリング時のUV値オフセットを設定する
+ */
+void GLFigure::setUVOffset(const String &mat_name, const float u, const float v) {
+    for (u32 k = 0; k < materials.size(); ++k) {
+        MGLFigureMaterial material = materials[k];
+        if (material->name == mat_name) {
+            material->offset.u = u;
+            material->offset.v = v;
+        }
+    }
+}
+
+/**
+ * マテリアルを登録する。
+ * 同一名・同一テクスチャのマテリアルがあれば、そのマテリアルを返してshareできるようにする。
+ * 無い場合はキャッシュに新規登録し、oldをそのまま返す。
+ */
+MGLFigureMaterial GLFigure::putMaterial(const MGLFigureMaterial old) {
+    // キャッシュを調べる
+    {
+        std::vector<MGLFigureMaterial>::iterator itr = materials.begin(), end = materials.end();
+        while (itr != end) {
+            MGLFigureMaterial cache = (*itr);
+            if (cache->name == old->name && cache->textureName == old->textureName) {
+                jclogf("    material cache name(%s) tex(%s)", cache->name.c_str(), cache->textureName.c_str());
+                return cache;
+            }
+            ++itr;
+        }
+    }
+
+    // キャッシュヒットしなかったから、oldを登録する
+    materials.push_back(old);
+    return old;
+}
+
 }
 }

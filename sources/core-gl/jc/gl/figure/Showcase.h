@@ -60,6 +60,10 @@ public:
         this->figure = figure;
     }
 
+    virtual MGLFigure getFigure() const {
+        return figure;
+    }
+
     /**
      * アニメーションを設定する
      */
