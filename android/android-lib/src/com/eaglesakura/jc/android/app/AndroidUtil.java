@@ -33,8 +33,11 @@ public class AndroidUtil {
 
     public static void log(Exception e) {
         //        _log(message);
+        if (e == null) {
+            return;
+        }
         e.printStackTrace();
-        Log.i("JC-LOG", e.getMessage());
+        Log.i("JC-LOG", "" + e.getMessage());
     }
 
     /**
