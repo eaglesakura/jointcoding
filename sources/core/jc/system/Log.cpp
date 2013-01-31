@@ -17,6 +17,7 @@
 namespace jc {
 
 void __logDebugF(const LogType_e type, const charactor* __file, const char* fmt, ...) {
+#ifdef DEBUG
     static jc::jcmutex mutex;
     MutexLock lock(mutex);
     {
@@ -42,7 +43,7 @@ void __logDebugF(const LogType_e type, const charactor* __file, const char* fmt,
         va_end(ap);
 #endif
     }
-
+#endif
 }
 
 }

@@ -55,6 +55,8 @@ enum LogType_e {
 
 void __logDebugF(const LogType_e type, const charactor* __file, const charactor* fmt, ...);
 
+#ifdef DEBUG
+
 /**
  * 特定条件下の設定
  */
@@ -79,6 +81,36 @@ void __logDebugF(const LogType_e type, const charactor* __file, const charactor*
  * フォーマット付きアラート
  */
 #define jcalertf( fmt, ... )      { ::jc::__logDebugF(LogType_Alert, ::jc::__getFileName(__FILE__), "L %d | " fmt, __LINE__, __VA_ARGS__); }
+
+#else
+
+/**
+ * 特定条件下の設定
+ */
+#define jclog_from_f(...)       {  }
+
+/**
+ * フォーマット付きログ
+ */
+#define jclogf( ... )       {  }
+
+/**
+ * 単純ログ
+ */
+#define jclog( ... )            {  }
+
+/**
+ * アラート表示
+ */
+#define jcalert( ... )      {  }
+
+/**
+ * フォーマット付きアラート
+ */
+#define jcalertf( ... )      {  }
+
+
+#endif
 
 }
 #endif /* EGLLOG_H_ */

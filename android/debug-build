@@ -49,3 +49,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 ####################################
+
+
+
+
+# apk回収
+rm -rf release
+mkdir release
+mv ./android-lib/bin/classes.jar ./release/jointcoding-android-lib.jar
+mv ./android-testsupport/bin/*.jar ./release/jointcoding-testsupport.jar
