@@ -26,14 +26,6 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
          cppNamespace = "ndk")
 public abstract class NativeFragment extends Fragment {
 
-    static {
-        try {
-            System.loadLibrary("jointcoding-lib");
-        } catch (Exception e) {
-            AndroidUtil.log(e);
-        }
-    }
-
     private PointerList pointers = new PointerList();
 
     /**
