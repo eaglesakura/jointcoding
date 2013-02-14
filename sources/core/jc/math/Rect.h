@@ -51,6 +51,17 @@ struct RectT {
     T height() const {
         return abs(bottom - top);
     }
+
+    /**
+     * LTRBを指定値動かす
+     */
+    void offset(const T x, const T y) {
+        left += x;
+        right += x;
+
+        top += y;
+        bottom += y;
+    }
 };
 
 /**
