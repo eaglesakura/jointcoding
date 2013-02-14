@@ -143,6 +143,11 @@ public:
     /**
      * インスタンスを作成する
      */
+    static jc_sp<SpriteManager> createInstance( MDevice device);
+
+    /**
+     * インスタンスを作成する
+     */
     static jc_sp<SpriteManager> createInstance( MDevice device, const Uri vertexShaderUri, const Uri fragmentShaderUri );
 };
 

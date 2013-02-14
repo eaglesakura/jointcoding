@@ -8,6 +8,94 @@
 namespace jc {
 namespace gl {
 
+namespace {
+static const charactor *VERTEX_SHADER_SOURCE =
+//
+        /**
+         * ( poly_x | poly_y )はそれぞれ0.0f〜1.0fの正規化座標で設定する。
+         * poly_yについては2D座標系を基本として、画面左上が(0, 0)、画面右下が(1, 1)として扱う。
+         */
+// ポリゴンのXYWH
+        ""
+                "uniform mediump vec4    poly_data;"
+// ポリゴンの回転角度
+                "uniform mediump float   rotate;"
+// ポリゴンのUV情報
+                "uniform mediump vec4    poly_uv;"
+// アクセス用のショートカットを設定する
+                "#define poly_x         poly_data[0]"
+                "#define poly_y         poly_data[1]"
+                "#define poly_width     poly_data[2]"
+                "#define poly_height    poly_data[3]"
+//
+                "#define poly_uv_u      poly_uv[0]"
+                "#define poly_uv_v      poly_uv[1]"
+                "#define poly_uv_w      poly_uv[2]"
+                "#define poly_uv_h      poly_uv[3]"
+//
+                "attribute vec4 vTexCoord;"
+                "attribute vec4 vPosition;"
+                "varying vec2 fTexCoord;"
+
+                "void main() {"
+// 位置操作
+                "   {"
+                "       mediump mat4 trans = mat4(1.0);"
+                "       mediump mat4 scale = mat4(1.0);"
+// 移動行列を作成する
+                "       {"
+                "           trans[3][0] = poly_x;"
+                "           trans[3][1] = poly_y;"
+                "       }"
+// スケーリング行列を作成する
+                "       {"
+                "           scale[0][0] = poly_width;"
+                "           scale[1][1] = poly_height;"
+                "       }"
+                "       gl_Position = trans * scale * vPosition;"
+                "   }"
+// テクスチャ操作
+                "   {"
+                "       mediump mat4 trans = mat4(1.0);"
+// 移動行列を作成する
+                "       {"
+                "           trans[3][0] = poly_uv_u;"
+                "           trans[3][1] = poly_uv_v;"
+                "       }"
+                "       mediump mat4 scale = mat4(1.0);"
+// スケーリング行列を作成する
+                "       {"
+                "           scale[0][0] = poly_uv_w;"
+                "           scale[1][1] = poly_uv_h;"
+                "       }"
+                "       mediump vec4 tempTex = trans * scale * vTexCoord;"
+                "       fTexCoord.x = tempTex.x;"
+                "       fTexCoord.y = tempTex.y;"
+                "   }"
+                "}"
+//
+;
+
+static const charactor *FRAGMENT_SHADER_SOURCE = ""
+        ""
+        "        precision mediump float;"
+        // UV setting"
+        "        varying vec2 fTexCoord;"
+        // texture
+        "        uniform sampler2D tex;"
+        // color
+        "        uniform mediump vec4    blendColor;"
+        "        void main() {"
+        "            vec4 color = texture2D(tex, fTexCoord) * blendColor;"
+        "            color.a = blendColor.a;"
+        "            gl_FragColor = color;"
+        "        }"
+//
+;
+
+//
+}
+
 /**
  * 初期化を行う
  */
@@ -44,7 +132,14 @@ void SpriteManager::initialize(MDevice device) {
 
 SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     this->device = device;
+
     this->shader = shader;
+
+    // シェーダーが設定されて無ければ、組み込みで起動する
+    if (!shader) {
+        shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
+        assert(shader.get() != NULL);
+    }
     this->shaderContext.rotate = 0;
     this->shaderContext.bindedTextureIndex = 0;
     this->unifPolyData = UNIFORM_DISABLE_INDEX;
@@ -100,7 +195,7 @@ void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s3
     // 変更前のテクスチャを保持しておく
     {
         const s32 old_bindedTextureIndex = shaderContext.bindedTextureIndex;
-        // テクスチャ番号を設定する
+// テクスチャ番号を設定する
         shaderContext.bindedTextureIndex = image->bind();
         if (old_bindedTextureIndex != shaderContext.bindedTextureIndex) {
             glUniform1i(unifTexture, shaderContext.bindedTextureIndex);
@@ -135,6 +230,14 @@ void SpriteManager::dispose() {
     shader.reset();
     whiteTexture.reset();
     device.reset();
+}
+
+/**
+ * インスタンスを作成する
+ */
+MSpriteManager SpriteManager::createInstance(MDevice device) {
+    MSpriteManager result(new SpriteManager(device, MGLShaderProgram()));
+    return result;
 }
 
 MSpriteManager SpriteManager::createInstance(MDevice device, const Uri vertexShaderUri, const Uri fragmentShaderUri) {

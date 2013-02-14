@@ -103,6 +103,40 @@ MGLShaderProgram ShaderProgram::buildFromUri(MDevice device, const Uri &vertexSh
 }
 
 /**
+ * ソースコードから直接ビルドを行う
+ */
+MGLShaderProgram ShaderProgram::buildFromSource(MDevice device, const charactor *vertex_shader_source, const charactor* fragment_shader_source) {
+    MGLShader vertexShader; // ビルドした頂点シェーダ
+    MGLShader fragmentShader; // ビルドしたフラグメントシェーダ
+    MGLShaderProgram result;
+
+    // 頂点シェーダを作成
+    try {
+        vertexShader = Shader::compile(ShaderType_Vertex, device->getVRAM(), vertex_shader_source);
+        if (!vertexShader) {
+            return result;
+        }
+    } catch (const Exception &e) {
+        jcloge(e);
+        return result;
+    }
+    // フラグメントシェーダを作成
+    try {
+        fragmentShader = Shader::compile(ShaderType_Fragment, device->getVRAM(), fragment_shader_source);
+        if (!fragmentShader) {
+            return result;
+        }
+    } catch (const Exception &e) {
+        jcloge(e);
+        return result;
+    }
+
+    // リンクを行う
+    return link(device, vertexShader, fragmentShader);
+}
+
+
+/**
  * 実行用にシェーダーをリンクさせる。
  */ //
 jc_sp<ShaderProgram> ShaderProgram::link(MDevice device, const MGLShader vertexShader, const MGLShader fragmentShader) {

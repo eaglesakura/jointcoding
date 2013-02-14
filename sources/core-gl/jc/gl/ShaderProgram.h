@@ -123,6 +123,11 @@ public:
     static jc_sp<ShaderProgram> buildFromUri(MDevice device, const Uri &vertexShaderUri, const Uri &fragmentShaderUri );
 
     /**
+     * ソースコードから直接ビルドを行う
+     */
+    static jc_sp<ShaderProgram> buildFromSource(MDevice device, const charactor *vertex_shader_source, const charactor* fragment_shader_source);
+
+    /**
      * 実行用にシェーダーをリンクさせる。
      * 失敗した場合、NULLを返す。
      */
