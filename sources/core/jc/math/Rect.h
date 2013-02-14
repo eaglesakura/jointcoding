@@ -43,6 +43,14 @@ struct RectT {
     jcboolean equalsLTRB(const T l, const T t, const T r, const T b) const {
         return left == l && top == t && right == r && bottom == b;
     }
+
+    T width() const {
+        return abs(right - left);
+    }
+
+    T height() const {
+        return abs(bottom - top);
+    }
 };
 
 /**
