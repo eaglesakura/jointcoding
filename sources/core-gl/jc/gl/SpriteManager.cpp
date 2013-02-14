@@ -21,17 +21,17 @@ static const charactor *VERTEX_SHADER_SOURCE =
 // ポリゴンの回転角度
                 "uniform mediump float   rotate;"
 // ポリゴンのUV情報
-                "uniform mediump vec4    poly_uv;"
+                "uniform mediump vec4    poly_uv;\n"
 // アクセス用のショートカットを設定する
-                "#define poly_x         poly_data[0]"
-                "#define poly_y         poly_data[1]"
-                "#define poly_width     poly_data[2]"
-                "#define poly_height    poly_data[3]"
+                "#define poly_x         poly_data[0]\n"
+                "#define poly_y         poly_data[1]\n"
+                "#define poly_width     poly_data[2]\n"
+                "#define poly_height    poly_data[3]\n"
 //
-                "#define poly_uv_u      poly_uv[0]"
-                "#define poly_uv_v      poly_uv[1]"
-                "#define poly_uv_w      poly_uv[2]"
-                "#define poly_uv_h      poly_uv[3]"
+                "#define poly_uv_u      poly_uv[0]\n"
+                "#define poly_uv_v      poly_uv[1]\n"
+                "#define poly_uv_w      poly_uv[2]\n"
+                "#define poly_uv_h      poly_uv[3]\n"
 //
                 "attribute vec4 vTexCoord;"
                 "attribute vec4 vPosition;"
@@ -137,8 +137,8 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
 
     // シェーダーが設定されて無ければ、組み込みで起動する
     if (!shader) {
-        shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
-        assert(shader.get() != NULL);
+        this->shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
+        assert(this->shader.get() != NULL);
     }
     this->shaderContext.rotate = 0;
     this->shaderContext.bindedTextureIndex = 0;
