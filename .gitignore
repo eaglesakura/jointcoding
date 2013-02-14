@@ -33,3 +33,5 @@ fbx-tool/Release
 fbx-tool/*.fbx
 
 lint.xml
+
+android/release
