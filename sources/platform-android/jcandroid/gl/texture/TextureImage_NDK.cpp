@@ -58,14 +58,16 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     jclogf("Image (%x) size(%d x %d)", pixelBuffer, imageWidth, imageHeight);
 
     {
-        // TODO pixel copy
         void* raw_buffer = env->GetDirectBufferAddress(pixelBuffer);
+
+        jc_sa<u8> temp_buffer;
 
         if (pixelFormat != PixelFormat_RGBA8888) {
             jclogf("convert format(%d -> %d)", PixelFormat_RGBA8888, pixelFormat);
-            // TODO ピクセルフォーマット変換に対応する
-            jclog("unsupport...");
-//            temp = Pixel::createPixelBuffer(pixelFormat, imageWidth * imageHeight);
+            temp_buffer = Pixel::createPixelBuffer(pixelFormat, imageWidth * imageHeight);
+            Pixel::copyRGBA8888Pixels((const u8*)raw_buffer, pixelFormat, temp_buffer.get(), imageWidth * imageHeight);
+
+            raw_buffer = (void*)temp_buffer.get();
         }
 
         // make texture

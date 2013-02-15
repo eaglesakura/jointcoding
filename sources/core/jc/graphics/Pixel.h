@@ -131,6 +131,73 @@ public:
                 break;
         }
     }
+
+    /**
+     * RGB888のポインタをdstへピクセル情報をコピーする。
+     * 同じポインタの場合は、何も行わない。
+     */
+    inline
+    static void copyRGBA8888Pixels(const u8 *src_rgba8888, const PixelFormat_e dstFormat, u8 *dst, const s32 _pixels) {
+        if (src_rgba8888 == dst) {
+            return;
+        }
+
+        // 残ピクセル数
+        s32 pixels = _pixels;
+
+        const int pixel_size = 4;
+
+        switch (dstFormat) {
+            case PixelFormat_RGB565: {
+                u16 *p = (u16*) dst;
+                while (pixels) {
+
+                    const s32 r = src_rgba8888[0] & 0xff;
+                    const s32 g = src_rgba8888[1] & 0xff;
+                    const s32 b = src_rgba8888[2] & 0xff;
+
+                    (*p) = ((r >> 3) << 11) | ((g >> 2) << 5) | ((b >> 3));
+                    src_rgba8888 += pixel_size;
+                    ++p;
+                    --pixels;
+                }
+            }
+                break;
+            case PixelFormat_RGBA5551: {
+                u16 *p = (u16*) dst;
+                while (pixels) {
+
+                    const s32 r = src_rgba8888[0] & 0xff;
+                    const s32 g = src_rgba8888[1] & 0xff;
+                    const s32 b = src_rgba8888[2] & 0xff;
+                    const s32 a = (src_rgba8888[3] & 0xff) > 0 ? 1 : 0;
+                    (*p) = ((r >> 3) << 11) | ((g >> 3) << 6) | ((b >> 3) << 1) | a;
+                    src_rgba8888 += pixel_size;
+                    ++p;
+                    --pixels;
+                }
+            }
+                break;
+            case PixelFormat_RGB888: {
+                while (pixels) {
+
+                    dst[0] = src_rgba8888[0];
+                    dst[1] = src_rgba8888[1];
+                    dst[2] = src_rgba8888[2];
+                    dst[3] = 0xFF;
+
+                    src_rgba8888 += pixel_size;
+                    dst += 3;
+                    --pixels;
+                }
+            }
+                break;
+            case PixelFormat_RGBA8888: {
+                memcpy(dst, src_rgba8888, pixels * pixel_size);
+            }
+                break;
+        }
+    }
 };
 
 }
