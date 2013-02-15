@@ -292,7 +292,11 @@ public:
     inline jcboolean blendEnable(const jcboolean enable) {
         if (blendContext.enable != enable) {
             blendContext.enable = enable;
-            glEnable(GL_BLEND);
+            if (enable) {
+                glEnable(GL_BLEND);
+            } else {
+                glDisable(GL_BLEND);
+            }
             return jctrue;
         }
         return jcfalse;
@@ -394,7 +398,6 @@ public:
         return jcfalse;
 #endif
     }
-
 
     /**
      * 現在アクティブになっているテクスチャの番号を取得する。

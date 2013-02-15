@@ -25,7 +25,6 @@ public class NativeIOUtil {
     @JCMethod
     public static InputStream openFromAssets(String fileName, Context appContext) throws IOException {
         InputStream is = appContext.getResources().getAssets().open(fileName);
-
         return is;
     }
 

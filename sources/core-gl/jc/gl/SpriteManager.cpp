@@ -87,7 +87,7 @@ static const charactor *FRAGMENT_SHADER_SOURCE = ""
         "        uniform mediump vec4    blendColor;"
         "        void main() {"
         "            vec4 color = texture2D(tex, fTexCoord) * blendColor;"
-        "            color.a = blendColor.a;"
+        "            color.a *= blendColor.a;"
         "            gl_FragColor = color;"
         "        }"
 //

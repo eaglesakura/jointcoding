@@ -127,7 +127,7 @@ public:
     /**
      * 水平ラインごとにピクセルをコピーする
      * @param src コピー元のピクセル情報
-     * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1
+     * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1 | GL_UNSIGNED_BYTE
      * @param srcPixelFormat GL_RGB | GL_RGBA
      */
     virtual void copyPixelLine(const void* src, const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum);
@@ -169,13 +169,19 @@ public:
     /**
      * テクスチャへのデコードを行う。
      */
-    static jc_sp<TextureImage> decode( MDevice device, MImageDecoder decoder, PixelFormat_e pixelFormat);
+    static jc_sp<TextureImage> decode( MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat);
 
     /**
      * テクスチャへのデコードを行う。
      * uriにはJpegテクスチャへのURIを指定する。
      */
-    static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, PixelFormat_e pixelFormat);
+    static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat);
+
+    /**
+     * Platformが実装しているデコーダーで画像をデコードする。
+     * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
+     */
+    static jc_sp<TextureImage> decodeFromPlatformDecoder( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat);
 };
 
 /**

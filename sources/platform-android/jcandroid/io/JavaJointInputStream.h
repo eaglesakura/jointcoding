@@ -12,7 +12,7 @@
 #include "jc/io/InputStream.h"
 #include "android-classes/ndkJniInputStream.h"
 
-namespace  ndk {
+namespace ndk {
 
 /**
  * Java部分との接続を行うInputStream
@@ -51,6 +51,13 @@ public:
      * ストリームを閉じる
      */
     virtual void close();
+
+    /**
+     * 元のストリームを取得する
+     */
+    virtual jc_sp<JniInputStream> getJniStream() const {
+        return stream;
+    }
 };
 
 }

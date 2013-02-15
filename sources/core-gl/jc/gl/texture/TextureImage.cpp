@@ -64,7 +64,7 @@ void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, con
     if (!this->alloced) {
         this->alloced = jctrue;
 
-        if (lineHeader == 0 && lineNum == (s32)height) {
+        if (lineHeader == 0 && lineNum == (s32) height) {
             // 一度に転送しきれる場合は全て転送してしまう
             glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, width, height, 0, srcPixelFormat, srcPixelType, src);
             finished = jctrue;
@@ -256,7 +256,7 @@ static u32 PIXEL_FORMATS[] = {
 /**
  * デコーダーを通して、テクスチャ化を行う。
  */
-MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, PixelFormat_e pixelFormat) {
+MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat) {
 // 適当なラインずつ設定を行う。
     const s32 width = decoder->getWidth();
     const s32 height = decoder->getHeight();
@@ -290,7 +290,7 @@ MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, PixelF
  * テクスチャへのデコードを行う。
  * uriにはJpegテクスチャへのURIを指定する。
  */
-MTextureImage TextureImage::decode(MDevice device, const Uri &uri, PixelFormat_e pixelFormat) {
+MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat) {
 
     MInputStream is = Platform::getFileSystem()->openInputStream(uri);
     if (!is) {
@@ -312,6 +312,7 @@ MTextureImage TextureImage::decode(MDevice device, const Uri &uri, PixelFormat_e
 
     return result;
 }
+
 
 }
 }
