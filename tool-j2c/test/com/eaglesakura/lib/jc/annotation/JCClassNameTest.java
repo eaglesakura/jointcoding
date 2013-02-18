@@ -12,7 +12,6 @@ import org.junit.Test;
 import com.eaglesakura.lib.jc.JCUtil;
 import com.eaglesakura.lib.jc.Main;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
-import com.eaglesakura.lib.jc.exporter.ClassExporter;
 import com.eaglesakura.lib.jc.imp.ClassConverter;
 
 public class JCClassNameTest {
@@ -49,30 +48,6 @@ public class JCClassNameTest {
         if (JCUtil.getAnnotation(cc, JCClass.class) != null) {
             @SuppressWarnings("unused")
             ClassConverter converter = new ClassConverter(cc);
-        }
-    }
-
-    @Test
-    public void exportProtocolTest() throws Exception {
-        InputStream is = new FileInputStream(new File("./bin/com/eaglesakura/lib/jc/sample/SampleInterface.class"));
-
-        ClassPool pool = ClassPool.getDefault();
-        CtClass cc = pool.makeClass(is);
-
-        is.close();
-
-        // 読み込めたらクラス名を取得
-        System.out.println("ClassName :: " + cc.getName());
-
-        // クラス自体に付与されたアノテーションを取得
-        if (JCUtil.getAnnotation(cc, JCClass.class) != null) {
-            ClassExporter exporter = new ClassExporter(cc);
-            exporter.build();
-
-            System.out.println("------------ C++ Header ------------");
-            System.out.println(exporter.exportCppHeader().toString());
-
-            System.out.println(exporter.exportCppImpl().toString());
         }
     }
 }

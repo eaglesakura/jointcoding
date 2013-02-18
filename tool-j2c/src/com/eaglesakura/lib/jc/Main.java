@@ -79,6 +79,10 @@ public class Main {
     static void loadFile(File file) {
         try {
 
+            if (!file.getName().endsWith(".class")) {
+                return;
+            }
+
             InputStream is = new FileInputStream(file);
             ClassPool pool = ClassPool.getDefault();
             CtClass cc = pool.makeClass(is);
@@ -104,7 +108,8 @@ public class Main {
                 }
             }
         } catch (Exception e) {
-
+            System.out.println(String.format("load error (%s)", file.getAbsolutePath()));
+            e.printStackTrace();
         }
     }
 }

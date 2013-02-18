@@ -48,7 +48,18 @@ public class CodeTemplate {
      * @param rep
      */
     public void replase(String origin, String rep) {
-        code = code.replaceAll(origin, rep);
+        try {
+            code = code.replace(origin, rep);
+        } catch (RuntimeException e) {
+            try {
+                code = code.replace(origin, rep);
+            } catch (RuntimeException ee) {
+                System.out.println(String.format("rep = " + rep));
+                System.out.println(String.format("origin = " + origin));
+                throw ee;
+            }
+            //            throw e;
+        }
     }
 
     /**

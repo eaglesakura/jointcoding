@@ -1,0 +1,8 @@
+#! /bin/sh
+
+if [ ! -e AndroidManifest.xml ]; then
+    echo "is not Android Project directory..."
+    exit 1
+fi
+
+java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin" --output "./jni/gen/classes" --library "${ANDROID_HOME}/platforms/android-15/android.jar" "${JOINTCODING_HOME}/android/android-lib/bin/classes"
