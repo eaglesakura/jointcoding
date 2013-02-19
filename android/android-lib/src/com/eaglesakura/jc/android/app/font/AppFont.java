@@ -47,9 +47,18 @@ public class AppFont {
      * @param heightPixel
      */
     @JCMethod
-    public synchronized void createImage(final String text, final int heightPixel) {
+    public synchronized void createImage(final String text, int heightPixel) {
         Rect bounds = new Rect();
-        paint.setTextSize(heightPixel);
+
+        {
+            Point size = new Point();
+            int fontSize = heightPixel + 5;
+            while (calcTextSize(text, fontSize, size).y > heightPixel && heightPixel > 1) {
+                //                AndroidUtil.log(String.format("TextSize(%d x %d)", size.x, size.y));
+                --fontSize;
+            }
+        }
+        paint.setAntiAlias(true);
         paint.getTextBounds(text, 0, text.length(), bounds);
         FontMetrics fontMetrics = paint.getFontMetrics();
 
@@ -82,9 +91,9 @@ public class AppFont {
      * @param end
      * @return
      */
-    public synchronized Point calcTextSize(final String text, final int heightPixel, Point result) {
+    public synchronized Point calcTextSize(final String text, final int fontSize, Point result) {
         Rect bounds = new Rect();
-        paint.setTextSize(heightPixel);
+        paint.setTextSize(fontSize);
         paint.getTextBounds(text, 0, text.length(), bounds);
         FontMetrics fontMetrics = paint.getFontMetrics();
 
