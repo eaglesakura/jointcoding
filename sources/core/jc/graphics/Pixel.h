@@ -184,7 +184,6 @@ public:
                     dst[0] = src_rgba8888[0];
                     dst[1] = src_rgba8888[1];
                     dst[2] = src_rgba8888[2];
-                    dst[3] = 0xFF;
 
                     src_rgba8888 += pixel_size;
                     dst += 3;

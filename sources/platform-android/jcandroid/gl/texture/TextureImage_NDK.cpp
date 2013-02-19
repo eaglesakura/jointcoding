@@ -28,6 +28,7 @@ static u32 PIXEL_FORMATS[] = {
         };
 }
 
+
 /**
  * Platformが実装しているデコーダーで画像をデコードする。
  * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import android.content.Context;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -22,6 +23,8 @@ public class NativeContext {
      */
     Context appContext = null;
 
+    DisplayMetrics displayMetrics = null;
+
     /**
      * class読み込み時に記録されるID.
      * 例えばapkがunloadされた場合はリセットされる。
@@ -30,6 +33,7 @@ public class NativeContext {
 
     private NativeContext(Context appContext) {
         this.appContext = appContext;
+        this.displayMetrics = appContext.getResources().getDisplayMetrics();
     }
 
     /**
@@ -39,6 +43,32 @@ public class NativeContext {
     @JCMethod
     public Context getAppContext() {
         return appContext;
+    }
+
+    /**
+     * ディスプレイ構成を取得する
+     * @return
+     */
+    public DisplayMetrics getDisplayMetrics() {
+        return displayMetrics;
+    }
+
+    /**
+     * dp値をpixelに変換する
+     * @param dp
+     * @return
+     */
+    public int dp2pixel(final float dp) {
+        return (int) (dp * displayMetrics.density + 0.5f);
+    }
+
+    /**
+     * pixel値をdp値に変換する
+     * @param pixel
+     * @return
+     */
+    public float pixel2dp(final int pixel) {
+        return (float) pixel / displayMetrics.density;
     }
 
     /**

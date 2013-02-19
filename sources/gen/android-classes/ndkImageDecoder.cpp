@@ -9,10 +9,10 @@ const ::jc::charactor* ImageDecoder::CLASS_SIGNATURE = "com/eaglesakura/jc/andro
 
 static jclass class_ImageDecoder = NULL;
 
-#define methods_ImageDecoder_LENGTH 4
+#define methods_ImageDecoder_LENGTH 5
 
 #if methods_ImageDecoder_LENGTH
-static jmethodID methods_ImageDecoder[4];
+static jmethodID methods_ImageDecoder[5];
 #endif
 
 static void initialize_ImageDecoder() {
@@ -34,6 +34,7 @@ static void initialize_ImageDecoder() {
         methods_ImageDecoder[1] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "getHeight", "()I", false);
         methods_ImageDecoder[2] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "decodeFromStream", "(Ljava/io/InputStream;)Lcom/eaglesakura/jc/android/app/util/ImageDecoder;", true);
         methods_ImageDecoder[3] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "getWidth", "()I", false);
+        methods_ImageDecoder[4] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "decodeFromBitmap", "(Landroid/graphics/Bitmap;Z)Lcom/eaglesakura/jc/android/app/util/ImageDecoder;", true);
 
     }
 }
@@ -79,6 +80,12 @@ jint ImageDecoder::getWidth_(jobject _this) {
     CALL_JNIENV();
     initialize_ImageDecoder();
     return (jint) env->CallIntMethod(_this, methods_ImageDecoder[3]);
+}
+
+jobject ImageDecoder::decodeFromBitmap_unsafe(jobject image, jboolean recycle) {
+    CALL_JNIENV();
+    initialize_ImageDecoder();
+    return (jobject) env->CallStaticObjectMethod(class_ImageDecoder, methods_ImageDecoder[4], image, recycle);
 }
 
 jc_sp<ImageDecoder> ImageDecoder::wrap(jobject obj) {

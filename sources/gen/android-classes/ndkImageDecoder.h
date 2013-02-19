@@ -22,6 +22,7 @@ public:
     static jobject decodeFromStream_unsafe(jobject stream);
     virtual jint getWidth();
     static jint getWidth_(jobject _this);
+    static jobject decodeFromBitmap_unsafe(jobject image, jboolean recycle);
 
 
     static jc_sp<ImageDecoder> wrap(jobject obj);
