@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import android.os.Bundle;
 
+import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.resource.jni.Pointer.Mode;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -17,7 +18,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class PointerList {
+public class PointerList implements IJointCodingClass {
     /**
      * 管理しているポインタ一覧
      */

@@ -1,5 +1,6 @@
 package com.eaglesakura.jc.protocol;
 
+import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass.Mode;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCField;
@@ -7,7 +8,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCField;
 @JCClass(
          cppNamespace = "jc",
          mode = Mode.Protocol)
-public interface UriProtocol {
+public interface UriProtocol extends IJointCodingClass {
     /**
      * APK内のrawから読み出しを行う場合に設定される
      * Android

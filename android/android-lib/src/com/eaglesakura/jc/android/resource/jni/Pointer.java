@@ -1,5 +1,6 @@
 package com.eaglesakura.jc.android.resource.jni;
 
+import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.resource.DisposableResource;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -13,7 +14,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class Pointer extends DisposableResource {
+public class Pointer extends DisposableResource implements IJointCodingClass {
     public static final int NULL = 0x00000000;
 
     /**

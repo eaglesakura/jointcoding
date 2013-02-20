@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.resource.jni.ObjMonitoring;
 import com.eaglesakura.jc.android.ui.NativeTouchEvent;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -18,7 +19,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class NativeOnTouchListener implements OnTouchListener {
+public class NativeOnTouchListener implements OnTouchListener, IJointCodingClass {
     int nativeListenerPointer;
 
     private NativeOnTouchListener(int nativeListener) {

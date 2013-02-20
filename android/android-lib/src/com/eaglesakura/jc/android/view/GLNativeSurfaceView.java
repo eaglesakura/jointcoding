@@ -6,6 +6,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.app.NativeContext;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
 import com.eaglesakura.jc.android.resource.jni.Pointer.Mode;
@@ -27,7 +28,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 @JCClass(
          cppNamespace = "ndk")
 @Deprecated
-public final class GLNativeSurfaceView extends SurfaceView {
+public final class GLNativeSurfaceView extends SurfaceView implements IJointCodingClass {
     /**
      * デバイスポインタ
      */

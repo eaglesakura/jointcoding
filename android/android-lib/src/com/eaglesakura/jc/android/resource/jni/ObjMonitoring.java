@@ -2,6 +2,7 @@ package com.eaglesakura.jc.android.resource.jni;
 
 import java.lang.ref.WeakReference;
 
+import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -13,7 +14,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class ObjMonitoring {
+public class ObjMonitoring implements IJointCodingClass {
     /**
      * 監視対象のオブジェクト
      */

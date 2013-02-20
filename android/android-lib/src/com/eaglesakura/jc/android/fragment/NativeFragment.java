@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.app.AndroidUtil;
 import com.eaglesakura.jc.android.app.NativeContext;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
@@ -24,7 +25,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public abstract class NativeFragment extends Fragment {
+public abstract class NativeFragment extends Fragment implements IJointCodingClass {
 
     private PointerList pointers = new PointerList();
 
