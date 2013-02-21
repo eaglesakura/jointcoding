@@ -119,6 +119,15 @@ public class NativeContext implements IJointCodingClass {
     static native void nativeGC();
 
     /**
+     * Native側がNDK_DEBUG=1でビルドされている場合、trueが帰る。
+     * それ以外はfalseになる。
+     * @return
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public static native boolean isNativeDebuggable();
+
+    /**
      * 
      * @param context
      * @return

@@ -35,5 +35,18 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeG
     SystemMemory::gc();
     return;
 }
+
+// main
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isNativeDebuggable(JNIEnv *env, jobject _this) {
+    // call env reset
+    initJniEnv(env);
+
+#ifdef  DEBUG
+    return (jboolean)JNI_TRUE;
+#else
+    return (jboolean)JNI_FALSE;
+#endif
+}
+
 }
 

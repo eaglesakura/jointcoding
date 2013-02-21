@@ -16,6 +16,7 @@ public:
 
     static const ::jc::charactor* CLASS_SIGNATURE;
     static jstring getBootingId();
+    static jboolean isNativeDebuggable();
     virtual void nativeInitialize();
     static void nativeInitialize_(jobject _this);
     static void gc();
