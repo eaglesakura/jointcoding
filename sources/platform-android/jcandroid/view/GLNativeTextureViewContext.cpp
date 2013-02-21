@@ -122,6 +122,9 @@ void GLNativeTextureViewContext::onGLSuspend() {
         device->addFlags(DeviceFlag_RequestDestroy);
     }
 
+    // MEMO
+    // おそらく、TextureViewはSuspend時にSurfaceを保持していても問題ない
+#if 0
     MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
     MEGLSurfaceProtocol eglSurface = device->getSurface();
     if (eglSurface) {
@@ -130,6 +133,7 @@ void GLNativeTextureViewContext::onGLSuspend() {
         // デバイスにセットされているサーフェイスをリセットする
         device->setSurface(EGL_NULL_SURFACE);
     }
+#endif
 }
 
 /**

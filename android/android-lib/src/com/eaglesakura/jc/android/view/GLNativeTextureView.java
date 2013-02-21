@@ -132,7 +132,6 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
         }
         onNativeGLSurfaceSizeChanged(surface, width, height);
         es2callback.onEGLSurfaceSizeChanged(this, width, height);
-        es2callback.onEGLResumeCompleted(this);
     }
 
     /**
@@ -142,11 +141,11 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         try {
             assertNativeInitialized();
-            es2callback.onEGLPauseBegin(this);
+            es2callback.onEGLSurfaceDestroyBegin(this);
             {
                 onNativeGLDestroyed(surface);
             }
-            es2callback.onEGLPauseCompleted(this);
+            es2callback.onEGLSurfaceDestroyCompleted(this);
         } catch (Exception e) {
         }
         return true;
@@ -260,29 +259,23 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
         void onEGLInitializeCompleted(GLNativeTextureView view);
 
         /**
-         * EGL復帰が完了した。
-         * @param view
-         */
-        void onEGLResumeCompleted(GLNativeTextureView view);
-
-        /**
-         * EGLをサスペンドした。
-         * @param view
-         */
-        void onEGLPauseBegin(GLNativeTextureView view);
-
-        /**
-         * EGLサスペンドが完了した
-         * @param view
-         */
-        void onEGLPauseCompleted(GLNativeTextureView view);
-
-        /**
          * EGLのサイズが変わった
          * @param view
          * @param width
          * @param height
          */
         void onEGLSurfaceSizeChanged(GLNativeTextureView view, int width, int height);
+
+        /**
+         * EGLをサスペンドした。
+         * @param view
+         */
+        void onEGLSurfaceDestroyBegin(GLNativeTextureView view);
+
+        /**
+         * EGLサスペンドが完了した
+         * @param view
+         */
+        void onEGLSurfaceDestroyCompleted(GLNativeTextureView view);
     }
 }
