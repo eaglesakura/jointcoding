@@ -168,10 +168,11 @@ union Color {
         return result;
     }
 
-#if 0
     /**
      * 色をブレンドして返す。
-     *
+     * 遷移は次の通り
+     * blend = 0.0f -> rgba0
+     * blend = 1.0f -> rgba1
      * @param rgba0
      * @param rgba1
      * @param blend
@@ -180,40 +181,13 @@ union Color {
     static Color blendColor(const Color rgba0, const Color rgba1, const float blend) {
         Color result;
 
-        {
-            int value0 = (rgba0.r);
-            int value1 = (Color.toColorR(rgba1));
-
-            int color = (int) (GameUtil.blendValue(value0, value1, blend));
-        }
-
-        {
-            int value0 = (Color.toColorG(rgba0));
-            int value1 = (Color.toColorG(rgba1));
-
-            int color = (int) (GameUtil.blendValue(value0, value1, blend));
-            result |= ((color & 0xff) << 16);
-        }
-
-        {
-            int value0 = (Color.toColorB(rgba0));
-            int value1 = (Color.toColorB(rgba1));
-
-            int color = (int) (GameUtil.blendValue(value0, value1, blend));
-            result |= ((color & 0xff) << 8);
-        }
-
-        {
-            int value0 = (Color.toColorA(rgba0));
-            int value1 = (Color.toColorA(rgba1));
-
-            int color = (int) (GameUtil.blendValue(value0, value1, blend));
-            result |= ((color) & 0xff);
-        }
+        result.tag.r = (u8) minmax<s32>(0, 255, (s32) (((float) rgba0.tag.r * blend) + ((float) rgba1.tag.r * (1.0f - blend))));
+        result.tag.g = (u8) minmax<s32>(0, 255, (s32) (((float) rgba0.tag.g * blend) + ((float) rgba1.tag.g * (1.0f - blend))));
+        result.tag.b = (u8) minmax<s32>(0, 255, (s32) (((float) rgba0.tag.b * blend) + ((float) rgba1.tag.b * (1.0f - blend))));
+        result.tag.a = (u8) minmax<s32>(0, 255, (s32) (((float) rgba0.tag.a * blend) + ((float) rgba1.tag.a * (1.0f - blend))));
 
         return result;
     }
-#endif
 };
 
 }
