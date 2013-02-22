@@ -8,6 +8,8 @@
 #ifndef JCCOLOR_H_
 #define JCCOLOR_H_
 
+#include    "jc/math/Math.h"
+
 namespace jc {
 
 /**
@@ -178,14 +180,31 @@ union Color {
      * @param blend
      * @return
      */
-    static Color blendColor(const Color rgba0, const Color rgba1, const float blend) {
+    static Color blendColor(const Color rgba0, const Color rgba1,  float blend) {
+        Color result;
+        blend = jc::minmax<float>(0, 1.0f, blend);
+
+        result.tag.r = (u8) ((((float) rgba1.tag.r) * blend) + (((float) rgba0.tag.r) * (1.0f - blend)));
+        result.tag.g = (u8) ((((float) rgba1.tag.g) * blend) + (((float) rgba0.tag.g) * (1.0f - blend)));
+        result.tag.b = (u8) ((((float) rgba1.tag.b) * blend) + (((float) rgba0.tag.b) * (1.0f - blend)));
+        result.tag.a = (u8) ((((float) rgba1.tag.a) * blend) + (((float) rgba0.tag.a) * (1.0f - blend)));
+        return result;
+    }
+
+    /**
+     * 色を移動させて返す。
+     * @param rgba0
+     * @param rgba1
+     * @param blend
+     * @return
+     */
+    static Color moveColor(const Color now, const Color target, const u8 offset) {
         Color result;
 
-        result.tag.r = (u8) minmax<s32>(0, 255, (s32) (((float) rgba0.tag.r * blend) + ((float) rgba1.tag.r * (1.0f - blend))));
-        result.tag.g = (u8) minmax<s32>(0, 255, (s32) (((float) rgba0.tag.g * blend) + ((float) rgba1.tag.g * (1.0f - blend))));
-        result.tag.b = (u8) minmax<s32>(0, 255, (s32) (((float) rgba0.tag.b * blend) + ((float) rgba1.tag.b * (1.0f - blend))));
-        result.tag.a = (u8) minmax<s32>(0, 255, (s32) (((float) rgba0.tag.a * blend) + ((float) rgba1.tag.a * (1.0f - blend))));
-
+        result.tag.r = targetMove(now.tag.r, target.tag.r, offset);
+        result.tag.g = targetMove(now.tag.g, target.tag.g, offset);
+        result.tag.b = targetMove(now.tag.b, target.tag.b, offset);
+        result.tag.a = targetMove(now.tag.a, target.tag.a, offset);
         return result;
     }
 };
