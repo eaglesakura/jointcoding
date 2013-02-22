@@ -110,22 +110,22 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
             material.texture_name = stream->readString();
 
             {
-                material.diffuse.colors.tag.r = stream->readU8();
-                material.diffuse.colors.tag.g = stream->readU8();
-                material.diffuse.colors.tag.b = stream->readU8();
-                material.diffuse.colors.tag.a = stream->readU8();
+                material.diffuse.tag.r = stream->readU8();
+                material.diffuse.tag.g = stream->readU8();
+                material.diffuse.tag.b = stream->readU8();
+                material.diffuse.tag.a = stream->readU8();
             }
             {
-                material.ambient.colors.tag.r = stream->readU8();
-                material.ambient.colors.tag.g = stream->readU8();
-                material.ambient.colors.tag.b = stream->readU8();
-                material.ambient.colors.tag.a = stream->readU8();
+                material.ambient.tag.r = stream->readU8();
+                material.ambient.tag.g = stream->readU8();
+                material.ambient.tag.b = stream->readU8();
+                material.ambient.tag.a = stream->readU8();
             }
             {
-                material.emissive.colors.tag.r = stream->readU8();
-                material.emissive.colors.tag.g = stream->readU8();
-                material.emissive.colors.tag.b = stream->readU8();
-                material.emissive.colors.tag.a = stream->readU8();
+                material.emissive.tag.r = stream->readU8();
+                material.emissive.tag.g = stream->readU8();
+                material.emissive.tag.b = stream->readU8();
+                material.emissive.tag.a = stream->readU8();
             }
 
             mesh.materials.push_back(material);

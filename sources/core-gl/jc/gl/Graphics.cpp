@@ -37,7 +37,7 @@ void GLGraphics::clearf(const float r, const float g, const float b, const float
  */
 void GLGraphics::clear(const rgba32 color) {
     Color col;
-    col.colors.rgba = color;
+    col.rgba = color;
     getState()->clearColorf(col.rf(), col.gf(), col.bf(), col.af());
     getState()->clear(clearFlags);
 }

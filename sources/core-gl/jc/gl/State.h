@@ -29,6 +29,13 @@ namespace gl {
  */
 #define UNIFORM_DISABLE_INDEX -1
 
+enum GLBlendType_e {
+    /**
+     * 一般的なαブレンドを行う
+     */
+    GLBlendType_Alpha,
+};
+
 // #define  STATE_NO_CHECK
 
 /**
@@ -300,6 +307,20 @@ public:
             return jctrue;
         }
         return jcfalse;
+    }
+
+    /**
+     * デフォルト設定に従ってブレンドを行う
+     */
+    inline jcboolean blendFunc(const GLBlendType_e type) {
+        static const GLenum sfactor[] = {
+                GL_SRC_ALPHA
+        };
+        static const GLenum dfactor[] = {
+                GL_ONE_MINUS_SRC_ALPHA
+        };
+
+        return blendFunc(sfactor[type], dfactor[type]);
     }
 
     /**

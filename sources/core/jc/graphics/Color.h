@@ -25,98 +25,86 @@ typedef u32 argb32;
  * 色情報は一貫してRGBAの順番とする。
  * ライブラリ内部でnativeへ変換する。
  */
-struct Color {
+union Color {
     /**
-     * 色管理用の構造体
+     * 1要素ごとの情報
+     * リトルエンディアン格納のため、並びは反転する
      */
-    union {
-        /**
-         * 1要素ごとの情報
-         * リトルエンディアン格納のため、並びは反転する
-         */
-        struct {
-            u8 a;
-            u8 b;
-            u8 g;
-            u8 r;
-        } tag;
+    struct {
+        u8 a;
+        u8 b;
+        u8 g;
+        u8 r;
+    } tag;
 
-        /**
-         * RGBA情報
-         */
-        rgba32 rgba;
-    } colors;
+    /**
+     * RGBA情報
+     */
+    rgba32 rgba;
 
     Color() {
         RGBAi(255, 255, 255, 255);
     }
 
     Color(const Color &origin) {
-        colors = origin.colors;
+        rgba = origin.rgba;
     }
 
     inline
     float rf() const {
-        return (float) colors.tag.r / 255.0f;
+        return (float) tag.r / 255.0f;
     }
 
     inline
     float gf() const {
-        return (float) colors.tag.g / 255.0f;
+        return (float) tag.g / 255.0f;
     }
 
     inline
     float bf() const {
-        return (float) colors.tag.b / 255.0f;
+        return (float) tag.b / 255.0f;
     }
 
     inline
     float af() const {
-        return (float) colors.tag.a / 255.0f;
+        return (float) tag.a / 255.0f;
     }
 
     inline u8 r() const {
-        return colors.tag.r;
+        return tag.r;
     }
 
     inline u8 g() const {
-        return colors.tag.g;
+        return tag.g;
     }
 
     inline u8 b() const {
-        return colors.tag.b;
+        return tag.b;
     }
 
     inline u8 a() const {
-        return colors.tag.a;
+        return tag.a;
     }
     /**
      * RGBAを0〜255で指定する
      */
     inline
-    void RGBAi(u8 r, u8 g, u8 b, u8 a) {
-        colors.tag.r = r;
-        colors.tag.g = g;
-        colors.tag.b = b;
-        colors.tag.a = a;
+    void RGBAi(const u8 r, const u8 g, const u8 b, const u8 a) {
+        tag.r = r;
+        tag.g = g;
+        tag.b = b;
+        tag.a = a;
     }
 
     /**
      * RGBAを0〜1.0fで指定する
      */
     inline
-    void RGBAf(float r, float g, float b, float a) {
-        colors.tag.r = (u8) (r * 255.0f);
-        colors.tag.g = (u8) (g * 255.0f);
-        colors.tag.b = (u8) (b * 255.0f);
-        colors.tag.a = (u8) (a * 255.0f);
-    }
-
-    /**
-     * RGBA色に変換する
-     */
-    inline rgba32 rgba() const {
-        return colors.rgba;
+    void RGBAf(const float r, const float g, const float b, const float a) {
+        tag.r = (u8) (r * 255.0f);
+        tag.g = (u8) (g * 255.0f);
+        tag.b = (u8) (b * 255.0f);
+        tag.a = (u8) (a * 255.0f);
     }
 
     /**
@@ -129,10 +117,10 @@ struct Color {
             u8 g;
             u8 b;
         } _argb;
-        _argb.a = colors.tag.a;
-        _argb.r = colors.tag.r;
-        _argb.g = colors.tag.g;
-        _argb.b = colors.tag.b;
+        _argb.a = tag.a;
+        _argb.r = tag.r;
+        _argb.g = tag.g;
+        _argb.b = tag.b;
 
         return (*((argb32*) &_argb));
     }
@@ -142,21 +130,21 @@ struct Color {
      */
     inline
     bool operator==(const Color &col) const {
-        return rgba() == col.rgba();
+        return rgba == col.rgba;
     }
     /**
      * 同一以外ならtrue
      */
     inline
     bool operator!=(const Color &col) const {
-        return colors.rgba != col.colors.rgba;
+        return rgba != col.rgba;
     }
 
     /**
      * RGBA32形式へはキャストを提供する
      */
     inline operator rgba32() const {
-        return colors.rgba;
+        return rgba;
     }
 
     inline static Color fromRGBAf(float r, float g, float b, float a) {
@@ -171,11 +159,61 @@ struct Color {
         return result;
     }
 
-    inline static Color fromRGBAi(const rgba32 rgba ) {
+    /**
+     * intから色情報へ変換する
+     */
+    inline static Color fromRGBAi(const rgba32 rgba) {
         Color result;
-        result.colors.rgba = rgba;
+        result.rgba = rgba;
         return result;
     }
+
+#if 0
+    /**
+     * 色をブレンドして返す。
+     *
+     * @param rgba0
+     * @param rgba1
+     * @param blend
+     * @return
+     */
+    static Color blendColor(const Color rgba0, const Color rgba1, const float blend) {
+        Color result;
+
+        {
+            int value0 = (rgba0.r);
+            int value1 = (Color.toColorR(rgba1));
+
+            int color = (int) (GameUtil.blendValue(value0, value1, blend));
+        }
+
+        {
+            int value0 = (Color.toColorG(rgba0));
+            int value1 = (Color.toColorG(rgba1));
+
+            int color = (int) (GameUtil.blendValue(value0, value1, blend));
+            result |= ((color & 0xff) << 16);
+        }
+
+        {
+            int value0 = (Color.toColorB(rgba0));
+            int value1 = (Color.toColorB(rgba1));
+
+            int color = (int) (GameUtil.blendValue(value0, value1, blend));
+            result |= ((color & 0xff) << 8);
+        }
+
+        {
+            int value0 = (Color.toColorA(rgba0));
+            int value1 = (Color.toColorA(rgba1));
+
+            int color = (int) (GameUtil.blendValue(value0, value1, blend));
+            result |= ((color) & 0xff);
+        }
+
+        return result;
+    }
+#endif
 };
 
 }

@@ -113,7 +113,7 @@ public:
 
     /**
      * 自分自身の更新作業を行う
-     * trueを返しすと「処理完了」とみなして排除する
+     * trueを返すと「処理完了」とみなして排除する
      */
     virtual jcboolean onSelfUpdate() {
         return jcfalse;

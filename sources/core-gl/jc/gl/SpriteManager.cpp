@@ -203,7 +203,7 @@ void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s3
     }
 
     // ブレンド色を設定する
-    if (shaderContext.blendColor.colors.rgba != rgba) {
+    if (shaderContext.blendColor.rgba != rgba) {
         shaderContext.blendColor = Color::fromRGBAi(rgba);
         glUniform4f(unifBlendColor, shaderContext.blendColor.rf(), shaderContext.blendColor.gf(), shaderContext.blendColor.bf(), shaderContext.blendColor.af());
     }
