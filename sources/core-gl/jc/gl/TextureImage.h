@@ -178,6 +178,11 @@ public:
     static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat);
 
     /**
+     * PMKファイルのデコードを行う。
+     */
+    static jc_sp<TextureImage> decodePMK(MDevice device, const Uri &uri);
+
+    /**
      * Platformが実装しているデコーダーで画像をデコードする。
      * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
      */

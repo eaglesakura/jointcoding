@@ -27,6 +27,17 @@ s16 BinaryInputStream::readS16() {
 }
 
 /**
+ * 2byte read
+ * Big Endian
+ */
+s16 BinaryInputStream::readS16BE() {
+    const s16 w0 = ((s16)readS8()) & 0xFF;
+    const s16 w1 = ((s16)readS8()) & 0xFF;
+
+    return (w0 << 8) | w1;
+}
+
+/**
  * 4byte read
  */
 s32 BinaryInputStream::readS32() {
@@ -100,26 +111,26 @@ u32 BinaryInputStream::readFixed32Array(jc_sa<float> *result_data, u32 *result_d
     fixed32* pData = new fixed32[length];
 
     // 指定された長さ分だけ読み込む
-    stream->read((u8*)pData, sizeof(fixed32) * length);
+        stream->read((u8*)pData, sizeof(fixed32) * length);
 
-    // 戻り
-    float *pResult = new float[length];
-    for(u32 i = 0; i < length; ++i ) {
-        pResult[i] = fixed2real<fixed32, float>( pData[i], bits );
+        // 戻り
+        float *pResult = new float[length];
+        for(u32 i = 0; i < length; ++i ) {
+            pResult[i] = fixed2real<fixed32, float>( pData[i], bits );
+        }
+
+        // データを書き戻す
+        result_data->reset(pResult);
+
+        // len?
+        if(result_data_length) {
+            (*result_data_length) = length;
+        }
+
+        SAFE_DELETE_ARRAY(pData);
+        return length;
+
     }
 
-    // データを書き戻す
-    result_data->reset(pResult);
-
-    // len?
-    if(result_data_length) {
-        (*result_data_length) = length;
     }
-
-    SAFE_DELETE_ARRAY(pData);
-    return length;
-
-}
-
-}
 

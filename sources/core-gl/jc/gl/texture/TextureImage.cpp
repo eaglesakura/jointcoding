@@ -12,6 +12,8 @@
 #include    "jc/gl/State.h"
 #include    "jc/gl/GPUCapacity.h"
 
+#include    "jc/gl/PKMHeader.h"
+
 #define _BIND_CHECK(_this)      { if(_this->bindUnit < 0 ){ jclogf("texture not bind | this=( %x ) texture=( %d ) abort.", _this, _this->texture.get()); return; } }
 
 namespace jc {
@@ -289,7 +291,7 @@ MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const 
 /**
  * テクスチャへのデコードを行う。
  * uriにはJpegテクスチャへのURIを指定する。
- */
+ */ //
 MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat) {
 
     MInputStream is = Platform::getFileSystem()->openInputStream(uri);
@@ -313,6 +315,42 @@ MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFo
     return result;
 }
 
+/**
+ * PMKファイルのデコードを行う。
+ */
+MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri) {
+    MInputStream is = Platform::getFileSystem()->openInputStream(uri);
+    if (!is) {
+        jcalertf("file not found(%s)", uri.getUri().c_str());
+        return MTextureImage();
+    }
+
+    MPKMHeader header = PKMHeader::createInstance(is);
+
+    if (!header) {
+        jcalertf("not pkm file(%s)", uri.getUri().c_str());
+        return MTextureImage();
+    }
+
+    const s32 width = header->getWidth();
+    const s32 height = header->getHeight();
+
+    MTextureImage result(new TextureImage(width, height, device));
+
+    jclogf("etc1 size(%d x %d)", width, height);
+
+    result->bind();
+    {
+        u32 length = 0;
+        jc_sa<u8> temp = InputStream::toByteArray(is, &length);
+
+
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, header->getWidth(), header->getHeight(), 0, length, (void*)temp.get());
+    }
+    result->unbind();
+
+    return result;
+}
 
 }
 }

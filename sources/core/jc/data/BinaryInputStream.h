@@ -49,9 +49,19 @@ public:
 
     /**
      * 2byte read
+     * Big Endian
+     */
+    virtual s16 readS16BE();
+
+    /**
+     * 2byte read
      */
     virtual u16 readU16() {
         return static_cast<u16>(readS16());
+    }
+
+    virtual u16 readU16BE() {
+        return static_cast<u16>(readS16BE());
     }
 
     /**
