@@ -4,7 +4,7 @@
     <target name="javadoc">
         <javadoc access="public"
         	   additionalparam=" -encoding &quot;utf-8&quot; -charset &quot;utf-8&quot;"
-        	   author="true" classpath="${env.ANDROID_HOME}/platforms/android-15/android.jar;${env.ANDROID_HOME}/tools/support/annotations.jar;libs/jcannotation.jar"
+        	   author="true" classpath="${env.ANDROID_HOME}/platforms/android-15/android.jar;${env.ANDROID_HOME}/tools/support/annotations.jar;../android-lib/libs/jcannotation.jar"
         	   destdir="doc"
         	   nodeprecated="false"
         	   nodeprecatedlist="false"
