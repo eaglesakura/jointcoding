@@ -32,20 +32,21 @@ if [ $? -ne 0 ]; then
 fi
 
 # ndk-build
-#if [ -e jni/Android.mk ]; then
-#    cd ./jni
-#    if [ ${JC_NDK_CLEAN} = "true" ]; then
-#        ndk-build clean
-#    fi
-#    # release build
-#    ndk-build ${JC_NDK_OPTION}
-#    # build check
-#    if [ $? -ne 0 ]; then
-#        echo "ndk-build failed..."
-#        exit 1
-#    fi
-#    cd ..
-#fi
+if [ -e jni/Android.mk ]; then
+    cd ./jni
+    if [ ${JC_NDK_CLEAN} = "true" ]; then
+        ndk-build clean
+    fi
+    # release build
+    ndk-build ${JC_NDK_OPTION}
+    # build check
+    if [ $? -ne 0 ]; then
+        echo "ndk-build failed..."
+        exit 1
+    fi
+    cd ..
+fi
+
 # release build!!
 if [ -f keystore.properties ]; then
     ant clean
@@ -59,6 +60,23 @@ fi
 if [ $? -ne 0 ]; then
     echo "ant release failed..."
     exit 1
+fi
+
+# javadoc check
+if [ -f ./javadoc.xml ]; then
+    ant -f ./javadoc.xml
+    
+    cd bin/
+    # impl javadoc & src
+    if [ -f ./classes.jar ]; then
+
+        pwd
+        cp classes.jar classes_src_docs.jar
+        zip -u -r classes_src_docs.jar ../src/**
+        zip -u -r classes_src_docs.jar ../doc/**
+
+    fi
+    cd ../
 fi
 
 # back to current

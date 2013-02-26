@@ -1,0 +1,66 @@
+#! /bin/sh
+# Android Application Build Script
+# Author @eaglesakura
+# このスクリプトはCygwin/Mac環境向けです
+#
+# スクリプト実行には次のツールをインストールしてください
+#
+# 1.ant (version 1.8.2推奨)
+# 2.Android SDK
+#
+# 実行する前に、環境変数PATHにANDROID_HOME/platform-toolsが設定されていることを確認してください
+# このスクリプト実行時に"android"もしくは"android.bat"コマンドへのパスが通っている必要があります。
+# ANDROID_HOMEはAndroid SDKをインストールしたパスに適宜書き換えてください。
+
+
+rm -rf release
+mkdir release
+
+# ndk-build の設定
+export JC_NDK_OPTION=""
+export JC_NDK_CLEAN="true"
+
+#######   lib-project   #######
+export JC_PROJECT_PATH=android-lib
+export JC_PROJECT_TYPE=lib-project
+export JC_ANT_TASK=release
+./jc-build
+if [ $? -ne 0 ]; then
+    echo "jc-build failed..."
+    exit 1
+fi
+
+# lib回収
+cp ${JC_PROJECT_PATH}/bin/classes.jar            ./release/jointcoding-${JC_PROJECT_PATH}.jar
+cp ${JC_PROJECT_PATH}/bin/classes_src_docs.jar   ./release/jointcoding-${JC_PROJECT_PATH}-srcdocs.jar
+###############################
+
+####### test support project #######
+export JC_PROJECT_PATH=android-testsupport
+export JC_PROJECT_TYPE=lib-project
+export JC_ANT_TASK=release
+./jc-build
+if [ $? -ne 0 ]; then
+    echo "jc-build failed..."
+    exit 1
+fi
+
+# lib回収
+cp ${JC_PROJECT_PATH}/bin/classes.jar           ./release/jointcoding-${JC_PROJECT_PATH}.jar
+cp ${JC_PROJECT_PATH}/bin/classes_src_docs.jar  ./release/jointcoding-${JC_PROJECT_PATH}-srcdocs.jar
+####################################
+
+
+####### test project #######
+export JC_PROJECT_PATH=android-test
+export JC_PROJECT_TYPE="test-project -m ../android-lib"
+export JC_ANT_TASK="release"
+# ./jc-build
+if [ $? -ne 0 ]; then
+    echo "jc-build failed..."
+    exit 1
+fi
+####################################
+
+
+

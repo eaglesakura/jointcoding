@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <property environment="env" />
+    <target name="javadoc">
+        <javadoc access="public"
+        	   additionalparam=" -encoding &quot;utf-8&quot; -charset &quot;utf-8&quot;"
+        	   author="true" classpath="${env.ANDROID_HOME}/platforms/android-15/android.jar;${env.ANDROID_HOME}/tools/support/annotations.jar;libs/jcannotation.jar"
+        	   destdir="doc"
+        	   nodeprecated="false"
+        	   nodeprecatedlist="false"
+        	   noindex="false"
+        	   nonavbar="false"
+        	   notree="false"
+        	   packagenames="com.eaglesakura.*"
+        	   source="1.6"
+        	   sourcepath="src:gen"
+        	   splitindex="true"
+        	   use="true"
+        	   version="true"
+        />
+    </target>
+</project>

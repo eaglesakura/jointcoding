@@ -2,7 +2,7 @@
 
 # android project build
 cd android
-./debug-build
+./release-build
 
 if [ $? -ne 0 ]; then
     echo "android-build failed..."
