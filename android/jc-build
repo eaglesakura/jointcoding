@@ -62,22 +62,16 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# javadoc check
-if [ -f ./javadoc.xml ]; then
-    ant -f ./javadoc.xml
-    
-    cd bin/
-    # impl javadoc & src
-    if [ -f ./classes.jar ]; then
 
-        pwd
-        cp classes.jar classes_src_docs.jar
-        zip -u -r classes_src_docs.jar ../src/**
-        zip -u -r classes_src_docs.jar ../doc/**
+cd bin/
+# impl src
+if [ -f ./classes.jar ]; then
 
-    fi
-    cd ../
+    pwd
+    cp classes.jar classes_src.jar
+    zip -u -r classes_src.jar ../src/**
 fi
+cd ../
 
 # back to current
 cd ${JC_CURRENT_PATH}

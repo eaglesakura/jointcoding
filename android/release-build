@@ -31,8 +31,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # lib回収
-cp ${JC_PROJECT_PATH}/bin/classes.jar            ./release/jointcoding-${JC_PROJECT_PATH}.jar
-cp ${JC_PROJECT_PATH}/bin/classes_src_docs.jar   ./release/jointcoding-${JC_PROJECT_PATH}-srcdocs.jar
+cp ${JC_PROJECT_PATH}/bin/classes.jar       ./release/jointcoding-${JC_PROJECT_PATH}.jar
+cp ${JC_PROJECT_PATH}/bin/classes_src.jar   ./release/jointcoding-${JC_PROJECT_PATH}-srcdocs.jar
 ###############################
 
 ####### test support project #######
@@ -46,8 +46,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # lib回収
-cp ${JC_PROJECT_PATH}/bin/classes.jar           ./release/jointcoding-${JC_PROJECT_PATH}.jar
-cp ${JC_PROJECT_PATH}/bin/classes_src_docs.jar  ./release/jointcoding-${JC_PROJECT_PATH}-srcdocs.jar
+cp ${JC_PROJECT_PATH}/bin/classes.jar      ./release/jointcoding-${JC_PROJECT_PATH}.jar
+cp ${JC_PROJECT_PATH}/bin/classes_src.jar  ./release/jointcoding-${JC_PROJECT_PATH}-srcdocs.jar
 ####################################
 
 
