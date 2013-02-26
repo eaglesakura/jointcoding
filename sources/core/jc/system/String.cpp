@@ -102,6 +102,18 @@ bool String::operator==(const String &str) const {
 
     return a == b;
 }
+
+/**
+ * 比較を行う
+ */
+bool String::operator!=(const String &str) const {
+    const string_t &a = this->native_string.as<string_t>();
+    const string_t &b = str.native_string.as<string_t>();
+
+    return a != b;
+}
+
+
 /**
  * map比較演算子
  */

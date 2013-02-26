@@ -23,7 +23,7 @@ static u32 PIXEL_TYPES[4] = {
         };
 static u32 PIXEL_FORMATS[] = {
 //
-        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA,
+        GL_RGB, GL_RGBA, GL_RGB, GL_BGRA_EXT,
 //
         };
 }

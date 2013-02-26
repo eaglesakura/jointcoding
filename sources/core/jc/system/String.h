@@ -76,6 +76,11 @@ public:
     bool operator==(const String &r) const;
 
     /**
+     * 比較を行う
+     */
+    bool operator!=(const String &r) const;
+
+    /**
      * 文字列のindexOfを求める
      */
     s32 indexOf(const String &str) const;

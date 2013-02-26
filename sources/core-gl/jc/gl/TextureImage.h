@@ -17,6 +17,16 @@ namespace jc {
 namespace gl {
 
 /**
+ * ETC1テクスチャの拡張子（PKM形式)
+ */
+#define JC_TEXTURE_EXT_ETC1 "pkm"
+
+/**
+ * Jpegテクスチャの拡張子
+ */
+#define JC_TEXTURE_EXT_JPEG "jpg"
+
+/**
  * OpenGLで扱うテクスチャを管理する。
  * GLES2.0を基本とするため、テクスチャサイズは2^n以外も可能だが、パフォーマンスには影響する
  */
@@ -174,8 +184,12 @@ public:
     /**
      * テクスチャへのデコードを行う。
      * uriにはJpegテクスチャへのURIを指定する。
+     *
+     * 拡張子jpg -> Jpeg形式として、内蔵デコーダで画像のデコードを行う
+     * 拡張子pkm -> PKM形式として認識し、自動的にdecodePKMを呼び出す。
+     * それ以外  -> decodeFromPlatformDecoderを呼び出して、デコードを行う
      */
-    static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat);
+    static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat = PixelFormat_RGBA8888);
 
     /**
      * PMKファイルのデコードを行う。

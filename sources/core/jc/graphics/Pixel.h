@@ -41,6 +41,13 @@ enum PixelFormat_e {
      * GL_UNSIGNED_BYTE
      */
     PixelFormat_RGBA8888,
+
+    /**
+     * 4byte
+     * GL_BGRA_EXT
+     * GL_UNSIGNED_BYTE
+     */
+    PixelFormat_BGRA8888,
 };
 
 class Pixel {

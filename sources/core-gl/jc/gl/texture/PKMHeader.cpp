@@ -8,6 +8,8 @@
 #include    "jc/data/BinaryInputStream.h"
 #include    "jc/mem/MemoryUtil.h"
 
+#include    "jc/gl/GL.h"
+
 namespace jc {
 namespace gl {
 
@@ -18,6 +20,19 @@ PKMHeader::PKMHeader() {
 
 PKMHeader::~PKMHeader() {
 
+}
+
+/**
+ * ビルドしているプラットフォームがこのフォーマットテクスチャをサポートしているかをチェックする
+ */
+jcboolean PKMHeader::isPlatformSupportTexture() const {
+#ifdef  GL_OES_compressed_ETC1_RGB8_texture
+    // ETC1をサポートしているプラットフォームならばOK
+    if (isETC1()) {
+        return jctrue;
+    }
+#endif
+    return jcfalse;
 }
 
 /**

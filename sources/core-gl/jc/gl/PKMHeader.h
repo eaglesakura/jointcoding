@@ -75,6 +75,15 @@ public:
         return dataType == 0;
     }
 
+    virtual u16 getDataType() const {
+        return dataType;
+    }
+
+    /**
+     * ビルドしているプラットフォームがこのフォーマットテクスチャをサポートしているかをチェックする
+     */
+    virtual jcboolean isPlatformSupportTexture() const;
+
     /**
      * npotテクスチャであればtrueを返す
      */

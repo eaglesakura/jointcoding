@@ -294,6 +294,17 @@ MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const 
  */ //
 MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat) {
 
+    {
+        const String ext = uri.getFileExt();
+        if (ext == JC_TEXTURE_EXT_ETC1) {
+            jclogf("pkm texture(%s)", uri.getUri().c_str());
+            return decodePMK(device, uri);
+        } else if (ext != JC_TEXTURE_EXT_JPEG) {
+            jclogf("platform texture(%s)", uri.getUri().c_str());
+            return decodeFromPlatformDecoder(device, uri, pixelFormat);
+        }
+    }
+
     MInputStream is = Platform::getFileSystem()->openInputStream(uri);
     if (!is) {
         jcalertf("file not found %s", uri.getUri().c_str());
@@ -332,20 +343,23 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri) {
         return MTextureImage();
     }
 
+    if (!header->isPlatformSupportTexture()) {
+        jclogf("unsupported Pixel Format(%s) Type(%d)", uri.getUri().c_str(), header->getDataType());
+        return MTextureImage();
+    }
+
     const s32 width = header->getWidth();
     const s32 height = header->getHeight();
 
     MTextureImage result(new TextureImage(width, height, device));
-
-    jclogf("etc1 size(%d x %d)", width, height);
 
     result->bind();
     {
         u32 length = 0;
         jc_sa<u8> temp = InputStream::toByteArray(is, &length);
 
-
-        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, header->getWidth(), header->getHeight(), 0, length, (void*)temp.get());
+        jclogf("etc1 size(%d x %d)", width, height);
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, header->getWidth(), header->getHeight(), 0, length, (void*) temp.get());
     }
     result->unbind();
 

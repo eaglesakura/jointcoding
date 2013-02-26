@@ -3,6 +3,8 @@ package com.eaglesakura.jc.android.app.util;
 import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -83,7 +85,8 @@ public class ImageDecoder implements IJointCodingClass {
         ImageDecoder result = new ImageDecoder();
 
         // ピクセル情報の格納先を確保
-        ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(image_width * image_height * 4);
+        IntBuffer pixelBuffer = ByteBuffer.allocateDirect(image_width * image_height * 4)
+                .order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
         {
             result.width = image_width;
             result.height = image_height;
@@ -92,22 +95,17 @@ public class ImageDecoder implements IJointCodingClass {
 
         AndroidUtil.log(String.format("image size(%d x %d)", image_width, image_height));
 
-        final int[] temp = new int[image_width];
-        final byte[] pixel_temp = new byte[4];
-        for (int i = 0; i < image_height; ++i) {
+        final int ONCE_READ_LINE = 6;
+        final int[] temp = new int[image_width * ONCE_READ_LINE];
+
+        int readHeight = image_height;
+        while (readHeight > 0) {
             // 1ラインずつ読み込む
-            image.getPixels(temp, 0, image_width, 0, i, image_width, 1);
-            // 結果をByteArrayへ書き込む
-            for (int k = 0; k < image_width; ++k) {
-                final int pixel = temp[k];
+            final int readLine = Math.min(readHeight, ONCE_READ_LINE);
+            image.getPixels(temp, 0, image_width, 0, image_height - readHeight, image_width, readLine);
+            pixelBuffer.put(temp, 0, image_width * readLine);
 
-                pixel_temp[0] = (byte) ((pixel >> 16) & 0xFF);
-                pixel_temp[1] = (byte) ((pixel >> 8) & 0xFF);
-                pixel_temp[2] = (byte) ((pixel) & 0xFF);
-                pixel_temp[3] = (byte) ((pixel >> 24) & 0xFF);
-
-                pixelBuffer.put(pixel_temp);
-            }
+            readHeight -= readLine;
         }
 
         // 書き込み位置をリセットする
