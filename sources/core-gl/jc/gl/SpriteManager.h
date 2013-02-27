@@ -120,6 +120,13 @@ public:
     virtual void renderingRect(const s32 x, const s32 y, const s32 w, const s32 h, const u32 rgba);
 
     /**
+     * 四角形描画を行う
+     */
+    virtual void renderingRect(const RectI &dst, const u32 rgba) {
+        renderingRect(dst.left, dst.top, dst.width(), dst.height(), rgba);
+    }
+
+    /**
      * 画像を描画する
      * @param src{XYWH} テクスチャ内の座標をpix単位で指定する
      * @param dst{XYWH} 描画先の座標をpix単位で指定する。
@@ -140,6 +147,20 @@ public:
      */
     virtual void renderingImage( MTextureImage image, const s32 x, const s32 y) {
         renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), x, y, image->getWidth(), image->getHeight());
+    }
+
+    /**
+     * 画像を描画する
+     */
+    virtual void renderingImage( MTextureImage image, const RectI &dst) {
+        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height());
+    }
+
+    /**
+     * 画像を描画する
+     */
+    virtual void renderingImage( MTextureImage image, const RectI &dst, const u32 color) {
+        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height(), 0, color);
     }
 
     /**
