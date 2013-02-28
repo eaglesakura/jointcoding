@@ -10,6 +10,7 @@
 #include    "jointcoding.h"
 #include    "jc/math/Rect.h"
 #include    "jc/gl/TextureImage.h"
+#include    "jc/gl/SpriteManager.h"
 
 namespace jc {
 namespace gl {
@@ -79,7 +80,7 @@ class Sprite: public Object {
     float rotate;
 
 protected:
-    MTextureImage getRenderingTexture() const {
+    virtual MTextureImage getRenderingTexture() const {
         return texture;
     }
 public:
@@ -282,11 +283,20 @@ public:
         return this;
     }
 
+    /**
+     *
+     */
     Sprite* setColor(Color color) {
         this->color = color;
         return this;
     }
 
+    /**
+     * レンダリングを行う
+     */
+    virtual void rendering(MSpriteManager spriteManager) {
+        spriteManager->renderingImage(getRenderingTexture(), (s32) srcArea.left, (s32) srcArea.top, (s32) srcArea.width(), (s32) srcArea.height(), (s32) dstArea.left, (s32) dstArea.top, (s32) dstArea.width(), (s32) dstArea.height(), rotate, color.rgba);
+    }
 };
 
 typedef jc_sp<Sprite> MSprite;}

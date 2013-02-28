@@ -12,7 +12,7 @@ namespace ndk {
 /**
  * jstringから通常のStringへ変換する
  */
-String j2String(jstring);
+String j2String(jstring str, const jcboolean deleteRef);
 
 /**
  * charactor*からjstringへ変換する
