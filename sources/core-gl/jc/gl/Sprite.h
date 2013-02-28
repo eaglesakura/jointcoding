@@ -181,6 +181,13 @@ public:
     }
 
     /**
+     *
+     */
+    Sprite* setSpritePosition(float x, float y, u32 SpritePosition_flags) {
+        return setSpritePosition(x, y, srcArea.width(), srcArea.height(), SpritePosition_flags);
+    }
+
+    /**
      * 指定したピクセル数、描画エリアを移動する。
      * @param x
      * @param y
