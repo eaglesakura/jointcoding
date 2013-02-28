@@ -52,6 +52,14 @@ struct RectT {
         return abs(bottom - top);
     }
 
+    T centerX() const {
+        return (right + left) / 2;
+    }
+
+    T centerY() const {
+        return (top + bottom) / 2;
+    }
+
     /**
      * LTRBを指定値動かす
      */
