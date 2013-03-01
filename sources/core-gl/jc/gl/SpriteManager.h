@@ -165,6 +165,15 @@ public:
 
     /**
      * レンダリングエリアを設定する
+     * 設定はディスプレイ座標系（左上原点）で行う
+     */
+    virtual void setRenderArea(const RectI &display) {
+        setRenderArea(display.left, display.top, display.width(), display.height());
+    }
+
+    /**
+     * レンダリングエリアを設定する
+     * 設定はディスプレイ座標系（左上原点）で行う
      */
     virtual void setRenderArea( const s32 x, const s32 y, const s32 w, const s32 h ) {
         MGLState state = device->getState();
@@ -172,7 +181,6 @@ public:
 
         // display -> viewport
         device->convertViewportRect(createRectFromXYWH<s32>(x, y, w, h), &view_x, &view_y, &view_w, &view_h);
-
 
         // enable scissor
         state->enableScissor(jctrue);
