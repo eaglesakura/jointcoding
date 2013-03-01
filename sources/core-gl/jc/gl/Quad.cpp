@@ -122,7 +122,6 @@ void Quad::rendering() {
         state->enableVertexAttribArray(attrCoords);
         state->vertexAttribPointer(attrCoords, 2, GL_FLOAT, GL_FALSE, sizeof(tagVertex), NULL, sizeof(float) * 2);
     }
-
     CLEAR_GL_ERROR
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     PRINT_GL_ERROR;

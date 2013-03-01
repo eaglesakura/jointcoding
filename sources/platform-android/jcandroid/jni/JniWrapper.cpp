@@ -33,6 +33,7 @@ jmethodID JniWrapper::loadMethod(jclass clazz, const charactor* name, const char
     // 読み込んだメソッドIDを出力
     if (result == NULL) {
         jclogf("Method Load Error !! Name %s = id %d", name, (s32)result);
+        throw create_exception(RuntimeException, "method not found...");
     }
 
     return result;

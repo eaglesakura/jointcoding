@@ -30,7 +30,7 @@ TextureImage::TextureImage(s32 width, s32 height, MDevice device) {
     this->height = height;
     this->state = device->getState();
     bindUnit = -1;
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     texture.alloc(device->getVRAM(), VRAM_Texture);
 
