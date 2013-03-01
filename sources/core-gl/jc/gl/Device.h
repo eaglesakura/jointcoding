@@ -262,6 +262,34 @@ public:
         return (float) surface->getWidth() / (float) surface->getHeight();
     }
 
+    /**
+     * 左上起点のディスプレイ座標系から、左下起点のウィンドウ座標系へ変換する。
+     *
+     * resultのポインタをそのまま帰す。
+     */
+    virtual void convertViewportRect(const RectI &displayRect, s32 *result_x, s32 *result_y, s32 *result_width, s32 *result_height) const {
+        const s32 display_width = surface->getWidth();
+        const u32 display_height = surface->getHeight();
+
+        const u32 viewport_x = displayRect.left;
+        const u32 viewport_y = display_height - displayRect.bottom;
+        const u32 viewport_width = displayRect.width();
+        const u32 viewport_height = displayRect.height();
+
+        if (result_x) {
+            (*result_x) = viewport_x;
+        }
+        if(result_y) {
+            (*result_y) = viewport_y;
+        }
+        if(result_width) {
+            (*result_width) = viewport_width;
+        }
+        if(result_height) {
+            (*result_height) = viewport_height;
+        }
+    }
+
     friend class DeviceLock;
 };
 

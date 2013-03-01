@@ -313,12 +313,8 @@ public:
      * デフォルト設定に従ってブレンドを行う
      */
     inline jcboolean blendFunc(const GLBlendType_e type) {
-        static const GLenum sfactor[] = {
-                GL_SRC_ALPHA
-        };
-        static const GLenum dfactor[] = {
-                GL_ONE_MINUS_SRC_ALPHA
-        };
+        static const GLenum sfactor[] = { GL_SRC_ALPHA };
+        static const GLenum dfactor[] = { GL_ONE_MINUS_SRC_ALPHA };
 
         return blendFunc(sfactor[type], dfactor[type]);
     }
@@ -350,6 +346,46 @@ public:
 #endif
             glViewport(x, y, width, height);
             viewportContext.setXYWH(x, y, width, height);
+            return jctrue;
+#ifndef STATE_NO_CHECK
+        }
+        return jcfalse;
+#endif
+    }
+
+    /**
+     * シザーボックスの有効・無効を切り替える。
+     */
+    inline jcboolean enableScissor(const jcboolean set) {
+        if (set != scissorContext.enable) {
+
+            if(set) {
+                glEnable(GL_SCISSOR_TEST);
+            }else {
+                glDisable(GL_SCISSOR_TEST);
+            }
+
+            scissorContext.enable = set;
+
+            return jctrue;
+        }
+        return jcfalse;
+    }
+
+    /**
+     * glScissor
+     * シザーボックスを設定する。
+     */
+    inline jcboolean scissor(const GLint x, const GLint y, const GLint width, const GLint height) {
+        const s32 left = x;
+        const s32 top = y;
+        const s32 right = x + width;
+        const s32 bottom = y + height;
+#ifndef STATE_NO_CHECK
+        if (!scissorContext.box.equalsLTRB(left, top, right, bottom)) {
+#endif
+            glScissor(x, y, width, height);
+            scissorContext.box.setXYWH(x, y, width, height);
             return jctrue;
 #ifndef STATE_NO_CHECK
         }

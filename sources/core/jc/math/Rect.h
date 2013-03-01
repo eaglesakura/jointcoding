@@ -82,6 +82,28 @@ typedef RectT<s32> RectI;
  */
 typedef RectT<float> RectF;
 
+template<typename T>
+RectT<T> createRectFromXYWH(const T x, const T y, const T w, const T h) {
+    RectT<T> result;
+    result.left = x;
+    result.top = y;
+    result.right = x + w;
+    result.bottom = y + h;
+
+    return result;
+}
+
+template<typename T>
+RectT<T> createRectFromXYRB(const T x, const T y, const T r, const T b) {
+    RectT<T> result;
+    result.left = x;
+    result.top = y;
+    result.right = r;
+    result.bottom = b;
+
+    return result;
+}
+
 }
 
 #endif /* JCRECT_H_ */

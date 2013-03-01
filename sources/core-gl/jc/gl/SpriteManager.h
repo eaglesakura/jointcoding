@@ -164,6 +164,26 @@ public:
     }
 
     /**
+     * レンダリングエリアを設定する
+     */
+    virtual void setRenderArea( const s32 x, const s32 y, const s32 w, const s32 h ) {
+        MGLState state = device->getState();
+        s32 view_x = 0, view_y = 0, view_w = 0, view_h = 0;
+
+        // display -> viewport
+        device->convertViewportRect(createRectFromXYWH<s32>(x, y, w, h), &view_x, &view_y, &view_w, &view_h);
+
+
+        // enable scissor
+        state->enableScissor(jctrue);
+        state->scissor(view_x, view_y, view_w, view_h);
+    }
+
+    virtual void clearRenderArea() {
+        device->getState()->enableScissor(jcfalse);
+    }
+
+    /**
      * 明示的な解放を行う
      */
     virtual void dispose();
