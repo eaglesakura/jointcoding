@@ -2,13 +2,12 @@ package com.eaglesakura.jc.android.app.util;
 
 import android.os.Build;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
 @JCClass(
          cppNamespace = "ndk")
-public class NativeAppUtil implements IJointCodingClass {
+public class NativeAppUtil {
 
     /**
      * APIレベルを取得する

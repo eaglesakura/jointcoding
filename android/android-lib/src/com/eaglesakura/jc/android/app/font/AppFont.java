@@ -9,7 +9,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.app.util.ImageDecoder;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -19,7 +18,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class AppFont implements IJointCodingClass {
+public class AppFont {
 
     /**
      * フォント

@@ -3,7 +3,6 @@ package com.eaglesakura.jc.android.view.listener;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.resource.jni.ObjMonitoring;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -15,7 +14,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class NativeOnClickListener implements OnClickListener, IJointCodingClass {
+public class NativeOnClickListener implements OnClickListener {
     int nativeListenerPointer;
 
     private NativeOnClickListener(int pointer) {

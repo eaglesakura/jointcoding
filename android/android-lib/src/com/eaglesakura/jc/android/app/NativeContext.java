@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -18,7 +17,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class NativeContext implements IJointCodingClass {
+public class NativeContext {
     /**
      * コンテキスト本体
      */

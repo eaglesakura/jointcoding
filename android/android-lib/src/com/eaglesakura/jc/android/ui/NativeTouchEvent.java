@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.view.MotionEvent;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.protocol.TouchEventProtocol;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -18,7 +17,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class NativeTouchEvent implements TouchEventProtocol, IJointCodingClass {
+public class NativeTouchEvent implements TouchEventProtocol {
 
     MotionEvent event;
 

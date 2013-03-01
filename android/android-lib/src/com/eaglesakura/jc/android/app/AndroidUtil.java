@@ -4,13 +4,12 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
 @JCClass(
          cppNamespace = "ndk")
-public class AndroidUtil implements IJointCodingClass {
+public class AndroidUtil {
     /**
      * 単純にsleepさせる。
      * 

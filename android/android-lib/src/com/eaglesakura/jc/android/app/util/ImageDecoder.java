@@ -9,7 +9,6 @@ import java.nio.IntBuffer;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.app.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -22,7 +21,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class ImageDecoder implements IJointCodingClass {
+public class ImageDecoder {
     /**
      * 幅
      */

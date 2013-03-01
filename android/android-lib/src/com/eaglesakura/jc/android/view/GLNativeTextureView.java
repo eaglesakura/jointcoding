@@ -5,7 +5,6 @@ import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
 import android.view.TextureView;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
 import com.eaglesakura.jc.android.resource.jni.Pointer.Mode;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -25,7 +24,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class GLNativeTextureView extends TextureView implements TextureView.SurfaceTextureListener, IJointCodingClass {
+public class GLNativeTextureView extends TextureView implements TextureView.SurfaceTextureListener {
 
     static final String TAG = GLNativeTextureView.class.getSimpleName();
     /**

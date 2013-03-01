@@ -1,6 +1,5 @@
 package com.eaglesakura.jc.android.app.util;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -12,7 +11,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class JavaNativeThread extends Thread implements IJointCodingClass {
+public class JavaNativeThread extends Thread {
     int nativeThread;
 
     public JavaNativeThread(int nativeThread) {

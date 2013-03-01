@@ -8,13 +8,12 @@ import java.io.InputStream;
 import android.content.Context;
 import android.os.Environment;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
 @JCClass(
          cppNamespace = "ndk")
-public class NativeIOUtil implements IJointCodingClass {
+public class NativeIOUtil {
 
     /**
      * アセットからのファイルを開く

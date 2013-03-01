@@ -1,6 +1,5 @@
 package com.eaglesakura.jc.protocol;
 
-import com.eaglesakura.jc.android.IJointCodingClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass.Mode;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCField;
@@ -14,7 +13,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 @JCClass(
          mode = Mode.Protocol,
          cppNamespace = "jc")
-public interface TouchEventProtocol extends IJointCodingClass {
+public interface TouchEventProtocol {
 
     /**
      * タッチが開始された
