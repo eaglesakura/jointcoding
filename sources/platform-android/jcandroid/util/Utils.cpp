@@ -6,7 +6,7 @@
  */
 #include    "jointcoding-android.h"
 #include    "jni.h"
-#include    "jcandroid/util/utils.h"
+#include    "jcandroid/util/Utils.h"
 
 namespace ndk {
 
