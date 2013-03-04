@@ -11,7 +11,7 @@
 #include    "jc/mem/SmartPtr.h"
 #include    "jc/thread/Runnable.h"
 #include    "jc/thread/Mutex.h"
-#include    "jc/thread/ThreadID.h"
+#include    "jc/thread/ThreadId.h"
 #include    "jc/platform/Timer.h"
 #include    <list>
 
