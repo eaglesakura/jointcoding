@@ -287,6 +287,10 @@ public:
         return vram2type(vid);
     }
 
+    vram_id getId() const {
+        return vid;
+    }
+
     /**
      * VRAMが生きているならtrueを返す。
      */

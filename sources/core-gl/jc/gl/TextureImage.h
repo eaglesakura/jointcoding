@@ -91,7 +91,9 @@ class TextureImage: public Object {
     } context;
 
 public:
-    TextureImage(s32 width, s32 height, MDevice device);
+    TextureImage(const s32 width, const s32 height, MDevice device);
+
+    TextureImage(const GLenum target, const width, const height, MDevice device);
 
     virtual ~TextureImage();
 
@@ -143,6 +145,13 @@ public:
     virtual void copyPixelLine(const void* src, const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum);
 
     /**
+     * テクスチャピクセル用のメモリを確保する
+     * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1 | GL_UNSIGNED_BYTE
+     * @param srcPixelFormat GL_RGB | GL_RGBA
+     */
+    virtual void allocPixelMemory(const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 miplevel);
+
+    /**
      * テクスチャをindex番のユニットに関連付ける
      */
     virtual void bind(s32 index);
@@ -165,6 +174,20 @@ public:
      * resultIndexが設定されている場合、bindedならインデックスを返す。
      */
     virtual jcboolean isBinded(s32 *resultIndex);
+
+    /**
+     * VRAMの情報を取得する
+     */
+    virtual vram_id getVramId() const {
+        return texture.getId();
+    }
+
+    /**
+     * テクスチャ名を取得する
+     */
+    virtual u32 getName() const {
+        return texture.get();
+    }
 
     /**
      * テクスチャをユニットから切り離す

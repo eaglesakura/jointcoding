@@ -24,7 +24,7 @@ namespace gl {
  */
 static s32 g_overrideTextureUnitIndex = 0;
 
-TextureImage::TextureImage(s32 width, s32 height, MDevice device) {
+TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     this->alloced = jcfalse;
     this->width = width;
     this->height = height;
@@ -46,6 +46,35 @@ TextureImage::TextureImage(s32 width, s32 height, MDevice device) {
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            context.magFilter = GL_NEAREST;
+            context.minFilter = GL_NEAREST;
+        }
+        this->unbind();
+    }
+}
+
+TextureImage::TextureImage(const GLenum target, const s32 width, const s32 height, MDevice device) {
+    this->alloced = jcfalse;
+    this->width = width;
+    this->height = height;
+    this->state = device->getState();
+    bindUnit = -1;
+//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    texture.alloc(device->getVRAM(), VRAM_Texture);
+
+    {
+        s32 index = state->getFreeTextureUnitIndex();
+        this->bind(index);
+        {
+            // npotでは GL_CLAMP_TO_EDGE を指定する必要がある
+            glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            context.wrapS = GL_CLAMP_TO_EDGE;
+            context.wrapT = GL_CLAMP_TO_EDGE;
+
+            glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             context.magFilter = GL_NEAREST;
             context.minFilter = GL_NEAREST;
         }
@@ -80,6 +109,20 @@ void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, con
     // 部分転送が必要なら転送する
     if (!finished) {
         glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, width, lineNum, srcPixelFormat, srcPixelType, src);
+    }
+}
+
+/**
+ * テクスチャピクセル用のメモリを確保する
+ * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1 | GL_UNSIGNED_BYTE
+ * @param srcPixelFormat GL_RGB | GL_RGBA
+ */
+void TextureImage::allocPixelMemory(const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 miplevel) {
+    _BIND_CHECK(this);
+
+    if (!this->alloced) {
+        // まずは空の領域を確保する
+        glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, width, height, 0, srcPixelFormat, srcPixelType, NULL);
     }
 }
 
