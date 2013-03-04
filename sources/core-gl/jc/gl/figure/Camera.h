@@ -8,7 +8,7 @@
 #define CAMERA_H_
 
 #include    "jointcoding.h"
-#include    "jc/math/vec3.h"
+#include    "jc/math/Vec3.h"
 #include    "jc/math/matrix.h"
 
 namespace jc {
