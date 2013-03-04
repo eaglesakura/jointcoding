@@ -10,7 +10,7 @@
 
 #include    "jc/system/Macro.h"
 #include    "jc/mem/SmartPtr.h"
-#include    "jc/thread/ThreadID.h"
+#include    "jc/thread/ThreadId.h"
 
 namespace jc {
 
