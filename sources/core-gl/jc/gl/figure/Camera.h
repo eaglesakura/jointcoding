@@ -9,7 +9,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/math/Vec3.h"
-#include    "jc/math/matrix.h"
+#include    "jc/math/Matrix.h"
 
 namespace jc {
 namespace gl {
