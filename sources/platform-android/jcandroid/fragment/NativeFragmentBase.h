@@ -7,7 +7,7 @@
 #ifndef NDKNATIVEFRAGMENT_H_
 #define NDKNATIVEFRAGMENT_H_
 
-#include    "jc/system/log.h"
+#include    "jc/system/Log.h"
 #include    "android-classes/ndkNativeFragment.h"
 
 namespace ndk {
