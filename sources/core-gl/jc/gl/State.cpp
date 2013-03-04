@@ -57,6 +57,7 @@ GLState::GLState() {
         textureContext.active = jcfalse;
         for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
             textureContext.textures[i] = 0;
+            textureContext.targets[i] = 0;
         }
     }
     // reset buffer params

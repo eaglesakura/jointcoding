@@ -29,6 +29,7 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     this->width = width;
     this->height = height;
     this->state = device->getState();
+    this->target = GL_TEXTURE_2D;
     bindUnit = -1;
 //    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -58,6 +59,7 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     this->width = width;
     this->height = height;
     this->state = device->getState();
+    this->target = target;
     bindUnit = -1;
 //    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -138,7 +140,7 @@ void TextureImage::setMinFilter(GLint filter) {
     if (this->isNonPowerOfTwo()) {
         jclogf("texture is non power of two %d x %d", width, height);
     }
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
     context.minFilter = filter;
 }
 
@@ -154,7 +156,7 @@ void TextureImage::setMagFilter(GLint filter) {
     if (this->isNonPowerOfTwo()) {
         jclogf("texture is non power of two %d x %d", width, height);
     }
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
     context.magFilter = filter;
 }
 
@@ -171,7 +173,7 @@ void TextureImage::setWrapS(GLint wrap) {
         jclogf("texture is non power of two %d x %d", width, height);
     }
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
 }
 
 /**
@@ -187,7 +189,7 @@ void TextureImage::setWrapT(GLint wrap) {
         jclogf("texture is non power of two %d x %d", width, height);
     }
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
 }
 
 /**
@@ -221,7 +223,7 @@ s32 TextureImage::bind() {
 void TextureImage::bind(s32 index) {
     bindUnit = index;
     this->state->activeTexture(index);
-    this->state->bindTexture(texture.get());
+    this->state->bindTexture(target, texture.get());
 }
 
 /**

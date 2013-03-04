@@ -98,6 +98,11 @@ class GLState: public Object {
         GLuint textures[MAX_TEXTURE_UNIT];
 
         /**
+         * GL_TEXTURE0〜GL_TEXTURE31に対応
+         */
+        GLenum targets[MAX_TEXTURE_UNIT];
+
+        /**
          * アクティブ化されているテクスチャユニットを保持する
          */
         s32 active;
@@ -176,7 +181,6 @@ class GLState: public Object {
          * GL_TEXTURE_2D
          */
         jcboolean texture2d;
-
     } enableContext;
 
     struct {
@@ -471,7 +475,7 @@ public:
             if (textureContext.textures[i] == texture) {
                 // テクスチャが一致したからunbind
                 activeTexture(i);
-                bindTexture(GL_TEXTURE_2D, 0);
+                bindTexture(textureContext.targets[i], 0);
             }
         }
     }
@@ -497,23 +501,18 @@ public:
     }
 
     /**
-     * TEXTURE_2Dにバインドする。
-     */
-    inline jcboolean bindTexture(const GLuint texture) {
-        return bindTexture(GL_TEXTURE_2D, texture);
-    }
-
-    /**
      * 現在activeになっているテクスチャユニットに対してバインドを行う。
      */
     inline jcboolean bindTexture(const GLenum target, const GLuint texture) {
         const s32 index = getActiveTextureIndex();
         const GLuint currentTex = textureContext.textures[index];
+        const GLenum currentTarget = textureContext.targets[index];
 
         // 違うテクスチャがユニットに設定されていたら、バインドし直す
-        if (currentTex != texture) {
+        if (currentTex != texture || currentTarget != target) {
             textureContext.textures[index] = texture;
-            glBindTexture(GL_TEXTURE_2D, texture);
+            textureContext.targets[index] = target;
+            glBindTexture(target, texture);
 
             return jctrue;
         }

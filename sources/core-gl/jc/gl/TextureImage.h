@@ -42,6 +42,11 @@ class TextureImage: public Object {
     u32 height;
 
     /**
+     * テクスチャバインドターゲット
+     */
+    GLenum target;
+
+    /**
      * テクスチャユニット本体
      */
     SharedResource texture;
