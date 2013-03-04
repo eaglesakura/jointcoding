@@ -93,7 +93,7 @@ class TextureImage: public Object {
 public:
     TextureImage(const s32 width, const s32 height, MDevice device);
 
-    TextureImage(const GLenum target, const width, const height, MDevice device);
+    TextureImage(const GLenum target, const s32 width, const s32 height, MDevice device);
 
     virtual ~TextureImage();
 
