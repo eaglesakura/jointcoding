@@ -352,7 +352,14 @@ public class CppHeaderExporter extends CppClassInfomationBase {
                     result += JCUtil.toCppType(arg.getType());
                 }
                 result += " ";
-                result += arg.getName();
+
+                if ("this".equals(arg.getName())) {
+                    System.out
+                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    result += ("arg" + i);
+                } else {
+                    result += arg.getName();
+                }
 
                 // 最後の1つでなければ、","で引数を繋げる
                 if (i != (method.getArgmentNum() - 1)) {
