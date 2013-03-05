@@ -228,8 +228,17 @@ public class CppImplExporter extends CppClassInfomationBase {
             for (int i = 0; i < method.getArgmentNum(); ++i) {
                 Argment arg = method.getArgment(i);
                 CtClass paramType = arg.getType();
-                String argName = arg.getName();
-                writer.append(JCUtil.toCppType(paramType)).append(" ").append(argName);
+
+                String arg_name;
+                if ("this".equals(arg.getName())) {
+                    System.out
+                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    arg_name = (JCUtil.toCppType(arg.getType()) + i);
+                } else {
+                    arg_name = arg.getName();
+                }
+
+                writer.append(JCUtil.toCppType(paramType)).append(" ").append(arg_name);
                 if (i < (method.getArgmentNum() - 1)) {
                     writer.append(", ");
                 }
@@ -268,7 +277,17 @@ public class CppImplExporter extends CppClassInfomationBase {
             // 引数一覧
             for (int i = 0; i < method.getArgmentNum(); ++i) {
 
-                writer.append(method.getArgment(i).getName());
+                Argment arg = method.getArgment(i);
+                String arg_name;
+                if ("this".equals(arg.getName())) {
+                    System.out
+                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    arg_name = (JCUtil.toCppType(arg.getType()) + i);
+                } else {
+                    arg_name = arg.getName();
+                }
+
+                writer.append(arg_name);
                 if (i < (method.getArgmentNum() - 1)) {
                     writer.append(", ");
                 }
@@ -319,7 +338,16 @@ public class CppImplExporter extends CppClassInfomationBase {
                 String type = JCUtil.toCppType(arg.getType());
                 argments += type;
                 argments += " ";
-                argments += arg.getName();
+
+                String arg_name;
+                if ("this".equals(arg.getName())) {
+                    System.out
+                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    arg_name = (JCUtil.toCppType(arg.getType()) + i);
+                } else {
+                    arg_name = arg.getName();
+                }
+                argments += arg_name;
 
                 if (i < (method.getArgmentNum() - 1)) {
                     argments += ", ";
@@ -367,9 +395,17 @@ public class CppImplExporter extends CppClassInfomationBase {
                 String type = JCUtil.toCppType(arg.getType());
                 argments += type;
                 argments += " ";
-                argments += arg.getName();
 
-                newArgs += arg.getName();
+                String arg_name;
+                if ("this".equals(arg.getName())) {
+                    System.out
+                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    arg_name = (JCUtil.toCppType(arg.getType()) + i);
+                } else {
+                    arg_name = arg.getName();
+                }
+                argments += arg_name;
+                newArgs += arg_name;
 
                 if (i < (method.getArgmentNum() - 1)) {
                     argments += ", ";
@@ -420,9 +456,17 @@ public class CppImplExporter extends CppClassInfomationBase {
                 String type = JCUtil.toCppType(arg.getType());
                 argments += type;
                 argments += " ";
-                argments += arg.getName();
 
-                newArgs += arg.getName();
+                String arg_name;
+                if ("this".equals(arg.getName())) {
+                    System.out
+                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    arg_name = (JCUtil.toCppType(arg.getType()) + i);
+                } else {
+                    arg_name = arg.getName();
+                }
+                argments += arg_name;
+                newArgs += arg_name;
 
                 if (i < (method.getArgmentNum() - 1)) {
                     argments += ", ";
