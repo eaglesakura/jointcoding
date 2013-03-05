@@ -211,6 +211,7 @@ s32 TextureImage::bind() {
     }
 
     s32 unitIndex = state->getFreeTextureUnitIndex();
+
     if (unitIndex < 0) {
         unitIndex = (++g_overrideTextureUnitIndex % (s32) GPUCapacity::getMaxTextureUnits());
         jclogf("texture unit = %d", unitIndex);
