@@ -64,14 +64,14 @@ struct Matrix {
                 if (i == k) {
 
                     if (!equals(1.0f, m[i][k], threshold)) {
-                        jclogf("m[%d][%d] = %f", i, k, m[i][k]);
+//                        jclogf("m[%d][%d] = %f", i, k, m[i][k]);
                         return jcfalse;
                     }
 
                 } else {
 
                     if (!equals(0.0f, m[i][k], threshold)) {
-                        jclogf("m[%d][%d] = %f", i, k, m[i][k]);
+//                        jclogf("m[%d][%d] = %f", i, k, m[i][k]);
                         return jcfalse;
                     }
 

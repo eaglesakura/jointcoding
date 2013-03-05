@@ -18,6 +18,7 @@ static const charactor *VERTEX_SHADER_SOURCE =
 // ポリゴンのXYWH
         ""
                 "uniform mediump vec4    poly_data;"
+                "uniform mediump float   aspect;"
 // ポリゴンの回転角度
                 "uniform mediump float   rotate;"
 // ポリゴンのUV情報
@@ -41,18 +42,30 @@ static const charactor *VERTEX_SHADER_SOURCE =
 // 位置操作
                 "   {"
                 "       mediump mat4 trans = mat4(1.0);"
+                "       mediump mat4 rot = mat4(1.0);"
                 "       mediump mat4 scale = mat4(1.0);"
+                "       mediump mat4 aspScale = mat4(1.0);"
 // 移動行列を作成する
                 "       {"
                 "           trans[3][0] = poly_x;"
                 "           trans[3][1] = poly_y;"
                 "       }"
-// スケーリング行列を作成する
+// 回転行列を作成する
                 "       {"
-                "           scale[0][0] = poly_width;"
+                "           rot[0][0] = cos(rotate);"
+                "           rot[1][0] = sin(rotate);"
+                "           rot[0][1] = -rot[1][0];"
+                "           rot[1][1] = rot[0][0];"
+                "       }"
+                // スケーリング行列を作成する
+                "       {"
+                "           scale[0][0] = poly_width * aspect;"
                 "           scale[1][1] = poly_height;"
                 "       }"
-                "       gl_Position = trans * scale * vPosition;"
+                "       {"
+                "           aspScale[0][0] = 1.0 / aspect;"
+                "       }"
+                "       gl_Position = (trans * aspScale * rot * scale) * vPosition;"
                 "   }"
 // テクスチャ操作
                 "   {"
@@ -101,6 +114,7 @@ static const charactor *VERTEX_EXTERNAL_SHADER_SOURCE =
 // ポリゴンのXYWH
         ""
                 "uniform mediump vec4    poly_data;"
+                "uniform mediump float   aspect;"
 // ポリゴンの回転角度
                 "uniform mediump float   rotate;"
 // ポリゴンのUV情報
@@ -119,19 +133,30 @@ static const charactor *VERTEX_EXTERNAL_SHADER_SOURCE =
 // 位置操作
                 "   {"
                 "       mediump mat4 trans = mat4(1.0);"
+                "       mediump mat4 rot = mat4(1.0);"
                 "       mediump mat4 scale = mat4(1.0);"
-                "       mediump mat4 scale2 = mat4(1.0);"
+                "       mediump mat4 aspScale = mat4(1.0);"
 // 移動行列を作成する
                 "       {"
                 "           trans[3][0] = poly_x;"
                 "           trans[3][1] = poly_y;"
                 "       }"
+// 回転行列を作成する
+                "       {"
+                "           rot[0][0] = cos(rotate);"
+                "           rot[1][0] = sin(rotate);"
+                "           rot[0][1] = -rot[1][0];"
+                "           rot[1][1] = rot[0][0];"
+                "       }"
 // スケーリング行列を作成する
                 "       {"
-                "           scale[0][0] = poly_width;"
+                "           scale[0][0] = poly_width * aspect;"
                 "           scale[1][1] = poly_height;"
                 "       }"
-                "       gl_Position = trans * scale * vPosition;"
+                "       {"
+                "           aspScale[0][0] = 1.0 / aspect;"
+                "       }"
+                "       gl_Position = (trans * aspScale * rot * scale) * vPosition;"
                 "   }"
 // テクスチャ操作
                 "   {"
@@ -183,6 +208,11 @@ void SpriteManager::initialize(MDevice device) {
 
     this->unifPolyData = shader->getUniformLocation("poly_data");
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
+    this->unifAspect = shader->getUniformLocation("aspect");
+    assert(unifAspect != UNIFORM_DISABLE_INDEX);
+
+    this->unifRotate = shader->getUniformLocation("rotate");
+    assert(unifRotate != UNIFORM_DISABLE_INDEX);
     this->unifTexture = shader->getUniformLocation("tex");
     assert(unifTexture != UNIFORM_DISABLE_INDEX);
     this->unifBlendColor = shader->getUniformLocation("blendColor");
@@ -209,6 +239,9 @@ void SpriteManager::initialize(MDevice device) {
         }
         whiteTexture->unbind();
     }
+
+    // default shader context
+    setSurfaceAspect(device->getSurface()->getWidth(), device->getSurface()->getHeight());
 }
 
 SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
@@ -221,13 +254,20 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
         this->shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
         assert(this->shader.get() != NULL);
     }
-    this->shaderContext.rotate = 0;
-    this->shaderContext.bindedTextureIndex = 0;
+
+    {
+        this->shaderContext.rotate = 0;
+        this->shaderContext.bindedTextureIndex = 0;
+        this->shaderContext.aspect = 0;
+    }
+
     this->unifPolyData = UNIFORM_DISABLE_INDEX;
+    this->unifRotate = UNIFORM_DISABLE_INDEX;
     this->unifTexM = UNIFORM_DISABLE_INDEX;
     this->unifTexture = UNIFORM_DISABLE_INDEX;
     this->unifPolyUv = UNIFORM_DISABLE_INDEX;
     this->unifBlendColor = UNIFORM_DISABLE_INDEX;
+    this->unifAspect = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
     this->shaderContext.blendColor = Color::fromRGBAi(0, 0, 0, 0);
@@ -248,6 +288,19 @@ void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
 
     shader->bind();
     glUniformMatrix4fv(unifTexM, 1, GL_FALSE, (const float*) m.m);
+}
+
+/**
+ * サーフェイスのアスペクト比を設定する
+ */
+void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_height) {
+    const float aspect = (float) surface_width / (float) surface_height;
+
+    shader->bind();
+    if (shaderContext.aspect != aspect) {
+        shaderContext.aspect = aspect;
+        glUniform1f(unifAspect, aspect);
+    }
 }
 
 /**
@@ -302,6 +355,12 @@ void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s3
         glUniform4f(unifBlendColor, shaderContext.blendColor.rf(), shaderContext.blendColor.gf(), shaderContext.blendColor.bf(), shaderContext.blendColor.af());
     }
 
+    // ポリゴン回転を設定する
+    if (shaderContext.rotate != degree) {
+        shaderContext.rotate = degree;
+        glUniform1f(unifRotate, jc::degree2radian(degree));
+    }
+
 //! テクスチャ描画位置を行列で操作する
     if (unifPolyUv != UNIFORM_DISABLE_INDEX && image != whiteTexture) {
         const float sizeX = (float) srcW / (float) image->getWidth();
@@ -339,6 +398,7 @@ MSpriteManager SpriteManager::createInstance(MDevice device) {
  */
 MSpriteManager SpriteManager::createExternalInstance(MDevice device) {
     MGLShaderProgram program = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_EXTERNAL_SHADER_SOURCE, FRAGMENT_EXTERNAL_SHADER_SOURCE);
+    assert(program.get() != NULL);
     MSpriteManager result(new SpriteManager(device, program));
     result->getRenderingQuad()->updateVertices(g_revert_vertices);
     return result;

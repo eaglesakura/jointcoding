@@ -51,6 +51,11 @@ protected:
     s32 unifPolyData;
 
     /**
+     * ポリゴンの回転
+     */
+    s32 unifRotate;
+
+    /**
      * テクスチャ行列用uniform
      */
     s32 unifTexM;
@@ -73,6 +78,11 @@ protected:
     s32 unifBlendColor;
 
     /**
+     * 画面アスペクト比
+     */
+    s32 unifAspect;
+
+    /**
      * 四角形描画用の白テクスチャ
      */
     MTextureImage whiteTexture;
@@ -88,6 +98,11 @@ protected:
          * 初期値は0.0
          */
         float rotate;
+
+        /**
+         * サーフェイスのアスペクト比
+         */
+        float aspect;
 
         /**
          * バインドされたテクスチャ番号
@@ -173,6 +188,11 @@ public:
      * テクスチャ用行列を設定する
      */
     virtual void setTextureMatrix(const Matrix4x4 &m);
+
+    /**
+     * サーフェイスのアスペクト比を設定する
+     */
+    virtual void setSurfaceAspect(const u32 surface_width, const u32 surface_height);
 
     /**
      * レンダリング用の矩形を取得する
