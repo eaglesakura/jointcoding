@@ -17,12 +17,12 @@ class RenderingFitter: public Object {
     /**
      * レンダリング可能エリア
      */
-    RectF renderArea;
+    RectF viewport;
 
     /**
      * 画像レンダリングを行うエリア
      */
-    RectF imageArea;
+    RectF image;
 
     /**
      * width / heightの値
@@ -37,22 +37,22 @@ class RenderingFitter: public Object {
 
 public:
 
-    enum FitType {
+    enum FitType_e {
         /**
          * 長辺がフィット（画面全体に収まる）ようにする。
          */
-        LONG,
+        Fittype_Long,
     };
 private:
-    FitType fitting;
+    FitType_e fitting;
 public:
     RenderingFitter() {
-        fitting = LONG;
+        fitting = Fittype_Long;
         aspect = 1.0f;
         defPixels = 1.0f;
 
-        renderArea.setXYWH(0, 0, 1, 1);
-        imageArea.setXYWH(0, 0, 1, 1);
+        viewport.setXYWH(0, 0, 1, 1);
+        image.setXYWH(0, 0, 1, 1);
     }
 
     virtual ~RenderingFitter() {
@@ -65,8 +65,8 @@ public:
      * @param width
      * @param height
      */
-    void setRenderArea(const int x, const int y, const int width, const int height) {
-        renderArea.setXYWH(x, y, width, height);
+    void setViewport(const int x, const int y, const int width, const int height) {
+        viewport.setXYWH(x, y, width, height);
     }
 
     /**
@@ -76,8 +76,8 @@ public:
      * @param width
      * @param height
      */
-    void setRenderArea(const float x, const float y, const float width, const float height) {
-        renderArea.setXYWH(x, y, width, height);
+    void setViewport(const float x, const float y, const float width, const float height) {
+        viewport.setXYWH(x, y, width, height);
     }
 
     /**
@@ -87,7 +87,7 @@ public:
      */
     void setImageAspect(const s32 width, const s32 height) {
         aspect = (float) width / (float) height;
-        setDefaultFitting(LONG);
+        setDefaultFitting(Fittype_Long);
     }
 
     /**
@@ -102,10 +102,10 @@ public:
      * フィッティングを指定して初期化する。
      * @param fitting
      */
-    void setDefaultFitting(FitType fitting) {
+    void setDefaultFitting(FitType_e fitting) {
         this->fitting = fitting;
-        getDefaultRenderArea(fitting, &imageArea);
-        defPixels = imageArea.width() * imageArea.height();
+        getDefaultRenderingArea(fitting, &image);
+        defPixels = image.width() * image.height();
     }
 
     /**
@@ -135,24 +135,24 @@ public:
      * X方向に長いエリア
      * @return
      */
-    jcboolean isXLongArea() {
-        return renderArea.width() > renderArea.height();
+    jcboolean isXLongViewport() {
+        return viewport.width() > viewport.height();
     }
 
     /**
      * Y方向に長いエリア
      * @return
      */
-    jcboolean isYLongArea() const {
-        return renderArea.height() >= renderArea.width();
+    jcboolean isYLongViewport() const {
+        return viewport.height() >= viewport.width();
     }
 
-    float getRenderAreaWidth() {
-        return renderArea.width();
+    float getViewportWidth() {
+        return viewport.width();
     }
 
-    float getRenderAreaHeight() {
-        return renderArea.height();
+    float getViewportHeight() {
+        return viewport.height();
     }
 
     /**
@@ -161,26 +161,26 @@ public:
      * @param result
      * @return
      */
-    RectF* getDefaultRenderArea(const FitType fitting, RectF *result) const {
+    RectF* getDefaultRenderingArea(const FitType_e fitting, RectF *result) const {
         float width = 0;
         float height = 0;
         switch (fitting) {
-            case LONG:
-                if (isYLongArea()) {
-                    width = renderArea.width();
+            case Fittype_Long:
+                if (isYLongViewport()) {
+                    width = viewport.width();
                     height = width / aspect;
 
-                    const float mul = height / renderArea.height();
+                    const float mul = height / viewport.height();
                     if (mul > 1) {
                         width /= mul;
                         height /= mul;
                     }
 
                 } else {
-                    height = renderArea.height();
+                    height = viewport.height();
                     width = height * aspect;
 
-                    const float mul = width / renderArea.width();
+                    const float mul = width / viewport.width();
                     if (mul > 1) {
                         width /= mul;
                         height /= mul;
@@ -193,7 +193,7 @@ public:
         }
 
         result->setXYWH(0, 0, width, height);
-        result->offset(renderArea.centerX() - result->centerX(), renderArea.centerY() - result->centerY());
+        result->offset(viewport.centerX() - result->centerX(), viewport.centerY() - result->centerY());
         return result;
     }
 
@@ -202,81 +202,57 @@ public:
      * @param result
      * @return
      */
-    RectF* getImageArea(RectF *result) const {
-        *result = imageArea;
+    RectF* getImage(RectF *result) const {
+        *result = image;
         return result;
     }
 
-    float getRenderAreaLeft() const {
-        return renderArea.left;
-    }
-
-    float getRenderAreaTop() const {
-        return renderArea.top;
-    }
-
-    float getRenderAreaRight() const {
-        return renderArea.right;
-    }
-
-    float getRenderAreaBottom() const {
-        return renderArea.bottom;
-    }
-
-    float getRenderAreaCenterX() const {
-        return renderArea.centerX();
-    }
-
-    float getRenderAreaCenterY() const {
-        return renderArea.centerY();
+    /**
+     * 実際に画像を描画するエリア取得
+     * @return
+     */
+    float getImageLeft() const {
+        return image.left;
     }
 
     /**
      * 実際に画像を描画するエリア取得
      * @return
      */
-    float getImageAreaLeft() const {
-        return imageArea.left;
+    float getImageTop() const {
+        return image.top;
     }
 
     /**
      * 実際に画像を描画するエリア取得
      * @return
      */
-    float getImageAreaTop() const {
-        return imageArea.top;
+    float getImageRight() const {
+        return image.right;
     }
 
     /**
      * 実際に画像を描画するエリア取得
      * @return
      */
-    float getImageAreaRight() const {
-        return imageArea.right;
+    float getImageBottom() const {
+        return image.bottom;
     }
 
     /**
      * 実際に画像を描画するエリア取得
      * @return
      */
-    float getImageAreaBottom() const {
-        return imageArea.bottom;
+    float getImageWidth() const {
+        return image.width();
     }
 
     /**
      * 実際に画像を描画するエリア取得
      * @return
      */
-    float getImageAreaWidth() const {
-        return imageArea.width();
-    }
-
-    /**
-     * 実際に画像を描画するエリア取得
-     * @return
-     */
-    float getImageAreaHeight() const {
-        return imageArea.height();
+    float getImageHeight() const {
+        return image.height();
     }
 
     /**
@@ -284,36 +260,11 @@ public:
      * @param result
      * @return
      */
-    RectI* getImageArea(RectI *result) const {
-        result->left = (int) imageArea.left;
-        result->right = (int)imageArea.right;
-        result->top = (int)imageArea.top;
-        result->bottom = (int)imageArea.bottom;
-        return result;
-    }
-
-    /**
-     * レンダリング領域を取得する。
-     * @param result
-     * @return
-     */
-    RectF* getRenderArea(RectF *result) const {
-        *result = renderArea;
-        return result;
-    }
-
-    /**
-     * レンダリング領域を取得する
-     * @param result
-     * @return
-     */
-    RectI* getRenderArea(RectI *result) const {
-
-        result->left = (int) renderArea.left;
-        result->right = (int)renderArea.right;
-        result->top = (int)renderArea.top;
-        result->bottom = (int)renderArea.bottom;
-
+    RectI* getImage(RectI *result) const {
+        result->left = (int) image.left;
+        result->right = (int) image.right;
+        result->top = (int) image.top;
+        result->bottom = (int) image.bottom;
         return result;
     }
 
@@ -323,13 +274,13 @@ public:
      * @return
      */
     float pixToImageU(float x) const {
-        const float offset = x - imageArea.left;
-        return offset / imageArea.width();
+        const float offset = x - image.left;
+        return offset / image.width();
     }
 
     float uToImagePix(float u) const {
-        u *= imageArea.width();
-        u += imageArea.left;
+        u *= image.width();
+        u += image.left;
 
         return u;
     }
@@ -340,13 +291,13 @@ public:
      * @return
      */
     float pixToImageV(float y) const {
-        const float offset = y - imageArea.top;
-        return offset / imageArea.height();
+        const float offset = y - image.top;
+        return offset / image.height();
     }
 
     float vToImagePix(float v) const {
-        v *= imageArea.height();
-        v += imageArea.top;
+        v *= image.height();
+        v += image.top;
 
         return v;
     }
@@ -357,7 +308,7 @@ public:
      * @param y
      */
     void offset(float x, float y) {
-        imageArea.offset(x, y);
+        image.offset(x, y);
     }
 
     /**
@@ -365,15 +316,15 @@ public:
      * @return
      */
     jcboolean isCenterFitting() const {
-        return imageArea.centerX() == renderArea.centerX() && imageArea.centerY() == renderArea.centerY();
+        return image.centerX() == viewport.centerX() && image.centerY() == viewport.centerY();
     }
 
     /**
      * ピクセル数ベースで拡大率を取得する。
      * @return
      */
-    float getPixelScale()  const{
-        return (imageArea.width() * imageArea.height()) / defPixels;
+    float getPixelScale() const {
+        return (image.width() * image.height()) / defPixels;
     }
 
     /**
@@ -397,31 +348,83 @@ public:
      * レンダリングエリアからイメージエリアが飛び出していたら、飛び出さないようにする。
      * レンダリングエリアよりイメージエリアのほうが狭かったら、中心寄せに補正する。
      */
-    void correctImageArea(jcboolean xCrrect, jcboolean yCorrect) {
+    void correctImageArea(const jcboolean xCrrect, const jcboolean yCorrect) {
 
         if (xCrrect) {
-            if (imageArea.width() < renderArea.width()) {
-                imageArea.offset(renderArea.centerX() - imageArea.centerX(), 0);
+            if (image.width() < viewport.width()) {
+                image.offset(viewport.centerX() - image.centerX(), 0);
             } else {
-                if (imageArea.left > renderArea.left) {
-                    imageArea.offset(renderArea.left - imageArea.left, 0);
-                } else if (imageArea.right < renderArea.right) {
-                    imageArea.offset(renderArea.right - imageArea.right, 0);
+                if (image.left > viewport.left) {
+                    image.offset(viewport.left - image.left, 0);
+                } else if (image.right < viewport.right) {
+                    image.offset(viewport.right - image.right, 0);
                 }
             }
         }
 
         if (yCorrect) {
-            if (imageArea.height() < renderArea.height()) {
-                imageArea.offset(0, renderArea.centerY() - imageArea.centerY());
+            if (image.height() < viewport.height()) {
+                image.offset(0, viewport.centerY() - image.centerY());
             } else {
-                if (imageArea.top > renderArea.top) {
-                    imageArea.offset(0, renderArea.top - imageArea.top);
-                } else if (imageArea.bottom < renderArea.bottom) {
-                    imageArea.offset(0, renderArea.bottom - imageArea.bottom);
+                if (image.top > viewport.top) {
+                    image.offset(0, viewport.top - image.top);
+                } else if (image.bottom < viewport.bottom) {
+                    image.offset(0, viewport.bottom - image.bottom);
                 }
             }
         }
+    }
+
+    // viewport系
+
+    /**
+     * レンダリング領域を取得する。
+     * @param result
+     * @return
+     */
+    RectF* getViewport(RectF *result) const {
+        *result = viewport;
+        return result;
+    }
+
+    /**
+     * レンダリング領域を取得する
+     * @param result
+     * @return
+     */
+    RectI* getViewport(RectI *result) const {
+
+        result->left = (int) viewport.left;
+        result->right = (int) viewport.right;
+        result->top = (int) viewport.top;
+        result->bottom = (int) viewport.bottom;
+
+        return result;
+    }
+
+
+    float getViewportLeft() const {
+        return viewport.left;
+    }
+
+    float getViewportTop() const {
+        return viewport.top;
+    }
+
+    float getViewportRight() const {
+        return viewport.right;
+    }
+
+    float getViewportBottom() const {
+        return viewport.bottom;
+    }
+
+    float getViewoprtCenterX() const {
+        return viewport.centerX();
+    }
+
+    float getViewportCenterY() const {
+        return viewport.centerY();
     }
 };
 
