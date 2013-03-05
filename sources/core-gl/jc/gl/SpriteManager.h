@@ -12,6 +12,7 @@
 #include    "jc/gl/ShaderProgram.h"
 #include    "jc/gl/TextureImage.h"
 #include    "jc/gl/Quad.h"
+#include    "jc/math/Matrix.h"
 
 namespace jc {
 namespace gl {
@@ -48,6 +49,11 @@ protected:
      * @shader_uniform poly_data
      */
     s32 unifPolyData;
+
+    /**
+     * テクスチャ行列用uniform
+     */
+    s32 unifTexM;
 
     /**
      * テクスチャ情報のuniformインデックス
@@ -164,6 +170,18 @@ public:
     }
 
     /**
+     * テクスチャ用行列を設定する
+     */
+    virtual void setTextureMatrix(const Matrix4x4 &m);
+
+    /**
+     * レンダリング用の矩形を取得する
+     */
+    virtual jc_sp<Quad> getRenderingQuad() const {
+        return quad;
+    }
+
+    /**
      * レンダリングエリアを設定する
      * 設定はディスプレイ座標系（左上原点）で行う
      */
@@ -187,6 +205,9 @@ public:
         state->scissor(view_x, view_y, view_w, view_h);
     }
 
+    /**
+     * シザーボックスを削除する
+     */
     virtual void clearRenderArea() {
         device->getState()->enableScissor(jcfalse);
     }
@@ -200,6 +221,11 @@ public:
      * インスタンスを作成する
      */
     static jc_sp<SpriteManager> createInstance( MDevice device);
+
+    /**
+     * インスタンスを作成する
+     */
+    static jc_sp<SpriteManager> createExternalInstance( MDevice device);
 
     /**
      * インスタンスを作成する

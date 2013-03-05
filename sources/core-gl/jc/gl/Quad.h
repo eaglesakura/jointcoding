@@ -75,6 +75,27 @@ public:
      * レンダリング環境はバインド元に従う。
      */
     virtual void rendering();
+
+    struct QuadVertex {
+        /**
+         * pos
+         */
+        float x;
+        float y;
+
+        /**
+         * UV
+         */
+        float u;
+        float v;
+    };
+
+    /**
+     * 頂点情報を更新する。
+     * 4頂点を設定しなければならない。
+     */
+    virtual void updateVertices(const QuadVertex *vertices);
+
 };
 
 }

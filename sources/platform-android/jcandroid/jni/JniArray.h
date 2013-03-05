@@ -303,7 +303,7 @@ public:
         return jc_sp<JFloatArray>( new JFloatArray(array) );
     }
 
-    static jc_sp<JFloatArray> global(JFloatArray array) {
+    static jc_sp<JFloatArray> global(jfloatArray array) {
         return jc_sp<JFloatArray>((JFloatArray*) (new JFloatArray(array))->addGlobalRef());
     }
 };

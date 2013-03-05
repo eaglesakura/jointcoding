@@ -13,26 +13,13 @@ namespace gl {
 
 namespace {
 
-struct tagVertex {
-    /**
-     * pos
-     */
-    float x;
-    float y;
-
-    /**
-     * UV
-     */
-    float u;
-    float v;
-};
 
 #define LEFT    -0.5
 #define TOP     0.5
 #define RIGHT   0.5
 #define BOTTOM  -0.5
 
-static tagVertex g_vertices[] = {
+const static Quad::QuadVertex g_vertices[] = {
 //
         /**
          // 位置情報
@@ -78,13 +65,8 @@ void Quad::initialize() {
     jclogf("quad initialize : %x", this);
     jclogf("quad id = %d", vertices.get());
 
-    // ステートの割り当て
-    state->bindBuffer(GL_ARRAY_BUFFER, vertices.get());
+    updateVertices(g_vertices);
 
-// バッファ転送
-    CLEAR_GL_ERROR
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertices), g_vertices, GL_STATIC_DRAW);
-    PRINT_GL_ERROR;
 }
 
 /**
@@ -112,7 +94,7 @@ void Quad::rendering() {
     // 頂点バッファ
     if (attrVertices >= 0) {
         state->enableVertexAttribArray(attrVertices);
-        state->vertexAttribPointer(attrVertices, 2, GL_FLOAT, GL_FALSE, sizeof(tagVertex), NULL, 0);
+        state->vertexAttribPointer(attrVertices, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), NULL, 0);
     } else {
         // attrVが存在しないならレンダリングできない。
         return;
@@ -120,12 +102,27 @@ void Quad::rendering() {
     // UVバッファ
     if (attrCoords >= 0) {
         state->enableVertexAttribArray(attrCoords);
-        state->vertexAttribPointer(attrCoords, 2, GL_FLOAT, GL_FALSE, sizeof(tagVertex), NULL, sizeof(float) * 2);
+        state->vertexAttribPointer(attrCoords, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), NULL, sizeof(float) * 2);
     }
     CLEAR_GL_ERROR
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     PRINT_GL_ERROR;
 }
+
+/**
+ * 頂点情報を更新する。
+ * 4頂点を設定しなければならない。
+ */
+void Quad::updateVertices(const QuadVertex *vertices) {
+    // ステートの割り当て
+    state->bindBuffer(GL_ARRAY_BUFFER, this->vertices.get());
+
+// バッファ転送
+    CLEAR_GL_ERROR
+    glBufferData(GL_ARRAY_BUFFER, sizeof(QuadVertex) * 4, vertices, GL_STATIC_DRAW);
+    PRINT_GL_ERROR;
+}
+
 
 }
 }

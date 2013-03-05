@@ -142,6 +142,13 @@ public:
     virtual void setWrapT(GLint wrap);
 
     /**
+     * glBindTexgture(target, xxx)の内容を変更する
+     */
+    virtual void setBindTarget(GLenum target) {
+        this->target = target;
+    }
+
+    /**
      * 水平ラインごとにピクセルをコピーする
      * @param src コピー元のピクセル情報
      * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1 | GL_UNSIGNED_BYTE

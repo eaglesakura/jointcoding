@@ -93,6 +93,81 @@ static const charactor *FRAGMENT_SHADER_SOURCE = ""
 //
 ;
 
+static const charactor *VERTEX_EXTERNAL_SHADER_SOURCE =
+//
+        /**
+         * ( poly_x | poly_y )はそれぞれ0.0f〜1.0fの正規化座標で設定する。
+         */
+// ポリゴンのXYWH
+        ""
+                "uniform mediump vec4    poly_data;"
+// ポリゴンの回転角度
+                "uniform mediump float   rotate;"
+// ポリゴンのUV情報
+                "uniform mediump mat4    unif_texm;"
+// アクセス用のショートカットを設定する
+                "#define poly_x         poly_data[0]\n"
+                "#define poly_y         poly_data[1]\n"
+                "#define poly_width     poly_data[2]\n"
+                "#define poly_height    poly_data[3]\n"
+//
+                "attribute vec4 vTexCoord;"
+                "attribute vec4 vPosition;"
+                "varying vec2 fTexCoord;"
+
+                "void main() {"
+// 位置操作
+                "   {"
+                "       mediump mat4 trans = mat4(1.0);"
+                "       mediump mat4 scale = mat4(1.0);"
+                "       mediump mat4 scale2 = mat4(1.0);"
+// 移動行列を作成する
+                "       {"
+                "           trans[3][0] = poly_x;"
+                "           trans[3][1] = poly_y;"
+                "       }"
+// スケーリング行列を作成する
+                "       {"
+                "           scale[0][0] = poly_width;"
+                "           scale[1][1] = poly_height;"
+                "       }"
+                "       gl_Position = trans * scale * vPosition;"
+                "   }"
+// テクスチャ操作
+                "   {"
+                "       fTexCoord = (unif_texm * vTexCoord).xy;"
+                "   }"
+                "}"
+//
+;
+
+static const charactor *FRAGMENT_EXTERNAL_SHADER_SOURCE = ""
+        ""
+        "#extension GL_OES_EGL_image_external : require\n"
+        "        precision mediump float;"
+        // UV setting"
+        "        varying vec2 fTexCoord;"
+        // texture
+        "        uniform samplerExternalOES tex;"
+// color
+        "        uniform mediump vec4    blendColor;"
+        "        void main() {"
+        "            vec4 color = texture2D(tex, fTexCoord) * blendColor;"
+        "            color.a *= blendColor.a;"
+        "            gl_FragColor = color;"
+        "        }"
+//
+;
+
+const static Quad::QuadVertex g_revert_vertices[] = {
+// 左上
+        { -0.5, 0.5, 0.0f, 1.0f, },
+        // 右上
+        { 0.5, 0.5, 1.0f, 1.0f },
+        // 左下
+        { -0.5, -0.5, 0.0f, 0.0f },
+        // 右下
+        { 0.5, -0.5, 1.0f, 0.0f }, };
 //
 }
 
@@ -110,13 +185,19 @@ void SpriteManager::initialize(MDevice device) {
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
     this->unifTexture = shader->getUniformLocation("tex");
     assert(unifTexture != UNIFORM_DISABLE_INDEX);
-    this->unifPolyUv = shader->getUniformLocation("poly_uv");
-    assert(unifPolyData != UNIFORM_DISABLE_INDEX);
     this->unifBlendColor = shader->getUniformLocation("blendColor");
     assert(unifBlendColor != UNIFORM_DISABLE_INDEX);
 
-    this->quad.reset(new Quad(device));
+    {
+        // optional
+        this->unifPolyUv = shader->getUniformLocation("poly_uv");
+        this->unifTexM = shader->getUniformLocation("unif_texm");
+        if (unifTexM != UNIFORM_DISABLE_INDEX) {
+            setTextureMatrix(Matrix4x4());
+        }
+    }
 
+    this->quad.reset(new Quad(device));
     quad->attributes(attrVertices, attrCoords);
 
     {
@@ -135,7 +216,7 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
 
     this->shader = shader;
 
-    // シェーダーが設定されて無ければ、組み込みで起動する
+// シェーダーが設定されて無ければ、組み込みで起動する
     if (!shader) {
         this->shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
         assert(this->shader.get() != NULL);
@@ -143,6 +224,7 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     this->shaderContext.rotate = 0;
     this->shaderContext.bindedTextureIndex = 0;
     this->unifPolyData = UNIFORM_DISABLE_INDEX;
+    this->unifTexM = UNIFORM_DISABLE_INDEX;
     this->unifTexture = UNIFORM_DISABLE_INDEX;
     this->unifPolyUv = UNIFORM_DISABLE_INDEX;
     this->unifBlendColor = UNIFORM_DISABLE_INDEX;
@@ -154,6 +236,18 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
 
 SpriteManager::~SpriteManager() {
     this->dispose();
+}
+
+/**
+ * テクスチャ用行列を設定する
+ */
+void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
+    if (unifTexM == UNIFORM_DISABLE_INDEX) {
+        return;
+    }
+
+    shader->bind();
+    glUniformMatrix4fv(unifTexM, 1, GL_FALSE, (const float*) m.m);
 }
 
 /**
@@ -172,7 +266,7 @@ void SpriteManager::rendering(s32 x, s32 y, s32 width, s32 height) {
 
     float poly_data[] = { translateX, translateY, sizeX, sizeY };
 
-    // データを転送する
+// データを転送する
     glUniform4fv(unifPolyData, 1, poly_data);
 
     quad->rendering();
@@ -189,10 +283,10 @@ void SpriteManager::renderingRect(const s32 x, const s32 y, const s32 w, const s
  * レンダリングを行う
  */
 void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstWidth, const s32 dstHeight, const float degree, const u32 rgba) {
-    // シェーダーを切り替える
+// シェーダーを切り替える
     shader->bind();
 
-    // 変更前のテクスチャを保持しておく
+// 変更前のテクスチャを保持しておく
     {
         const s32 old_bindedTextureIndex = shaderContext.bindedTextureIndex;
 // テクスチャ番号を設定する
@@ -202,14 +296,14 @@ void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s3
         }
     }
 
-    // ブレンド色を設定する
+// ブレンド色を設定する
     if (shaderContext.blendColor.rgba != rgba) {
         shaderContext.blendColor = Color::fromRGBAi(rgba);
         glUniform4f(unifBlendColor, shaderContext.blendColor.rf(), shaderContext.blendColor.gf(), shaderContext.blendColor.bf(), shaderContext.blendColor.af());
     }
 
-    //! テクスチャ描画位置を行列で操作する
-    if (image != whiteTexture) {
+//! テクスチャ描画位置を行列で操作する
+    if (unifPolyUv != UNIFORM_DISABLE_INDEX && image != whiteTexture) {
         const float sizeX = (float) srcW / (float) image->getWidth();
         const float sizeY = (float) srcH / (float) image->getHeight();
         const float sx = (float) srcX / (float) image->getWidth();
@@ -237,6 +331,16 @@ void SpriteManager::dispose() {
  */
 MSpriteManager SpriteManager::createInstance(MDevice device) {
     MSpriteManager result(new SpriteManager(device, MGLShaderProgram()));
+    return result;
+}
+
+/**
+ * インスタンスを作成する
+ */
+MSpriteManager SpriteManager::createExternalInstance(MDevice device) {
+    MGLShaderProgram program = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_EXTERNAL_SHADER_SOURCE, FRAGMENT_EXTERNAL_SHADER_SOURCE);
+    MSpriteManager result(new SpriteManager(device, program));
+    result->getRenderingQuad()->updateVertices(g_revert_vertices);
     return result;
 }
 

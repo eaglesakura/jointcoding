@@ -62,7 +62,6 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     this->target = target;
     bindUnit = -1;
 //    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
     texture.alloc(device->getVRAM(), VRAM_Texture);
 
     {
@@ -82,6 +81,8 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
         }
         this->unbind();
     }
+    /*
+     */
 }
 
 TextureImage::~TextureImage() {
@@ -123,6 +124,7 @@ void TextureImage::allocPixelMemory(const GLenum srcPixelType, const GLenum srcP
     _BIND_CHECK(this);
 
     if (!this->alloced) {
+        this->alloced = jctrue;
         // まずは空の領域を確保する
         glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, width, height, 0, srcPixelFormat, srcPixelType, NULL);
     }

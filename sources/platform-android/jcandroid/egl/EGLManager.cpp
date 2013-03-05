@@ -167,6 +167,8 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
  * このメソッドは完了するまでブロックされる。
  */
 jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
+    glFinish();
+
     EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(displaySurface.get());
     const EGLSurface targetSurface = surfaceManager->getSurface();
     const EGLSurface currentSurface = eglGetCurrentSurface(EGL_DRAW);
