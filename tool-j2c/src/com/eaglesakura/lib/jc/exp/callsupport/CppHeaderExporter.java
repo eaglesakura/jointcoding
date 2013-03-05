@@ -356,7 +356,7 @@ public class CppHeaderExporter extends CppClassInfomationBase {
                 if ("this".equals(arg.getName())) {
                     System.out
                             .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
-                    result += ("arg" + i);
+                    result += (JCUtil.toCppType(arg.getType()) + i);
                 } else {
                     result += arg.getName();
                 }
