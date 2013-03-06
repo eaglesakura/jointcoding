@@ -21,8 +21,6 @@ public:
     static jint onCreateNativeContext_(jobject _this, jint int_0);
     virtual jint getNativeContextPointer();
     static jint getNativeContextPointer_(jobject _this);
-    virtual void onNativeGLResume(jobject surfacetexture_0, jint int_1, jint int_2);
-    static void onNativeGLResume_(jobject _this, jobject surfacetexture_0, jint int_1, jint int_2);
     virtual void onNativeGLInitialize(jobject surfacetexture_0, jint int_1, jint int_2);
     static void onNativeGLInitialize_(jobject _this, jobject surfacetexture_0, jint int_1, jint int_2);
     virtual void onDestroyNative();

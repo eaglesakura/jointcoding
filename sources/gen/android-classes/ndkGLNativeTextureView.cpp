@@ -11,10 +11,10 @@ const ::jc::s32 GLNativeTextureView::EGL_COLORBUFFER_BITS_DEFAULT = 0;
 
 static jclass class_GLNativeTextureView = NULL;
 
-#define methods_GLNativeTextureView_LENGTH 7
+#define methods_GLNativeTextureView_LENGTH 6
 
 #if methods_GLNativeTextureView_LENGTH
-static jmethodID methods_GLNativeTextureView[7];
+static jmethodID methods_GLNativeTextureView[6];
 #endif
 
 static void initialize_GLNativeTextureView() {
@@ -35,10 +35,9 @@ static void initialize_GLNativeTextureView() {
         methods_GLNativeTextureView[0] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onNativeGLSurfaceSizeChanged", "(Landroid/graphics/SurfaceTexture;II)V", false);
         methods_GLNativeTextureView[1] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onCreateNativeContext", "(I)I", false);
         methods_GLNativeTextureView[2] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "getNativeContextPointer", "()I", false);
-        methods_GLNativeTextureView[3] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onNativeGLResume", "(Landroid/graphics/SurfaceTexture;II)V", false);
-        methods_GLNativeTextureView[4] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onNativeGLInitialize", "(Landroid/graphics/SurfaceTexture;II)V", false);
-        methods_GLNativeTextureView[5] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onDestroyNative", "()V", false);
-        methods_GLNativeTextureView[6] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onNativeGLDestroyed", "(Landroid/graphics/SurfaceTexture;)V", false);
+        methods_GLNativeTextureView[3] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onNativeGLInitialize", "(Landroid/graphics/SurfaceTexture;II)V", false);
+        methods_GLNativeTextureView[4] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onDestroyNative", "()V", false);
+        methods_GLNativeTextureView[5] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onNativeGLDestroyed", "(Landroid/graphics/SurfaceTexture;)V", false);
 
     }
 }
@@ -164,62 +163,9 @@ jint GLNativeTextureView::getNativeContextPointer_(jobject _this) {
     return (jint) env->CallIntMethod(_this, methods_GLNativeTextureView[2]);
 }
 
-void GLNativeTextureView::onNativeGLResume(jobject surfacetexture_0, jint int_1, jint int_2) {
-    CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_GLNativeTextureView[3], surfacetexture_0, int_1, int_2);
-}
-#if 0
-#include "jointcoding-android.h"
-#include "ndkGLNativeTextureView.h"
-
-extern "C" {
-// prototype
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume(JNIEnv *env, jobject _this, jobject surfacetexture_0, jint int_1, jint int_2);
-}
-
-// main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume(JNIEnv *env, jobject _this, jobject surfacetexture_0, jint int_1, jint int_2) {
-    // call env reset
-    initJniEnv(env);
-    
-    // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume");
-    
-    return;
-}
-#endif
-
-
-void GLNativeTextureView::onNativeGLResume_(jobject _this, jobject surfacetexture_0, jint int_1, jint int_2) {
-    CALL_JNIENV();
-    initialize_GLNativeTextureView();
-    env->CallVoidMethod(_this, methods_GLNativeTextureView[3], surfacetexture_0, int_1, int_2);
-}
-#if 0
-#include "jointcoding-android.h"
-#include "ndkGLNativeTextureView.h"
-
-extern "C" {
-// prototype
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume(JNIEnv *env, jobject _this, jobject surfacetexture_0, jint int_1, jint int_2);
-}
-
-// main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume(JNIEnv *env, jobject _this, jobject surfacetexture_0, jint int_1, jint int_2) {
-    // call env reset
-    initJniEnv(env);
-    
-    // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume");
-    
-    return;
-}
-#endif
-
-
 void GLNativeTextureView::onNativeGLInitialize(jobject surfacetexture_0, jint int_1, jint int_2) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_GLNativeTextureView[4], surfacetexture_0, int_1, int_2);
+    env->CallVoidMethod(this->getObject(), methods_GLNativeTextureView[3], surfacetexture_0, int_1, int_2);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -246,7 +192,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 void GLNativeTextureView::onNativeGLInitialize_(jobject _this, jobject surfacetexture_0, jint int_1, jint int_2) {
     CALL_JNIENV();
     initialize_GLNativeTextureView();
-    env->CallVoidMethod(_this, methods_GLNativeTextureView[4], surfacetexture_0, int_1, int_2);
+    env->CallVoidMethod(_this, methods_GLNativeTextureView[3], surfacetexture_0, int_1, int_2);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -272,7 +218,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 
 void GLNativeTextureView::onDestroyNative() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_GLNativeTextureView[5]);
+    env->CallVoidMethod(this->getObject(), methods_GLNativeTextureView[4]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -299,7 +245,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 void GLNativeTextureView::onDestroyNative_(jobject _this) {
     CALL_JNIENV();
     initialize_GLNativeTextureView();
-    env->CallVoidMethod(_this, methods_GLNativeTextureView[5]);
+    env->CallVoidMethod(_this, methods_GLNativeTextureView[4]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -325,7 +271,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 
 void GLNativeTextureView::onNativeGLDestroyed(jobject surfacetexture_0) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_GLNativeTextureView[6], surfacetexture_0);
+    env->CallVoidMethod(this->getObject(), methods_GLNativeTextureView[5], surfacetexture_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -352,7 +298,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 void GLNativeTextureView::onNativeGLDestroyed_(jobject _this, jobject surfacetexture_0) {
     CALL_JNIENV();
     initialize_GLNativeTextureView();
-    env->CallVoidMethod(_this, methods_GLNativeTextureView[6], surfacetexture_0);
+    env->CallVoidMethod(_this, methods_GLNativeTextureView[5], surfacetexture_0);
 }
 #if 0
 #include "jointcoding-android.h"
