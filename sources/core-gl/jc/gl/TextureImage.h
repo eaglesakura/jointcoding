@@ -196,6 +196,7 @@ public:
 
     /**
      * テクスチャ名を取得する
+     * 名称は一意の32bit整数になる。
      */
     virtual u32 getName() const {
         return texture.get();

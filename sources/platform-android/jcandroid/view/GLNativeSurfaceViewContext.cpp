@@ -22,6 +22,9 @@ GLNativeSurfaceViewContext::GLNativeSurfaceViewContext(const u32 eglFlags) {
     // デフォルトディスプレイはEGLが初期化してくれているから、特に追加初期化を行う必要はない
     this->display = EGLManager::getDefaultDisplay();
 
+    EGLManager* egl = dynamic_cast<EGLManager*>(device->getEGL().get());
+    egl->stashEGLCurrents();
+
     jclogf("new context %x", this);
 }
 
