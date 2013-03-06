@@ -81,8 +81,6 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
         }
         this->unbind();
     }
-    /*
-     */
 }
 
 TextureImage::~TextureImage() {

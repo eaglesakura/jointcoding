@@ -47,14 +47,12 @@ inline const T minmax(const T _min, const T _max, const T value) {
  */
 template<class T>
 inline jcboolean isPowerOfTwo(const T n) {
-    T bit = 2;
-    const s32 BIT_SIZE = sizeof(T) * 8;
-
     if (!n) {
         return jcfalse;
     }
 
-    for (s32 i = 0; i < BIT_SIZE; ++i) {
+    T bit = 1;
+    for (s32 i = 0; i < 32; ++i) {
         if (n == bit) {
             return jctrue;
         }

@@ -114,7 +114,6 @@ EGLStatus_e EGLManager::getStatus() const {
  */
 void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProtocol> surface) {
     if( context.get() && surface.get() ) {
-//        this->stashEGLCurrents();
         EGLContextManager *contextManager = dynamic_cast<EGLContextManager*>(context.get());
         EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(surface.get());
 
@@ -122,11 +121,14 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
         EGLContext eglContext = contextManager->getContext();
         EGLSurface eglSurface = surfaceManager ? surfaceManager->getSurface() : EGL_NO_SURFACE;
 
+//        jclogf("request disp(%x) read(%x) draw(%d) ctx(%x)", eglDisplay, eglSurface, eglSurface, eglContext);
+
 // カレントに設定できなければ例外を投げる
         if( !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ) {
             printEGLError(__FILE__, __LINE__);
             throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
         }
+
     } else {
         EGLDisplay eglDisplay = display;
         EGLSurface eglReadSurface = EGL_NO_SURFACE;
@@ -153,8 +155,10 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
                     throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
                 }
             } else {
-                printEGLError(__FILE__, __LINE__);
-                EGLSupport::unlockEGLMakeCurrent((jint)eglDisplay, (jint)EGL_NO_SURFACE, (jint)EGL_NO_SURFACE, (jint)EGL_NO_CONTEXT);
+                if(!eglMakeCurrent(EGL_NO_DISPLAY, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
+                    printEGLError(__FILE__, __LINE__);
+                    EGLSupport::unlockEGLMakeCurrent((jint)eglDisplay, (jint)EGL_NO_SURFACE, (jint)EGL_NO_SURFACE, (jint)EGL_NO_CONTEXT);
+                }
             }
         }
     }
@@ -173,11 +177,11 @@ jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
     const EGLSurface targetSurface = surfaceManager->getSurface();
     const EGLSurface currentSurface = eglGetCurrentSurface(EGL_DRAW);
     if (currentSurface != targetSurface) {
-//        jclogf("current surface(%x) != app surface(%x)", currentSurface, targetSurface);
+        jclogf("current surface(%x) != app surface(%x)", currentSurface, targetSurface);
         return jcfalse;
     }
     jcboolean result = eglSwapBuffers(display, targetSurface);
-    if (printEGLError(__FILE__, __LINE__)) {
+    if (!result || printEGLError(__FILE__, __LINE__)) {
         jclogf("Bad Surface(%x)", targetSurface);
     }
     return result;
@@ -191,10 +195,7 @@ void EGLManager::stashEGLCurrents() {
     androidEGL.readSurface = eglGetCurrentSurface(EGL_READ);
     androidEGL.drawSurface = eglGetCurrentSurface(EGL_DRAW);
 
-    jclogf("Android EGLDisplay(%x)", androidEGL.display);
-    jclogf("Android EGLContext(%x)", androidEGL.context);
-    jclogf("Android EGLSurface-Read(%x)", androidEGL.readSurface);
-    jclogf("Android EGLSurface-Draw(%x)", androidEGL.drawSurface);
+    jclogf("Current EGLDisplay(%x) EGLSurface-Read(%x) EGLSurface-Draw(%x) EGLContext(%x)", androidEGL.display, androidEGL.readSurface, androidEGL.drawSurface, androidEGL.context);
 }
 
 /**

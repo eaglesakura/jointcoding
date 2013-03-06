@@ -71,7 +71,7 @@ MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charac
     // エラーチェック
     if (GLState::printShaderError(shader.get(), GL_COMPILE_STATUS)) {
         shader.release();
-        jclogf("shader(%d) comple error!!", type);
+        jclogf("shader(%s) comple error!!", type == ShaderType_Fragment ? "FRAGMENT" : "VERTEX");
         return MGLShader();
     }
 

@@ -205,16 +205,6 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
     native void onNativeGLInitialize(SurfaceTexture surface, int width, int height);
 
     /**
-     * SurfaceTextureを復旧する
-     * @param surface
-     * @param width
-     * @param height
-     */
-    @JCMethod(
-              nativeMethod = true)
-    native void onNativeGLResume(SurfaceTexture surface, int width, int height);
-
-    /**
      * SurfaceTextureのサイズ変更に対応する
      * @param surface
      * @param width

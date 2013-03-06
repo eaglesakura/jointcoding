@@ -24,66 +24,68 @@ static const charactor *VERTEX_SHADER_SOURCE =
 // ポリゴンのUV情報
                 "uniform mediump vec4    poly_uv;\n"
 // アクセス用のショートカットを設定する
-                "#define poly_x         poly_data[0]\n"
-                "#define poly_y         poly_data[1]\n"
-                "#define poly_width     poly_data[2]\n"
-                "#define poly_height    poly_data[3]\n"
+                "#define poly_x         poly_data.x\n"
+                "#define poly_y         poly_data.y\n"
+                "#define poly_width     poly_data.z\n"
+                "#define poly_height    poly_data.w\n"
 //
-                "#define poly_uv_u      poly_uv[0]\n"
-                "#define poly_uv_v      poly_uv[1]\n"
-                "#define poly_uv_w      poly_uv[2]\n"
-                "#define poly_uv_h      poly_uv[3]\n"
+                "#define poly_uv_u      poly_uv.x\n"
+                "#define poly_uv_v      poly_uv.y\n"
+                "#define poly_uv_w      poly_uv.z\n"
+                "#define poly_uv_h      poly_uv.w\n"
 //
                 "attribute vec4 vTexCoord;"
                 "attribute vec4 vPosition;"
                 "varying vec2 fTexCoord;"
 
                 "void main() {"
-// 位置操作
+                "mediump mat4 mat = mat4(1.0);"
+                "mediump mat4 temp = mat4(1.0);"
                 "   {"
-                "       mediump mat4 trans = mat4(1.0);"
-                "       mediump mat4 rot = mat4(1.0);"
-                "       mediump mat4 scale = mat4(1.0);"
-                "       mediump mat4 aspScale = mat4(1.0);"
+
 // 移動行列を作成する
                 "       {"
-                "           trans[3][0] = poly_x;"
-                "           trans[3][1] = poly_y;"
+                "           mat[3][0] = poly_x;"
+                "           mat[3][1] = poly_y;"
                 "       }"
 // 回転行列を作成する
                 "       {"
-                "           rot[0][0] = cos(rotate);"
-                "           rot[1][0] = sin(rotate);"
-                "           rot[0][1] = -rot[1][0];"
-                "           rot[1][1] = rot[0][0];"
+                "           temp[0][0] = cos(rotate);"
+                "           temp[1][0] = sin(rotate);"
+                "           temp[0][1] = -temp[1][0];"
+                "           temp[1][1] = temp[0][0];"
+                "           mat = mat * temp;"
                 "       }"
-                // スケーリング行列を作成する
+// スケーリング行列を作成する
                 "       {"
-                "           scale[0][0] = poly_width * aspect;"
-                "           scale[1][1] = poly_height;"
+                "           temp = mat4(1.0);"
+                "           temp[0][0] = poly_width * aspect;"
+                "           temp[1][1] = poly_height;"
+                "           mat = mat * temp;"
                 "       }"
                 "       {"
-                "           aspScale[0][0] = 1.0 / aspect;"
+                "           temp = mat4(1.0);"
+                "           temp[0][0] = 1.0 / aspect;"
+                "           mat = mat * temp;"
                 "       }"
-                "       gl_Position = (trans * aspScale * rot * scale) * vPosition;"
+                "       gl_Position = mat * vPosition;"
                 "   }"
 // テクスチャ操作
                 "   {"
-                "       mediump mat4 trans = mat4(1.0);"
+                "       mat = mat4(1.0);"
 // 移動行列を作成する
                 "       {"
-                "           trans[3][0] = poly_uv_u;"
-                "           trans[3][1] = poly_uv_v;"
+                "           mat[3][0] = poly_uv_u;"
+                "           mat[3][1] = poly_uv_v;"
                 "       }"
-                "       mediump mat4 scale = mat4(1.0);"
 // スケーリング行列を作成する
                 "       {"
-                "           scale[0][0] = poly_uv_w;"
-                "           scale[1][1] = poly_uv_h;"
+                "           temp = mat4(1.0);"
+                "           temp[0][0] = poly_uv_w;"
+                "           temp[1][1] = poly_uv_h;"
+                "           mat = mat * temp;"
                 "       }"
-                "       mediump vec4 tempTex = trans * scale * vTexCoord;"
-                "       fTexCoord.x = tempTex.x;"
-                "       fTexCoord.y = tempTex.y;"
+                "       fTexCoord.xy = (mat * vTexCoord).xy;"
                 "   }"
                 "}"
 //
@@ -114,16 +116,17 @@ static const charactor *VERTEX_EXTERNAL_SHADER_SOURCE =
 // ポリゴンのXYWH
         ""
                 "uniform mediump vec4    poly_data;"
-                "uniform mediump float   aspect;"
 // ポリゴンの回転角度
+                "uniform mediump float   aspect;"
                 "uniform mediump float   rotate;"
 // ポリゴンのUV情報
-                "uniform mediump mat4    unif_texm;"
+                "uniform mediump mat4    unif_texm;\n"
+
 // アクセス用のショートカットを設定する
-                "#define poly_x         poly_data[0]\n"
-                "#define poly_y         poly_data[1]\n"
-                "#define poly_width     poly_data[2]\n"
-                "#define poly_height    poly_data[3]\n"
+                "#define poly_x         poly_data.x\n"
+                "#define poly_y         poly_data.y\n"
+                "#define poly_width     poly_data.z\n"
+                "#define poly_height    poly_data.w\n"
 //
                 "attribute vec4 vTexCoord;"
                 "attribute vec4 vPosition;"
@@ -132,35 +135,39 @@ static const charactor *VERTEX_EXTERNAL_SHADER_SOURCE =
                 "void main() {"
 // 位置操作
                 "   {"
-                "       mediump mat4 trans = mat4(1.0);"
-                "       mediump mat4 rot = mat4(1.0);"
-                "       mediump mat4 scale = mat4(1.0);"
-                "       mediump mat4 aspScale = mat4(1.0);"
+                "       mediump mat4 mat = mat4(1.0);"
+                "       mediump mat4 temp = mat4(1.0);"
+
 // 移動行列を作成する
                 "       {"
-                "           trans[3][0] = poly_x;"
-                "           trans[3][1] = poly_y;"
+                "           mat[3][0] = poly_x;"
+                "           mat[3][1] = poly_y;"
                 "       }"
 // 回転行列を作成する
                 "       {"
-                "           rot[0][0] = cos(rotate);"
-                "           rot[1][0] = sin(rotate);"
-                "           rot[0][1] = -rot[1][0];"
-                "           rot[1][1] = rot[0][0];"
+                "           temp[0][0] = cos(rotate);"
+                "           temp[1][0] = sin(rotate);"
+                "           temp[0][1] = -temp[1][0];"
+                "           temp[1][1] = temp[0][0];"
+                "           mat = mat * temp;"
                 "       }"
 // スケーリング行列を作成する
                 "       {"
-                "           scale[0][0] = poly_width * aspect;"
-                "           scale[1][1] = poly_height;"
+                "           temp = mat4(1.0);"
+                "           temp[0][0] = poly_width * aspect;"
+                "           temp[1][1] = poly_height;"
+                "           mat = mat * temp;"
                 "       }"
                 "       {"
-                "           aspScale[0][0] = 1.0 / aspect;"
+                "           temp = mat4(1.0);"
+                "           temp[0][0] = 1.0 / aspect;"
+                "           mat = mat * temp;"
                 "       }"
-                "       gl_Position = (trans * aspScale * rot * scale) * vPosition;"
+                "       gl_Position = mat * vPosition;"
                 "   }"
 // テクスチャ操作
                 "   {"
-                "       fTexCoord = (unif_texm * vTexCoord).xy;"
+                "       fTexCoord.xy = (unif_texm * vTexCoord).xy;"
                 "   }"
                 "}"
 //
@@ -389,6 +396,7 @@ void SpriteManager::dispose() {
  * インスタンスを作成する
  */
 MSpriteManager SpriteManager::createInstance(MDevice device) {
+    jclog("createInstance");
     MSpriteManager result(new SpriteManager(device, MGLShaderProgram()));
     return result;
 }
@@ -397,6 +405,7 @@ MSpriteManager SpriteManager::createInstance(MDevice device) {
  * インスタンスを作成する
  */
 MSpriteManager SpriteManager::createExternalInstance(MDevice device) {
+    jclog("createExternalInstance");
     MGLShaderProgram program = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_EXTERNAL_SHADER_SOURCE, FRAGMENT_EXTERNAL_SHADER_SOURCE);
     assert(program.get() != NULL);
     MSpriteManager result(new SpriteManager(device, program));
