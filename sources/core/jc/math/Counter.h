@@ -29,6 +29,37 @@ enum CounterType_e {
     CounterType_MinStop,
 };
 
+enum LeapType_e {
+    /**
+     * 直値を取得する
+     */
+    LeapType_Direct,
+
+    /**
+     * イーズ式（１）
+     * ゆるやかに加速、ゆるやかに減速
+     */
+    LeapType_Ease1,
+
+    /**
+     * イーズ式（２）
+     * ゆるやかに加速、ゆるやかに減速
+     */
+    LeapType_Ease2,
+
+    /**
+     * 指数式
+     * 急加速、急減速
+     */
+    LeapType_Exp1,
+
+    /**
+     * 指数式
+     * 急加速、急減速
+     */
+    LeapType_Exp2,
+};
+
 template<typename T>
 class CounterT {
     /**
@@ -253,6 +284,32 @@ public:
     }
 
     /**
+     * 適当な式で修正を行った値を取得する
+     *
+     * @seel http://game.g.hatena.ne.jp/Nao_u/20110505
+     */
+    const T getValue(const LeapType_e type) {
+        switch (type) {
+            case LeapType_Direct:
+                return value;
+            case LeapType_Ease1:
+                return (T) (0.5 - cos((double) value * jc::PI) * 0.5);
+            case LeapType_Ease2:
+                return (T) (3.0 * (double) value * (double) value - 2 * (double) value * (double) value);
+            case LeapType_Exp1:
+                return (T) (1.0 - exp(-3.0 * (double) value));
+            case LeapType_Exp2: {
+                const double temp = (1.0 - (double) value);
+                return (T) (1.0 - temp * temp * temp);
+            }
+            default:
+                assert(false);
+                break;
+        }
+        return (T) 0;
+    }
+
+    /**
      * 停止状態ならtrue
      */
     const jcboolean isStopped() const {
@@ -272,6 +329,7 @@ public:
     operator T() const {
         return value;
     }
+
 };
 
 /**
