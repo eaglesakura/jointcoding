@@ -28,6 +28,20 @@ struct RectT {
     }
 
     /**
+     * 中央地点を設定する
+     */
+    void setCenter(const T x, const T y) {
+        const T _width = width() / 2;
+        const T _height = height() / 2;
+
+        left = x - _width;
+        right = x + _width;
+
+        top = y - _height;
+        bottom = y + _height;
+    }
+
+    /**
      * x/y/width/heightを指定する
      */
     void setXYWH(const T x, const T y, const T w, const T h) {

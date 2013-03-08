@@ -16,14 +16,14 @@ namespace gl {
 using namespace ndk;
 
 namespace {
-static u32 PIXEL_TYPES[4] = {
+static u32 PIXEL_TYPES[] = {
 //
-        GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,
+        GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,
 //
         };
 static u32 PIXEL_FORMATS[] = {
 //
-        GL_RGB, GL_RGBA, GL_RGB, GL_BGRA_EXT,
+        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_BGRA_EXT,
 //
         };
 }
@@ -63,8 +63,8 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
 
         jc_sa<u8> temp_buffer;
 
-        if (pixelFormat != PixelFormat_RGBA8888) {
-            jclogf("convert format(%d -> %d)", PixelFormat_RGBA8888, pixelFormat);
+        if (pixelFormat != PixelFormat_BGRA8888) {
+            jclogf("convert format(%d -> %d)", PixelFormat_BGRA8888, pixelFormat);
             temp_buffer = Pixel::createPixelBuffer(pixelFormat, imageWidth * imageHeight);
             Pixel::copyBGRA8888Pixels((const u8*)raw_buffer, pixelFormat, temp_buffer.get(), imageWidth * imageHeight);
 
