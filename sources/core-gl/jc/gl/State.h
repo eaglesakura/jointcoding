@@ -363,9 +363,9 @@ public:
     inline jcboolean enableScissor(const jcboolean set) {
         if (set != scissorContext.enable) {
 
-            if(set) {
+            if (set) {
                 glEnable(GL_SCISSOR_TEST);
-            }else {
+            } else {
                 glDisable(GL_SCISSOR_TEST);
             }
 
@@ -501,10 +501,31 @@ public:
     }
 
     /**
+     * 指定したテクスチャがバインド済みになっているかを調べる
+     */
+    inline jcboolean isBindedTexture(const GLenum target, const GLuint texture) const {
+        for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
+            if (textureContext.textures[i] == texture && textureContext.targets[i] == target) {
+                return jctrue;
+            }
+        }
+        return jcfalse;
+    }
+
+    /**
+     * まだバインドされているかをチェックする
+     */
+    inline jcboolean isBindedTexture(const u32 index, const GLenum target, const GLuint texture) {
+        assert(index < MAX_TEXTURE_UNIT);
+        return textureContext.textures[index] == texture && textureContext.targets[index] == target;
+    }
+
+    /**
      * 現在activeになっているテクスチャユニットに対してバインドを行う。
      */
     inline jcboolean bindTexture(const GLenum target, const GLuint texture) {
         const s32 index = getActiveTextureIndex();
+        assert(index >= 0);
         const GLuint currentTex = textureContext.textures[index];
         const GLenum currentTarget = textureContext.targets[index];
 

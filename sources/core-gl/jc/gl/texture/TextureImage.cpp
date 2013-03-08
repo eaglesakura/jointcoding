@@ -205,7 +205,11 @@ jcboolean TextureImage::isNonPowerOfTwo() {
 
 s32 TextureImage::bind() {
     if (bindUnit >= 0) {
-        return bindUnit;
+        if (state->isBindedTexture(bindUnit, target, texture.get())) {
+            state->activeTexture(bindUnit);
+            return bindUnit;
+        }
+        bindUnit = -1;
     }
 
     s32 unitIndex = state->getFreeTextureUnitIndex();
@@ -222,6 +226,14 @@ s32 TextureImage::bind() {
  * テクスチャをindex番のユニットに関連付ける
  */
 void TextureImage::bind(s32 index) {
+    if (bindUnit == index) {
+        if (state->isBindedTexture(bindUnit, target, texture.get())) {
+            state->activeTexture(index);
+            return;
+        }
+    } else if (bindUnit >= 0) {
+        unbind();
+    }
     bindUnit = index;
     this->state->activeTexture(index);
     this->state->bindTexture(target, texture.get());
