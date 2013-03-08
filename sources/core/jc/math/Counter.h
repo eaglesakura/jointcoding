@@ -9,6 +9,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/math/Math.h"
+#include    "jc/math/Angle.h"
 
 namespace jc {
 
