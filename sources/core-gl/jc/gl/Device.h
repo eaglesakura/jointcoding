@@ -232,11 +232,9 @@ public:
         while (hasLockRequest()) {
             Thread::sleep(sleep_ms);
 
-            if (cancel_flag) {
+            if (cancel_flag && *cancel_flag) {
                 // キャンセルフラグが設定されていて、かつjctrueである場合はキャンセルを行う。
-                if (*cancel_flag) {
-                    return;
-                }
+                return;
             }
         }
     }
@@ -279,13 +277,13 @@ public:
         if (result_x) {
             (*result_x) = viewport_x;
         }
-        if(result_y) {
+        if (result_y) {
             (*result_y) = viewport_y;
         }
-        if(result_width) {
+        if (result_width) {
             (*result_width) = viewport_width;
         }
-        if(result_height) {
+        if (result_height) {
             (*result_height) = viewport_height;
         }
     }

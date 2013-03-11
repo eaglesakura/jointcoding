@@ -12,6 +12,7 @@
 #include    "jc/gl/State.h"
 #include    "jc/gl/GPUCapacity.h"
 
+#include    "jc/gl/DeviceLock.h"
 #include    "jc/gl/PKMHeader.h"
 
 #define _BIND_CHECK(_this)      { if(_this->bindUnit < 0 ){ jclogf("texture not bind | this=( %x ) texture=( %d ) abort.", _this, _this->texture.get()); return; } }
@@ -409,19 +410,22 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri) {
     const s32 width = header->getWidth();
     const s32 height = header->getHeight();
 
-    MTextureImage result(new TextureImage(width, height, device));
-
-    result->bind();
     {
-        u32 length = 0;
-        jc_sa<u8> temp = InputStream::toByteArray(is, &length);
+        DeviceLock lock(device, jctrue);
 
-        jclogf("etc1 size(%d x %d)", width, height);
-        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, header->getWidth(), header->getHeight(), 0, length, (void*) temp.get());
+        MTextureImage result(new TextureImage(width, height, device));
+        result->bind();
+        {
+            u32 length = 0;
+            jc_sa<u8> temp = InputStream::toByteArray(is, &length);
+
+            jclogf("etc1 size(%d x %d)", width, height);
+            glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, header->getWidth(), header->getHeight(), 0, length, (void*) temp.get());
+        }
+        result->unbind();
+
+        return result;
     }
-    result->unbind();
-
-    return result;
 }
 
 }

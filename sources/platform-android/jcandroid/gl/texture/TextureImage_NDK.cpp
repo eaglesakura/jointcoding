@@ -10,6 +10,8 @@
 #include    "android-classes/ndkImageDecoder.h"
 #include    "jcandroid/io/JavaJointInputStream.h"
 
+#include    "jc/gl/DeviceLock.h"
+
 namespace jc {
 namespace gl {
 
@@ -27,7 +29,6 @@ static u32 PIXEL_FORMATS[] = {
 //
         };
 }
-
 
 /**
  * Platformが実装しているデコーダーで画像をデコードする。
@@ -66,23 +67,27 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         if (pixelFormat != PixelFormat_BGRA8888) {
             jclogf("convert format(%d -> %d)", PixelFormat_BGRA8888, pixelFormat);
             temp_buffer = Pixel::createPixelBuffer(pixelFormat, imageWidth * imageHeight);
-            Pixel::copyBGRA8888Pixels((const u8*)raw_buffer, pixelFormat, temp_buffer.get(), imageWidth * imageHeight);
+            Pixel::copyBGRA8888Pixels((const u8*) raw_buffer, pixelFormat, temp_buffer.get(), imageWidth * imageHeight);
 
-            raw_buffer = (void*)temp_buffer.get();
+            raw_buffer = (void*) temp_buffer.get();
         }
 
-        // make texture
-        result.reset(new TextureImage(imageWidth, imageHeight, device));
-
-        result->bind();
         {
-            CLEAR_GL_ERROR
-            ;
-            result->copyPixelLine(raw_buffer, PIXEL_TYPES[pixelFormat], PIXEL_FORMATS[pixelFormat], 0, 0, imageHeight);
+            // lock
+            DeviceLock lock(device, jctrue);
 
-            PRINT_GL_ERROR;
+            // make texture
+            result.reset(new TextureImage(imageWidth, imageHeight, device));
+            result->bind();
+            {
+                CLEAR_GL_ERROR
+                ;
+                result->copyPixelLine(raw_buffer, PIXEL_TYPES[pixelFormat], PIXEL_FORMATS[pixelFormat], 0, 0, imageHeight);
+
+                PRINT_GL_ERROR;
+            }
+            result->unbind();
         }
-        result->unbind();
     }
 
     env->DeleteLocalRef(ndkImageDecoder);

@@ -39,6 +39,11 @@ class DeviceLock {
     jcboolean locked;
 
     /**
+     * 既にロックされた状態の場合
+     */
+    jcboolean def_locked;
+
+    /**
      * デバイスの専有を行う
      */
     void lockDevice() {
@@ -61,12 +66,15 @@ class DeviceLock {
             }
             device->decLockRequest();
         } else {
-            // Mutex占有権を取得する
-            lock.reset(new MutexLock(device->getGPUMutex()));
+            def_locked = jctrue;
         }
 
 // contextとthreadを結びつける
-        locked = device->makeCurrent(EGLMakeCurrent_Bind);
+        if(current_thread) {
+            locked = jctrue;
+        } else {
+            locked = device->makeCurrent(EGLMakeCurrent_Bind);
+        }
 
 // ロックに失敗したら、専有も解除する
         if( !locked ) {
@@ -79,7 +87,7 @@ class DeviceLock {
      * デバイスの専有を解除する
      */
     void unlockDevice() {
-        if(locked) {
+        if(locked && !def_locked) {
             device->makeCurrent(EGLMakeCurrent_Unbind);
         }
 
@@ -104,6 +112,7 @@ public:
      */
     DeviceLock(MDevice device, jcboolean throw_error) {
         this->locked = jcfalse;
+        this->def_locked = jcfalse;
         this->device = device;
         lockDevice();
 
