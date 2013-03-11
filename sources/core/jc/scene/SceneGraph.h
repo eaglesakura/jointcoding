@@ -27,11 +27,6 @@ class SceneGraph: public Object {
     scene_id uniqueId;
 
     /**
-     * 子参照
-     */
-    std::list<MSceneGraph> childs;
-
-    /**
      * 親参照
      */
     SceneGraph* parent;
@@ -42,12 +37,22 @@ class SceneGraph: public Object {
      */
     float renderingPriority;
 
+protected:
+    /**
+     * 子参照
+     */
+    std::list<MSceneGraph> childs;
+
 public:
     SceneGraph();
     virtual ~SceneGraph();
 
     virtual scene_id getUniqueId() const {
         return uniqueId;
+    }
+
+    virtual u32 getChildrenNum() const {
+        return childs.size();
     }
 
     virtual void setUniqueId(const scene_id set) {
