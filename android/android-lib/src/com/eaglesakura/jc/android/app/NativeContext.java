@@ -118,13 +118,21 @@ public class NativeContext {
     static native void nativeGC();
 
     /**
-     * Native側がNDK_DEBUG=1でビルドされている場合、trueが帰る。
+     * Native側がNDK_DEBUG=1でビルドされている場合、trueが返る。
      * それ以外はfalseになる。
      * @return
      */
     @JCMethod(
               nativeMethod = true)
     public static native boolean isNativeDebuggable();
+
+    /**
+     * Native側がLOCAL_CPPFLAGS += OUTPUT_LOGされている場合、trueが返る。
+     * @return
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public static native boolean isNativeLogOutput();
 
     /**
      * 

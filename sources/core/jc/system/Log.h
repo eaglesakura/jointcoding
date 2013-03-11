@@ -13,16 +13,6 @@
 // SmartPtrクラスのログを出力
 //#define __ENABLELOG_SMARTPTR
 
-// Memoryクラスのログを出力
-//#define __ENABLELOG_MEMORY
-#ifdef  __ENABLELOG_MEMORY
-
-// new演算子のログ
-#define __ENABLELOG_NEW
-
-// new[]演算子のログ
-#define __ENABLELOG_NEW_ARRAY
-#endif
 
 namespace jc {
 
@@ -55,7 +45,7 @@ enum LogType_e {
 
 void __logDebugF(const LogType_e type, const charactor* __file, const charactor* fmt, ...);
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(OUTPUT_LOG)
 
 /**
  * 特定条件下の設定

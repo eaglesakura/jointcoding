@@ -42,11 +42,22 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isN
     initJniEnv(env);
 
 #ifdef  DEBUG
-    return (jboolean)JNI_TRUE;
+    return (jboolean) JNI_TRUE;
 #else
     return (jboolean)JNI_FALSE;
 #endif
 }
 
+// main
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isNativeLogOutput(JNIEnv *env, jobject _this) {
+    // call env reset
+    initJniEnv(env);
+
+#if  defined(DEBUG) || defined(OUTPUT_LOG)
+    return (jboolean)JNI_TRUE;
+#else
+    return (jboolean) JNI_FALSE;
+#endif
+}
 }
 

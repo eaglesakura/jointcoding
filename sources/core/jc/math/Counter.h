@@ -234,10 +234,17 @@ public:
     }
 
     /**
+     * 範囲の長さを取得する
+     */
+    T getRangeLength() const {
+        return maxValue - minValue;
+    }
+
+    /**
      * オフセットを設定する
      */
     void setOffset(const T offset) {
-        assert(offset <= (maxValue - minValue));
+        assert(offset <= getRangeLength());
 
         this->offset = offset;
     }
@@ -331,6 +338,12 @@ public:
         return value;
     }
 
+    /**
+     * インクリメントモードの場合true
+     */
+    jcboolean isIncrement() const {
+        return inc;
+    }
 };
 
 /**

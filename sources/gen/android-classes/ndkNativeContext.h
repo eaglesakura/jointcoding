@@ -22,6 +22,7 @@ public:
     static void gc();
     virtual jobject getAppContext_unsafe();
     static jobject getAppContext_unsafe_(jobject _this);
+    static jboolean isNativeLogOutput();
     static jboolean isUIThread();
     static void nativeGC();
 

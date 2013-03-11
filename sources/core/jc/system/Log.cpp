@@ -17,7 +17,7 @@
 namespace jc {
 
 void __logDebugF(const LogType_e type, const charactor* __file, const char* fmt, ...) {
-#ifdef DEBUG
+#if defined(DEBUG) || defined(OUTPUT_LOG)
     static jc::jcmutex mutex;
     MutexLock lock(mutex);
     {
@@ -27,7 +27,11 @@ void __logDebugF(const LogType_e type, const charactor* __file, const char* fmt,
 #ifdef  BUILD_Android
         {
             static const s32 LOG_TYPES[] = {
+#ifdef  DEBUG
                     ANDROID_LOG_DEBUG,
+#else
+                    ANDROID_LOG_INFO,
+#endif
                     ANDROID_LOG_ERROR,
             };
             __android_log_vprint(LOG_TYPES[type], __file, fmt, ap);
