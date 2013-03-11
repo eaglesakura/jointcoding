@@ -66,6 +66,10 @@ GLState::GLState() {
             bindBufferContext.buffers[i] = 0;
         }
     }
+    // caps
+    {
+        caps.MAX_TEXTURE_UNITS = GPUCapacity::getMaxTextureUnits();
+    }
 }
 
 GLState::~GLState() {

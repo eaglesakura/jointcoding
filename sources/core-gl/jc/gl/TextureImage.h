@@ -95,6 +95,9 @@ class TextureImage: public Object {
         GLint wrapT;
     } context;
 
+protected:
+    virtual s32 getFreeTextureUnitIndex();
+
 public:
     TextureImage(const s32 width, const s32 height, MDevice device);
 

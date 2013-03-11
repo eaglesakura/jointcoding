@@ -47,8 +47,7 @@ class GLState: public Object {
         /**
          * テクスチャユニットの最大数
          */
-        MAX_TEXTURE_UNIT = 16,
-
+        MAX_TEXTURE_UNIT = 32,
         /**
          * GL_ARRAY_BUFFERの値を取り出したい
          */
@@ -229,6 +228,13 @@ class GLState: public Object {
      * ViewPort情報
      */
     RectI viewportContext;
+
+    /**
+     * GPUキャパシティと配列のMIN値
+     */
+    struct {
+        s32 MAX_TEXTURE_UNITS;
+    } caps;
 
 public:
     GLState();
@@ -471,6 +477,9 @@ public:
      * 引数のテクスチャがどれかにバインドされている場合、バインドを解除する。
      */
     inline void unbindTexture(const GLuint texture) {
+        const s32 active = textureContext.active;
+        assert(active >= 0);
+
         for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
             if (textureContext.textures[i] == texture) {
                 // テクスチャが一致したからunbind
@@ -478,33 +487,37 @@ public:
                 bindTexture(textureContext.targets[i], 0);
             }
         }
+        activeTexture(active);
     }
 
     /**
      * 空いているテクスチャユニット番号を取得する
+     * @param overrride trueの場合、適当なテクスチャユニットをピックアップして返す。
      */
-    inline s32 getFreeTextureUnitIndex() {
-        for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
+    inline s32 getFreeTextureUnitIndex(const jcboolean overrride) {
+        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
             if (textureContext.textures[i] == 0) {
                 return i;
             }
         }
 
-        // どのテクスチャユニットも空いていない
-        jclog("free texture unit not found...");
-        {
-            for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
-                jclogf("texture[%d] = %x", i, textureContext.textures[i]);
-            }
+        //強制的に持ち回りでテクスチャユニットを上書きする
+        if (overrride) {
+            static s32 g_overrideTextureUnitIndex = 0;
+            const s32 unitIndex = ((++g_overrideTextureUnitIndex) % caps.MAX_TEXTURE_UNITS);
+//            jclogf("texture unit = %d", unitIndex);
+            return unitIndex;
+        } else {
+            // 上書きせずにエラーを返す
+            return -1;
         }
-        return -1;
     }
 
     /**
      * 指定したテクスチャがバインド済みになっているかを調べる
      */
     inline jcboolean isBindedTexture(const GLenum target, const GLuint texture) const {
-        for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
+        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
             if (textureContext.textures[i] == texture && textureContext.targets[i] == target) {
                 return jctrue;
             }
@@ -516,7 +529,7 @@ public:
      * まだバインドされているかをチェックする
      */
     inline jcboolean isBindedTexture(const u32 index, const GLenum target, const GLuint texture) {
-        assert(index < MAX_TEXTURE_UNIT);
+        assert(index < caps.MAX_TEXTURE_UNITS);
         return textureContext.textures[index] == texture && textureContext.targets[index] == target;
     }
 
@@ -525,7 +538,7 @@ public:
      */
     inline jcboolean bindTexture(const GLenum target, const GLuint texture) {
         const s32 index = getActiveTextureIndex();
-        assert(index >= 0);
+        assert(index >= 0 && index < caps.MAX_TEXTURE_UNITS);
         const GLuint currentTex = textureContext.textures[index];
         const GLenum currentTarget = textureContext.targets[index];
 

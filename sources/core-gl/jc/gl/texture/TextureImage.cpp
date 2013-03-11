@@ -20,11 +20,6 @@
 namespace jc {
 namespace gl {
 
-/**
- * 強制的に持ち回りでテクスチャユニットを上書きする
- */
-static s32 g_overrideTextureUnitIndex = 0;
-
 TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     this->alloced = jcfalse;
     this->width = width;
@@ -37,7 +32,7 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     texture.alloc(device->getVRAM(), VRAM_Texture);
 
     {
-        s32 index = state->getFreeTextureUnitIndex();
+        s32 index = getFreeTextureUnitIndex();
         this->bind(index);
         {
             // npotでは GL_CLAMP_TO_EDGE を指定する必要がある
@@ -66,7 +61,7 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     texture.alloc(device->getVRAM(), VRAM_Texture);
 
     {
-        s32 index = state->getFreeTextureUnitIndex();
+        s32 index = getFreeTextureUnitIndex();
         this->bind(index);
         {
             // npotでは GL_CLAMP_TO_EDGE を指定する必要がある
@@ -86,6 +81,10 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
 
 TextureImage::~TextureImage() {
     this->dispose();
+}
+
+s32 TextureImage::getFreeTextureUnitIndex() {
+    return state->getFreeTextureUnitIndex(jctrue);
 }
 
 void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum) {
@@ -213,12 +212,8 @@ s32 TextureImage::bind() {
         bindUnit = -1;
     }
 
-    s32 unitIndex = state->getFreeTextureUnitIndex();
-
-    if (unitIndex < 0) {
-        unitIndex = (++g_overrideTextureUnitIndex % (s32) GPUCapacity::getMaxTextureUnits());
-        jclogf("texture unit = %d", unitIndex);
-    }
+    s32 unitIndex = getFreeTextureUnitIndex();
+//    unitIndex = 0;
     this->bind(unitIndex);
     return unitIndex;
 }
@@ -227,6 +222,8 @@ s32 TextureImage::bind() {
  * テクスチャをindex番のユニットに関連付ける
  */
 void TextureImage::bind(s32 index) {
+    assert(index >= 0);
+
     if (bindUnit == index) {
         if (state->isBindedTexture(bindUnit, target, texture.get())) {
             state->activeTexture(index);
