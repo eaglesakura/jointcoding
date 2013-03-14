@@ -72,9 +72,9 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             raw_buffer = (void*) temp_buffer.get();
         }
 
-        {
+        try {
             // lock
-            DeviceLock lock(device, jctrue);
+            DeviceLock lock(device, jcfalse);
 
             // make texture
             result.reset(new TextureImage(imageWidth, imageHeight, device));
@@ -87,6 +87,11 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 PRINT_GL_ERROR;
             }
             result->unbind();
+        } catch (EGLException &e) {
+            // ref
+            env->DeleteLocalRef(ndkImageDecoder);
+            env->DeleteLocalRef(pixelBuffer);
+            throw;
         }
     }
 
