@@ -74,7 +74,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
 
         try {
             // lock
-            DeviceLock lock(device, jcfalse);
+            DeviceLock lock(device, jctrue);
 
             // make texture
             result.reset(new TextureImage(imageWidth, imageHeight, device));

@@ -215,13 +215,14 @@ public:
      * 呼び出しをされているのがカレントスレッドに当たる場合はtrueを返す。
      */
     virtual jcboolean isCurrentThread() {
+        MThreadID id = threadId;
 
         // threadがそもそも設定されていないならfalseしかない
-        if (!threadId) {
+        if (!id) {
             return jcfalse;
         }
 
-        return threadId->isCurrent();
+        return id->isCurrent();
     }
 
     /**
@@ -229,7 +230,7 @@ public:
      */
     virtual void waitLockRequest(s32 sleep_ms, jcboolean *cancel_flag) {
         // ロックリクエストを保持している間はループさせる
-        while (hasLockRequest()) {
+        while (hasLockRequest() && !isCurrentThread()) {
             Thread::sleep(sleep_ms);
 
             if (cancel_flag && *cancel_flag) {
