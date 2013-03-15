@@ -21,6 +21,8 @@ SceneGraph::~SceneGraph() {
  * 子を追加する
  */
 void SceneGraph::pushBackChild(MSceneGraph child) {
+    assert(child.get() != NULL);
+
     // 既に自分自身が親だったら何もしない
     if (child->parent == this) {
         return;
@@ -41,11 +43,22 @@ void SceneGraph::pushBackChild(MSceneGraph child) {
  * 子を外す
  */
 void SceneGraph::removeChild(MSceneGraph child) {
+    assert(child.get() != NULL);
+
     // 違う親が設定されていたら何もしない
     if (child->parent != this) {
+        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+
+        // 子を探索する
+        while (itr != end) {
+            (*itr)->removeChild(child);
+            ++itr;
+        }
+
         return;
     }
 
+//    jclogf("detatch (%x)", child.get());
     child->parent = NULL;
     childs.remove(child);
 
@@ -83,6 +96,22 @@ void SceneGraph::removeChilds() {
  * 見つからなかったらnullを返す
  */
 MSceneGraph SceneGraph::findScene(const scene_id uniqueId) const {
+    assert(uniqueId != this->uniqueId);
+
+    std::list<MSceneGraph> *target_list = (std::list<MSceneGraph>*)&childs;
+    std::list<MSceneGraph>::iterator itr = target_list->begin(), end = target_list->end();
+
+    while (itr != end) {
+        if ((*itr)->getUniqueId() == uniqueId) {
+            return *itr;
+        } else {
+            MSceneGraph result = (*itr)->findScene(uniqueId);
+            if (result) {
+                return result;
+            }
+        }
+        ++itr;
+    }
     return MSceneGraph();
 }
 
