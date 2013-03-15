@@ -44,6 +44,13 @@ class DeviceLock {
     jcboolean def_locked;
 
     /**
+     *
+     */
+    request_id lock_request;
+
+    jcboolean lock_requested;
+
+    /**
      * デバイスの専有を行う
      */
     void lockDevice() {
@@ -59,12 +66,15 @@ class DeviceLock {
 
         // 専有が現在のスレッドと違うのならば、ロックリクエストを送る
         if(!current_thread) {
-            device->incLockRequest();
-            {
-                // Mutex占有権を取得する
-                lock.reset(new MutexLock(device->getGPUMutex()));
+            lock_request = device->lockRequest();
+            lock_requested = jctrue;
+
+            while(!device->isCurrentRequest(lock_request)) {
+//                jclogf("wait lock request(%d)", (s32)lock_request);
+                Thread::sleep(10);
             }
-            device->decLockRequest();
+            // Mutex占有権を取得する
+            lock.reset(new MutexLock(device->getGPUMutex()));
         } else {
             def_locked = jctrue;
         }
@@ -91,6 +101,9 @@ class DeviceLock {
             device->makeCurrent(EGLMakeCurrent_Unbind);
         }
 
+        if(lock_requested) {
+            device->unlockRequest(lock_request);
+        }
         lock.reset();
     }
 
@@ -114,6 +127,8 @@ public:
         this->locked = jcfalse;
         this->def_locked = jcfalse;
         this->device = device;
+        this->lock_request = 0;
+        this->lock_requested = jcfalse;
         lockDevice();
 
         if(throw_error) {

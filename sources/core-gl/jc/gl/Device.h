@@ -11,6 +11,7 @@
 #include    "jc/egl/EGLContext.h"
 #include    "jc/egl/EGLSurface.h"
 #include    "jc/thread/Thread.h"
+#include    "jc/thread/Mutex.h"
 
 namespace jc {
 namespace gl {
@@ -40,6 +41,11 @@ enum DeviceFlag_e {
 };
 
 class DeviceLock;
+
+/**
+ * ロックリクエストのID
+ */
+typedef u64 request_id;
 
 /**
  * 描画に必要な情報を一塊にしたものをDeviceとする。
@@ -72,6 +78,11 @@ protected:
     u32 flags;
 
     /**
+     * ロックリクエストを送るためのMutex
+     */
+    jcmutex request_mutex;
+
+    /**
      * GPU制御のためのMutex。
      * ひとつのContext(eglMakeCurrent)に対して１つ割り当てる。
      * eglMakeCurrent中はこのMutexを取得し、安全にロック制御を行う必要がある。
@@ -84,36 +95,45 @@ protected:
     MThreadID threadId;
 
     /**
-     * 別スレッドからのロックリクエスト数
+     * 現在のリクエストID
+     * リクエストの予約番号として処理される。
      */
-    s32 lock_request;
+    request_id current_request;
+
+    /**
+     * 現在占有権のあるリクエストID
+     * DeviceLockが開放される度にデクリメントされる
+     */
+    request_id current_id;
 
 private:
     // for DeviceLock
 
     /**
-     * ロックリクエスト数をインクリメントする。
-     * DeviceLockを得る直前にインクリメントされる。
+     * ロックリクエストを発行する。
+     *
      */
-    virtual void incLockRequest() {
-        ++lock_request;
+    virtual request_id lockRequest() {
+        MutexLock lock(request_mutex);
+        return current_request++;
     }
 
     /**
-     * ロックリクエスト数をデクリメントする。
-     * DeviceLockを得た直後にデクリメントされる。
+     * リクエストが占有権を持っている場合はtrueを返す
      */
-    virtual void decLockRequest() {
-        --lock_request;
+    virtual request_id isCurrentRequest(const request_id id) {
+        MutexLock lock(request_mutex);
+        assert(current_id <= id);
+        return current_id == id;
     }
 
     /**
-     * ロックリクエストを処理しきれていないならtrueを返す。
-     * 短い間に同一スレッドからのMutexは制御がわたらない危険性がある。（例えば、while(true){ rendering(); }のレンダリングループ）
-     * 短い間にロックを再取得する恐れがある場合は適宜ロックリクエストのチェックを行う。
+     * リクエストの処理を終了した
      */
-    virtual jcboolean hasLockRequest() {
-        return lock_request > 0;
+    virtual void unlockRequest(const request_id id) {
+        MutexLock lock(request_mutex);
+        assert(id == current_id);
+        ++current_id;
     }
 
     /**
@@ -226,21 +246,6 @@ public:
     }
 
     /**
-     * ロックリクエストを処理しきるまで、ウェイトをかける。
-     */
-    virtual void waitLockRequest(s32 sleep_ms, jcboolean *cancel_flag) {
-        // ロックリクエストを保持している間はループさせる
-        while (hasLockRequest() && !isCurrentThread()) {
-            Thread::sleep(sleep_ms);
-
-            if (cancel_flag && *cancel_flag) {
-                // キャンセルフラグが設定されていて、かつjctrueである場合はキャンセルを行う。
-                return;
-            }
-        }
-    }
-
-    /**
      * 現在のコンテキストのステートを取得する
      */
     virtual MGLState getState() {
@@ -286,6 +291,20 @@ public:
         }
         if (result_height) {
             (*result_height) = viewport_height;
+        }
+    }
+
+    /**
+     * 呼び出しスレッドがリクエスト権を持てるようになるまで待つ。
+     * 但し、その他のスレッドからの要求で呼び出し順が変化ある場合は何もしない。
+     */
+    virtual void waitLockRequest(const s32 sleepMs, const jcboolean *canceled) {
+        while (current_request != current_id) {
+            if (canceled && (*canceled)) {
+                // キャンセルチェック
+                return;
+            }
+            Thread::sleep(sleepMs);
         }
     }
 

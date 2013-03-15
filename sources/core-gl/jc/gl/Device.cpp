@@ -11,7 +11,8 @@ namespace gl {
 
 Device::Device() {
     flags = 0;
-    lock_request = 0;
+    current_request = 0;
+    current_id = 0;
 }
 
 Device::~Device() {

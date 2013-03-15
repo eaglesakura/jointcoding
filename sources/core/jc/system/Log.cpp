@@ -18,8 +18,8 @@ namespace jc {
 
 void __logDebugF(const LogType_e type, const charactor* __file, const char* fmt, ...) {
 #if defined(DEBUG) || defined(OUTPUT_LOG)
-    static jc::jcmutex mutex;
-    MutexLock lock(mutex);
+//    static jc::jcmutex mutex;
+//    MutexLock lock(mutex);
     {
 #ifndef IDE_ECLIPSE
         va_list ap;
