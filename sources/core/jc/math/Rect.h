@@ -84,6 +84,13 @@ struct RectT {
         top += y;
         bottom += y;
     }
+
+    /**
+     * 面積を求める
+     */
+    T getAreaSize() const {
+        return jc::abs(width() * height());
+    }
 };
 
 /**
