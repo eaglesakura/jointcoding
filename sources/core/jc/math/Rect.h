@@ -60,6 +60,12 @@ struct RectT {
         this->bottom = top + _height;
     }
 
+    void moveToLeft(const T left) {
+        const T _width = width();
+        this->left = left;
+        this->right =left + _width;
+    }
+
     /**
      * Left/Top/Right/Bottomで一致を確認する
      */
