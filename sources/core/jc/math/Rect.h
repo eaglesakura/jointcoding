@@ -100,6 +100,21 @@ struct RectT {
     T getAreaSize() const {
         return jc::abs(width() * height());
     }
+
+
+    void copy(const RectT<s32> origin) {
+        left = (T)origin.left;
+        top = (T)origin.top;
+        right = (T)origin.right;
+        bottom = (T)origin.bottom;
+    }
+
+    void copy(const RectT<float> origin) {
+        left = (T)origin.left;
+        top = (T)origin.top;
+        right = (T)origin.right;
+        bottom = (T)origin.bottom;
+    }
 };
 
 /**

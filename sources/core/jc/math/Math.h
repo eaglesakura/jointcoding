@@ -45,13 +45,27 @@ inline const T minmax(const T _min, const T _max, const T value) {
 }
 
 /**
+ * 四捨五入を行う
+ */
+inline const s32 round(const float value) {
+    return (s32) (value + 0.5f);
+}
+
+/**
+ * 四捨五入を行う
+ */
+inline const s64 round(const double value) {
+    return (s64) (value + 0.5);
+}
+
+/**
  * 2つの値をブレンドする。
  * 0.0 = before
  * 1.0 = after
  */
 template<typename T>
 inline const T blend(const T before, const T after, const double weight) {
-    return (T)((double)after * weight) + ((double)before * (1.0 - weight));
+    return (T) ((double) after * weight) + ((double) before * (1.0 - weight));
 }
 
 /**

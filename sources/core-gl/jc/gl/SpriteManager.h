@@ -148,6 +148,13 @@ public:
     }
 
     /**
+     * 四角形描画を行う
+     */
+    virtual void renderingRect(const RectF &dst, const u32 rgba) {
+        renderingRect(jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()), rgba);
+    }
+
+    /**
      * 画像を描画する
      * @param src{XYWH} テクスチャ内の座標をpix単位で指定する
      * @param dst{XYWH} 描画先の座標をpix単位で指定する。
@@ -207,6 +214,14 @@ public:
      */
     virtual void setRenderArea(const RectI &display) {
         setRenderArea(display.left, display.top, display.width(), display.height());
+    }
+
+    /**
+     * レンダリングエリアを設定する
+     * 設定はディスプレイ座標系（左上原点）で行う
+     */
+    virtual void setRenderArea(const RectF &display) {
+        setRenderArea(jc::round(display.left), jc::round(display.top), jc::round(display.width()), jc::round(display.height()));
     }
 
     /**
