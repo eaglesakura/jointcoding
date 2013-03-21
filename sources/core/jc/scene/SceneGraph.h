@@ -88,6 +88,14 @@ public:
     }
 
     /**
+     * レンダリング優先度を取得する
+     * priorityが大きい順に描画する
+     */
+    virtual void setRenderingPriority(const float set) {
+        this->renderingPriority = set;
+    }
+
+    /**
      * 親から参照を外す
      */
     virtual void removeFromParent();

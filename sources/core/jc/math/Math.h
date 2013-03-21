@@ -45,6 +45,16 @@ inline const T minmax(const T _min, const T _max, const T value) {
 }
 
 /**
+ * 2つの値をブレンドする。
+ * 0.0 = before
+ * 1.0 = after
+ */
+template<typename T>
+inline const T blend(const T before, const T after, const double weight) {
+    return (T)((double)after * weight) + ((double)before * (1.0 - weight));
+}
+
+/**
  * 整数nが2の乗数の場合、trueを返す。
  */
 template<class T>

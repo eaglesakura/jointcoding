@@ -52,6 +52,15 @@ struct RectT {
     }
 
     /**
+     * 指定座標がTOPになるように移動させる
+     */
+    void moveToTop(const T top) {
+        const T _height = height();
+        this->top = top;
+        this->bottom = top + _height;
+    }
+
+    /**
      * Left/Top/Right/Bottomで一致を確認する
      */
     jcboolean equalsLTRB(const T l, const T t, const T r, const T b) const {

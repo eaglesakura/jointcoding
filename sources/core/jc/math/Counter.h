@@ -28,6 +28,11 @@ enum CounterType_e {
      * 最小値まで戻ったら停止する
      */
     CounterType_MinStop,
+
+    /**
+     * 最大・最小のどちらかで停止する
+     */
+    CounterType_EdgeStop,
 };
 
 enum LeapType_e {
@@ -132,22 +137,20 @@ public:
      * カウンターを次へ進める
      */
     CounterT<T>& increment() {
-        if (stopped) {
-            return *this;
-        }
-
+        stopped = jcfalse;
         if (inc) {
             // インクリメント処理
             value += offset;
             if (value > maxValue) {
                 // 最大値を超えたら
                 value = maxValue;
-                if (type != CounterType_MaxStop) {
-                    inc = !inc;
-                    ++revertCount;
-                } else {
+
+                if (type == CounterType_MaxStop || type == CounterType_EdgeStop) {
                     // 最大停止モードだったら止める
                     stopped = jctrue;
+                } else {
+                    inc = !inc;
+                    ++revertCount;
                 }
             }
         } else {
@@ -156,12 +159,12 @@ public:
             if (value < minValue) {
                 // 最低値を下回ったら
                 value = minValue;
-                if (type != CounterType_MinStop) {
-                    inc = !inc;
-                    ++revertCount;
-                } else {
+                if (type == CounterType_MinStop || type == CounterType_EdgeStop) {
                     // 最低停止モードだったら止める
                     stopped = jctrue;
+                } else {
+                    inc = !inc;
+                    ++revertCount;
                 }
             }
         }
@@ -173,9 +176,7 @@ public:
      * カウンターを戻す
      */
     CounterT<T>& decrement() {
-        if (stopped) {
-            return *this;
-        }
+        stopped = jcfalse;
 
         if (!inc) {
             // インクリメント処理
@@ -183,12 +184,12 @@ public:
             if (value > maxValue) {
                 // 最大値を超えたら
                 value = maxValue;
-                if (type != CounterType_MaxStop) {
-                    inc = !inc;
-                    ++revert;
-                } else {
+                if (type == CounterType_MaxStop || type == CounterType_EdgeStop) {
                     // 最大停止モードだったら止める
                     stopped = jctrue;
+                } else {
+                    inc = !inc;
+                    ++revertCount;
                 }
             }
         } else {
@@ -197,12 +198,12 @@ public:
             if (value < minValue) {
                 // 最低値を下回ったら
                 value = minValue;
-                if (type != CounterType_MinStop) {
-                    inc = !inc;
-                    ++revert;
-                } else {
+                if (type == CounterType_MinStop || type == CounterType_EdgeStop) {
                     // 最低停止モードだったら止める
                     stopped = jctrue;
+                } else {
+                    inc = !inc;
+                    ++revertCount;
                 }
             }
         }
@@ -296,7 +297,7 @@ public:
      *
      * @seel http://game.g.hatena.ne.jp/Nao_u/20110505
      */
-    const T getValue(const LeapType_e type) {
+    const T getValue(const LeapType_e type) const {
         switch (type) {
             case LeapType_Direct:
                 return value;

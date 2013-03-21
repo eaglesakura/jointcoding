@@ -161,6 +161,24 @@ public:
      * @param result
      * @return
      */
+    RectI* getDefaultRenderingArea(const FitType_e fitting, RectI *result) const {
+        RectF area;
+        getDefaultRenderingArea(fitting, &area);
+
+        result->left = (s32)area.left;
+        result->top = (s32)area.top;
+        result->right = (s32)area.right;
+        result->bottom = (s32)area.bottom;
+
+        return result;
+    }
+
+    /**
+     * デフォルトのレンダリングエリアを取得する。
+     * @param fitting
+     * @param result
+     * @return
+     */
     RectF* getDefaultRenderingArea(const FitType_e fitting, RectF *result) const {
         float width = 0;
         float height = 0;
@@ -401,7 +419,6 @@ public:
 
         return result;
     }
-
 
     float getViewportLeft() const {
         return viewport.left;
