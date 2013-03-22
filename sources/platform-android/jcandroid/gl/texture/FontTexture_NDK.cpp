@@ -41,11 +41,10 @@ jc_sp<FontTexture> FontTexture::createInstance(const String &text, const u32 hei
         void* raw_buffer = env->GetDirectBufferAddress(pixelBuffer);
         result->bind();
         {
-            result->copyPixelLine(raw_buffer, GL_UNSIGNED_BYTE, GL_RGBA, 0, 0, imageHeight);
+            result->copyPixelLine(raw_buffer, GL_UNSIGNED_BYTE, GL_BGRA_EXT, 0, 0, imageHeight);
         }
         result->unbind();
     }
-
     env->DeleteLocalRef(ndkImageDecoder);
     env->DeleteLocalRef(pixelBuffer);
     return result;
