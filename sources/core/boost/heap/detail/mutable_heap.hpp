@@ -155,7 +155,7 @@ protected:
     priority_queue_mutable_wrapper (priority_queue_mutable_wrapper && rhs):
         q_(std::move(rhs.q_))
     {
-        /// FIXME: msvc seems to invalidate iterators when moving std::list
+        /// FIXME_BOOST: msvc seems to invalidate iterators when moving std::list
         std::swap(objects, rhs.objects);
     }
 

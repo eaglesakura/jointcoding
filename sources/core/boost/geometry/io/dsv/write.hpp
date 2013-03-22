@@ -304,7 +304,7 @@ struct dsv<polygon_tag, Polygon>
 namespace detail { namespace dsv
 {
 
-// FIXME: This class is not copyable/assignable but it is used as such --mloskot
+// FIXME_BOOST: This class is not copyable/assignable but it is used as such --mloskot
 template <typename Geometry>
 class dsv_manipulator
 {

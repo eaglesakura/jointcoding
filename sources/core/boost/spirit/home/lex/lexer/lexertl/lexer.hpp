@@ -40,7 +40,7 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
         template <typename Char>
         inline bool must_escape(Char c)
         {
-            // FIXME: more needed?
+            // FIXME_BOOST: more needed?
             switch (c) {
             case '+': case '/': case '*': case '?':
             case '|':

@@ -135,7 +135,7 @@ namespace boost { namespace spirit
         template <typename Env>
         struct result
         {
-            // FIXME: is this remove_const really necessary?
+            // FIXME_BOOST: is this remove_const really necessary?
             typedef typename
                 remove_const<
                     typename mpl::at_c<typename Env::args_type, 0>::type

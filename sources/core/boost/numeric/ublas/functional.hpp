@@ -1484,7 +1484,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_CHECK (i >= j, bad_index ());
             detail::ignore_unused_variable_warning(size_i);
             detail::ignore_unused_variable_warning(size_j);
-            // FIXME size_type overflow
+            // FIXME_BOOST_BOOST size_type overflow
             // sigma_i (i + 1) = (i + 1) * i / 2
             // i = 0 1 2 3, sigma = 0 1 3 6
             return ((i + 1) * i) / 2 + j;
@@ -1495,7 +1495,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_CHECK (i < size_i, bad_index ());
             BOOST_UBLAS_CHECK (j < size_j, bad_index ());
             BOOST_UBLAS_CHECK (i <= j, bad_index ());
-            // FIXME size_type overflow
+            // FIXME_BOOST_BOOST size_type overflow
             // sigma_i (size - i) = size * i - i * (i - 1) / 2
             // i = 0 1 2 3, sigma = 0 4 7 9
             return (i * (2 * (std::max) (size_i, size_j) - i + 1)) / 2 + j - i;
@@ -1660,7 +1660,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_CHECK (i < size_i, bad_index ());
             BOOST_UBLAS_CHECK (j < size_j, bad_index ());
             BOOST_UBLAS_CHECK (i >= j, bad_index ());
-            // FIXME size_type overflow
+            // FIXME_BOOST_BOOST size_type overflow
             // sigma_j (size - j) = size * j - j * (j - 1) / 2
             // j = 0 1 2 3, sigma = 0 4 7 9
             return i - j + (j * (2 * (std::max) (size_i, size_j) - j + 1)) / 2;
@@ -1671,7 +1671,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_CHECK (i < size_i, bad_index ());
             BOOST_UBLAS_CHECK (j < size_j, bad_index ());
             BOOST_UBLAS_CHECK (i <= j, bad_index ());
-            // FIXME size_type overflow
+            // FIXME_BOOST_BOOST size_type overflow
             // sigma_j (j + 1) = (j + 1) * j / 2
             // j = 0 1 2 3, sigma = 0 1 3 6
             return i + ((j + 1) * j) / 2;
@@ -1727,7 +1727,7 @@ namespace boost { namespace numeric { namespace ublas {
         bool other (size_type /* i */, size_type /* j */) {
             return true;
         }
-        // FIXME: this should not be used at all
+        // FIXME_BOOST_BOOST: this should not be used at all
         static
         BOOST_UBLAS_INLINE
         size_type restrict1 (size_type i, size_type /* j */) {

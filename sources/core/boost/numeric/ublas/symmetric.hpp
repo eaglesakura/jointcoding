@@ -1219,7 +1219,7 @@ namespace boost { namespace numeric { namespace ublas {
                                    (current_ == 0 && it1_ != it1_end_) ||
                                    (current_ == 1 && it2_ != it2_end_), internal_logic ());
             }
-            // FIXME cannot compile
+            // FIXME_BOOST cannot compile
             //  iterator1 does not have these members!
             BOOST_UBLAS_INLINE
             const_iterator1 (const iterator1 &it):
@@ -1666,7 +1666,7 @@ namespace boost { namespace numeric { namespace ublas {
                                    (current_ == 0 && it1_ != it1_end_) ||
                                    (current_ == 1 && it2_ != it2_end_), internal_logic ());
             }
-            // FIXME cannot compiler
+            // FIXME_BOOST cannot compiler
             //  iterator2 does not have these members!
             BOOST_UBLAS_INLINE
             const_iterator2 (const iterator2 &it):

@@ -1256,7 +1256,7 @@ namespace boost { namespace spirit
 
         if (t == type::range_type)
         {
-            // FIXME: O(n), and we have the room to store the size of a range
+            // FIXME_BOOST: O(n), and we have the room to store the size of a range
             // in the union if we compute it when assigned/constructed.
             std::size_t size = 0;
             detail::list::node* n = r.first;

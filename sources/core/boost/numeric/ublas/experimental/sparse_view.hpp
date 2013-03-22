@@ -149,10 +149,10 @@ namespace boost { namespace numeric { namespace ublas {
         typedef const matrix_reference<const self_type> const_closure_type;
         typedef matrix_reference<self_type> closure_type;
 
-        // FIXME: define a corresponding temporary type
+        // FIXME_BOOST: define a corresponding temporary type
         // typedef compressed_vector<T, IB, IA, TA> vector_temporary_type;
 
-        // FIXME: define a corresponding temporary type
+        // FIXME_BOOST: define a corresponding temporary type
         // typedef self_type matrix_temporary_type;
 
         typedef sparse_tag storage_category;

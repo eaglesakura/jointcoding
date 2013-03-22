@@ -336,7 +336,7 @@ namespace boost { namespace spirit { namespace repository { namespace karma
         >
       , spirit::karma::generator<subrule<ID_, T1, T2> >
     {
-        //FIXME should go fetch the real properties of this subrule's definition in the current context, but we don't
+        //FIXME_BOOST should go fetch the real properties of this subrule's definition in the current context, but we don't
         // have the context here (properties would need to be 'template<typename Context> struct properties' instead)
         typedef mpl::int_<
             spirit::karma::generator_properties::all_properties> properties;

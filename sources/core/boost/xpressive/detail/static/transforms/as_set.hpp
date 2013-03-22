@@ -144,14 +144,14 @@ namespace boost { namespace xpressive { namespace grammar_detail
         template<typename Not>
         void set_(detail::literal_matcher<traits_type, icase_type, Not> const &ch) const
         {
-            // BUGBUG fixme!
+            // BUGBUG FIXME_BOOST!
             BOOST_MPL_ASSERT_NOT((Not));
             set_char(this->charset_.charset_, ch.ch_, this->visitor_.traits(), icase_type());
         }
 
         void set_(detail::range_matcher<traits_type, icase_type> const &rg) const
         {
-            // BUGBUG fixme!
+            // BUGBUG FIXME_BOOST!
             BOOST_ASSERT(!rg.not_);
             set_range(this->charset_.charset_, rg.ch_min_, rg.ch_max_, this->visitor_.traits(), icase_type());
         }
@@ -159,7 +159,7 @@ namespace boost { namespace xpressive { namespace grammar_detail
         template<typename Size>
         void set_(detail::set_matcher<traits_type, Size> const &set_) const
         {
-            // BUGBUG fixme!
+            // BUGBUG FIXME_BOOST!
             BOOST_ASSERT(!set_.not_);
             for(int i = 0; i < Size::value; ++i)
             {

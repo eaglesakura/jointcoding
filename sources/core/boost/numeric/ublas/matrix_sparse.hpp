@@ -359,7 +359,7 @@ namespace boost { namespace numeric { namespace ublas {
     public:
         BOOST_UBLAS_INLINE
         void resize (size_type size1, size_type size2, bool preserve = true) {
-            // FIXME preserve unimplemented
+            // FIXME_BOOST preserve unimplemented
             BOOST_UBLAS_CHECK (!preserve, internal_logic ());
             size1_ = size1;
             size2_ = size2;
@@ -1428,7 +1428,7 @@ namespace boost { namespace numeric { namespace ublas {
         // Resizing
         BOOST_UBLAS_INLINE
         void resize (size_type size1, size_type size2, bool preserve = true) {
-            // FIXME preserve unimplemented
+            // FIXME_BOOST preserve unimplemented
             BOOST_UBLAS_CHECK (!preserve, internal_logic ());
             size1_ = size1;
             size2_ = size2;
@@ -1903,7 +1903,7 @@ namespace boost { namespace numeric { namespace ublas {
                     } else {
                         i_ = index1 () - 1;
                     }
-                    // FIXME: this expression should never become true!
+                    // FIXME_BOOST: this expression should never become true!
                     if (rank_ == 1 && -- itv_ == m.end1 ().itv_)
                         *this = m.find1 (rank_, i_, j_, -1);
                     else if (rank_ == 1) {
@@ -2078,7 +2078,7 @@ namespace boost { namespace numeric { namespace ublas {
                     } else {
                         i_ = index1 () - 1;
                     }
-                    // FIXME: this expression should never become true!
+                    // FIXME_BOOST: this expression should never become true!
                     if (rank_ == 1 && -- itv_ == m.end1 ().itv_)
                         *this = m.find1 (rank_, i_, j_, -1);
                     else if (rank_ == 1) {
@@ -2258,7 +2258,7 @@ namespace boost { namespace numeric { namespace ublas {
                     } else {
                         j_ = index2 () - 1;
                     }
-                    // FIXME: this expression should never become true!
+                    // FIXME_BOOST: this expression should never become true!
                     if (rank_ == 1 && -- itv_ == m.end2 ().itv_)
                         *this = m.find2 (rank_, i_, j_, -1);
                     else if (rank_ == 1) {
@@ -2433,7 +2433,7 @@ namespace boost { namespace numeric { namespace ublas {
                     } else {
                         j_ = index2 () - 1;
                     }
-                    // FIXME: this expression should never become true!
+                    // FIXME_BOOST: this expression should never become true!
                     if (rank_ == 1 && -- itv_ == m.end2 ().itv_)
                         *this = m.find2 (rank_, i_, j_, -1);
                     else if (rank_ == 1) {
@@ -2637,7 +2637,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef typename IA::value_type size_type;
         // size_type for the data arrays.
         typedef typename IA::size_type array_size_type;
-        // FIXME difference type for sparse storage iterators should it be in the container?
+        // FIXME_BOOST difference type for sparse storage iterators should it be in the container?
         typedef typename IA::difference_type difference_type;
         typedef T value_type;
         typedef const T &const_reference;
@@ -2803,7 +2803,7 @@ namespace boost { namespace numeric { namespace ublas {
     public:
         BOOST_UBLAS_INLINE
         void resize (size_type size1, size_type size2, bool preserve = true) {
-            // FIXME preserve unimplemented
+            // FIXME_BOOST preserve unimplemented
             BOOST_UBLAS_CHECK (!preserve, internal_logic ());
             size1_ = size1;
             size2_ = size2;
@@ -4145,7 +4145,7 @@ namespace boost { namespace numeric { namespace ublas {
     public:
         BOOST_UBLAS_INLINE
         void resize (size_type size1, size_type size2, bool preserve = true) {
-            // FIXME preserve unimplemented
+            // FIXME_BOOST preserve unimplemented
             BOOST_UBLAS_CHECK (!preserve, internal_logic ());
             size1_ = size1;
             size2_ = size2;

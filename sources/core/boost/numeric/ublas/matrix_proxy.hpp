@@ -1121,7 +1121,7 @@ namespace boost { namespace numeric { namespace ublas {
 
         // Iterator types
     private:
-        // Use range as an index - FIXME this fails for packed assignment
+        // Use range as an index - FIXME_BOOST this fails for packed assignment
         typedef typename range_type::const_iterator const_subiterator1_type;
         typedef typename range_type::const_iterator subiterator1_type;
         typedef typename range_type::const_iterator const_subiterator2_type;
@@ -1146,7 +1146,7 @@ namespace boost { namespace numeric { namespace ublas {
             public iterator_base_traits<typename M::const_iterator1::iterator_category>::template
                         iterator_base<const_iterator, value_type>::type {
         public:
-            // FIXME Iterator can never be different code was:
+            // FIXME_BOOST Iterator can never be different code was:
             // typename iterator_restrict_traits<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::iterator_category>
             BOOST_STATIC_ASSERT ((boost::is_same<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::value ));
 
@@ -1200,7 +1200,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -1254,7 +1254,7 @@ namespace boost { namespace numeric { namespace ublas {
             public iterator_base_traits<typename M::iterator1::iterator_category>::template
                         iterator_base<iterator, value_type>::type {
         public:
-            // FIXME Iterator can never be different code was:
+            // FIXME_BOOST Iterator can never be different code was:
             // typename iterator_restrict_traits<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::iterator_category>
             BOOST_STATIC_ASSERT ((boost::is_same<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::value ));
 
@@ -1305,7 +1305,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -1584,7 +1584,7 @@ namespace boost { namespace numeric { namespace ublas {
 
         // Iterator types
     private:
-        // Use slice as an index - FIXME this fails for packed assignment
+        // Use slice as an index - FIXME_BOOST this fails for packed assignment
         typedef typename slice_type::const_iterator const_subiterator1_type;
         typedef typename slice_type::const_iterator subiterator1_type;
         typedef typename slice_type::const_iterator const_subiterator2_type;
@@ -1611,7 +1611,7 @@ namespace boost { namespace numeric { namespace ublas {
             public iterator_base_traits<typename M::const_iterator1::iterator_category>::template
                         iterator_base<const_iterator, value_type>::type {
         public:
-            // FIXME Iterator can never be different code was:
+            // FIXME_BOOST Iterator can never be different code was:
             // typename iterator_restrict_traits<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::iterator_category>
             BOOST_STATIC_ASSERT ((boost::is_same<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::value ));
 
@@ -1665,7 +1665,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -1719,7 +1719,7 @@ namespace boost { namespace numeric { namespace ublas {
             public iterator_base_traits<typename M::iterator1::iterator_category>::template
                         iterator_base<iterator, value_type>::type {
         public:
-            // FIXME Iterator can never be different code was:
+            // FIXME_BOOST Iterator can never be different code was:
             // typename iterator_restrict_traits<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::iterator_category>
             BOOST_STATIC_ASSERT ((boost::is_same<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::value ));
 
@@ -1770,7 +1770,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -2049,7 +2049,7 @@ namespace boost { namespace numeric { namespace ublas {
 
         // Iterator types
     private:
-        // Use indirect array as an index - FIXME this fails for packed assignment
+        // Use indirect array as an index - FIXME_BOOST this fails for packed assignment
         typedef typename IA::const_iterator const_subiterator1_type;
         typedef typename IA::const_iterator subiterator1_type;
         typedef typename IA::const_iterator const_subiterator2_type;
@@ -2076,7 +2076,7 @@ namespace boost { namespace numeric { namespace ublas {
             public iterator_base_traits<typename M::const_iterator1::iterator_category>::template
                         iterator_base<const_iterator, value_type>::type {
         public:
-            // FIXME Iterator can never be different code was:
+            // FIXME_BOOST Iterator can never be different code was:
             // typename iterator_restrict_traits<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::iterator_category>
             BOOST_STATIC_ASSERT ((boost::is_same<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::value ));
 
@@ -2130,7 +2130,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -2184,7 +2184,7 @@ namespace boost { namespace numeric { namespace ublas {
             public iterator_base_traits<typename M::iterator1::iterator_category>::template
                         iterator_base<iterator, value_type>::type {
         public:
-            // FIXME Iterator can never be different code was:
+            // FIXME_BOOST Iterator can never be different code was:
             // typename iterator_restrict_traits<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::iterator_category>
             BOOST_STATIC_ASSERT ((boost::is_same<typename M::const_iterator1::iterator_category, typename M::const_iterator2::iterator_category>::value ));
 
@@ -2235,7 +2235,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -3425,7 +3425,7 @@ namespace boost { namespace numeric { namespace ublas {
 
         // Iterator types
     private:
-        // Use slice as an index - FIXME this fails for packed assignment
+        // Use slice as an index - FIXME_BOOST this fails for packed assignment
         typedef typename slice_type::const_iterator const_subiterator1_type;
         typedef typename slice_type::const_iterator subiterator1_type;
         typedef typename slice_type::const_iterator const_subiterator2_type;
@@ -3496,7 +3496,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename M::const_iterator1::value_type value_type;
             typedef typename M::const_iterator1::difference_type difference_type;
-            typedef typename M::const_reference reference;    //FIXME due to indexing access
+            typedef typename M::const_reference reference;    //FIXME_BOOST due to indexing access
             typedef typename M::const_iterator1::pointer pointer;
             typedef const_iterator2 dual_iterator_type;
             typedef const_reverse_iterator2 dual_reverse_iterator_type;
@@ -3543,7 +3543,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -3638,7 +3638,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename M::iterator1::value_type value_type;
             typedef typename M::iterator1::difference_type difference_type;
-            typedef typename M::reference reference;    //FIXME due to indexing access
+            typedef typename M::reference reference;    //FIXME_BOOST due to indexing access
             typedef typename M::iterator1::pointer pointer;
             typedef iterator2 dual_iterator_type;
             typedef reverse_iterator2 dual_reverse_iterator_type;
@@ -3682,7 +3682,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -3779,7 +3779,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename M::const_iterator2::value_type value_type;
             typedef typename M::const_iterator2::difference_type difference_type;
-            typedef typename M::const_reference reference;    //FIXME due to indexing access
+            typedef typename M::const_reference reference;    //FIXME_BOOST due to indexing access
             typedef typename M::const_iterator2::pointer pointer;
             typedef const_iterator1 dual_iterator_type;
             typedef const_reverse_iterator1 dual_reverse_iterator_type;
@@ -3826,7 +3826,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -3921,7 +3921,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename M::iterator2::value_type value_type;
             typedef typename M::iterator2::difference_type difference_type;
-            typedef typename M::reference reference;    //FIXME due to indexing access
+            typedef typename M::reference reference;    //FIXME_BOOST due to indexing access
             typedef typename M::iterator2::pointer pointer;
             typedef iterator1 dual_iterator_type;
             typedef reverse_iterator1 dual_reverse_iterator_type;
@@ -3965,7 +3965,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -4448,7 +4448,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename M::const_iterator1::value_type value_type;
             typedef typename M::const_iterator1::difference_type difference_type;
-            typedef typename M::const_reference reference;    //FIXME due to indexing access
+            typedef typename M::const_reference reference;    //FIXME_BOOST due to indexing access
             typedef typename M::const_iterator1::pointer pointer;
             typedef const_iterator2 dual_iterator_type;
             typedef const_reverse_iterator2 dual_reverse_iterator_type;
@@ -4495,7 +4495,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -4590,7 +4590,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename M::iterator1::value_type value_type;
             typedef typename M::iterator1::difference_type difference_type;
-            typedef typename M::reference reference;    //FIXME due to indexing access
+            typedef typename M::reference reference;    //FIXME_BOOST due to indexing access
             typedef typename M::iterator1::pointer pointer;
             typedef iterator2 dual_iterator_type;
             typedef reverse_iterator2 dual_reverse_iterator_type;
@@ -4634,7 +4634,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -4731,7 +4731,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename M::const_iterator2::value_type value_type;
             typedef typename M::const_iterator2::difference_type difference_type;
-            typedef typename M::const_reference reference;    //FIXME due to indexing access
+            typedef typename M::const_reference reference;    //FIXME_BOOST due to indexing access
             typedef typename M::const_iterator2::pointer pointer;
             typedef const_iterator1 dual_iterator_type;
             typedef const_reverse_iterator1 dual_reverse_iterator_type;
@@ -4778,7 +4778,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE
@@ -4873,7 +4873,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename M::iterator2::value_type value_type;
             typedef typename M::iterator2::difference_type difference_type;
-            typedef typename M::reference reference;    //FIXME due to indexing access
+            typedef typename M::reference reference;    //FIXME_BOOST due to indexing access
             typedef typename M::iterator2::pointer pointer;
             typedef iterator1 dual_iterator_type;
             typedef reverse_iterator1 dual_reverse_iterator_type;
@@ -4917,7 +4917,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 return (*this) ().data_ (*it1_, *it2_);
             }
             BOOST_UBLAS_INLINE

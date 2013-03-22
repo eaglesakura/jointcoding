@@ -483,7 +483,7 @@ public:
             break;
         }
 
-    // FIXME: else, handle operators separately (will catch to many cases)
+    // FIXME_BOOST: else, handle operators separately (will catch to many cases)
 //         if (IS_CATEGORY(current, OperatorTokenType) && 
 //             IS_CATEGORY(prev, OperatorTokenType))
 //         {

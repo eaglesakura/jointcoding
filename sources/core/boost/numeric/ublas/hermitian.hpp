@@ -256,7 +256,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef typename A::size_type size_type;
         typedef typename A::difference_type difference_type;
         typedef T value_type;
-        // FIXME no better way to not return the address of a temporary?
+        // FIXME_BOOST no better way to not return the address of a temporary?
         // typedef const T &const_reference;
         typedef const T const_reference;
 #ifndef BOOST_UBLAS_STRICT_HERMITIAN
@@ -1492,7 +1492,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename const_subiterator1_type::value_type value_type;
             typedef typename const_subiterator1_type::difference_type difference_type;
-            // FIXME no better way to not return the address of a temporary?
+            // FIXME_BOOST no better way to not return the address of a temporary?
             // typedef typename const_subiterator1_type::reference reference;
             typedef typename const_subiterator1_type::value_type reference;
             typedef typename const_subiterator1_type::pointer pointer;
@@ -1526,7 +1526,7 @@ namespace boost { namespace numeric { namespace ublas {
                                    (current_ == 0 && it1_ != it1_end_) ||
                                    (current_ == 1 && it2_ != it2_end_), internal_logic ());
             }
-            // FIXME cannot compile
+            // FIXME_BOOST cannot compile
             //  iterator1 does not have these members!
             BOOST_UBLAS_INLINE
             const_iterator1 (const iterator1 &it):
@@ -1946,7 +1946,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename const_subiterator2_type::value_type value_type;
             typedef typename const_subiterator2_type::difference_type difference_type;
-            // FIXME no better way to not return the address of a temporary?
+            // FIXME_BOOST no better way to not return the address of a temporary?
             // typedef typename const_subiterator2_type::reference reference;
             typedef typename const_subiterator2_type::value_type reference;
             typedef typename const_subiterator2_type::pointer pointer;
@@ -1980,7 +1980,7 @@ namespace boost { namespace numeric { namespace ublas {
                                    (current_ == 0 && it1_ != it1_end_) ||
                                    (current_ == 1 && it2_ != it2_end_), internal_logic ());
             }
-            // FIXME cannot compiler
+            // FIXME_BOOST cannot compiler
             //  iterator2 does not have these members!
             BOOST_UBLAS_INLINE
             const_iterator2 (const iterator2 &it):

@@ -307,7 +307,7 @@ namespace boost { namespace spirit
             type;
         };
 
-        // FIXME: we need to change this to conform to the result_of protocol
+        // FIXME_BOOST: we need to change this to conform to the result_of protocol
         template <
             typename A0
           , typename A1 = unused_type

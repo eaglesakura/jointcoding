@@ -73,7 +73,7 @@ namespace boost { namespace polygon { namespace detail { namespace simplify_deta
         // perpendicular vector from the line AC to point B (i.e. AB - proj)
         ftype perpx = abx - projx, perpy = aby - projy;
         
-        // Squared fractional distance of projection. FIXME: can
+        // Squared fractional distance of projection. FIXME_BOOST: can
         // remove this division, the decisions below can be made with
         // just the sign of the quotient and a check to see if
         // abs(numerator) is greater than abs(divisor).

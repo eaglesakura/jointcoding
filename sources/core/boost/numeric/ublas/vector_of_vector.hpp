@@ -23,7 +23,7 @@
 namespace boost { namespace numeric { namespace ublas {
 
     // uBLAS sparse vector based sparse matrix class
-    // FIXME outer vector can be sparse type but it is completely filled
+    // FIXME_BOOST outer vector can be sparse type but it is completely filled
     template<class T, class L, class A>
     class generalized_vector_of_vector:
         public matrix_container<generalized_vector_of_vector<T, L, A> > {
@@ -321,7 +321,7 @@ namespace boost { namespace numeric { namespace ublas {
         BOOST_UBLAS_INLINE
         void clear () {
             const size_type sizeM = layout_type::size_M (size1_, size2_);
-            // FIXME should clear data () if this is done via value_type/*zero*/() then it is not size preserving
+            // FIXME_BOOST should clear data () if this is done via value_type/*zero*/() then it is not size preserving
             for (size_type i = 0; i < sizeM; ++ i)
                 ref (data () [i]).clear ();
             storage_invariants ();

@@ -205,7 +205,7 @@ public:
    template <class U>
    polynomial& operator *=(const polynomial<U>& value)
    {
-      // TODO: FIXME: use O(N log(N)) algorithm!!!
+      // TODO: FIXME_BOOST: use O(N log(N)) algorithm!!!
       BOOST_ASSERT(value.size());
       polynomial base(*this);
       *this *= value[0];

@@ -786,7 +786,7 @@ namespace boost { namespace numeric { namespace ublas {
 
         // Iterator types
     private:
-        // Use slice as an index - FIXME this fails for packed assignment
+        // Use slice as an index - FIXME_BOOST this fails for packed assignment
         typedef typename slice_type::const_iterator const_subiterator_type;
         typedef typename slice_type::const_iterator subiterator_type;
 
@@ -827,7 +827,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename V::const_iterator::difference_type difference_type;
             typedef typename V::const_iterator::value_type value_type;
-            typedef typename V::const_reference reference;    //FIXME due to indexing access
+            typedef typename V::const_reference reference;    //FIXME_BOOST due to indexing access
             typedef typename V::const_iterator::pointer pointer;
 
             // Construction and destruction
@@ -871,7 +871,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return (*this) ().data_ (*it_);
             }
@@ -928,7 +928,7 @@ namespace boost { namespace numeric { namespace ublas {
         public:
             typedef typename V::iterator::difference_type difference_type;
             typedef typename V::iterator::value_type value_type;
-            typedef typename V::reference reference;    //FIXME due to indexing access
+            typedef typename V::reference reference;    //FIXME_BOOST due to indexing access
             typedef typename V::iterator::pointer pointer;
 
             // Construction and destruction
@@ -969,7 +969,7 @@ namespace boost { namespace numeric { namespace ublas {
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return (*this) ().data_ (*it_);
             }
@@ -1330,7 +1330,7 @@ return true;
 
         // Iterator types
     private:
-        // Use indirect array as an index - FIXME this fails for packed assignment
+        // Use indirect array as an index - FIXME_BOOST this fails for packed assignment
         typedef typename IA::const_iterator const_subiterator_type;
         typedef typename IA::const_iterator subiterator_type;
 
@@ -1372,7 +1372,7 @@ return true;
         public:
             typedef typename V::const_iterator::difference_type difference_type;
             typedef typename V::const_iterator::value_type value_type;
-            typedef typename V::const_reference reference;    //FIXME due to indexing access
+            typedef typename V::const_reference reference;    //FIXME_BOOST due to indexing access
             typedef typename V::const_iterator::pointer pointer;
 
             // Construction and destruction
@@ -1416,7 +1416,7 @@ return true;
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return (*this) ().data_ (*it_);
             }
@@ -1473,7 +1473,7 @@ return true;
         public:
             typedef typename V::iterator::difference_type difference_type;
             typedef typename V::iterator::value_type value_type;
-            typedef typename V::reference reference;    //FIXME due to indexing access
+            typedef typename V::reference reference;    //FIXME_BOOST due to indexing access
             typedef typename V::iterator::pointer pointer;
 
             // Construction and destruction
@@ -1514,7 +1514,7 @@ return true;
             // Dereference
             BOOST_UBLAS_INLINE
             reference operator * () const {
-                // FIXME replace find with at_element
+                // FIXME_BOOST replace find with at_element
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return (*this) ().data_ (*it_);
             }

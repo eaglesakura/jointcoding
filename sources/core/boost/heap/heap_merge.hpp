@@ -47,8 +47,8 @@ struct heap_merge_emulate
             }
         }
 
-        // FIXME: container adaptors could benefit from first appending all elements and then restoring the heap order
-        // FIXME: optimize: if we have ordered iterators and we can efficiently insert keys with a below the lowest key in the heap
+        // FIXME_BOOST: container adaptors could benefit from first appending all elements and then restoring the heap order
+        // FIXME_BOOST: optimize: if we have ordered iterators and we can efficiently insert keys with a below the lowest key in the heap
         //                  d-ary, b and fibonacci heaps fall into this category
 
         while (!rhs.empty()) {

@@ -934,7 +934,7 @@ namespace boost { namespace numeric { namespace ublas {
             function_requires< Mutable_RandomAccessIteratorConcept<container_model::iterator> >();
         }
 
-/* FIXME array_adaptors are in progress
+/* FIXME_BOOST array_adaptors are in progress
         {
             typedef array_adaptor<T> container_model;
             function_requires< Mutable_StorageArrayConcept<container_model> >();

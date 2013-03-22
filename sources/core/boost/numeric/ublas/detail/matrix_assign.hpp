@@ -52,7 +52,7 @@ namespace detail {
         typedef typename M::size_type size_type;
         typedef typename M::difference_type difference_type;
         typedef typename M::value_type value_type;
-        // FIXME unbounded_array with push_back maybe better
+        // FIXME_BOOST unbounded_array with push_back maybe better
         std::vector<std::pair<size_type, size_type> > index;
         typename M::iterator1 it1 (m.begin1 ());
         typename M::iterator1 it1_end (m.end1 ());
@@ -1362,7 +1362,7 @@ namespace detail {
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
 
         detail::make_conformant (m, e, row_major_tag (), conformant_restrict_type ());
-        // FIXME should be a seperate restriction for E
+        // FIXME_BOOST should be a seperate restriction for E
         detail::make_conformant (e (), m, row_major_tag (), conformant_restrict_type ());
 
         typename M::iterator1 it1 (m.begin1 ());
@@ -1487,7 +1487,7 @@ namespace detail {
         BOOST_UBLAS_CHECK (m.size2 () == e ().size2 (), bad_size ());
 
         detail::make_conformant (m, e, column_major_tag (), conformant_restrict_type ());
-        // FIXME should be a seperate restriction for E
+        // FIXME_BOOST should be a seperate restriction for E
         detail::make_conformant (e (), m, column_major_tag (), conformant_restrict_type ());
 
         typename M::iterator2 it2 (m.begin2 ());

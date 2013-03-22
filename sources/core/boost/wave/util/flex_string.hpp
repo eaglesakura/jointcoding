@@ -2612,7 +2612,7 @@ namespace boost { namespace serialization {
 
 #if !defined(BOOST_WAVE_FLEX_STRING_SERIALIZATION_HACK)
 
-// FIXME: This doesn't work because of the missing flex_string::operator>>()
+// FIXME_BOOST: This doesn't work because of the missing flex_string::operator>>()
 template <typename E, class T, class A, class S>
 struct implementation_level<boost::wave::util::flex_string<E, T, A, S> >
 {

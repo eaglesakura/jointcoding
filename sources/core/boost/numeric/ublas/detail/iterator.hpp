@@ -206,7 +206,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef T derived_value_type;
         typedef D derived_difference_type;
 
-        /* FIXME Need to explicitly pass derived_reference_type as otherwise I undefined type or forward declared
+        /* FIXME_BOOST Need to explicitly pass derived_reference_type as otherwise I undefined type or forward declared
         typedef typename derived_iterator_type::reference derived_reference_type;
         // Indexed element
         BOOST_UBLAS_INLINE

@@ -15,7 +15,7 @@
 # include <windows.h>
 #elif defined( WIN32 ) || defined( _WIN32 ) || defined( __WIN32__ ) ||  defined(__CYGWIN__)
 # include <WinError.h>
-// @FIXME Which condition must be tested
+// @FIXME_BOOST Which condition must be tested
 # ifdef UNDER_CE
 #  ifndef WINAPI
 #   ifndef _WIN32_WCE_EMULATION
@@ -63,7 +63,7 @@ extern "C" {
 
     typedef long LONG_;
 
-// @FIXME Which condition must be tested
+// @FIXME_BOOST Which condition must be tested
 //~ #if !defined(_M_IX86)
 //~ #if defined(BOOST_NO_INT64_T)
     //~ typedef double LONGLONG_;
@@ -75,7 +75,7 @@ extern "C" {
 //~ #endif
     typedef boost::int64_t LONGLONG_;
 
-// @FIXME Which condition must be tested
+// @FIXME_BOOST Which condition must be tested
 # ifdef _WIN64
 #if defined(__CYGWIN__)
     typedef unsigned long ULONG_PTR_;

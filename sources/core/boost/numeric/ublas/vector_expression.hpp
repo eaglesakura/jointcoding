@@ -445,7 +445,7 @@ namespace boost { namespace numeric { namespace ublas {
     template<class E, class F>
     struct vector_unary_traits {
         typedef vector_unary<E, F> expression_type;
-//FIXME
+//FIXME_BOOST
 // #ifndef BOOST_UBLAS_SIMPLE_ET_DEBUG
         typedef expression_type result_type;
 // #else
@@ -1079,7 +1079,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             difference_type operator - (const const_iterator &it) const {
                 BOOST_UBLAS_CHECK ((*this) ().same_closure (it ()), external_logic ());
-                // FIXME we shouldn't compare floats
+                // FIXME_BOOST we shouldn't compare floats
                 // BOOST_UBLAS_CHECK (it1_ == it.it1_, external_logic ());
                 return it2_ - it.it2_;
             }
@@ -1113,14 +1113,14 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             bool operator == (const const_iterator &it) const {
                 BOOST_UBLAS_CHECK ((*this) ().same_closure (it ()), external_logic ());
-                // FIXME we shouldn't compare floats
+                // FIXME_BOOST we shouldn't compare floats
                 // BOOST_UBLAS_CHECK (it1_ == it.it1_, external_logic ());
                 return it2_ == it.it2_;
             }
             BOOST_UBLAS_INLINE
             bool operator < (const const_iterator &it) const {
                 BOOST_UBLAS_CHECK ((*this) ().same_closure (it ()), external_logic ());
-                // FIXME we shouldn't compare floats
+                // FIXME_BOOST we shouldn't compare floats
                 // BOOST_UBLAS_CHECK (it1_ == it.it1_, external_logic ());
                 return it2_ < it.it2_;
             }
@@ -1306,7 +1306,7 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             difference_type operator - (const const_iterator &it) const {
                 BOOST_UBLAS_CHECK ((*this) ().same_closure (it ()), external_logic ());
-                // FIXME we shouldn't compare floats
+                // FIXME_BOOST we shouldn't compare floats
                 // BOOST_UBLAS_CHECK (it2_ == it.it2_, external_logic ());
                 return it1_ - it.it1_;
             }
@@ -1340,14 +1340,14 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             bool operator == (const const_iterator &it) const {
                 BOOST_UBLAS_CHECK ((*this) ().same_closure (it ()), external_logic ());
-                // FIXME we shouldn't compare floats
+                // FIXME_BOOST we shouldn't compare floats
                 // BOOST_UBLAS_CHECK (it2_ == it.it2_, external_logic ());
                 return it1_ == it.it1_;
             }
             BOOST_UBLAS_INLINE
             bool operator < (const const_iterator &it) const {
                 BOOST_UBLAS_CHECK ((*this) ().same_closure (it ()), external_logic ());
-                // FIXME we shouldn't compare floats
+                // FIXME_BOOST we shouldn't compare floats
                 // BOOST_UBLAS_CHECK (it2_ == it.it2_, external_logic ());
                 return it1_ < it.it1_;
             }
@@ -1489,7 +1489,7 @@ namespace boost { namespace numeric { namespace ublas {
     struct vector_scalar_unary_traits {
         typedef vector_scalar_unary<E, F> expression_type;
 #if !defined (BOOST_UBLAS_SIMPLE_ET_DEBUG) && defined (BOOST_UBLAS_USE_SCALAR_ET)
-// FIXME don't define USE_SCALAR_ET other then for testing
+// FIXME_BOOST don't define USE_SCALAR_ET other then for testing
 // They do not work for complex types
          typedef expression_type result_type;
 #else
@@ -1629,7 +1629,7 @@ namespace boost { namespace numeric { namespace ublas {
     struct vector_scalar_binary_traits {
         typedef vector_scalar_binary<E1, E2, F> expression_type;
 #if !defined (BOOST_UBLAS_SIMPLE_ET_DEBUG) && defined (BOOST_UBLAS_USE_SCALAR_ET)
-// FIXME don't define USE_SCALAR_ET other then for testing
+// FIXME_BOOST don't define USE_SCALAR_ET other then for testing
 // They do not work for complex types
         typedef expression_type result_type;
 #else

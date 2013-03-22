@@ -236,7 +236,7 @@ namespace boost {
     typename EdgeList::value_type u, v;
     u = e.first;
     v = e.second;
-    // FIXME: edge type does not fully specify the edge to be deleted
+    // FIXME_BOOST: edge type does not fully specify the edge to be deleted
     typename EdgeList::iterator i = std::remove(g[u].begin(), g[u].end(), v);
     if (i != g[u].end())
       g[u].erase(i, g[u].end());

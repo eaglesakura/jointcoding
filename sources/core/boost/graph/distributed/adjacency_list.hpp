@@ -1479,7 +1479,7 @@ namespace boost {
           base_distribution_type> distribution_type;
 
   private:
-    // FIXME: the original adjacency_list contained this comment:
+    // FIXME_BOOST: the original adjacency_list contained this comment:
     //    Default copy constructor and copy assignment operators OK??? TBD
     // but the adj_list_impl contained these declarations:
     adjacency_list(const adjacency_list& other);
@@ -3420,7 +3420,7 @@ namespace boost {
   template<PBGL_DISTRIB_ADJLIST_TEMPLATE_PARMS, typename Property>
   struct property_map<PBGL_DISTRIB_ADJLIST_TYPE const, Property>
           : boost::detail::parallel::get_adj_list_pmap<Property>
-// FIXME: in the original code the following was not const
+// FIXME_BOOST: in the original code the following was not const
       ::template apply<PBGL_DISTRIB_ADJLIST_TYPE const>
   { };
 
