@@ -19,7 +19,7 @@ namespace boost { namespace geometry
 namespace detail
 {
 
-// TODO: move this to /util/
+// TODO_BOOST: move this to /util/
 template <typename T>
 static inline std::pair<T, T> ordered_pair(T const& first, T const& second)
 {

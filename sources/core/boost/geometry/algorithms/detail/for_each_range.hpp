@@ -55,7 +55,7 @@ struct fe_range_polygon
     {
         actor.apply(exterior_ring(polygon));
 
-        // TODO: If some flag says true, also do the inner rings.
+        // TODO_BOOST: If some flag says true, also do the inner rings.
         // for convex hull, it's not necessary
     }
 };

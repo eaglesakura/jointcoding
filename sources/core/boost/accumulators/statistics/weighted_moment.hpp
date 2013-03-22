@@ -35,7 +35,7 @@ namespace impl
     // weighted_moment_impl
     template<typename N, typename Sample, typename Weight>
     struct weighted_moment_impl
-      : accumulator_base // TODO: also depends_on sum of powers
+      : accumulator_base // TODO_BOOST: also depends_on sum of powers
     {
         BOOST_MPL_ASSERT_RELATION(N::value, >, 0);
         typedef typename numeric::functional::multiplies<Sample, Weight>::result_type weighted_sample;

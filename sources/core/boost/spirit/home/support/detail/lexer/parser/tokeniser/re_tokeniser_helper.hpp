@@ -113,7 +113,7 @@ public:
 /*
             else if (ch_ == '[' && !state_.eos () && *state_._curr == ':')
             {
-                // TODO: POSIX charsets
+                // TODO_BOOST: POSIX charsets
             }
 */
             else

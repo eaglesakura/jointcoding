@@ -92,7 +92,7 @@ namespace boost
         already_exists = ERROR_ALREADY_EXISTS
         // ...
 
-        // TODO: add more Windows errors
+        // TODO_BOOST: add more Windows errors
       };
 
     }  // namespace windows

@@ -73,7 +73,7 @@ inline bool check_inverse_gamma_x(
 
 template <class RealType, class Policy>
 inline bool check_inverse_gamma(
-      const char* function, // TODO swap these over, so shape is first.
+      const char* function, // TODO_BOOST swap these over, so shape is first.
       RealType scale,  // scale aka beta
       RealType shape, // shape aka alpha
       RealType* result, const Policy& pol)

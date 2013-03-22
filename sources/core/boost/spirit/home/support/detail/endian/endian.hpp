@@ -16,7 +16,7 @@
 //  partial specialization to correctly extend the sign when cover integer size
 //  differs from endian representation size.
 
-// TODO: When a compiler supporting constexpr becomes available, try possible uses.
+// TODO_BOOST: When a compiler supporting constexpr becomes available, try possible uses.
 
 #ifndef BOOST_SPIRIT_ENDIAN_HPP
 #define BOOST_SPIRIT_ENDIAN_HPP

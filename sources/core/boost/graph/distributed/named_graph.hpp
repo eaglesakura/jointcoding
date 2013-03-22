@@ -5,7 +5,7 @@
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-// TODO:
+// TODO_BOOST:
 //   - Cache (some) remote vertex names?
 #ifndef BOOST_GRAPH_DISTRIBUTED_NAMED_GRAPH_HPP
 #define BOOST_GRAPH_DISTRIBUTED_NAMED_GRAPH_HPP

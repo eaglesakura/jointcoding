@@ -13,7 +13,7 @@
 // Azzalini, A. (1985). "A class of distributions which includes the normal ones".
 // Scand. J. Statist. 12: 171-178.
 
-#include <boost/math/distributions/fwd.hpp> // TODO add skew_normal distribution to fwd.hpp!
+#include <boost/math/distributions/fwd.hpp> // TODO_BOOST add skew_normal distribution to fwd.hpp!
 #include <boost/math/special_functions/owens_t.hpp> // Owen's T function
 #include <boost/math/distributions/complement.hpp>
 #include <boost/math/distributions/normal.hpp>
@@ -297,7 +297,7 @@ namespace boost{ namespace math{
   namespace detail
   {
     /*
-      TODO No closed expression for mode, so use max of pdf.
+      TODO_BOOST No closed expression for mode, so use max of pdf.
     */
     
     template <class RealType, class Policy>
@@ -415,7 +415,7 @@ namespace boost{ namespace math{
     
     
     /*
-     * TODO No closed expression for mode, so use f'(x) = 0
+     * TODO_BOOST No closed expression for mode, so use f'(x) = 0
      */
     template <class RealType, class Policy>
     struct skew_normal_mode_functor
@@ -530,7 +530,7 @@ namespace boost{ namespace math{
     
     BOOST_ASSERT(d > static_cast<diff_type>(0));
 
-    // TODO: make the search bounds smarter, depending on the shape parameter
+    // TODO_BOOST: make the search bounds smarter, depending on the shape parameter
     RealType search_min = 0; // below zero was caught above
     RealType search_max = 0.55; // will never go above 0.55
 

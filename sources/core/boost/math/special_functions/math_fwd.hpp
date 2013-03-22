@@ -1,6 +1,6 @@
 // math_fwd.hpp
 
-// TODO revise completely for new distribution classes.
+// TODO_BOOST revise completely for new distribution classes.
 
 // Copyright Paul A. Bristow 2006.
 // Copyright John Maddock 2006.

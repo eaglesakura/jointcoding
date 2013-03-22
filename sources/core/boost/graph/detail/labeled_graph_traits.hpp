@@ -17,7 +17,7 @@ namespace boost {
 // NOTE: the label_vertex tag denotes the fact that you can basically assign
 // arbitrary labels to vertices without modifying the actual graph.
 
-// TODO: We might also overlay the uniqueness/multiplicity of labels in this
+// TODO_BOOST: We might also overlay the uniqueness/multiplicity of labels in this
 // hierarchy also. For now, we just assumed that labels are unique.
 
 struct label_vertex_tag { };

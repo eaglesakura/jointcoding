@@ -285,7 +285,7 @@ namespace boost { namespace program_options {
         /** Makes all substitutions using the template */
         virtual void substitute_placeholders(const std::string& error_template) const;
     private:
-        // TODO: copy ctor might throw
+        // TODO_BOOST: copy ctor might throw
         std::vector<std::string> m_alternatives;
     };
 

@@ -120,7 +120,7 @@ inline OutputIterator add_rings(SelectionMap const& map,
 			// Only add rings if they satisfy minimal requirements.
 			// This cannot be done earlier (during traversal), not
 			// everything is figured out yet (sum of positive/negative rings)
-			// TODO: individual rings can still contain less than 3 points.
+			// TODO_BOOST: individual rings can still contain less than 3 points.
 			if (geometry::num_points(result) >= min_num_points
 				&& math::larger(geometry::area(result), zero))
 			{

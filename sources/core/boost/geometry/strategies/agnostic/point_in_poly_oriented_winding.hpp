@@ -183,7 +183,7 @@ public :
             // Side is NEG for right, POS for left.
             // The count is -2 for down, 2 for up (or -1/1)
             // Side positive thus means UP and LEFTSIDE or DOWN and RIGHTSIDE
-            // See accompagnying figure (TODO)
+            // See accompagnying figure (TODO_BOOST)
             if (side * count > 0)
             {
                 state.m_count += count;

@@ -295,7 +295,7 @@ class init : public init_base<init<BOOST_PYTHON_OVERLOAD_ARGS> >
       , signature_
     >::type signature;
 
-    // TODO: static assert to make sure there are no other optional elements
+    // TODO_BOOST: static assert to make sure there are no other optional elements
 
     // Count the number of default args
     typedef mpl::size<optional_args> n_defaults;

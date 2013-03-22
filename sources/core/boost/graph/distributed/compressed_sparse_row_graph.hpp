@@ -1122,7 +1122,7 @@ compressed_sparse_row_graph(distributed_construct_inplace_from_sources_and_targe
     sources, targets, m_distribution.block_size(process_id(m_process_group), numverts),
     identity_property_map());
 
-  // TODO: set property on m_base?
+  // TODO_BOOST: set property on m_base?
 }
 
 template<BOOST_DISTRIB_CSR_GRAPH_TEMPLATE_PARMS>
@@ -1150,7 +1150,7 @@ compressed_sparse_row_graph(distributed_construct_inplace_from_sources_and_targe
     sources, targets, m_distribution.block_size(process_id(m_process_group), numverts),
     identity_property_map());
 
-  // TODO: set property on m_base?
+  // TODO_BOOST: set property on m_base?
 }
 
 template<BOOST_DISTRIB_CSR_GRAPH_TEMPLATE_PARMS>
@@ -1179,7 +1179,7 @@ compressed_sparse_row_graph(distributed_construct_inplace_from_sources_and_targe
     m_distribution.block_size(process_id(m_process_group), numverts),
     identity_property_map());
 
-  // TODO: set property on m_base?
+  // TODO_BOOST: set property on m_base?
 }
 
 template<BOOST_DISTRIB_CSR_GRAPH_TEMPLATE_PARMS>
@@ -1209,7 +1209,7 @@ compressed_sparse_row_graph(distributed_construct_inplace_from_sources_and_targe
     m_distribution.block_size(process_id(m_process_group), numverts),
     identity_property_map());
 
-  // TODO: set property on m_base?
+  // TODO_BOOST: set property on m_base?
 }
 
 //

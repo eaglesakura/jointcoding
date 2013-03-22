@@ -321,10 +321,10 @@ private:
     typedef std::vector<edge_descriptor> GlobalEdgeList;
     typedef std::map<vertex_descriptor, vertex_descriptor> LocalVertexMap;
     typedef std::map<edge_index_type, edge_descriptor> LocalEdgeMap;
-    // TODO: Should the LocalVertexMap be: map<index_type, descriptor>?
-    // TODO: Can we relax the indexing requirement if both descriptors are
+    // TODO_BOOST: Should the LocalVertexMap be: map<index_type, descriptor>?
+    // TODO_BOOST: Can we relax the indexing requirement if both descriptors are
     // LessThanComparable?
-    // TODO: Should we really be using unorderd_map for improved lookup times?
+    // TODO_BOOST: Should we really be using unorderd_map for improved lookup times?
 
 public: // Probably shouldn't be public....
     Graph m_graph;
@@ -351,7 +351,7 @@ public: // Probably shouldn't be public....
 };
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
-// TODO: I don't think these are required since the default metafunction
+// TODO_BOOST: I don't think these are required since the default metafunction
 // returns Graph::vertex_bundled.
 template <typename Graph>
 struct vertex_bundle_type<subgraph<Graph> >
@@ -758,7 +758,7 @@ add_vertex(subgraph<G>& g)
 
 
 #if 0
-// TODO: Under Construction
+// TODO_BOOST: Under Construction
 template <typename G>
 void remove_vertex(typename subgraph<G>::vertex_descriptor u, subgraph<G>& g)
 { BOOST_ASSERT(false); }

@@ -35,7 +35,7 @@ namespace impl
     struct error_of_impl
       : accumulator_base
     {
-        // TODO: specialize this on the specific features that have errors we're
+        // TODO_BOOST: specialize this on the specific features that have errors we're
         // interested in.
         BOOST_MPL_ASSERT((this_feature_has_no_error_calculation<Feature>));
 

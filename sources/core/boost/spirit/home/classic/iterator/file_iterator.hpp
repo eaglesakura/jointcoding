@@ -35,7 +35,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  TODO LIST:
+//  TODO_BOOST LIST:
 //
 //  - In the Win32 mmap iterator, we could check if keeping a handle to the
 //    opened file is really required. If it's not, we can just store the file

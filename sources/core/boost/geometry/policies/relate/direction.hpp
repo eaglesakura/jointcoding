@@ -63,7 +63,7 @@ struct direction_type
     }
 
 
-    // TODO: replace this
+    // TODO_BOOST: replace this
     // NOTE: "char" will be replaced by enum in future version
     // "How" is the intersection formed?
     char how;
@@ -246,7 +246,7 @@ struct segments_direction
     {
         // Return "E" to denote error
         // This will throw an error in get_turn_info
-        // TODO: change to enum or similar
+        // TODO_BOOST: change to enum or similar
         return return_type('E', false);
     }
 

@@ -797,7 +797,7 @@ struct parameters
 
     // Metafunction that returns an ArgumentPack.
 
-    // TODO, bind has to instantiate the error type in the result
+    // TODO_BOOST, bind has to instantiate the error type in the result
     // of make_arg_list.
 
     template <

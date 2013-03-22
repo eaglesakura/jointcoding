@@ -81,7 +81,7 @@ namespace boost { namespace numeric { namespace ublas {
 	/// This type has the generic name \c array_typ within the vector definition.
 	/// \param size initial size of the vector \bug this value is not used
 	/// \param data container of type \c A
-	/// \todo remove this definition because \c size is not used
+	/// \TODO_BOOST remove this definition because \c size is not used
         BOOST_UBLAS_INLINE
         vector (size_type size, const array_type &data):
             vector_container<self_type> (),

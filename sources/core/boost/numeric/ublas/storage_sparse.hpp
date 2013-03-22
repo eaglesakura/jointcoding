@@ -319,7 +319,7 @@ namespace boost { namespace numeric { namespace ublas {
         }
         BOOST_UBLAS_INLINE
         size_type max_size () const {
-            return 0; //TODO
+            return 0; //TODO_BOOST
         }
        
         BOOST_UBLAS_INLINE

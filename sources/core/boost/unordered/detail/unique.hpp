@@ -503,7 +503,7 @@ namespace boost { namespace unordered { namespace detail {
                 // could be a pair with first_types as key_type without const or
                 // a different second_type.
                 //
-                // TODO: Might be worth storing the value_type instead of the
+                // TODO_BOOST: Might be worth storing the value_type instead of the
                 // key here. Could be more efficient if '*i' is expensive. Could
                 // be less efficient if copying the full value_type is
                 // expensive.

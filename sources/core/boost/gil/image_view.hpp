@@ -168,7 +168,7 @@ template <typename L2>
 inline void swap(image_view<L2>& x, image_view<L2>& y) { 
     using std::swap;
     swap(x._dimensions,y._dimensions); 
-    swap(x._pixels, y._pixels);            // TODO: Extend further
+    swap(x._pixels, y._pixels);            // TODO_BOOST: Extend further
 }
 
 /////////////////////////////

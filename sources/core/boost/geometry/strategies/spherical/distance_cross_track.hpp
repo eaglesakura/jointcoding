@@ -273,7 +273,7 @@ struct strategy_point_point<cross_track<Point, PointOfSegment, CalculationType, 
 
 /*
 
-TODO:  spherical polar coordinate system requires "get_as_radian_equatorial<>"
+TODO_BOOST:  spherical polar coordinate system requires "get_as_radian_equatorial<>"
 
 template <typename Point, typename PointOfSegment, typename Strategy>
 struct default_strategy

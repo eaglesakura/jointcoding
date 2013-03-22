@@ -86,7 +86,7 @@
 #  define BOOST_EXCEPTION_DISABLE
 #  define BOOST_NO_EXCEPTIONS
 
-#else // TODO: More platform support e.g. UIQ
+#else // TODO_BOOST: More platform support e.g. UIQ
 #  error "Unsuppoted Symbian SDK"
 #endif
 

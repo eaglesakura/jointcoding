@@ -175,7 +175,7 @@ namespace boost { namespace polygon{
 //                        polygon_set_type>::type &
 //   self_intersect(polygon_set_type& polygon_set) {
 //     typedef typename polygon_45_set_traits<polygon_set_type>::coordinate_type Unit;
-//     //TODO
+//     //TODO_BOOST
 //   }
 
   template <typename polygon_set_type, typename coord_type>

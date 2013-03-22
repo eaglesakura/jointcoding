@@ -178,7 +178,7 @@ namespace boost { namespace unordered { namespace detail {
             }
         }
 
-        // TODO: Why calculate_max_load?
+        // TODO_BOOST: Why calculate_max_load?
         table(table& x, boost::unordered::detail::move_tag m) :
             buckets(x, m),
             functions(x),
@@ -186,8 +186,8 @@ namespace boost { namespace unordered { namespace detail {
             max_load_(calculate_max_load())
         {}
 
-        // TODO: Why not calculate_max_load?
-        // TODO: Why do I use x's bucket count?
+        // TODO_BOOST: Why not calculate_max_load?
+        // TODO_BOOST: Why do I use x's bucket count?
         table(table& x, node_allocator const& a,
                 boost::unordered::detail::move_tag m) :
             buckets(a, x.bucket_count_),
@@ -237,7 +237,7 @@ namespace boost { namespace unordered { namespace detail {
             // Need to delete before setting the allocator so that buckets
             // aren't deleted with the wrong allocator.
             if(this->buckets_) this->delete_buckets();
-            // TODO: Can allocator assignment throw?
+            // TODO_BOOST: Can allocator assignment throw?
             this->allocators_.assign(x.allocators_);
             this->swap(tmp, false_type());
         }
@@ -374,7 +374,7 @@ namespace boost { namespace unordered { namespace detail {
 
         iterator find_matching_node(iterator n) const
         {
-            // TODO: Does this apply to C++11?
+            // TODO_BOOST: Does this apply to C++11?
             //
             // For some stupid reason, I decided to support equality comparison
             // when different hash functions are used. So I can't use the hash

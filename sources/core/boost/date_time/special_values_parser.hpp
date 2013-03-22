@@ -20,7 +20,7 @@ namespace boost { namespace date_time {
 
   //! Class for special_value parsing 
   /*! 
-   * TODO: add doc-comments for which elements can be changed
+   * TODO_BOOST: add doc-comments for which elements can be changed
    * Parses input stream for strings representing special_values. 
    * Special values parsed are:
    *  - not_a_date_time

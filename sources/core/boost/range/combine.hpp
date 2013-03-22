@@ -148,7 +148,7 @@ namespace boost
                       zip_iter_t( generator_t::end( z, r ) ) )
             {
 
-                // @todo: tuple::begin( should be overloaded for this situation
+                // @TODO_BOOST: tuple::begin( should be overloaded for this situation
             }
 
             struct tuple_length : ::boost::tuples::length<tuple_t>

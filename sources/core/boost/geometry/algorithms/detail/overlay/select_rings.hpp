@@ -214,7 +214,7 @@ inline void update_selection_map(Geometry1 const& geometry1,
 
             // Calculate the "within code" (previously this was done earlier but is
             // must efficienter here - it can be even more efficient doing it all at once,
-            // using partition, TODO)
+            // using partition, TODO_BOOST)
             // So though this is less elegant than before, it avoids many unused point-in-poly calculations
             switch(id.source_index)
             {

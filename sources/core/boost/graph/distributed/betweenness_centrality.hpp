@@ -65,7 +65,7 @@ namespace boost {
 
   namespace serialization {
 
-    // TODO(nge): Write generalized serialization for tuples
+    // TODO_BOOST(nge): Write generalized serialization for tuples
     template<typename Archive, typename T1, typename T2, typename T3, 
              typename T4>
     void serialize(Archive & ar,
@@ -637,7 +637,7 @@ namespace boost {
       if (delta == 0)
         set_delta(g);
       
-      // TODO (NGE): Restructure the code so we don't have to construct
+      // TODO_BOOST (NGE): Restructure the code so we don't have to construct
       //             impl every time?
       betweenness_centrality_delta_stepping_impl<
           Graph, DistanceMap, IncomingMap, WeightMap, PathCountMap
@@ -735,7 +735,7 @@ namespace boost {
     process_group_type pg = process_group(g);
     typename process_group_type::process_id_type id = process_id(pg);
 
-    // TODO: Is it faster not to clear some of these maps?
+    // TODO_BOOST: Is it faster not to clear some of these maps?
     // Initialize for this iteration
     distance.clear();
     incoming.clear();
@@ -765,7 +765,7 @@ namespace boost {
 #ifndef COMPUTE_PATH_COUNTS_INLINE
 
     //
-    // TODO: Optimize case where source has no out-edges
+    // TODO_BOOST: Optimize case where source has no out-edges
     //
  
     // Count of incoming edges to tell when all incoming edges have been relaxed in 
@@ -791,7 +791,7 @@ namespace boost {
 
     // Mark forward adjacencies in DAG of shortest paths
 
-    // TODO: It's possible to do this using edge flags but it's not currently done this way
+    // TODO_BOOST: It's possible to do this using edge flags but it's not currently done this way
     //       because during traversal of the DAG we would have to examine all out edges
     //       which would lead to more memory accesses and a larger cache footprint.
     //
@@ -1193,7 +1193,7 @@ namespace boost {
     }
 
     // Merge the centrality maps by summing the values at each vertex)
-    // TODO(nge): this copy-out, reduce, copy-in is lame
+    // TODO_BOOST(nge): this copy-out, reduce, copy-in is lame
     typedef typename property_traits<CentralityMap>::value_type centrality_type;
     typedef typename property_traits<EdgeCentralityMap>::value_type edge_centrality_type;
 
@@ -1337,7 +1337,7 @@ namespace graph { namespace parallel { namespace detail {
       weight_map);
   }
   
-  // TODO: Should the type of the distance and dependency map depend on the 
+  // TODO_BOOST: Should the type of the distance and dependency map depend on the 
   //       value type of the centrality map?
   template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
            typename VertexIndexMap, typename Buffer>
@@ -1678,7 +1678,7 @@ non_distributed_brandes_betweenness_centrality(const ProcessGroup& pg, const Gra
 }
 
 // Compute the central point dominance of a graph.
-// TODO: Make sure central point dominance works in parallel case
+// TODO_BOOST: Make sure central point dominance works in parallel case
 template<typename Graph, typename CentralityMap>
 typename property_traits<CentralityMap>::value_type
 central_point_dominance(const Graph& g, CentralityMap centrality

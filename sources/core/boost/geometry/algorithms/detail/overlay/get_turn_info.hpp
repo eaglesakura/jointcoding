@@ -395,7 +395,7 @@ struct touch : public base_turn_handler
 
 #ifdef BOOST_GEOMETRY_DEBUG_GET_TURNS
         // Normally a robustness issue.
-        // TODO: more research if still occuring
+        // TODO_BOOST: more research if still occuring
         std::cout << "Not yet handled" << std::endl
             << "pi " << get<0>(pi) << " , " << get<1>(pi)
             << " pj " << get<0>(pj) << " , " << get<1>(pj)

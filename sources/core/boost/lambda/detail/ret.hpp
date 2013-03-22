@@ -15,7 +15,7 @@
 namespace boost { 
 namespace lambda {
 
-  // TODO:
+  // TODO_BOOST:
 
 //  Add specializations for function references for ret, protect and unlambda
 //  e.g void foo(); unlambda(foo); fails, as it would add a const qualifier
@@ -26,7 +26,7 @@ namespace lambda {
 // -- ret -------------------------
 // the explicit return type template 
 
-  // TODO: It'd be nice to make ret a nop for other than lambda functors
+  // TODO_BOOST: It'd be nice to make ret a nop for other than lambda functors
   // but causes an ambiguiyty with gcc (not with KCC), check what is the
   // right interpretation.
 

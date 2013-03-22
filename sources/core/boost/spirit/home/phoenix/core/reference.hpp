@@ -17,7 +17,7 @@ namespace boost { namespace phoenix
     template <typename T>
     struct reference
     {
-        // $$$ TODO: a better (user friendly) static assert
+        // $$$ TODO_BOOST: a better (user friendly) static assert
         BOOST_STATIC_ASSERT(
             mpl::not_<is_reference<T> >::value != 0);
 

@@ -63,7 +63,7 @@ namespace posix_time {
           << date_time::absolute_value(td.minutes()) << ":";
       ss  << std::setw(2) << std::setfill(fill_char)
           << date_time::absolute_value(td.seconds());
-      //TODO the following is totally non-generic, yelling FIXME_BOOST
+      //TODO_BOOST the following is totally non-generic, yelling FIXME_BOOST
 #if (defined(BOOST_MSVC) && (_MSC_VER < 1300))
       boost::int64_t frac_sec =
         date_time::absolute_value(td.fractional_seconds());
@@ -132,7 +132,7 @@ namespace posix_time {
           << date_time::absolute_value(td.minutes());
       ss  << std::setw(2) << std::setfill(fill_char)
           << date_time::absolute_value(td.seconds());
-      //TODO the following is totally non-generic, yelling FIXME_BOOST
+      //TODO_BOOST the following is totally non-generic, yelling FIXME_BOOST
 #if (defined(BOOST_MSVC) && (_MSC_VER < 1300))
       boost::int64_t frac_sec =
         date_time::absolute_value(td.fractional_seconds());

@@ -21,8 +21,8 @@ namespace boost { namespace geometry
 {
 
 struct format_wkt {};
-struct format_wkb {}; // TODO
-struct format_dsv {}; // TODO
+struct format_wkb {}; // TODO_BOOST
+struct format_dsv {}; // TODO_BOOST
 
 #ifndef DOXYGEN_NO_DISPATCH
 namespace dispatch
@@ -51,7 +51,7 @@ inline void read(Geometry& geometry, std::string const& wkt)
     dispatch::read<Format, Geometry>::apply(geometry, wkt);
 }
 
-// TODO: wriite
+// TODO_BOOST: wriite
 
 }} // namespace boost::geometry
 

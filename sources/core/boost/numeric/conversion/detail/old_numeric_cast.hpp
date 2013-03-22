@@ -57,7 +57,7 @@
 //  time if you use a template function which has template parameters that don't
 //  appear in the function's argument list.
 //
-//  TODO: Add this to config.hpp?
+//  TODO_BOOST: Add this to config.hpp?
 //  FLC: This macro is repeated in boost/cast.hpp but only locally (is undefined at the bottom)
 //       so is OK to reproduce it here.
 # if defined(BOOST_MSVC) && BOOST_MSVC < 1300

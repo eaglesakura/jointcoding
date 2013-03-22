@@ -266,7 +266,7 @@ class bimap_core
     // diferent from the one used for the sides in wich case we have to add yet
     // another index to the core.
 
-    // TODO
+    // TODO_BOOST
     // If all the set types are unsconstrained there must be readable compile
     // time error.
 

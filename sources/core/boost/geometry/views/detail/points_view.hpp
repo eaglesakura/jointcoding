@@ -34,7 +34,7 @@ class points_view
 {
     // Iterates over a series of points (indicated by pointer
     // to have it lightweight). Probably there is already an
-    // equivalent of this within Boost. If so, TODO: use that one.
+    // equivalent of this within Boost. If so, TODO_BOOST: use that one.
     // This used to be "box_iterator" and "segment_iterator".
     struct points_iterator
         : public boost::iterator_facade

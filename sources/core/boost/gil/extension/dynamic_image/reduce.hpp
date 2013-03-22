@@ -617,7 +617,7 @@ namespace detail {
         typedef typename mpl::if_<swap_t, _first_t, _second_t>::type second_t;
     };
 */
-// TODO: Use the old code for reduce_color_spaces above to do color layout reduction
+// TODO_BOOST: Use the old code for reduce_color_spaces above to do color layout reduction
     template <typename SrcLayout, typename DstLayout>
     struct reduce_color_layouts {
         typedef SrcLayout first_t;

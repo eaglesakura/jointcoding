@@ -15,7 +15,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/date_time/time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp> //todo remove?
+#include <boost/date_time/posix_time/posix_time.hpp> //TODO_BOOST remove?
 #include <boost/date_time/dst_rules.hpp>
 #include <boost/date_time/time_zone_base.hpp>
 #include <boost/date_time/special_defs.hpp>
@@ -42,7 +42,7 @@ namespace local_time {
       std::logic_error(std::string("is_dst flag does not match resulting dst for time label given: " + msg)) {}
   };
 
-  //TODO: I think these should be in local_date_time_base and not
+  //TODO_BOOST: I think these should be in local_date_time_base and not
   // necessarily brought into the namespace
   using date_time::time_is_dst_result;
   using date_time::is_in_dst;
@@ -130,7 +130,7 @@ namespace local_time {
       }
     }
 
-    //TODO maybe not the right set...Ignore the last 2 for now...
+    //TODO_BOOST maybe not the right set...Ignore the last 2 for now...
     enum DST_CALC_OPTIONS { EXCEPTION_ON_ERROR, NOT_DATE_TIME_ON_ERROR };
                             //ASSUME_DST_ON_ERROR, ASSUME_NOT_DST_ON_ERROR };
 
@@ -280,7 +280,7 @@ namespace local_time {
      * zone abbrev will not be included if calling object is a special_value*/
     std::string to_string() const
     {
-      //TODO is this a temporary function ???
+      //TODO_BOOST is this a temporary function ???
       std::ostringstream ss;
       if(this->is_special()){
         ss << utc_time();
@@ -495,7 +495,7 @@ namespace local_time {
       return t;
     }
 
-    /*! Simple formatting code -- todo remove this?
+    /*! Simple formatting code -- TODO_BOOST remove this?
      */
     std::string zone_as_offset(const time_duration_type& td,
                                const std::string& separator) const

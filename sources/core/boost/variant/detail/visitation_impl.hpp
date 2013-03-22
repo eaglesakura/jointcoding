@@ -44,7 +44,7 @@
 // BOOST_VARIANT_VISITATION_UNROLLING_LIMIT
 //
 // Unrolls variant's visitation mechanism to reduce template instantiation
-// and potentially increase runtime performance. (TODO: Investigate further.)
+// and potentially increase runtime performance. (TODO_BOOST: Investigate further.)
 //
 #if !defined(BOOST_VARIANT_VISITATION_UNROLLING_LIMIT)
 #   define BOOST_VARIANT_VISITATION_UNROLLING_LIMIT   \

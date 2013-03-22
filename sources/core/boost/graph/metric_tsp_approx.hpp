@@ -18,7 +18,7 @@
 // 'natural' (metric) weights such that the triangle inequality is maintained.
 // Graphs must be fully interconnected.
 
-// TODO:
+// TODO_BOOST:
 // There are a couple of improvements that could be made.
 // 1) Change implementation to lower uppper bound Christofides heuristic
 // 2) Implement a less restrictive TSP heuristic (one that does not rely on
@@ -58,8 +58,8 @@ namespace boost
     };
 
     // Tree visitor that keeps track of a preorder traversal of a tree
-    // TODO: Consider migrating this to the graph_as_tree header.
-    // TODO: Parameterize the underlying stores o it doesn't have to be a vector.
+    // TODO_BOOST: Consider migrating this to the graph_as_tree header.
+    // TODO_BOOST: Parameterize the underlying stores o it doesn't have to be a vector.
     template<typename Node, typename Tree> class PreorderTraverser
     {
     private:
@@ -222,7 +222,7 @@ namespace boost
         for(PreorderTraverser<Node, Tree>::const_iterator curr(tvis.begin());
             curr != tvis.end(); ++curr)
         {
-            // TODO: This is will be O(n^2) if vertex storage of g != vecS.
+            // TODO_BOOST: This is will be O(n^2) if vertex storage of g != vecS.
             GVertex v = *next(g_verts.first, get(vertex_index, mst)[*curr]);
             vis.visit_vertex(v, g);
         }

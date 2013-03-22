@@ -420,7 +420,7 @@ namespace boost { namespace numeric { namespace ublas {
 	 * \tparam T1 type of the first scalar (not needed by default)
 	 * \tparam T2 type of the second scalar (not needed by default)
 	 * \tparam M2 type of the second matrix (not needed by default)
-	 * \todo use opb_prod()
+	 * \TODO_BOOST use opb_prod()
          */                 
         template<class M1, class T1, class T2, class M2>
         M1 & srk (M1 &m1, const T1 &t1, const T2 &t2, const M2 &m2) 
@@ -440,7 +440,7 @@ namespace boost { namespace numeric { namespace ublas {
 	 * \tparam T1 type of the first scalar (not needed by default)
 	 * \tparam T2 type of the second scalar (not needed by default)
 	 * \tparam M2 type of the second matrix (not needed by default)
-	 * \todo use opb_prod()
+	 * \TODO_BOOST use opb_prod()
          */                 
         template<class M1, class T1, class T2, class M2>
         M1 & hrk (M1 &m1, const T1 &t1, const T2 &t2, const M2 &m2) 
@@ -462,7 +462,7 @@ namespace boost { namespace numeric { namespace ublas {
 	 * \tparam T2 type of the second scalar (not needed by default)
 	 * \tparam M2 type of the second matrix (not needed by default)
 	 * \tparam M3 type of the third matrix (not needed by default)
-	 * \todo use opb_prod()
+	 * \TODO_BOOST use opb_prod()
          */                 
         template<class M1, class T1, class T2, class M2, class M3>
         M1 & sr2k (M1 &m1, const T1 &t1, const T2 &t2, const M2 &m2, const M3 &m3) 
@@ -484,7 +484,7 @@ namespace boost { namespace numeric { namespace ublas {
 	 * \tparam T2 type of the second scalar (not needed by default)
 	 * \tparam M2 type of the second matrix (not needed by default)
 	 * \tparam M3 type of the third matrix (not needed by default)
-	 * \todo use opb_prod()
+	 * \TODO_BOOST use opb_prod()
          */                 
         template<class M1, class T1, class T2, class M2, class M3>
         M1 & hr2k (M1 &m1, const T1 &t1, const T2 &t2, const M2 &m2, const M3 &m3) 

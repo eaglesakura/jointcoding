@@ -168,7 +168,7 @@ BOOST_UBLAS_INLINE vector_move_manip<T>  move(T i) {
 *
 * \sa move()
 *
-* \todo Doxygen has some problems with similar template functions. Correct that.
+* \TODO_BOOST Doxygen has some problems with similar template functions. Correct that.
 */
 template <std::size_t I>
 class static_vector_move_manip: public index_manipulator<static_vector_move_manip<I> > {
@@ -196,7 +196,7 @@ public:
 * 1 2 0 0 0 3
 * \endcode
 *
-* \todo Doxygen has some problems with similar template functions. Correct that.
+* \TODO_BOOST Doxygen has some problems with similar template functions. Correct that.
 */
 template <std::size_t I>
 BOOST_UBLAS_INLINE static_vector_move_manip<I>  move() {
@@ -211,7 +211,7 @@ BOOST_UBLAS_INLINE static_vector_move_manip<I>  move() {
 *
 * \sa move_to(T i, T j)
 *
-* \todo Doxygen has some problems with similar template functions. Correct that.
+* \TODO_BOOST Doxygen has some problems with similar template functions. Correct that.
 */
 template <typename T>
 class matrix_move_to_manip: public index_manipulator<matrix_move_to_manip<T> > {
@@ -252,7 +252,7 @@ private:
 * \endcode
 * \sa move_to(T i, T j) and static_matrix_move_to_manip
 *
-* \todo Doxygen has some problems with similar template functions. Correct that.
+* \TODO_BOOST Doxygen has some problems with similar template functions. Correct that.
 */
 template <typename T>
 BOOST_UBLAS_INLINE matrix_move_to_manip<T>  move_to(T i, T j) {
@@ -267,7 +267,7 @@ BOOST_UBLAS_INLINE matrix_move_to_manip<T>  move_to(T i, T j) {
 *
 * \sa move_to()
 *
-* \todo Doxygen has some problems with similar template functions. Correct that.
+* \TODO_BOOST Doxygen has some problems with similar template functions. Correct that.
 */
 template <std::size_t I, std::size_t J>
 class static_matrix_move_to_manip: public index_manipulator<static_matrix_move_to_manip<I, J> > {
@@ -367,7 +367,7 @@ BOOST_UBLAS_INLINE matrix_move_manip<T>  move(T i, T j) {
 *
 * \sa move()
 *
-* \todo Doxygen has some problems with similar template functions. Correct that.
+* \TODO_BOOST Doxygen has some problems with similar template functions. Correct that.
 */
 template <std::size_t I, std::size_t J>
 class static_matrix_move_manip: public index_manipulator<static_matrix_move_manip<I, J> > {
@@ -405,7 +405,7 @@ public:
 *
 * \sa move_to()
 *
-* \todo Doxygen has some problems with similar template functions. Correct that.
+* \TODO_BOOST Doxygen has some problems with similar template functions. Correct that.
 */
 template <std::size_t I, std::size_t J>
 BOOST_UBLAS_INLINE static_matrix_move_manip<I, J>  move() {
@@ -789,7 +789,7 @@ namespace traverse_policy {
     *
     * Please see EXAMPLES_LINK for usage information.
     *
-    * \todo Add examples link
+    * \TODO_BOOST Add examples link
     */
     template <class Wrap = wrap>
     class by_row_policy :public traverse_policy_wrapper<by_row_policy<Wrap> > {
@@ -835,7 +835,7 @@ namespace traverse_policy {
     *
     * Please see EXAMPLES_LINK for usage information.
     *
-    * \todo Add examples link
+    * \TODO_BOOST Add examples link
     */
     template <class Wrap = wrap>
     class by_column_policy :public traverse_policy_wrapper<by_column_policy<Wrap> > {
@@ -917,7 +917,7 @@ namespace traverse_policy {
 * This object is meant to be created by appropriate object generators.
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E, class Fill_Policy = fill_policy::index_assign>
 class vector_expression_assigner {
@@ -1040,7 +1040,7 @@ static_vector_expression_assigner<vector_expression<E>, 1 > test_static(vector_e
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E>
 BOOST_UBLAS_INLINE
@@ -1053,7 +1053,7 @@ vector_expression_assigner<vector_expression<E> > operator<<=(vector_expression<
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E1, class E2>
 BOOST_UBLAS_INLINE
@@ -1066,7 +1066,7 @@ vector_expression_assigner<vector_expression<E1> > operator<<=(vector_expression
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E, typename T>
 BOOST_UBLAS_INLINE
@@ -1079,7 +1079,7 @@ vector_expression_assigner<vector_expression<E> > operator<<=(vector_expression<
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E, typename T>
 BOOST_UBLAS_INLINE
@@ -1093,7 +1093,7 @@ vector_expression_assigner<vector_expression<E>, T> operator<<=(vector_expressio
 * This object is meant to be created by appropriate object generators.
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E, class Fill_Policy = fill_policy::index_assign, class Traverse_Policy = DEFAULT_TRAVERSE_POLICY >
 class matrix_expression_assigner {
@@ -1203,7 +1203,7 @@ private:
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E>
 BOOST_UBLAS_INLINE
@@ -1216,7 +1216,7 @@ matrix_expression_assigner<matrix_expression<E> > operator<<=(matrix_expression<
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E, typename T>
 BOOST_UBLAS_INLINE
@@ -1229,7 +1229,7 @@ matrix_expression_assigner<matrix_expression<E>, T> operator<<=(matrix_expressio
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E, typename T>
 BOOST_UBLAS_INLINE
@@ -1242,7 +1242,7 @@ matrix_expression_assigner<matrix_expression<E> > operator<<=(matrix_expression<
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E, typename T>
 BOOST_UBLAS_INLINE
@@ -1255,7 +1255,7 @@ matrix_expression_assigner<matrix_expression<E>, fill_policy::index_assign, T> o
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E1, class E2>
 BOOST_UBLAS_INLINE
@@ -1268,7 +1268,7 @@ matrix_expression_assigner<matrix_expression<E1> > operator<<=(matrix_expression
 *
 * Please see EXAMPLES_LINK for usage information.
 *
-* \todo Add examples link
+* \TODO_BOOST Add examples link
 */
 template <class E1, class E2>
 BOOST_UBLAS_INLINE

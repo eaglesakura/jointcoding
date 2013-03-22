@@ -51,7 +51,7 @@ template <> struct promote_code<float> { static const int value = 500; };
 template <> struct promote_code<double> { static const int value = 600; };
 template <> struct promote_code<long double> { static const int value = 700; };
 
-// TODO: wchar_t
+// TODO_BOOST: wchar_t
 
 // forward delcaration of complex.
 
@@ -89,7 +89,7 @@ template <> struct promote_to_int<unsigned short int>
 };
 
 
-// TODO: think, should there be default behaviour for non-standard types?
+// TODO_BOOST: think, should there be default behaviour for non-standard types?
 
 } // namespace detail
 
@@ -203,7 +203,7 @@ struct return_type_1<other_action<addressof_action>, A> {
 
 // contentsof action ------------------------------------
 
-// TODO: this deduction may lead to fail directly, 
+// TODO_BOOST: this deduction may lead to fail directly, 
 // (if A has no specialization for iterator_traits and has no
 // typedef A::reference.
 // There is no easy way around this, cause there doesn't seem to be a way
@@ -524,7 +524,7 @@ struct return_type_2<bitwise_action<Act>, A, B>
 
   // plus_action is just a random pick, has to be a concrete instance
 
-  // TODO: This check is only valid for built-in types, overloaded types might
+  // TODO_BOOST: This check is only valid for built-in types, overloaded types might
   // accept floating point operators
 
   // bitwise operators not defined for floating point types

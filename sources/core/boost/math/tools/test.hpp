@@ -78,7 +78,7 @@ T relative_error(T a, T b)
 
    if((a != 0) && (b != 0))
    {
-      // TODO: use isfinite:
+      // TODO_BOOST: use isfinite:
       if(fabs(b) >= max_val)
       {
          if(fabs(a) >= max_val)
@@ -122,7 +122,7 @@ inline double relative_error<double>(double a, double b)
 
    if((a != 0) && (b != 0))
    {
-      // TODO: use isfinite:
+      // TODO_BOOST: use isfinite:
       if(b > max_val)
       {
          if(a > max_val)

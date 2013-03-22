@@ -80,7 +80,7 @@ namespace boost { namespace numeric
         }
     }
 
-    // TODO: handle complex weight, valarray, MTL vectors
+    // TODO_BOOST: handle complex weight, valarray, MTL vectors
 
     /// INTERNAL ONLY
     ///

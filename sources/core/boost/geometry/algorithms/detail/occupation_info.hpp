@@ -44,7 +44,7 @@ public :
 
     inline relaxed_less()
     {
-        // TODO: adapt for ttmath, and maybe build the map in another way 
+        // TODO_BOOST: adapt for ttmath, and maybe build the map in another way 
         // (e.g. exact constellations of segment-id's), maybe adaptive.
         epsilon = std::numeric_limits<double>::epsilon() * 100.0;
     }
@@ -246,7 +246,7 @@ inline void add_incoming_and_outgoing_angles(Point const& map_point, Point const
     segment_identifier real_seg_id = seg_id;
 	iterator_type it = boost::begin(ring) + seg_id.segment_index;
 
-    // TODO: if we use turn-info ("to", "middle"), we know if to advance without resorting to equals
+    // TODO_BOOST: if we use turn-info ("to", "middle"), we know if to advance without resorting to equals
     relaxed_less<Point> comparator;
 
     if (comparator.equals(intersection_point, *it))

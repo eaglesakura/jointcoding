@@ -117,7 +117,7 @@ struct wkt_range
 
         os << PrefixPolicy::apply();
 
-        // TODO: check EMPTY here
+        // TODO_BOOST: check EMPTY here
 
         for (iterator_type it = boost::begin(range);
             it != boost::end(range);
@@ -162,7 +162,7 @@ struct wkt_poly
         typedef typename ring_type<Polygon const>::type ring;
 
         os << PrefixPolicy::apply();
-        // TODO: check EMPTY here
+        // TODO_BOOST: check EMPTY here
         os << "(";
         wkt_sequence<ring>::apply(os, exterior_ring(poly));
 

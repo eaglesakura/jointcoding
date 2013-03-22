@@ -47,7 +47,7 @@ namespace boost { namespace xpressive { namespace grammar_detail
       : or_<
             when<
                 comma<ListSet<Char>, CharLiteral<Char> >
-              , make<mpl::next<call<ListSet<Char>(_left)> > > // TODO make a custom transform for this...
+              , make<mpl::next<call<ListSet<Char>(_left)> > > // TODO_BOOST make a custom transform for this...
             >
           , when<
                 assign<detail::set_initializer_type, CharLiteral<Char> >

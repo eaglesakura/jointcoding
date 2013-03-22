@@ -4,7 +4,7 @@
 //  (C) Copyright Beman Dawes 2001 - 2003. 
 //  (C) Copyright Douglas Gregor 2002. 
 //  (C) Copyright David Abrahams 2002 - 2003. 
-//  (C) Copyright Synge Todo 2003. 
+//  (C) Copyright Synge TODO_BOOST 2003. 
 //  Use, modification and distribution are subject to the 
 //  Boost Software License, Version 1.0. (See accompanying file 
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)

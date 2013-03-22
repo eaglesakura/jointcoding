@@ -1497,7 +1497,7 @@ namespace boost { namespace property_tree { namespace detail {namespace rapidxml
             if (Flags & parse_no_utf8)
             {
                 // Insert 8-bit ASCII character
-                // Todo: possibly verify that code is less than 256 and use replacement char otherwise?
+                // TODO_BOOST: possibly verify that code is less than 256 and use replacement char otherwise?
                 text[0] = static_cast<unsigned char>(code);
                 text += 1;
             }

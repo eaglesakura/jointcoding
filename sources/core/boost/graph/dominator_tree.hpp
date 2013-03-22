@@ -229,7 +229,7 @@ namespace boost {
    *
    * @note reference Appel. p. 452~453. algorithm 19.9, 19.10.
    *
-   * @todo : Optimization in Finding Dominators in Practice, Loukas Georgiadis
+   * @TODO_BOOST : Optimization in Finding Dominators in Practice, Loukas Georgiadis
    */
   template<class Graph, class IndexMap, class TimeMap, class PredMap,
            class VertexVector, class DomTreePredMap>

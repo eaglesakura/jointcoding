@@ -10,7 +10,7 @@
 #include <boost/property_map/property_map.hpp>
 
 
-// TODO: This should really be part of the property maps library rather than
+// TODO_BOOST: This should really be part of the property maps library rather than
 // the Boost.Graph library.
 
 namespace boost {

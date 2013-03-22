@@ -25,7 +25,7 @@ namespace boost {
 namespace uuids {
 
 // generate a name-based uuid
-// TODO: add in common namesspace uuids
+// TODO_BOOST: add in common namesspace uuids
 class name_generator {
 public:
     typedef uuid result_type;

@@ -20,7 +20,7 @@
 #include <boost/static_assert.hpp>
 
 // See boost/python/type_id.hpp
-// TODO: add BOOST_TYPEID_COMPARE_BY_NAME to config.hpp
+// TODO_BOOST: add BOOST_TYPEID_COMPARE_BY_NAME to config.hpp
 # if (defined(__GNUC__) && __GNUC__ >= 3) \
  || defined(_AIX) \
  || (   defined(__sgi) && defined(__host_mips)) \

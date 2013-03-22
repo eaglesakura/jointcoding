@@ -202,7 +202,7 @@ namespace boost { namespace xpressive { namespace detail
     struct width_of<Expr, Char, keeper_tag>
       : unknown_width
     {
-        // TODO: keep() now has a second meaning: execute actions immediately.
+        // TODO_BOOST: keep() now has a second meaning: execute actions immediately.
         // In that sense, it is perfectly reasonable to put a fixed-width
         // sub-expression in a keep. Can fixed-width keep() sub-expressions
         // use the simple_repeat_matcher?

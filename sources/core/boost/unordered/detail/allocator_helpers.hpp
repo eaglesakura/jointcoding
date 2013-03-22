@@ -201,7 +201,7 @@ namespace boost { namespace unordered { namespace detail {
 
 namespace boost { namespace unordered { namespace detail {
 
-    // TODO: Does this match std::allocator_traits<Alloc>::rebind_alloc<T>?
+    // TODO_BOOST: Does this match std::allocator_traits<Alloc>::rebind_alloc<T>?
     template <typename Alloc, typename T>
     struct rebind_wrap
     {
@@ -387,7 +387,7 @@ namespace boost { namespace unordered { namespace detail {
         typedef BOOST_UNORDERED_DEFAULT_TYPE(Alloc, size_type, std::size_t)
             size_type;
 
-        // TODO: rebind_alloc and rebind_traits
+        // TODO_BOOST: rebind_alloc and rebind_traits
 
         static pointer allocate(Alloc& a, size_type n)
             { return a.allocate(n); }

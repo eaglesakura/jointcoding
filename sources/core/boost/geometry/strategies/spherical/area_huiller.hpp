@@ -139,8 +139,8 @@ public :
             // In right direction: positive, add area. In left direction: negative, subtract area.
             // Longitude comparisons are not so obvious. If one is negative, other is positive,
             // we have to take the dateline into account.
-            // TODO: check this / enhance this, should be more robust. See also the "grow" for ll
-            // TODO: use minmax or "smaller"/"compare" strategy for this
+            // TODO_BOOST: check this / enhance this, should be more robust. See also the "grow" for ll
+            // TODO_BOOST: use minmax or "smaller"/"compare" strategy for this
             calculation_type lon1 = geometry::get_as_radian<0>(p1) < 0
                 ? geometry::get_as_radian<0>(p1) + two_pi
                 : geometry::get_as_radian<0>(p1);

@@ -22,7 +22,7 @@
 namespace boost { namespace xpressive { namespace detail
 {
 
-    // TODO: the mark matcher is acually a fixed-width matcher, but the width is
+    // TODO_BOOST: the mark matcher is acually a fixed-width matcher, but the width is
     // not known until pattern match time.
 
     ///////////////////////////////////////////////////////////////////////////////

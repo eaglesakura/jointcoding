@@ -103,7 +103,7 @@ class mpi_process_group
   /**
    * Stores the outgoing messages for a particular processor.
    *
-   * @todo Evaluate whether we should use a deque instance, which
+   * @TODO_BOOST Evaluate whether we should use a deque instance, which
    * would reduce could reduce the cost of "sending" messages but
    * increases the time spent in the synchronization step.
    */
@@ -286,7 +286,7 @@ public:
    *   immediately. The handler can be changed after-the-fact by
    *   calling @c replace_handler.
    *
-   *   @param out_of_band_receive An anachronism. TODO: remove this.
+   *   @param out_of_band_receive An anachronism. TODO_BOOST: remove this.
    */
   mpi_process_group(const mpi_process_group& other,
                     const receiver_type& handler,
@@ -355,7 +355,7 @@ public:
   std::pair<int, int> decode_tag(int encoded_tag) const
   { return std::make_pair(encoded_tag / max_tags, encoded_tag % max_tags); }
 
-  // @todo Actually write up the friend declarations so these could be
+  // @TODO_BOOST Actually write up the friend declarations so these could be
   // private.
 
   // private:

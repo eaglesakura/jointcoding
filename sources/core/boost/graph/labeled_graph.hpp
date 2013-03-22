@@ -45,7 +45,7 @@ namespace graph_detail {
         typedef typename mpl::if_<
             is_unsigned<Label>,
             std::vector<Vertex>,
-            std::map<Label, Vertex> // TODO: Should use unordered_map?
+            std::map<Label, Vertex> // TODO_BOOST: Should use unordered_map?
         >::type type;
     };
 
@@ -245,12 +245,12 @@ struct labeled_graph_types {
  * The labeled_graph class is a graph adaptor that maintains a mapping between
  * vertex labels and vertex descriptors.
  *
- * @todo This class is somewhat redundant for adjacency_list<*, vecS>  if
+ * @TODO_BOOST This class is somewhat redundant for adjacency_list<*, vecS>  if
  * the intended label is an unsigned int (and perhpahs some other cases), but
  * it does avoid some weird ambiguities (i.e. adding a vertex with a label that
  * does not match its target index).
  *
- * @todo This needs to be reconciled with the named_graph, but since there is
+ * @TODO_BOOST This needs to be reconciled with the named_graph, but since there is
  * no documentation or examples, its not going to happen.
  */
 template <typename Graph, typename Label, typename Selector = defaultS>

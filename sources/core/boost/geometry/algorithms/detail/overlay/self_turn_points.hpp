@@ -92,7 +92,7 @@ struct self_section_visitor
         }
         if (m_interrupt_policy.has_intersections)
         {
-            // TODO: we should give partition an interrupt policy.
+            // TODO_BOOST: we should give partition an interrupt policy.
             // Now we throw, and catch below, to stop the partition loop.
             throw self_ip_exception();
         }

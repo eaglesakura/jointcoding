@@ -268,7 +268,7 @@ namespace impl
 
 } // namespace impl
 
-// TODO The templatized tag::tail below should inherit from the correct named parameter.
+// TODO_BOOST The templatized tag::tail below should inherit from the correct named parameter.
 // The following lines provide a workaround, but there must be a better way of doing this.
 template<typename T>
 struct tail_cache_size_named_arg

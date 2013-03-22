@@ -538,7 +538,7 @@ namespace boost {
 
     /** Compare distributed edge descriptors for equality.
      *
-     * \todo need edge_descriptor to know if it is undirected so we
+     * \TODO_BOOST need edge_descriptor to know if it is undirected so we
      * can compare both ways.
      */
     template<typename Edge>
@@ -1245,14 +1245,14 @@ namespace boost {
    * processes will then be released from the synchronization barrier
    * concurrently.
    *
-   * \todo Determine precisely what we should do with nonlocal edges
+   * \TODO_BOOST Determine precisely what we should do with nonlocal edges
    * in undirected graphs. Our parallelization of certain algorithms
    * relies on the ability to access edge property maps immediately
    * (e.g., edge_weight_t), so it may be necessary to duplicate the
    * edge properties in both processes (but then we need some form of
    * coherence protocol).
    *
-   * \todo What does the user do if @c property_reduce doesn't do the
+   * \TODO_BOOST What does the user do if @c property_reduce doesn't do the
    * right thing?
    */
   template<typename OutEdgeListS, typename ProcessGroup,
@@ -2039,7 +2039,7 @@ namespace boost {
      * for the target vertex, but it is marked as a non-local edge
      * descriptor.
      *
-     * \todo There is a potential problem here, where we could
+     * \TODO_BOOST There is a potential problem here, where we could
      * unintentionally allow duplicate edges in undirected graphs
      * because the same edge is added on two different processors
      * simultaneously. It's not an issue now, because we require
@@ -2483,7 +2483,7 @@ namespace boost {
       if (target.owner == self.processor()) {
         // Edge is local, so add the new edge to the list
 
-        // TODO: This is not what we want to do for an undirected
+        // TODO_BOOST: This is not what we want to do for an undirected
         // edge, because we haven't linked the source and target's
         // representations of those edges.
         local_edge_descriptor return_edge =

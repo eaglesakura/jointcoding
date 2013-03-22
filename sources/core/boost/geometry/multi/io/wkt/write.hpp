@@ -33,7 +33,7 @@ struct wkt_multi
                 Multi const& geometry)
     {
         os << PrefixPolicy::apply();
-        // TODO: check EMPTY here
+        // TODO_BOOST: check EMPTY here
         os << "(";
 
         for (typename boost::range_iterator<Multi const>::type

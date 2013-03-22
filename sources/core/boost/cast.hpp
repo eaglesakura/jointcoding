@@ -54,7 +54,7 @@
 //  time if you use a template function which has template parameters that don't
 //  appear in the function's argument list.
 //
-//  TODO: Add this to config.hpp?
+//  TODO_BOOST: Add this to config.hpp?
 # if defined(BOOST_MSVC) && BOOST_MSVC < 1300
 #  define BOOST_EXPLICIT_DEFAULT_TARGET , ::boost::type<Target>* = 0
 # else

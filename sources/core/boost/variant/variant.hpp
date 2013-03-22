@@ -92,7 +92,7 @@
 //   When #defined, implementation employs all known means to minimize the
 //   size of variant obje   cts. However, often unsuccessful due to alignment
 //   issues, and potentially harmful to runtime speed, so not enabled by
-//   default. (TODO: Investigate further.)
+//   default. (TODO_BOOST: Investigate further.)
 
 #if defined(BOOST_VARIANT_MINIMIZE_SIZE)
 #   include <climits> // for SCHAR_MAX

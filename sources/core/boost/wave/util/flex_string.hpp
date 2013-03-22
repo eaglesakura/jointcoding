@@ -484,7 +484,7 @@ public:
     template <class InputIterator>
     void append(InputIterator b, InputIterator e)
     {
-        // @@@ todo: optimize this depending on iterator type
+        // @@@ TODO_BOOST: optimize this depending on iterator type
         for (; b != e; ++b)
         {
             *this += *b;
@@ -1067,7 +1067,7 @@ public:
     template <class InputIterator>
     void append(InputIterator b, InputIterator e)
     {
-        // @@@ todo: optimize this depending on iterator type
+        // @@@ TODO_BOOST: optimize this depending on iterator type
         for (; b != e; ++b)
         {
             *this += *b;

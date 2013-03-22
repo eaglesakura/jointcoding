@@ -557,7 +557,7 @@ namespace boost { namespace polygon {
       return *this;
     }
 
-    // TODO:: should be private
+    // TODO_BOOST:: should be private
     template <typename geometry_type>
     inline polygon_set_data&
     insert_with_resize(const geometry_type& poly, coordinate_type resizing, bool corner_fill_arc=false, unsigned int num_circle_segments=0, bool hole = false) {
@@ -641,7 +641,7 @@ namespace boost { namespace polygon {
         v = point_data<double>(v.x()/s,v.y()/s);
         point_data<T> curr_prev;
         if (prev_concave)
-          //TODO missing round_down()
+          //TODO_BOOST missing round_down()
           curr_prev = point_data<T>(first->x()+v.x(),first->y()+v.y());
         else 
           curr_prev = prev_point;

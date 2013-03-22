@@ -209,7 +209,7 @@ namespace detail
         // http://en.wikipedia.org/wiki/List_of_canonical_coordinate_transformations#From_Cartesian_coordinates
 
 #if defined(BOOST_GEOMETRY_TRANSFORM_CHECK_UNIT_SPHERE)
-        // TODO: MAYBE ONLY IF TO BE CHECKED?
+        // TODO_BOOST: MAYBE ONLY IF TO BE CHECKED?
         T const r = /*sqrt not necessary, sqrt(1)=1*/ (x * x + y * y + z * z);
 
         // Unit sphere, so r should be 1
@@ -217,7 +217,7 @@ namespace detail
         {
             return false;
         }
-        // end todo
+        // end TODO_BOOST
 #endif
 
         set_from_radian<0>(p, atan2(y, x));

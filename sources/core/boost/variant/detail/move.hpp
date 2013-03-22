@@ -45,7 +45,7 @@ namespace detail {
 //
 // Concrete type from which moveable<T> derives.
 //
-// TODO: Move into moveable_fwd.hpp and define has_move_constructor.
+// TODO_BOOST: Move into moveable_fwd.hpp and define has_move_constructor.
 //
 template <typename Deriving>
 struct moveable_tag

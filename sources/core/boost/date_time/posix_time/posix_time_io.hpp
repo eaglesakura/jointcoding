@@ -172,7 +172,7 @@ namespace posix_time {
 
 
   //! ostream operator for posix_time::time_duration 
-  //  todo fix to use facet --  place holder for now...
+  //  TODO_BOOST fix to use facet --  place holder for now...
   template <class CharT, class Traits>
   inline
   std::basic_ostream<CharT, Traits>&

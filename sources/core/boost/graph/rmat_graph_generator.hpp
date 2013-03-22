@@ -161,7 +161,7 @@ namespace boost {
       if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
 
-      // TODO: Generate the entire adjacency matrix then "Clip and flip" if undirected graph
+      // TODO_BOOST: Generate the entire adjacency matrix then "Clip and flip" if undirected graph
 
       // Generate the first edge
       vertices_size_type u, v;
@@ -274,7 +274,7 @@ namespace boost {
       if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
 
-      // TODO: "Clip and flip" if undirected graph
+      // TODO_BOOST: "Clip and flip" if undirected graph
       int SCALE = int_log2(n);
 
       for (edges_size_type i = 0; i < m; ++i) {

@@ -472,7 +472,7 @@ struct cpp_regex_traits
     template<typename FwdIter>
     string_type transform_primary(FwdIter begin, FwdIter end) const
     {
-        BOOST_ASSERT(false); // TODO implement me
+        BOOST_ASSERT(false); // TODO_BOOST implement me
         return string_type();
     }
 
@@ -484,7 +484,7 @@ struct cpp_regex_traits
     template<typename FwdIter>
     string_type lookup_collatename(FwdIter begin, FwdIter end) const
     {
-        BOOST_ASSERT(false); // TODO implement me
+        BOOST_ASSERT(false); // TODO_BOOST implement me
         return string_type();
     }
 

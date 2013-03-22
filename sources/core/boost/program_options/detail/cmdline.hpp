@@ -54,7 +54,7 @@ namespace boost { namespace program_options { namespace detail {
         line parsing. In addition, it's possible to install additional parser
         which will process custom option styles.
 
-        @todo mininal match length for guessing?
+        @TODO_BOOST mininal match length for guessing?
     */
     class BOOST_PROGRAM_OPTIONS_DECL cmdline {
     public:

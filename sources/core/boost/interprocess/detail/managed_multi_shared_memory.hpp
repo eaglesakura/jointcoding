@@ -46,7 +46,7 @@ namespace boost {
 
 namespace interprocess {
 
-//TODO: We must somehow obtain the permissions of the first segment
+//TODO_BOOST: We must somehow obtain the permissions of the first segment
 //to apply them to subsequent segments
 //-Use GetSecurityInfo?
 //-Change everything to use only a shared memory object expanded via truncate()?

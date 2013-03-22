@@ -18,7 +18,7 @@ struct accumulator_concept
 {
     void constraints()
     {
-        // TODO: define the stat concept
+        // TODO_BOOST: define the stat concept
     }
 
     Stat stat;

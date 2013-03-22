@@ -59,7 +59,7 @@ inline void forced_return<void>( BOOST_EXPLICIT_TEMPLATE_TYPE_SPEC(void) )
 
 // workaround implementation
 //
-// TODO: Determine the most efficient way to handle this -- as below? by
+// TODO_BOOST: Determine the most efficient way to handle this -- as below? by
 // throwing? by recursive call to forced_return itself? etc.
 //
 

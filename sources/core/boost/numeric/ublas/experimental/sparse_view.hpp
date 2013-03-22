@@ -32,7 +32,7 @@ namespace boost { namespace numeric { namespace ublas {
         typedef T * pointer;
 
     public:
-        // TODO: think about a const pointer
+        // TODO_BOOST: think about a const pointer
         typedef const pointer array_type;
 
         typedef std::size_t size_type;

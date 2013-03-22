@@ -125,7 +125,7 @@ struct segments_intersection_points
     {
         return_type result;
         result.count = 2;
-        // TODO: order of IP's
+        // TODO_BOOST: order of IP's
         set<0>(result.intersections[0], get<0, 0>(s));
         set<1>(result.intersections[0], get<0, 1>(s));
         set<0>(result.intersections[1], get<1, 0>(s));

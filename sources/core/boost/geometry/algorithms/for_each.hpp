@@ -57,7 +57,7 @@ struct fe_point_per_segment
     static inline Functor apply(
                 typename add_const_if_c<IsConst, Point>::type& , Functor f)
     {
-        // TODO: if non-const, we should extract the points from the segment
+        // TODO_BOOST: if non-const, we should extract the points from the segment
         // and call the functor on those two points
         return f;
     }

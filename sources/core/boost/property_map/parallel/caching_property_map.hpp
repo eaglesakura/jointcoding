@@ -29,7 +29,7 @@ namespace parallel {
  * suppresses communication in the event of a remote @c put operation
  * by mapping it to a local @c put operation.
  *
- * @todo Find a better name for @ref caching_property_map
+ * @TODO_BOOST Find a better name for @ref caching_property_map
  */
 template<typename PropertyMap>
 class caching_property_map

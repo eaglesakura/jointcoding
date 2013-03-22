@@ -262,7 +262,7 @@ IntType get_one_int(Iter& first, Iter last)
     return s;
 }
 
-// TODO: work in-place whenever possible
+// TODO_BOOST: work in-place whenever possible
 template<int w, std::size_t n, class SeedSeq, class UIntType>
 void seed_array_int_impl(SeedSeq& seq, UIntType (&x)[n])
 {

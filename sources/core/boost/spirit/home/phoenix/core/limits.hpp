@@ -73,7 +73,7 @@
 #include <boost/fusion/include/vector.hpp>
 
 // for some reason, this must be included now to make
-// detail/type_deduction.hpp compile. $$$ TODO: Investigate further $$$
+// detail/type_deduction.hpp compile. $$$ TODO_BOOST: Investigate further $$$
 #include <boost/mpl/vector/vector20.hpp>
 
 #endif

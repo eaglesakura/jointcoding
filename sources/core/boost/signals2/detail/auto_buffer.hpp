@@ -312,7 +312,7 @@ namespace detail
         {
             BOOST_ASSERT( n > members_.capacity_ );
             size_type new_capacity = GrowPolicy::new_capacity( members_.capacity_ );
-            // @todo: consider to check for allocator.max_size()
+            // @TODO_BOOST: consider to check for allocator.max_size()
             return (std::max)(new_capacity,n);
         }
 
@@ -832,7 +832,7 @@ namespace detail
 
         iterator insert( const_iterator before, optimized_const_reference x ) // basic
         {
-            // @todo: consider if we want to support x in 'this'
+            // @TODO_BOOST: consider if we want to support x in 'this'
             if( size_ < members_.capacity_ )
             {
                 bool is_back_insertion = before == cend();
@@ -865,7 +865,7 @@ namespace detail
         void insert( const_iterator before, size_type n,
                      optimized_const_reference x )
         {
-            // @todo: see problems above
+            // @TODO_BOOST: see problems above
             if( size_ + n <= members_.capacity_ )
             {
                 grow_back( n );

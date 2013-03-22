@@ -308,7 +308,7 @@ make_repeat(quant_spec const &spec, sequence<BidiIter> &seq, int mark_nbr)
     // only bother creating a repeater if max is greater than one
     if(1 < spec.max_)
     {
-        // TODO: statically bind the repeat matchers to the mark matchers for better perf
+        // TODO_BOOST: statically bind the repeat matchers to the mark matchers for better perf
         unsigned int min = spec.min_ ? spec.min_ : 1U;
         repeat_begin_matcher repeat_begin(mark_nbr);
         if(spec.greedy_)

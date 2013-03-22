@@ -378,10 +378,10 @@ void fill(boost::gil::iterator_from_2d<IL> first, boost::gil::iterator_from_2d<I
         // fill row by row
         std::ptrdiff_t n=last-first;
         while (n>0) {
-            std::ptrdiff_t numToDo=std::min<const std::ptrdiff_t>(n,(std::ptrdiff_t)(first.width()-first.x_pos()));
-            fill_n(first.x(), numToDo, val);
-            first+=numToDo;
-            n-=numToDo;
+            std::ptrdiff_t numTODO_BOOST=std::min<const std::ptrdiff_t>(n,(std::ptrdiff_t)(first.width()-first.x_pos()));
+            fill_n(first.x(), numTODO_BOOST, val);
+            first+=numTODO_BOOST;
+            n-=numTODO_BOOST;
         }
     }
 } 

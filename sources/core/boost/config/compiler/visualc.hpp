@@ -87,7 +87,7 @@
 #  define BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
 #  define BOOST_NO_IS_ABSTRACT
 #  define BOOST_NO_FUNCTION_TYPE_SPECIALIZATIONS
-// TODO: what version is meant here? Have there really been any fixes in cl 12.01 (as e.g. shipped with eVC4)?
+// TODO_BOOST: what version is meant here? Have there really been any fixes in cl 12.01 (as e.g. shipped with eVC4)?
 #  if (_MSC_VER >= 1300)
 #     define BOOST_NO_MEMBER_FUNCTION_SPECIALIZATIONS
 #  endif
@@ -233,7 +233,7 @@
 #  define BOOST_ABI_SUFFIX "boost/config/abi/msvc_suffix.hpp"
 #endif
 
-// TODO:
+// TODO_BOOST:
 // these things are mostly bogus. 1200 means version 12.0 of the compiler. The 
 // artificial versions assigned to them only refer to the versions of some IDE
 // these compilers have been shipped with, and even that is not all of it. Some

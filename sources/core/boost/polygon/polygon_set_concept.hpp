@@ -440,7 +440,7 @@ namespace boost { namespace polygon{
     return self_assignment_boolean_op<geometry_type_1, geometry_type_2, 3>(lvalue, rvalue);
   }
 
-  // TODO: Dafna, test these four resizing operators
+  // TODO_BOOST: Dafna, test these four resizing operators
   struct y_ps_rpe : gtl_yes {};
 
   template <typename geometry_type_1, typename coordinate_type_1>

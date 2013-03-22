@@ -65,7 +65,7 @@ namespace boost
 // AdjacencyMatrix modeled graphs due to the non-constant implementation
 // of the edge(u,v,g) functions.
 //
-// TODO: It might be worthwhile to provide functionality for passing
+// TODO_BOOST: It might be worthwhile to provide functionality for passing
 // a connectivity matrix to improve the efficiency of those lookups
 // when needed. This could simply be passed as a BooleanMatrix
 // s.t. edge(u,v,B) returns true or false. This could easily be
@@ -199,7 +199,7 @@ namespace detail
             if(ni != nend) return;
         }
 
-        // TODO: the original algorithm 457 describes an alternative
+        // TODO_BOOST: the original algorithm 457 describes an alternative
         // (albeit really complicated) mechanism for selecting candidates.
         // The given optimizaiton seeks to bring about the above
         // condition sooner (i.e., there is a vertex in the not set
@@ -218,7 +218,7 @@ namespace detail
         // there's some other stuff about using the number of disconnects
         // as a counter, but i'm jot really sure i followed it.
 
-        // TODO: If we min-sized cliques to visit, then theoretically, we
+        // TODO_BOOST: If we min-sized cliques to visit, then theoretically, we
         // should be able to stop recursing if the clique falls below that
         // size - maybe?
 

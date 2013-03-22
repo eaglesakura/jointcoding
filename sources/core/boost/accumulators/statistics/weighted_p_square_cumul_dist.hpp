@@ -90,7 +90,7 @@ namespace impl
                 {
                     //std::sort(this->heights.begin(), this->heights.end());
 
-                    // TODO: we need to sort the initial samples (in heights) in ascending order and
+                    // TODO_BOOST: we need to sort the initial samples (in heights) in ascending order and
                     // sort their weights (in actual_positions) the same way. The following lines do
                     // it, but there must be a better and more efficient way of doing this.
                     typename array_type::iterator it_begin, it_end, it_min;

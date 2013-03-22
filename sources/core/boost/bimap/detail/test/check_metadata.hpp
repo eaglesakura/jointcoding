@@ -95,14 +95,14 @@
 /*===========================================================================*/
 
 
-// Just for autodocumment the test code
+// Just for auTODO_BOOSTcumment the test code
 /*===========================================================================*/
 #define BOOST_BIMAP_TEST_STATIC_FUNCTION(NAME)                                \
     namespace NAME
 /*===========================================================================*/
 
 
-// Just for autodocument the test code
+// Just for auTODO_BOOSTcument the test code
 /*===========================================================================*/
 #define BOOST_BIMAP_CALL_TEST_STATIC_FUNCTION(NAME)
 /*===========================================================================*/

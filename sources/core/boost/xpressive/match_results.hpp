@@ -668,7 +668,7 @@ public:
         this->args_.swap(that.args_);
     }
 
-    /// TODO document me
+    /// TODO_BOOST document me
     ///
     template<typename Arg>
     match_results<BidiIter> &let(Arg const &arg)

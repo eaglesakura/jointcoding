@@ -905,7 +905,7 @@ namespace boost { namespace numeric { namespace ublas {
 #define INTERNAL_EXPRESSION
 #endif
 
-        // TODO enable this for development
+        // TODO_BOOST enable this for development
         // #define VIEW_CONCEPTS
 
         // Element value type for tests

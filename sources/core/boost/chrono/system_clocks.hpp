@@ -28,7 +28,7 @@ time2_demo contained this comment:
 
 /*
 
-TODO:
+TODO_BOOST:
 
   * Fully implement error handling, with test cases.
   * Use boost::throw_exception. (Currently not used because of an issue with Intel 11.0.)

@@ -13,7 +13,7 @@
 #include <boost/graph/numeric_values.hpp>
 #include <boost/concept/assert.hpp>
 
-// TODO: Should this really be in detail?
+// TODO_BOOST: Should this really be in detail?
 
 namespace boost
 {

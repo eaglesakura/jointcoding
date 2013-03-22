@@ -55,7 +55,7 @@ struct mutable_property_graph_tag
 
 // Some graphs just don't like to be torn down. Note this only restricts
 // teardown to the set of vertices, not the vertex set.
-// TODO: Find a better name for this tag.
+// TODO_BOOST: Find a better name for this tag.
 struct add_only_property_graph_tag
     : virtual add_vertex_property_tag
     , virtual mutable_edge_property_graph_tag

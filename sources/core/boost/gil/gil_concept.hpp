@@ -610,7 +610,7 @@ struct ColorBaseConcept {
         gil_function_requires<ColorSpaceConcept<color_space_t> >();
 
         typedef typename ColorBase::layout_t::channel_mapping_t channel_mapping_t;
-        // TODO: channel_mapping_t must be an MPL RandomAccessSequence
+        // TODO_BOOST: channel_mapping_t must be an MPL RandomAccessSequence
 
         static const std::size_t num_elements = size<ColorBase>::value;
 
@@ -1869,7 +1869,7 @@ struct RandomAccess2DImageViewConcept {
         gil_function_requires<RandomAccessNDImageViewConcept<View> >();
         BOOST_STATIC_ASSERT(View::num_dimensions==2);
 
-        // TODO: This executes the requirements for RandomAccessNDLocatorConcept again. Fix it to improve compile time
+        // TODO_BOOST: This executes the requirements for RandomAccessNDLocatorConcept again. Fix it to improve compile time
         gil_function_requires<RandomAccess2DLocatorConcept<typename View::locator> >();
 
         typedef typename dynamic_x_step_type<View>::type  dynamic_x_step_t;
@@ -1932,7 +1932,7 @@ struct ImageViewConcept {
     void constraints() {
         gil_function_requires<RandomAccess2DImageViewConcept<View> >();
 
-        // TODO: This executes the requirements for RandomAccess2DLocatorConcept again. Fix it to improve compile time
+        // TODO_BOOST: This executes the requirements for RandomAccess2DLocatorConcept again. Fix it to improve compile time
         gil_function_requires<PixelLocatorConcept<typename View::xy_locator> >();
         
         BOOST_STATIC_ASSERT((is_same<typename View::x_coord_t, typename View::y_coord_t>::value));

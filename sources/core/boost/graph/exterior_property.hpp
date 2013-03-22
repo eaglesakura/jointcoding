@@ -52,7 +52,7 @@ namespace detail {
  * of this metafunction will select an appropriate "matrix" property that
  * records values for pairs of vertices.
  *
- * @todo This does not currently support the ability to define exterior
+ * @TODO_BOOST This does not currently support the ability to define exterior
  * properties for graph types that do not model the IndexGraph concepts. A
  * solution should not be especially difficult, but will require an extension
  * of type traits to affect the type selection.

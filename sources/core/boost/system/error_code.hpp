@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <functional>
 
-// TODO: undef these macros if not already defined
+// TODO_BOOST: undef these macros if not already defined
 #include <boost/cerrno.hpp> 
 
 #if !defined(BOOST_POSIX_API) && !defined(BOOST_WINDOWS_API)
@@ -451,7 +451,7 @@ namespace boost
       return !(lhs == rhs);
     }
                   
-    // TODO: both of these may move elsewhere, but the LWG hasn't spoken yet.
+    // TODO_BOOST: both of these may move elsewhere, but the LWG hasn't spoken yet.
 
     template <class charT, class traits>
     inline std::basic_ostream<charT,traits>&

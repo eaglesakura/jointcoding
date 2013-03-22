@@ -94,7 +94,7 @@ namespace boost { namespace spirit
 #   endif
 
 #   ifndef BOOST_NO_IO_COVER_OPERATORS
-  // TODO: stream I/O needs to be templatized on the stream type, so will
+  // TODO_BOOST: stream I/O needs to be templatized on the stream type, so will
   // work with wide streams, etc.
 
       // Stream input and output.

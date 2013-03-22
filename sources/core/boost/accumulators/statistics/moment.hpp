@@ -51,7 +51,7 @@ namespace impl
     // moment_impl
     template<typename N, typename Sample>
     struct moment_impl
-      : accumulator_base // TODO: also depends_on sum of powers
+      : accumulator_base // TODO_BOOST: also depends_on sum of powers
     {
         BOOST_MPL_ASSERT_RELATION(N::value, >, 0);
         // for boost::result_of

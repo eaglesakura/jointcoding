@@ -152,7 +152,7 @@ namespace boost { namespace phoenix
         template <typename Local, typename Env>
         struct apply_local
         {
-            // $$$ TODO: static assert that Env is a scoped_environment $$$
+            // $$$ TODO_BOOST: static assert that Env is a scoped_environment $$$
             typedef typename get_local<Local, Env>::type type;
         };
 

@@ -211,7 +211,7 @@ namespace boost
 #else
         template <class F>
         explicit thread(F f
-            // todo Disable also if Or is_same<typename decay<F>::type, thread>
+            // TODO_BOOST Disable also if Or is_same<typename decay<F>::type, thread>
         , typename disable_if<boost::is_convertible<F&,BOOST_THREAD_RV_REF(F) >, dummy* >::type=0):
             thread_info(make_thread_info(f))
         {

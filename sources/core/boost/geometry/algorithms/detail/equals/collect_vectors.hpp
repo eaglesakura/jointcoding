@@ -32,7 +32,7 @@
 namespace boost { namespace geometry
 {
 
-// TODO: if Boost.LA of Emil Dotchevski is accepted, adapt this
+// TODO_BOOST: if Boost.LA of Emil Dotchevski is accepted, adapt this
 template <typename T>
 struct collected_vector
 {

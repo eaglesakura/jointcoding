@@ -74,7 +74,7 @@ namespace boost { namespace graph { namespace distributed {
     build_local_metagraph(const Graph& g, ParentMap p, RootIterator r,
                           RootIterator r_end, AdjacencyMap& adj)
     {
-      // TODO: Static assert that AdjacencyMap::value_type is std::vector<vertex_descriptor>
+      // TODO_BOOST: Static assert that AdjacencyMap::value_type is std::vector<vertex_descriptor>
 
       typedef typename boost::graph::parallel::process_group_type<Graph>::type
         process_group_type;
@@ -314,7 +314,7 @@ namespace boost { namespace graph { namespace distributed {
       process_group_type pg = process_group(g);
       process_id_type id = process_id(pg);
 
-      // TODO (NGE): Should old_roots, roots, and completed_roots be std::list
+      // TODO_BOOST (NGE): Should old_roots, roots, and completed_roots be std::list
       adjacency_iterator av1, av2;
       std::vector<vertex_descriptor> old_roots;
       typename std::vector<vertex_descriptor>::iterator liter;
@@ -424,7 +424,7 @@ namespace boost { namespace graph { namespace distributed {
         }
 
 #ifdef PBGL_CONSTRUCT_METAGRAPH
-      /* TODO: If the number of roots is sufficiently small, we can 
+      /* TODO_BOOST: If the number of roots is sufficiently small, we can 
                use a 'problem folding' approach like we do in MST
                to gather all the roots and their adjacencies on one proc
                and solve for the connected components of the meta-graph */
@@ -492,7 +492,7 @@ namespace boost { namespace graph { namespace distributed {
         // Pointer jumping, perform until new roots determined
         //
 
-        // TODO: Implement cycle reduction rules to reduce this from
+        // TODO_BOOST: Implement cycle reduction rules to reduce this from
         // O(n) to O(log n) [n = cycle length]
         bool all_done;
         std::size_t parent_root_count;

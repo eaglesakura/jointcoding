@@ -216,8 +216,8 @@ template <typename V> struct view_is_mutable : public iterator_is_mutable<typena
 template <typename T, typename L, bool IsPlanar=false, bool IsMutable=true> struct pixel_reference_type{};
 template <typename T, typename L> struct pixel_reference_type<T,L,false,true > { typedef pixel<T,L>& type; };
 template <typename T, typename L> struct pixel_reference_type<T,L,false,false> { typedef const pixel<T,L>& type; };
-template <typename T, typename L> struct pixel_reference_type<T,L,true,true> { typedef const planar_pixel_reference<typename channel_traits<T>::reference,typename color_space_type<L>::type> type; };       // TODO: Assert M=identity
-template <typename T, typename L> struct pixel_reference_type<T,L,true,false> { typedef const planar_pixel_reference<typename channel_traits<T>::const_reference,typename color_space_type<L>::type> type; };// TODO: Assert M=identity
+template <typename T, typename L> struct pixel_reference_type<T,L,true,true> { typedef const planar_pixel_reference<typename channel_traits<T>::reference,typename color_space_type<L>::type> type; };       // TODO_BOOST: Assert M=identity
+template <typename T, typename L> struct pixel_reference_type<T,L,true,false> { typedef const planar_pixel_reference<typename channel_traits<T>::const_reference,typename color_space_type<L>::type> type; };// TODO_BOOST: Assert M=identity
 
 /// \ingroup TypeFactoryFromPixel
 /// \brief Returns the type of a pixel iterator given the pixel type, whether it operates on planar data, whether it is a step iterator, and whether it is mutable
@@ -239,8 +239,8 @@ template <typename Pixel, bool IsPlanar, bool IsMutable> struct iterator_type_fr
 template <typename T, typename L, bool IsPlanar=false, bool IsStep=false, bool IsMutable=true> struct iterator_type{};
 template <typename T, typename L> struct iterator_type<T,L,false,false,true > { typedef pixel<T,L>* type; };
 template <typename T, typename L> struct iterator_type<T,L,false,false,false> { typedef const pixel<T,L>* type; };
-template <typename T, typename L> struct iterator_type<T,L,true,false,true> { typedef planar_pixel_iterator<T*,typename L::color_space_t> type; };               // TODO: Assert M=identity
-template <typename T, typename L> struct iterator_type<T,L,true,false,false> { typedef planar_pixel_iterator<const T*,typename L::color_space_t> type; };        // TODO: Assert M=identity
+template <typename T, typename L> struct iterator_type<T,L,true,false,true> { typedef planar_pixel_iterator<T*,typename L::color_space_t> type; };               // TODO_BOOST: Assert M=identity
+template <typename T, typename L> struct iterator_type<T,L,true,false,false> { typedef planar_pixel_iterator<const T*,typename L::color_space_t> type; };        // TODO_BOOST: Assert M=identity
 template <typename T, typename L, bool IsPlanar, bool IsMutable> struct iterator_type<T,L,IsPlanar,true,IsMutable> { 
     typedef memory_based_step_iterator<typename iterator_type<T,L,IsPlanar,false,IsMutable>::type> type; 
 };

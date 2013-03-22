@@ -117,9 +117,9 @@ namespace gregorian {
   std::basic_ostream<charT, traits>&
   operator<<(std::basic_ostream<charT, traits>& os, const date_period& dp)
   {
-    os << '['; //TODO: facet or manipulator for periods?
+    os << '['; //TODO_BOOST: facet or manipulator for periods?
     os << dp.begin();
-    os << '/'; //TODO: facet or manipulator for periods?
+    os << '/'; //TODO_BOOST: facet or manipulator for periods?
     os << dp.last();
     os << ']'; 
     return os;

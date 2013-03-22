@@ -181,7 +181,7 @@ public:
 
 private:
    string_type get_default_message(regex_constants::syntax_type);
-   // TODO: use a hash table when available!
+   // TODO_BOOST: use a hash table when available!
    map_type m_char_map;
 };
 
@@ -554,7 +554,7 @@ typename w32_regex_traits_implementation<charT>::char_class_type
 template <class charT>
 boost::shared_ptr<const w32_regex_traits_implementation<charT> > create_w32_regex_traits(::boost::re_detail::lcid_type l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
 {
-   // TODO: create a cache for previously constructed objects.
+   // TODO_BOOST: create a cache for previously constructed objects.
    return boost::object_cache< ::boost::re_detail::lcid_type, w32_regex_traits_implementation<charT> >::get(l, 5);
 }
 

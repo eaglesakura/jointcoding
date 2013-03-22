@@ -214,7 +214,7 @@ struct get_number_of_regions
 };
 
 // builds a mpl::vector of initial states
-//TODO remove duplicate from get_initial_states
+//TODO_BOOST remove duplicate from get_initial_states
 template <class region>
 struct get_regions_as_sequence 
 {

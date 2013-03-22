@@ -328,7 +328,7 @@ namespace date_time {
       }
       if (local_format.find(zone_name_format) != string_type::npos) {
         if(time_arg.zone_name().empty()) {
-          /* TODO: this'll probably create problems if a user places
+          /* TODO_BOOST: this'll probably create problems if a user places
            * the zone_*_format flag in the format with a ptime. This
            * code removes the flag from the default formats */
 
@@ -346,7 +346,7 @@ namespace date_time {
       }
       if (local_format.find(zone_abbrev_format) != string_type::npos) {
         if(time_arg.zone_abbrev(false).empty()) {
-          /* TODO: this'll probably create problems if a user places
+          /* TODO_BOOST: this'll probably create problems if a user places
            * the zone_*_format flag in the format with a ptime. This
            * code removes the flag from the default formats */
 
@@ -364,7 +364,7 @@ namespace date_time {
       }
       if (local_format.find(zone_iso_extended_format) != string_type::npos) {
         if(time_arg.zone_name(true).empty()) {
-          /* TODO: this'll probably create problems if a user places
+          /* TODO_BOOST: this'll probably create problems if a user places
            * the zone_*_format flag in the format with a ptime. This
            * code removes the flag from the default formats */
 
@@ -381,7 +381,7 @@ namespace date_time {
 
       if (local_format.find(zone_iso_format) != string_type::npos) {
         if(time_arg.zone_abbrev(true).empty()) {
-          /* TODO: this'll probably create problems if a user places
+          /* TODO_BOOST: this'll probably create problems if a user places
            * the zone_*_format flag in the format with a ptime. This
            * code removes the flag from the default formats */
 

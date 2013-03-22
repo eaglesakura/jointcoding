@@ -154,7 +154,7 @@ namespace boost { namespace unordered { namespace detail {
         std::size_t num_buckets =
             boost::unordered::detail::default_bucket_count)
     {
-        // TODO: Why +1?
+        // TODO_BOOST: Why +1?
         return (std::max)(
             boost::unordered::detail::insert_size(i, j) + 1,
             num_buckets);

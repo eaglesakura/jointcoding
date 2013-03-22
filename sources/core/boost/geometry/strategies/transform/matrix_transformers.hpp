@@ -391,7 +391,7 @@ public :
 \note A single angle is needed to specify a rotation in 2D.
       Not yet in 3D, the 3D version requires special things to allow
       for rotation around X, Y, Z or arbitrary axis.
-\todo The 3D version will not compile.
+\TODO_BOOST The 3D version will not compile.
  */
 template <typename P1, typename P2, typename DegreeOrRadian>
 class rotate_transformer : public detail::rad_rotate_transformer<P1, P2>

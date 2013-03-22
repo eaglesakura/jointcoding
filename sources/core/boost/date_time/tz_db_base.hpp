@@ -237,7 +237,7 @@ namespace boost {
       // start and end rule are of the same type
       typedef typename rule_type::start_rule::week_num week_num;
 
-      /* TODO: mechanisms need to be put in place to handle different
+      /* TODO_BOOST: mechanisms need to be put in place to handle different
        * types of rule specs. parse_rules() only handles nth_kday
        * rule types. */
       

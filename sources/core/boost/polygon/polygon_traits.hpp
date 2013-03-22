@@ -1176,7 +1176,7 @@ namespace boost { namespace polygon{
     return counts[winding(polygon) == COUNTERCLOCKWISE ? 0 : 1] % 4 != 0; 
   }
 
-  //TODO: refactor to expose as user APIs
+  //TODO_BOOST: refactor to expose as user APIs
   template <typename Unit>
   struct edge_utils {
     typedef point_data<Unit> Point;

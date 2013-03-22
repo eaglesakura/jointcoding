@@ -373,7 +373,7 @@ inline void enable_reference_tracking<Derived>::dump_(std::ostream &sout) const
 ///////////////////////////////////////////////////////////////////////////////
 // tracking_ptr
 //   holder for a reference-tracked type. Does cycle-breaking, lazy initialization
-//   and copy-on-write. TODO: implement move semantics.
+//   and copy-on-write. TODO_BOOST: implement move semantics.
 //
 template<typename Type>
 struct tracking_ptr

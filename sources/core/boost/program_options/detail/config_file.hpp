@@ -59,7 +59,7 @@ namespace boost { namespace program_options { namespace detail {
          will result in option "gui.accessibility.visual_bell" with value
          "yes" been returned.
 
-         TODO: maybe, we should just accept a pointer to options_description
+         TODO_BOOST: maybe, we should just accept a pointer to options_description
          class.
      */    
     class common_config_file_iterator 

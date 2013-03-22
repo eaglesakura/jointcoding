@@ -179,7 +179,7 @@ struct return_type_2_ifthenelsereturn<1, false, false, false, A, B> {
   // are 'const int*' and 'void *'. The remaining type should be 'const void*'
   typedef const typename boost::remove_reference<A>::type plainA; 
   typedef const typename boost::remove_reference<B>::type plainB; 
-  // TODO: Add support for volatile ?
+  // TODO_BOOST: Add support for volatile ?
 
   typedef typename
        return_type_2_ifthenelsereturn<

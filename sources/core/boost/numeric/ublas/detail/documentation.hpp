@@ -17,7 +17,7 @@
         \brief contains all important classes and functions of uBLAS
 
         all ublas definitions ...
-        \todo expand this section
+        \TODO_BOOST expand this section
  */
 
 /** \defgroup blas1 Level 1 BLAS 

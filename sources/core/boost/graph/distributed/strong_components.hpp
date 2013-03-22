@@ -341,7 +341,7 @@ namespace boost { namespace graph { namespace distributed {
 
         // This is a completely random bound
         if ( active_vertices < 0.05*n ) {
-          // TODO: This set insertion is ridiculously inefficient, make it an in-place-merge?
+          // TODO_BOOST: This set insertion is ridiculously inefficient, make it an in-place-merge?
           for (std::size_t i = 0; i < vertex_sets.size(); i++)
             filter_set_g.insert(vertex_sets[i].begin(), vertex_sets[i].end());
 

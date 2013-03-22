@@ -139,12 +139,12 @@ var_string_to_int(std::istreambuf_iterator<charT>& itr,
  but they provide a way to skip over the weekday names for formats that
  provide them.
 
- todo -- Another interesting feature that this approach could provide is
+ TODO_BOOST -- Another interesting feature that this approach could provide is
          an option to fill in any missing fields with the current values
          from the clock.  So if you have %m-%d the parser would detect
          the missing year value and fill it in using the clock. 
 
- todo -- What to do with the %x.  %x in the classic facet is just bad...
+ TODO_BOOST -- What to do with the %x.  %x in the classic facet is just bad...
 
  */
 template<class date_type, typename charT>
@@ -165,7 +165,7 @@ class format_date_parser
   typedef typename parse_tree_type::parse_match_result_type match_results;
   typedef std::vector<std::basic_string<charT> > input_collection_type;
 
-  // TODO sv_parser uses its default constructor - write the others
+  // TODO_BOOST sv_parser uses its default constructor - write the others
   
   format_date_parser(const string_type& format_str,
                      const input_collection_type& month_short_names,

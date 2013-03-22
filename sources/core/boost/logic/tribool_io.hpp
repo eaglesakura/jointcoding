@@ -106,7 +106,7 @@ inline std::basic_string<char> get_default_indeterminate_name<char>()
 
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 // VC++ 6.0 chokes on the specialization below, so we're stuck without 
-// wchar_t support. What a pain. TODO: it might just need a the template 
+// wchar_t support. What a pain. TODO_BOOST: it might just need a the template 
 // parameter as function parameter...
 #else
 #  ifndef BOOST_NO_WCHAR_T

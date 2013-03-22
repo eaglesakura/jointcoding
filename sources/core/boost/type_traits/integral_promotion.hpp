@@ -46,7 +46,7 @@ template<> struct need_promotion<unsigned short int> : public true_type {};
 #if (defined(BOOST_MSVC) && (BOOST_MSVC < 1300)) \
     || (defined(BOOST_INTEL_CXX_VERSION) && defined(_MSC_VER) && (BOOST_INTEL_CXX_VERSION <= 600)) \
     || (defined(__BORLANDC__) && (__BORLANDC__ == 0x600) && (_MSC_VER < 1300))
-// TODO: common macro for this #if. Or better yet, PP SEQ of non-standard types.
+// TODO_BOOST: common macro for this #if. Or better yet, PP SEQ of non-standard types.
 BOOST_TT_AUX_PROMOTE_NONSTANDARD_TYPE(__int8          )
 BOOST_TT_AUX_PROMOTE_NONSTANDARD_TYPE(unsigned __int8 )
 BOOST_TT_AUX_PROMOTE_NONSTANDARD_TYPE(__int16         )

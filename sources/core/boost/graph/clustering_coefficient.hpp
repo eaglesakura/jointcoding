@@ -69,7 +69,7 @@ num_paths_through_vertex(const Graph& g, Vertex v)
     typedef typename graph_traits<Graph>::directed_category Directed;
     typedef typename graph_traits<Graph>::adjacency_iterator AdjacencyIterator;
 
-    // TODO: There should actually be a set of neighborhood functions
+    // TODO_BOOST: There should actually be a set of neighborhood functions
     // for things like this (num_neighbors() would be great).
 
     AdjacencyIterator i, end;
@@ -88,7 +88,7 @@ num_triangles_on_vertex(const Graph& g, Vertex v)
     typedef typename graph_traits<Graph>::directed_category Directed;
     typedef typename graph_traits<Graph>::adjacency_iterator AdjacencyIterator;
 
-    // TODO: I might be able to reduce the requirement from adjacency graph
+    // TODO_BOOST: I might be able to reduce the requirement from adjacency graph
     // to incidence graph by using out edges.
 
     Degree count(0);

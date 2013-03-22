@@ -492,7 +492,7 @@ class simple_state : public detail::simple_state_base_type< MostDerived,
       // not return do_discard_event!
       if ( reactionResult == detail::do_forward_event )
       {
-        // TODO: The following call to react_impl of our outer state should
+        // TODO_BOOST: The following call to react_impl of our outer state should
         // be made with a context_type:: prefix to call directly instead of
         // virtually. For some reason the compiler complains...
         reactionResult = pContext_->react_impl( evt, eventType );
