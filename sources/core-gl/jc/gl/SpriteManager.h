@@ -180,6 +180,13 @@ public:
     /**
      * 画像を描画する
      */
+    virtual void renderingImage( MTextureImage image, const float x, const float y) {
+        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), jc::round(x), jc::round(y), image->getWidth(), image->getHeight());
+    }
+
+    /**
+     * 画像を描画する
+     */
     virtual void renderingImage( MTextureImage image, const RectI &dst) {
         renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height());
     }
