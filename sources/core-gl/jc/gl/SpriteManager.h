@@ -206,6 +206,13 @@ public:
     }
 
     /**
+     * 画像を描画する
+     */
+    virtual void renderingImage( MTextureImage image, const RectF &dst, const u32 color) {
+        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()), 0, color);
+    }
+
+    /**
      * テクスチャ用行列を設定する
      */
     virtual void setTextureMatrix(const Matrix4x4 &m);
