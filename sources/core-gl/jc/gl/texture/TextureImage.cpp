@@ -193,6 +193,14 @@ void TextureImage::setWrapT(GLint wrap) {
 }
 
 /**
+ * mipmapを自動生成する
+ */
+void TextureImage::genMipmaps() {
+    _BIND_CHECK(this);
+    glGenerateMipmap(target);
+}
+
+/**
  * NPOTテクスチャの場合trueを返す。
  */
 jcboolean TextureImage::isNonPowerOfTwo() {

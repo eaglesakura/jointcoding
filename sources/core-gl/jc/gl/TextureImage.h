@@ -145,6 +145,11 @@ public:
     virtual void setWrapT(GLint wrap);
 
     /**
+     * mipmapを自動生成する
+     */
+    virtual void genMipmaps();
+
+    /**
      * glBindTexgture(target, xxx)の内容を変更する
      */
     virtual void setBindTarget(GLenum target) {
