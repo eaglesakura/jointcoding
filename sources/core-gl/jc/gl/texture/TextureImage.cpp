@@ -196,6 +196,10 @@ void TextureImage::setWrapT(GLint wrap) {
  * mipmapを自動生成する
  */
 void TextureImage::genMipmaps() {
+    if (isNonPowerOfTwo()) {
+        jclogf("texture is non power of two %d x %d", width, height);
+        return;
+    }
     _BIND_CHECK(this);
     glGenerateMipmap(target);
 }
