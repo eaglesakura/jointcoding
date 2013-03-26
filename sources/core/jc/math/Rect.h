@@ -145,7 +145,7 @@ RectT<T> createRectFromXYWH(const T x, const T y, const T w, const T h) {
 }
 
 template<typename T>
-RectT<T> createRectFromXYRB(const T x, const T y, const T r, const T b) {
+RectT<T> createRectFromLTRB(const T x, const T y, const T r, const T b) {
     RectT<T> result;
     result.left = x;
     result.top = y;

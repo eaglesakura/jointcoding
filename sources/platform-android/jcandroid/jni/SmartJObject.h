@@ -30,6 +30,7 @@ inline jobject change_globalref(JNIEnv *env, jobject obj) {
 
 /**
  * Javaのリファレンス管理を行う
+ * * SmartJObject<T>はデストラクタ実行時にDeleteGlobalRef/LocalRefを行うため、明示的な解放は不要である
  */
 template<typename T>
 class SmartJObject: public Object {
