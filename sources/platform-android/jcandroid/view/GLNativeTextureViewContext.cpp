@@ -7,6 +7,7 @@
 #include    "jcandroid/view/GLNativeTextureViewContext.h"
 #include    "jcandroid/egl/EGLDeviceUtil.h"
 #include    "android-gclasses/EGLSupport.h"
+#include    "jc/gl/DeviceLock.h"
 
 namespace ndk {
 
@@ -22,6 +23,29 @@ GLNativeTextureViewContext::GLNativeTextureViewContext(const u32 eglFlags) {
 
 GLNativeTextureViewContext::~GLNativeTextureViewContext() {
 
+}
+
+jcboolean GLNativeTextureViewContext::lockEGL() {
+    if (!initialized) {
+        return jctrue;
+    }
+
+    if (device_lock) {
+        return jcfalse;
+    }
+
+    device->waitLockRequest(1, NULL);
+    device_lock.reset(new DeviceLock(device, jcfalse, jcfalse));
+    if (!device_lock->isLockCompleted()) {
+        device_lock.reset();
+        return jcfalse;
+    }
+
+    return jctrue;
+}
+
+void GLNativeTextureViewContext::unlockEGL() {
+    device_lock.reset();
 }
 
 /**

@@ -179,6 +179,20 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
     }
 
     /**
+     * EGLを強制的にロックする。
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public native void lockEGL();
+
+    /**
+     * EGLをアンロックする
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public native void unlockEGL();
+
+    /**
      * EGL初期化を行う
      * @param egl_flags
      * @return

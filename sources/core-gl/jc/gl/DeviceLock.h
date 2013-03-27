@@ -44,10 +44,19 @@ class DeviceLock {
     jcboolean def_locked;
 
     /**
-     *
+     * eglMakeCurrentの要求を行う場合はtrue
+     * default=true
+     */
+    jcboolean makeCurrent;
+
+    /**
+     * ロックリクエスト整理番号
      */
     request_id lock_request;
 
+    /**
+     * ロックリクエストをこのインスタンスが行った場合はtrue
+     */
     jcboolean lock_requested;
 
     /**
@@ -71,7 +80,7 @@ class DeviceLock {
 
             while(!device->isCurrentRequest(lock_request)) {
 //                jclogf("wait lock request(%d)", (s32)lock_request);
-                Thread::sleep(10);
+                Thread::sleep(1);
             }
             // Mutex占有権を取得する
             lock.reset(new MutexLock(device->getGPUMutex()));
@@ -79,14 +88,18 @@ class DeviceLock {
             def_locked = jctrue;
         }
 
-// contextとthreadを結びつける
+        // contextとthreadを結びつける
         if(current_thread) {
             locked = jctrue;
         } else {
-            locked = device->makeCurrent(EGLMakeCurrent_Bind);
+            if(makeCurrent) {
+                locked = device->makeCurrent(EGLMakeCurrent_Bind);
+            } else {
+                locked = jctrue;
+            }
         }
 
-// ロックに失敗したら、専有も解除する
+        // ロックに失敗したら、専有も解除する
         if( !locked ) {
             jclog("lock failed");
             lock.reset();
@@ -98,7 +111,9 @@ class DeviceLock {
      */
     void unlockDevice() {
         if(locked && !def_locked) {
-            device->makeCurrent(EGLMakeCurrent_Unbind);
+            if(makeCurrent) {
+                device->makeCurrent(EGLMakeCurrent_Unbind);
+            }
         }
 
         if(lock_requested) {
@@ -106,16 +121,6 @@ class DeviceLock {
         }
         lock.reset();
     }
-
-    /**
-     * new/deleteも許可しない
-     */
-    static void* operator new(size_t size);
-
-    /**
-     * new/deleteも許可しない
-     */
-    static void operator delete(void* ptr);
 public:
 
     /**
@@ -123,12 +128,13 @@ public:
      * @param device ロック対象のデバイス。DeviceLockが生きている限り、deviceの利用は当該スレッドの専有となる。
      * @param throw_error エラーが発生した場合、例外を投げるならtrue。デフォルトがtrueなのは、チェック機構予備忘れ防止の為。
      */
-    DeviceLock(MDevice device, jcboolean throw_error) {
+    DeviceLock(MDevice device, const jcboolean throw_error, const jcboolean makeCurrent = jctrue) {
         this->locked = jcfalse;
         this->def_locked = jcfalse;
         this->device = device;
         this->lock_request = 0;
         this->lock_requested = jcfalse;
+        this->makeCurrent = makeCurrent;
         lockDevice();
 
         if(throw_error) {

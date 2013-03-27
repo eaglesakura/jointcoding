@@ -133,4 +133,24 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
     context->dispose();
     return;
 }
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_lockEGL(JNIEnv *env, jobject _this) {
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_lockEGL");
+
+    if(!context->lockEGL()) {
+        jclog("lock failed...");
+    }
+
+    return;
+}
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_unlockEGL(JNIEnv *env, jobject _this) {
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_unlockEGL");
+    context->unlockEGL();
+    return;
+}
 }

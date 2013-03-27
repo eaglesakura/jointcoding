@@ -54,6 +54,11 @@ class GLNativeTextureViewContext: public Object {
      */
     s32 height;
 
+    /**
+     * 強制ロック
+     */
+    jc_sp<DeviceLock> device_lock;
+
 public:
     GLNativeTextureViewContext(const u32 eglFlags);
     virtual ~GLNativeTextureViewContext();
@@ -84,6 +89,10 @@ public:
     virtual MDevice getDevice() {
         return device;
     }
+
+    virtual jcboolean lockEGL();
+
+    virtual void unlockEGL();
 
     /**
      * Context変換
