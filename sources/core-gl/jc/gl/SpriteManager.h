@@ -173,6 +173,13 @@ public:
     /**
      * 画像を描画する
      */
+    virtual void renderingImage( MTextureImage image, const s32 x, const s32 y, const Color color) {
+        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), x, y, image->getWidth(), image->getHeight(), 0.0f, color.rgba);
+    }
+
+    /**
+     * 画像を描画する
+     */
     virtual void renderingImage( MTextureImage image, const s32 x, const s32 y) {
         renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), x, y, image->getWidth(), image->getHeight());
     }
