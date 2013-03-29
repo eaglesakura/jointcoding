@@ -111,6 +111,10 @@ static VramFunction function_tbl[VRAM_e_num] = {
         };
 
 _VRAM::_VRAM() {
+    for (int i = 0; i < VRAM_e_num; ++i) {
+        alloced_num[i] = deleted_num[i] = 0;
+
+    }
 }
 
 _VRAM::~_VRAM() {
@@ -156,6 +160,8 @@ static vram_id get(std::list<vram_id> res, VRAM_e type) {
  * allocした時点でref=1がされているため、新たにref()を行う必要はない。
  */
 vram_id _VRAM::alloc(VRAM_e type) {
+    ++alloced_num[type];
+
     return ref(get(this->alloc_pool[type], type));
 }
 
@@ -191,6 +197,8 @@ void _VRAM::release(vram_id vid) {
 
     // リファレンスが無くなったら削除する
     if (vid->ref_count <= 0) {
+        ++deleted_num[vid->type];
+
 #ifdef  PRINT_VRAM
         jclogf("delete  vram(%x = obj:%d  type:%d ref:%d)", vid, vid->obj, vid->type, vid->ref_count)
 #endif
@@ -244,6 +252,20 @@ void _VRAM::gc(const u32 gc_flags) {
     }
 
     jclogf("VRAM-GC(%d objects)", gc_objects);
+}
+
+/**
+ * 確保済みのVRAMオブジェクト数を取得する
+ */
+_VRAM::Infomation _VRAM::getInfo(const VRAM_e vramType) {
+    Infomation result;
+
+    result.allocated = alloced_num[vramType];
+    result.deleted = deleted_num[vramType];
+    result.pool = alloc_pool[vramType].size();
+    result.gc_target = dealloc_pool[vramType].size();
+
+    return result;
 }
 
 }

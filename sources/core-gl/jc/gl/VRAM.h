@@ -165,6 +165,17 @@ enum VRAM_GC_e {
  * vram_idを握っているオブジェクトは必ずVRAMの生存期間に注意すること。
  */
 class _VRAM {
+
+    /**
+     * 今までに確保した合計量を保存しておく
+     */
+    s32 alloced_num[VRAM_e_num];
+
+    /**
+     * 今までに削除した合計量を保存しておく
+     */
+    s32 deleted_num[VRAM_e_num];
+
     /**
      * 生成済みのvram_id一覧
      */
@@ -206,6 +217,36 @@ public:
      * 不要な資源をまとめて解放する。
      */
     virtual void gc(const u32 gc_flags = VRAM_GC_default);
+
+    /**
+     *
+     */
+    struct Infomation {
+        /**
+         * 確保済みのオブジェクト数
+         */
+        u32 allocated;
+
+        /**
+         * 不要となったオブジェクト数
+         */
+        u32 deleted;
+
+        /**
+         * プール数
+         */
+        u32 pool;
+
+        /**
+         * 削除待ち
+         */
+        u32 gc_target;
+    };
+
+    /**
+     * 確保済みのVRAMオブジェクト数を取得する
+     */
+    virtual _VRAM::Infomation getInfo(const VRAM_e vramType);
 };
 
 /**

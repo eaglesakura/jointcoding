@@ -15,6 +15,14 @@ namespace jc {
 namespace gl {
 
 class DebugFont: public Object {
+public:
+    enum {
+        /**
+         *
+         */
+        TEXTURE_NUM = 126 - 32,
+    };
+private:
     /**
      * スプライト管理クラス
      */
@@ -39,7 +47,7 @@ class DebugFont: public Object {
      * フォントテクスチャ
      * １テクスチャ１文字で格納する
      */
-    MFontTexture fonts[126 - 32];
+    MFontTexture fonts[TEXTURE_NUM];
 
     /**
      * 利用するテクスチャユニット
@@ -87,6 +95,7 @@ public:
      * レンダリング速度が低いため注意すること。
      */
     void rendering(const String text, const s32 x, const s32 y);
+
 };
 
 /**
