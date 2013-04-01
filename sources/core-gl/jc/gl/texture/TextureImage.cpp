@@ -150,7 +150,7 @@ void TextureImage::setMagFilter(GLint filter) {
         return;
     }
 
-    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filter);
     context.magFilter = filter;
 }
 
