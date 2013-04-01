@@ -89,7 +89,7 @@ public:
         rotate = 0;
         color.rgba = 0xFFFFFFFF;
 
-        srcArea.setXYWH(0, 0, texture->getWidth(), texture->getHeight());
+        srcArea.setXYWH(0, 0, texture->getOriginalWidth(), texture->getOriginalHeight());
         dstArea = srcArea;
     }
 

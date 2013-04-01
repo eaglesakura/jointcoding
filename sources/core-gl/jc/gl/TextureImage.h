@@ -26,20 +26,52 @@ namespace gl {
  */
 #define JC_TEXTURE_EXT_JPEG "jpg"
 
+struct TextureLoadOption {
+    /**
+     * trueの場合強制的にPowerOfTwo変換して読み込む
+     */
+    jcboolean convert_pot;
+
+    /**
+     * trueの場合、mipmapを生成する
+     */
+    jcboolean gen_mipmap;
+
+    /**
+     *
+     */
+    TextureLoadOption() {
+        convert_pot = jcfalse;
+        gen_mipmap = jctrue;
+    }
+};
+
 /**
  * OpenGLで扱うテクスチャを管理する。
  * GLES2.0を基本とするため、テクスチャサイズは2^n以外も可能だが、パフォーマンスには影響する
  */
 class TextureImage: public Object {
-    /**
-     * テクスチャ幅
-     */
-    u32 width;
 
-    /**
-     * テクスチャ高さ
-     */
-    u32 height;
+    struct {
+        /**
+         * テクスチャサイズとしての幅
+         */
+        u32 tex_width;
+        /**
+         * テクスチャサイズとしての高さ
+         */
+        u32 tex_height;
+
+        /**
+         * 画像としての幅
+         */
+        u32 img_width;
+
+        /**
+         * 画像としての高さ
+         */
+        u32 img_height;
+    } size;
 
     /**
      * テクスチャバインドターゲット
@@ -98,6 +130,14 @@ class TextureImage: public Object {
 protected:
     virtual s32 getFreeTextureUnitIndex();
 
+    static u32 toTextureSize(const TextureLoadOption *option, const u32 size) {
+        if (option && option->convert_pot) {
+            return jc::toPowerOfTwo(size);
+        } else {
+            return size;
+        }
+    }
+
 public:
     TextureImage(const s32 width, const s32 height, MDevice device);
 
@@ -106,23 +146,41 @@ public:
     virtual ~TextureImage();
 
     /**
-     * テクスチャ幅
+     * 画像としての幅を取得する。
      */
-    virtual u32 getWidth() const {
-        return width;
+    virtual u32 getOriginalWidth() const {
+        return size.img_width;
     }
 
     /**
-     * テクスチャ高さ
+     * 画像としての高さを取得する
      */
-    virtual u32 getHeight() const {
-        return height;
+    virtual u32 getOriginalHeight() const {
+        return size.img_height;
     }
+
+    /**
+     * テクスチャとしての幅を取得する。
+     * POT変換を行う場合がある。
+     */
+    virtual u32 getTextureWidth() const {
+        return size.tex_width;
+    }
+
+    /**
+     * テクスチャとしての高さを取得する。
+     * POT変換を行う場合がある。
+     */
+    virtual u32 getTextureHeight() const {
+        return size.tex_height;
+    }
+
 
     /**
      * NPOTテクスチャの場合trueを返す。
+     * GPUに渡すステータスをチェックするため、getTextureWidth()とgetTextureHeight()をチェックする
      */
-    virtual jcboolean isNonPowerOfTwo();
+    virtual jcboolean isPowerOfTwoTexture();
 
     /**
      * Minフィルタを変更する
@@ -223,7 +281,7 @@ public:
     /**
      * テクスチャへのデコードを行う。
      */
-    static jc_sp<TextureImage> decode( MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat);
+    static jc_sp<TextureImage> decode( MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat, const TextureLoadOption *option = NULL);
 
     /**
      * テクスチャへのデコードを行う。
@@ -233,18 +291,18 @@ public:
      * 拡張子pkm -> PKM形式として認識し、自動的にdecodePKMを呼び出す。
      * それ以外  -> decodeFromPlatformDecoderを呼び出して、デコードを行う
      */
-    static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat = PixelFormat_RGBA8888);
+    static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat = PixelFormat_RGBA8888, const TextureLoadOption *option = NULL);
 
     /**
      * PMKファイルのデコードを行う。
      */
-    static jc_sp<TextureImage> decodePMK(MDevice device, const Uri &uri);
+    static jc_sp<TextureImage> decodePMK(MDevice device, const Uri &uri, const TextureLoadOption *option = NULL);
 
     /**
      * Platformが実装しているデコーダーで画像をデコードする。
      * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
      */
-    static jc_sp<TextureImage> decodeFromPlatformDecoder( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat);
+    static jc_sp<TextureImage> decodeFromPlatformDecoder( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, const TextureLoadOption *option = NULL);
 };
 
 /**

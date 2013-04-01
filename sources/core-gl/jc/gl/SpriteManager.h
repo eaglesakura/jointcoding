@@ -174,49 +174,55 @@ public:
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const s32 x, const s32 y, const Color color) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), x, y, image->getWidth(), image->getHeight(), 0.0f, color.rgba);
+        const u32 IMG_WIDTH = image->getOriginalWidth();
+        const u32 IMG_HEIGHT = image->getOriginalHeight();
+        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, IMG_WIDTH, IMG_HEIGHT, 0.0f, color.rgba);
     }
 
     /**
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const s32 x, const s32 y) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), x, y, image->getWidth(), image->getHeight());
+        const u32 IMG_WIDTH = image->getOriginalWidth();
+        const u32 IMG_HEIGHT = image->getOriginalHeight();
+        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, IMG_WIDTH, IMG_HEIGHT);
     }
 
     /**
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const float x, const float y) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), jc::round(x), jc::round(y), image->getWidth(), image->getHeight());
+        const u32 IMG_WIDTH = image->getOriginalWidth();
+        const u32 IMG_HEIGHT = image->getOriginalHeight();
+        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, jc::round(x), jc::round(y), IMG_WIDTH, IMG_HEIGHT);
     }
 
     /**
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const RectI &dst) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height());
+        renderingImage(image, 0, 0, image->getOriginalWidth(), image->getOriginalHeight(), dst.left, dst.top, dst.width(), dst.height());
     }
 
     /**
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const RectF &dst) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()));
+        renderingImage(image, 0, 0, image->getOriginalWidth(), image->getOriginalHeight(), jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()));
     }
 
     /**
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const RectI &dst, const u32 color) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height(), 0, color);
+        renderingImage(image, 0, 0, image->getOriginalWidth(), image->getOriginalHeight(), dst.left, dst.top, dst.width(), dst.height(), 0, color);
     }
 
     /**
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const RectF &dst, const u32 color) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()), 0, color);
+        renderingImage(image, 0, 0, image->getOriginalWidth(), image->getOriginalHeight(), jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()), 0, color);
     }
 
     /**

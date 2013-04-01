@@ -368,10 +368,14 @@ void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s3
 
 //! テクスチャ描画位置を行列で操作する
     if (unifPolyUv != UNIFORM_DISABLE_INDEX && image != whiteTexture) {
-        const float sizeX = (float) srcW / (float) image->getWidth();
-        const float sizeY = (float) srcH / (float) image->getHeight();
-        const float sx = (float) srcX / (float) image->getWidth();
-        const float sy = (float) srcY / (float) image->getHeight();
+        const float TEXTURE_WIDTH = (float)image->getTextureWidth();
+        const float TEXTURE_HEIGHT = (float)image->getTextureHeight();
+
+
+        const float sizeX = (float) srcW / TEXTURE_WIDTH;
+        const float sizeY = (float) srcH / TEXTURE_HEIGHT;
+        const float sx = (float) srcX / TEXTURE_WIDTH;
+        const float sy = (float) srcY / TEXTURE_HEIGHT;
 
         const float poly_uv[] = { sx, sy, sizeX, sizeY, };
         glUniform4fv(unifPolyUv, 1, poly_uv);

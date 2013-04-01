@@ -6,8 +6,6 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -81,32 +79,31 @@ public class GLNativeTextureLayout extends FrameLayout {
         }
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        try {
-            for (GLNativeTextureView view : surfaces) {
-                view.lockEGL();
-            }
-            return super.dispatchTouchEvent(ev);
-        } finally {
-            for (GLNativeTextureView view : surfaces) {
-                view.unlockEGL();
-            }
-        }
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        try {
-            for (GLNativeTextureView view : surfaces) {
-                view.lockEGL();
-            }
-            return super.dispatchKeyEvent(event);
-        } finally {
-            for (GLNativeTextureView view : surfaces) {
-                view.unlockEGL();
-            }
-        }
-
-    }
+    //    @Override
+    //    public boolean dispatchTouchEvent(MotionEvent ev) {
+    //        try {
+    //            for (GLNativeTextureView view : surfaces) {
+    //                view.lockEGL();
+    //            }
+    //            return super.dispatchTouchEvent(ev);
+    //        } finally {
+    //            for (GLNativeTextureView view : surfaces) {
+    //                view.unlockEGL();
+    //            }
+    //        }
+    //    }
+    //
+    //    @Override
+    //    public boolean dispatchKeyEvent(KeyEvent event) {
+    //        try {
+    //            for (GLNativeTextureView view : surfaces) {
+    //                view.lockEGL();
+    //            }
+    //            return super.dispatchKeyEvent(event);
+    //        } finally {
+    //            for (GLNativeTextureView view : surfaces) {
+    //                view.unlockEGL();
+    //            }
+    //        }
+    //    }
 }

@@ -22,8 +22,8 @@ namespace gl {
 
 TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     this->alloced = jcfalse;
-    this->width = width;
-    this->height = height;
+    size.img_width = size.tex_width = width;
+    size.img_height = size.tex_height = height;
     this->state = device->getState();
     this->target = GL_TEXTURE_2D;
     bindUnit = -1;
@@ -52,8 +52,8 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
 
 TextureImage::TextureImage(const GLenum target, const s32 width, const s32 height, MDevice device) {
     this->alloced = jcfalse;
-    this->width = width;
-    this->height = height;
+    size.img_width = size.tex_width = width;
+    size.img_height = size.tex_height = height;
     this->state = device->getState();
     this->target = target;
     bindUnit = -1;
@@ -96,20 +96,20 @@ void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, con
     if (!this->alloced) {
         this->alloced = jctrue;
 
-        if (lineHeader == 0 && lineNum == (s32) height) {
+        if (lineHeader == 0 && lineNum == (s32) size.tex_height) {
             // 一度に転送しきれる場合は全て転送してしまう
-            glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, width, height, 0, srcPixelFormat, srcPixelType, src);
+            glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, size.tex_width, size.tex_height, 0, srcPixelFormat, srcPixelType, src);
             finished = jctrue;
         } else {
             // まずは空の領域を確保する
-            glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, width, height, 0, srcPixelFormat, srcPixelType, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, size.tex_width, size.tex_height, 0, srcPixelFormat, srcPixelType, NULL);
             finished = jcfalse;
         }
     }
 
     // 部分転送が必要なら転送する
     if (!finished) {
-        glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, width, lineNum, srcPixelFormat, srcPixelType, src);
+        glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_height, lineNum, srcPixelFormat, srcPixelType, src);
     }
 }
 
@@ -124,7 +124,7 @@ void TextureImage::allocPixelMemory(const GLenum srcPixelType, const GLenum srcP
     if (!this->alloced) {
         this->alloced = jctrue;
         // まずは空の領域を確保する
-        glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, width, height, 0, srcPixelFormat, srcPixelType, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, size.tex_width, size.tex_height, 0, srcPixelFormat, srcPixelType, NULL);
     }
 }
 
@@ -137,9 +137,6 @@ void TextureImage::setMinFilter(GLint filter) {
         return;
     }
 
-    if (this->isNonPowerOfTwo()) {
-        jclogf("texture is non power of two %d x %d", width, height);
-    }
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
     context.minFilter = filter;
 }
@@ -153,9 +150,6 @@ void TextureImage::setMagFilter(GLint filter) {
         return;
     }
 
-    if (this->isNonPowerOfTwo()) {
-        jclogf("texture is non power of two %d x %d", width, height);
-    }
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
     context.magFilter = filter;
 }
@@ -169,11 +163,8 @@ void TextureImage::setWrapS(GLint wrap) {
         return;
     }
 
-    if (this->isNonPowerOfTwo()) {
-        jclogf("texture is non power of two %d x %d", width, height);
-    }
-
     glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
+    context.wrapS = wrap;
 }
 
 /**
@@ -185,19 +176,17 @@ void TextureImage::setWrapT(GLint wrap) {
         return;
     }
 
-    if (this->isNonPowerOfTwo()) {
-        jclogf("texture is non power of two %d x %d", width, height);
-    }
-
     glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
+    context.wrapT = wrap;
+
 }
 
 /**
  * mipmapを自動生成する
  */
 void TextureImage::genMipmaps() {
-    if (isNonPowerOfTwo()) {
-        jclogf("texture is non power of two %d x %d", width, height);
+    if (!isPowerOfTwoTexture()) {
+        jclogf("texture is non power of two %d x %d", size.tex_width, size.tex_height);
         return;
     }
     _BIND_CHECK(this);
@@ -207,11 +196,11 @@ void TextureImage::genMipmaps() {
 /**
  * NPOTテクスチャの場合trueを返す。
  */
-jcboolean TextureImage::isNonPowerOfTwo() {
-    if (jc::isPowerOfTwo(width) && jc::isPowerOfTwo(height)) {
-        return jcfalse;
-    } else {
+jcboolean TextureImage::isPowerOfTwoTexture() {
+    if (jc::isPowerOfTwo(size.tex_width) && jc::isPowerOfTwo(size.tex_height)) {
         return jctrue;
+    } else {
+        return jcfalse;
     }
 }
 
@@ -326,7 +315,7 @@ static u32 PIXEL_FORMATS[] = {
 /**
  * デコーダーを通して、テクスチャ化を行う。
  */
-MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat) {
+MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat, const TextureLoadOption *option) {
 // 適当なラインずつ設定を行う。
     const s32 width = decoder->getWidth();
     const s32 height = decoder->getHeight();
@@ -360,16 +349,16 @@ MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const 
  * テクスチャへのデコードを行う。
  * uriにはJpegテクスチャへのURIを指定する。
  */ //
-MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat) {
+MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, const TextureLoadOption *option) {
 
     {
         const String ext = uri.getFileExt();
         if (ext == JC_TEXTURE_EXT_ETC1) {
             jclogf("pkm texture(%s)", uri.getUri().c_str());
-            return decodePMK(device, uri);
+            return decodePMK(device, uri, option);
         } else if (ext != JC_TEXTURE_EXT_JPEG) {
             jclogf("platform texture(%s)", uri.getUri().c_str());
-            return decodeFromPlatformDecoder(device, uri, pixelFormat);
+            return decodeFromPlatformDecoder(device, uri, pixelFormat, option);
         }
     }
 
@@ -397,7 +386,7 @@ MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFo
 /**
  * PMKファイルのデコードを行う。
  */
-MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri) {
+MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, const TextureLoadOption *option) {
     MInputStream is = Platform::getFileSystem()->openInputStream(uri);
     if (!is) {
         jcalertf("file not found(%s)", uri.getUri().c_str());
@@ -433,6 +422,10 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri) {
         }
         result->unbind();
 
+        // オリジナルサイズに合わせて補正する
+        result->size.img_width = header->getOriginalWidth();
+        result->size.img_height = header->getOriginalHeight();
+        result->alloced = jctrue;
         return result;
     }
 }

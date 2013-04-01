@@ -88,6 +88,19 @@ inline jcboolean isPowerOfTwo(const T n) {
     return jcfalse;
 }
 
+/**
+ * サイズが2のn乗になるように修正する
+ */
+inline u32 toPowerOfTwo(const u32 size) {
+    u32 result = 1;
+
+    while (result < size) {
+        result <<= 1;
+    }
+
+    return result;
+}
+
 enum {
     /**
      * OpenGL ESで利用する固定小数値

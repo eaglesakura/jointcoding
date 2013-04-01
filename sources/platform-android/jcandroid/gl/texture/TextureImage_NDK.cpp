@@ -34,7 +34,7 @@ static u32 PIXEL_FORMATS[] = {
  * Platformが実装しているデコーダーで画像をデコードする。
  * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
  */
-MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat) {
+MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, const TextureLoadOption *option) {
     MTextureImage result;
     CALL_JNIENV();
 
@@ -57,7 +57,6 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     s32 imageWidth = ndk::ImageDecoder::getWidth_(ndkImageDecoder);
     s32 imageHeight = ndk::ImageDecoder::getHeight_(ndkImageDecoder);
 
-    jclogf("Image (%x) size(%d x %d)", pixelBuffer, imageWidth, imageHeight);
 
     {
         void* raw_buffer = env->GetDirectBufferAddress(pixelBuffer);
@@ -76,17 +75,39 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             // lock
             DeviceLock lock(device, jctrue);
 
+            const u32 origin_width = imageWidth;
+            const u32 origin_height = imageHeight;
+
+            const u32 texture_width = TextureImage::toTextureSize(option, origin_width);
+            const u32 texture_height = TextureImage::toTextureSize(option, origin_height);
+
             // make texture
-            result.reset(new TextureImage(imageWidth, imageHeight, device));
+            result.reset(new TextureImage(origin_width, origin_height, device));
             result->bind();
             {
-                CLEAR_GL_ERROR
-                ;
-                result->copyPixelLine(raw_buffer, PIXEL_TYPES[pixelFormat], PIXEL_FORMATS[pixelFormat], 0, 0, imageHeight);
-
-                PRINT_GL_ERROR;
+                // 同一サイズなら一括転送
+                if (origin_width == texture_width && origin_height == texture_height) {
+                    glTexImage2D(GL_TEXTURE_2D, 0, PIXEL_FORMATS[pixelFormat], texture_width, texture_height, 0, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], raw_buffer);
+                    jclogf("texture load(%d x %d)", imageWidth, imageHeight);
+                } else {
+                    glTexImage2D(GL_TEXTURE_2D, 0, PIXEL_FORMATS[pixelFormat], texture_width, texture_height, 0, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], NULL);
+                    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, origin_width, origin_height, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], raw_buffer);
+                    result->size.tex_width = texture_width;
+                    result->size.tex_height = texture_height;
+                    jclogf("texture load(%dx%d) -> tex(%dx%d) %s", result->getOriginalWidth(), result->getOriginalHeight(), result->getTextureWidth(), result->getTextureHeight(), uri.getUri().c_str());
+                }
             }
+
+            // 必要であればmipmapを生成する
+            if (result->isPowerOfTwoTexture() && option && option->gen_mipmap) {
+                jclogf("gen mipmap %s", uri.getUri().c_str());
+                result->genMipmaps();
+                result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+                result->setMagFilter(GL_LINEAR);
+            }
+
             result->unbind();
+            result->alloced = jctrue;
         } catch (EGLException &e) {
             // ref
             env->DeleteLocalRef(ndkImageDecoder);
