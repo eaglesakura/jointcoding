@@ -148,14 +148,14 @@ public:
     /**
      * 画像としての幅を取得する。
      */
-    virtual u32 getOriginalWidth() const {
+    virtual u32 getWidth() const {
         return size.img_width;
     }
 
     /**
      * 画像としての高さを取得する
      */
-    virtual u32 getOriginalHeight() const {
+    virtual u32 getHeight() const {
         return size.img_height;
     }
 

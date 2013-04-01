@@ -40,7 +40,7 @@ void DebugFont::initialize() {
         u8 str[2] = { (u8) (i + FONT_INDEX_HEAD), 0x00 };
         fonts[i] = FontTexture::createInstance((charactor*) str, fontCharSize.y, device);
         assert(this->fonts[i].get() != NULL);
-        fontCharSize.x = jc::max<s32>(fontCharSize.x, fonts[i]->getOriginalWidth());
+        fontCharSize.x = jc::max<s32>(fontCharSize.x, fonts[i]->getWidth());
     }
 }
 

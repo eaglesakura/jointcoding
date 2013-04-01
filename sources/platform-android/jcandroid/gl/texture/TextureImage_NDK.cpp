@@ -94,7 +94,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, origin_width, origin_height, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], raw_buffer);
                     result->size.tex_width = texture_width;
                     result->size.tex_height = texture_height;
-                    jclogf("texture load(%dx%d) -> tex(%dx%d) %s", result->getOriginalWidth(), result->getOriginalHeight(), result->getTextureWidth(), result->getTextureHeight(), uri.getUri().c_str());
+                    jclogf("texture load(%dx%d) -> tex(%dx%d) %s", result->getWidth(), result->getHeight(), result->getTextureWidth(), result->getTextureHeight(), uri.getUri().c_str());
                 }
             }
 
