@@ -19,7 +19,7 @@ namespace gl {
 /**
  * ETC1テクスチャの拡張子（PKM形式)
  */
-#define JC_TEXTURE_EXT_ETC1 "pkm"
+#define JC_TEXTURE_EXT_PKM "pkm"
 
 /**
  * Jpegテクスチャの拡張子
@@ -286,11 +286,6 @@ public:
      * 管理している資源を開放する
      */
     virtual void dispose();
-
-    /**
-     * テクスチャへのデコードを行う。
-     */
-    static jc_sp<TextureImage> decode( MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat, TextureLoadOption *option = NULL);
 
     /**
      * テクスチャへのデコードを行う。

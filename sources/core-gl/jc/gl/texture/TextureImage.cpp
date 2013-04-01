@@ -109,7 +109,7 @@ void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, con
 
     // 部分転送が必要なら転送する
     if (!finished) {
-        glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_height, lineNum, srcPixelFormat, srcPixelType, src);
+        glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_width, lineNum, srcPixelFormat, srcPixelType, src);
     }
 }
 
@@ -273,114 +273,19 @@ void TextureImage::dispose() {
     }
 }
 
-#if 0
-/**
- * 2byte
- * GL_UNSIGNED_SHORT_5_6_5
- */
-PixelFormat_RGB565,
-
-/**
- * 2byte
- * GL_UNSIGNED_SHORT_5_5_5_1
- */
-PixelFormat_RGBA5551,
-
-/**
- * 3byte
- * GL_UNSIGNED_BYTE
- */
-PixelFormat_RGB888,
-
-/**
- * 4byte
- * GL_UNSIGNED_BYTE
- */
-PixelFormat_RGBA8888,
-#endif
-
-namespace {
-static u32 PIXEL_TYPES[4] = {
-//
-        GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,
-//
-        };
-static u32 PIXEL_FORMATS[] = {
-//
-        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA,
-//
-        };
-}
-
-/**
- * デコーダーを通して、テクスチャ化を行う。
- */
-MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat, TextureLoadOption *option) {
-// 適当なラインずつ設定を行う。
-    const s32 width = decoder->getWidth();
-    const s32 height = decoder->getHeight();
-
-    if (width <= 0 || height <= 0) {
-        jcalertf("texture size error(%d x %d)", width, height);
-        return MTextureImage();
-    }
-
-    MTextureImage result(new TextureImage(width, height, device));
-
-    result->bind();
-    // 読み込んだ合計ライン数
-    s32 readed = 0;
-    // カレントのライン数
-    s32 line = 0;
-    // 可能な限り読み込み続ける
-    CLEAR_GL_ERROR
-    ;
-    while ((line = decoder->decode()) > 0) {
-        result->copyPixelLine(decoder->getPixels().get(), PIXEL_TYPES[pixelFormat], PIXEL_FORMATS[pixelFormat], 0, readed, line);
-        readed += line;
-    }
-    PRINT_GL_ERROR;
-    result->unbind();
-
-    return result;
-}
-
 /**
  * テクスチャへのデコードを行う。
  * uriにはJpegテクスチャへのURIを指定する。
  */ //
 MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, TextureLoadOption *option) {
-
-    {
-        const String ext = uri.getFileExt();
-        if (ext == JC_TEXTURE_EXT_ETC1) {
-            jclogf("pkm texture(%s)", uri.getUri().c_str());
-            return decodePMK(device, uri, option);
-        } else if (ext != JC_TEXTURE_EXT_JPEG) {
-            jclogf("platform texture(%s)", uri.getUri().c_str());
-            return decodeFromPlatformDecoder(device, uri, pixelFormat, option);
-        }
+    const String ext = uri.getFileExt();
+    if (ext == JC_TEXTURE_EXT_PKM) {
+        jclogf("pkm texture(%s)", uri.getUri().c_str());
+        return decodePMK(device, uri, option);
+    } else {
+        jclogf("platform texture(%s)", uri.getUri().c_str());
+        return decodeFromPlatformDecoder(device, uri, pixelFormat, option);
     }
-
-    MInputStream is = Platform::getFileSystem()->openInputStream(uri);
-    if (!is) {
-        jcalertf("file not found %s", uri.getUri().c_str());
-        return MTextureImage();
-    }
-
-    MImageDecoder decoder(new JpegImageDecoder(is));
-    // ヘッダを解析する
-    decoder->decodeHeader();
-    // 適当なライン数だけデコードする
-    decoder->decodeBegin(pixelFormat, 32);
-
-    // 実際のデコードを行う
-    MTextureImage result = TextureImage::decode(device, decoder, pixelFormat);
-
-    // デコーダーを削除
-    decoder->dispose();
-
-    return result;
 }
 
 /**
