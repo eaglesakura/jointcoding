@@ -77,6 +77,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             // lock
             DeviceLock lock(device, jctrue);
 
+            if (option) {
+                option->result.devicelocked_time_ms = Timer::lapseTimeMs(lock_start_time);
+            }
+
             const u32 origin_width = imageWidth;
             const u32 origin_height = imageHeight;
 
@@ -118,7 +122,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         }
 
         if (option) {
-            option->result_devicelocked_time_ms = Timer::lapseTimeMs(lock_start_time);
+            option->result.devicelocked_time_ms = Timer::lapseTimeMs(lock_start_time);
         }
     }
 

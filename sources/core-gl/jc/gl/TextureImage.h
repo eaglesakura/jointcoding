@@ -38,21 +38,30 @@ struct TextureLoadOption {
     jcboolean gen_mipmap;
 
     /**
-     * glTexImageの所要時間を返却する
+     * ラインごとに分割してデコードする
+     * デバイスの占有時間を細かくすることでローディングスレッドの占有時間を小さくする
      */
-    s32 result_teximage_time_ms;
+    s32 slice_loading;
 
-    /**
-     * デバイス占有時間を返却する
-     */
-    s32 result_devicelocked_time_ms;
+    struct {
+        /**
+         * glTexImageの所要時間を返却する
+         */
+        s32 teximage_time_ms;
+
+        /**
+         * デバイス占有時間を返却する
+         */
+        s32 devicelocked_time_ms;
+    } result;
 
     /**
      *
      */
     TextureLoadOption() {
         convert_pot = gen_mipmap = jcfalse;
-        result_teximage_time_ms = result_devicelocked_time_ms = 0;
+        result.teximage_time_ms = result.devicelocked_time_ms = 0;
+        slice_loading = 1;
     }
 };
 
