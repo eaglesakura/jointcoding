@@ -11,6 +11,7 @@
 #include    "jcandroid/io/JavaJointInputStream.h"
 
 #include    "jc/gl/DeviceLock.h"
+#include    "jc/platform/Timer.h"
 
 namespace jc {
 namespace gl {
@@ -34,7 +35,7 @@ static u32 PIXEL_FORMATS[] = {
  * Platformが実装しているデコーダーで画像をデコードする。
  * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
  */
-MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, const TextureLoadOption *option) {
+MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, TextureLoadOption *option) {
     MTextureImage result;
     CALL_JNIENV();
 
@@ -57,7 +58,6 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     s32 imageWidth = ndk::ImageDecoder::getWidth_(ndkImageDecoder);
     s32 imageHeight = ndk::ImageDecoder::getHeight_(ndkImageDecoder);
 
-
     {
         void* raw_buffer = env->GetDirectBufferAddress(pixelBuffer);
 
@@ -71,7 +71,9 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             raw_buffer = (void*) temp_buffer.get();
         }
 
+        jctime lock_start_time = Timer::currentTime();
         try {
+
             // lock
             DeviceLock lock(device, jctrue);
 
@@ -113,6 +115,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             env->DeleteLocalRef(ndkImageDecoder);
             env->DeleteLocalRef(pixelBuffer);
             throw;
+        }
+
+        if (option) {
+            option->result_devicelocked_time_ms = Timer::lapseTimeMs(lock_start_time);
         }
     }
 

@@ -315,7 +315,7 @@ static u32 PIXEL_FORMATS[] = {
 /**
  * デコーダーを通して、テクスチャ化を行う。
  */
-MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat, const TextureLoadOption *option) {
+MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat, TextureLoadOption *option) {
 // 適当なラインずつ設定を行う。
     const s32 width = decoder->getWidth();
     const s32 height = decoder->getHeight();
@@ -349,7 +349,7 @@ MTextureImage TextureImage::decode(MDevice device, MImageDecoder decoder, const 
  * テクスチャへのデコードを行う。
  * uriにはJpegテクスチャへのURIを指定する。
  */ //
-MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, const TextureLoadOption *option) {
+MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, TextureLoadOption *option) {
 
     {
         const String ext = uri.getFileExt();
@@ -386,7 +386,7 @@ MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFo
 /**
  * PMKファイルのデコードを行う。
  */
-MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, const TextureLoadOption *option) {
+MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoadOption *option) {
     MInputStream is = Platform::getFileSystem()->openInputStream(uri);
     if (!is) {
         jcalertf("file not found(%s)", uri.getUri().c_str());

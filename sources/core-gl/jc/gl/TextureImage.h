@@ -38,11 +38,21 @@ struct TextureLoadOption {
     jcboolean gen_mipmap;
 
     /**
+     * glTexImageの所要時間を返却する
+     */
+    s32 result_teximage_time_ms;
+
+    /**
+     * デバイス占有時間を返却する
+     */
+    s32 result_devicelocked_time_ms;
+
+    /**
      *
      */
     TextureLoadOption() {
-        convert_pot = jcfalse;
-        gen_mipmap = jctrue;
+        convert_pot = gen_mipmap = jcfalse;
+        result_teximage_time_ms = result_devicelocked_time_ms = 0;
     }
 };
 
@@ -175,7 +185,6 @@ public:
         return size.tex_height;
     }
 
-
     /**
      * NPOTテクスチャの場合trueを返す。
      * GPUに渡すステータスをチェックするため、getTextureWidth()とgetTextureHeight()をチェックする
@@ -281,7 +290,7 @@ public:
     /**
      * テクスチャへのデコードを行う。
      */
-    static jc_sp<TextureImage> decode( MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat, const TextureLoadOption *option = NULL);
+    static jc_sp<TextureImage> decode( MDevice device, MImageDecoder decoder, const PixelFormat_e pixelFormat, TextureLoadOption *option = NULL);
 
     /**
      * テクスチャへのデコードを行う。
@@ -291,18 +300,18 @@ public:
      * 拡張子pkm -> PKM形式として認識し、自動的にdecodePKMを呼び出す。
      * それ以外  -> decodeFromPlatformDecoderを呼び出して、デコードを行う
      */
-    static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat = PixelFormat_RGBA8888, const TextureLoadOption *option = NULL);
+    static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat = PixelFormat_RGBA8888, TextureLoadOption *option = NULL);
 
     /**
      * PMKファイルのデコードを行う。
      */
-    static jc_sp<TextureImage> decodePMK(MDevice device, const Uri &uri, const TextureLoadOption *option = NULL);
+    static jc_sp<TextureImage> decodePMK(MDevice device, const Uri &uri, TextureLoadOption *option = NULL);
 
     /**
      * Platformが実装しているデコーダーで画像をデコードする。
      * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
      */
-    static jc_sp<TextureImage> decodeFromPlatformDecoder( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, const TextureLoadOption *option = NULL);
+    static jc_sp<TextureImage> decodeFromPlatformDecoder( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, TextureLoadOption *option = NULL);
 };
 
 /**
