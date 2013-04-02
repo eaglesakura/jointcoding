@@ -38,16 +38,39 @@ struct TextureLoadOption {
     jcboolean gen_mipmap;
 
     /**
+     * キャンセルチェックを行う。
+     * 読込中にtrueを検出した場合、その時点で読込を停止する
+     */
+    jcboolean load_cancel;
+
+    /**
      * ラインごとに分割してデコードする
      * デバイスの占有時間を細かくすることでローディングスレッドの占有時間を小さくする
      */
     s32 slice_loading;
 
+    /**
+     * スライス読込時に一度sleepする時間
+     */
+    s32 slice_sleep_time_ms;
+
     struct {
+        /**
+         * RAW画像読み込み時間
+         */
+        s32 raw_load_time_ms;
+
+        s32 raw_pixelconvert_time_ms;
+
         /**
          * glTexImageの所要時間を返却する
          */
         s32 teximage_time_ms;
+
+        /**
+         * テクスチャ領域のalloc時間
+         */
+        s32 alloc_time_ms;
 
         /**
          * デバイス占有時間を返却する
@@ -59,9 +82,10 @@ struct TextureLoadOption {
      *
      */
     TextureLoadOption() {
-        convert_pot = gen_mipmap = jcfalse;
-        result.teximage_time_ms = result.devicelocked_time_ms = 0;
+        convert_pot = gen_mipmap = load_cancel = jcfalse;
+        result.alloc_time_ms = result.teximage_time_ms = result.devicelocked_time_ms = result.raw_load_time_ms = result.raw_pixelconvert_time_ms = 0;
         slice_loading = 1;
+        slice_sleep_time_ms = 0;
     }
 };
 

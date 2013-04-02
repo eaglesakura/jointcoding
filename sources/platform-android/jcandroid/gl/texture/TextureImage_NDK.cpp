@@ -39,6 +39,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     MTextureImage result;
     CALL_JNIENV();
 
+    jctime decode_starttime = Timer::currentTime();
     MInputStream stream = Platform::getFileSystem()->openInputStream(uri);
     JavaJointInputStream *pJJInputStream = dynamic_cast<JavaJointInputStream*>(stream.get());
     if (!pJJInputStream) {
@@ -53,81 +54,173 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         return result;
     }
 
+    if (option) {
+        option->result.raw_load_time_ms = Timer::lapseTimeMs(decode_starttime);
+    }
+
     // ラップして、必要な情報を取り出す
     jobject pixelBuffer = ndk::ImageDecoder::getPixels_unsafe_(ndkImageDecoder);
     s32 imageWidth = ndk::ImageDecoder::getWidth_(ndkImageDecoder);
     s32 imageHeight = ndk::ImageDecoder::getHeight_(ndkImageDecoder);
 
+    // 仮ポインタ
+    jcboolean cancel_flag = jcfalse;
+    jcboolean *cancel_ptr = option ? &option->load_cancel : &cancel_flag;
+
+    const GLenum TEXTURE_PIXEL_FORMAT = PIXEL_FORMATS[pixelFormat];
+    const GLenum TEXTURE_PIXEL_TYPE = PIXEL_TYPES[pixelFormat];
+
     {
-        void* raw_buffer = env->GetDirectBufferAddress(pixelBuffer);
+        u8* raw_buffer = (u8*) env->GetDirectBufferAddress(pixelBuffer);
 
         jc_sa<u8> temp_buffer;
 
-        if (pixelFormat != PixelFormat_BGRA8888) {
-            jclogf("convert format(%d -> %d)", PixelFormat_BGRA8888, pixelFormat);
+        if (pixelFormat != PixelFormat_NativeRGBA) {
+            jctime start_time = Timer::currentTime();
+
+            jclogf("convert format(%d -> %d)", PixelFormat_NativeRGBA, pixelFormat);
             temp_buffer = Pixel::createPixelBuffer(pixelFormat, imageWidth * imageHeight);
             Pixel::copyBGRA8888Pixels((const u8*) raw_buffer, pixelFormat, temp_buffer.get(), imageWidth * imageHeight);
 
-            raw_buffer = (void*) temp_buffer.get();
+            raw_buffer = (u8*) temp_buffer.get();
+
+            if (option) {
+                option->result.raw_pixelconvert_time_ms = Timer::lapseTimeMs(start_time);
+            }
+        } else {
+            if (option) {
+                option->result.raw_pixelconvert_time_ms = 0;
+            }
         }
 
-        jctime lock_start_time = Timer::currentTime();
-        try {
+        const u32 origin_width = imageWidth;
+        const u32 origin_height = imageHeight;
 
+        const u32 texture_width = TextureImage::toTextureSize(option, origin_width);
+        const u32 texture_height = TextureImage::toTextureSize(option, origin_height);
+
+        // テクスチャを生成する
+        try {
+            jctime lock_time = Timer::currentTime();
             // lock
             DeviceLock lock(device, jctrue);
 
+            // デバイスロック時間の記録
             if (option) {
-                option->result.devicelocked_time_ms = Timer::lapseTimeMs(lock_start_time);
+                option->result.devicelocked_time_ms = Timer::lapseTimeMs(lock_time);
             }
+            lock_time = Timer::currentTime();
 
-            const u32 origin_width = imageWidth;
-            const u32 origin_height = imageHeight;
+            // テクスチャを作成する
+            result.reset(new TextureImage(texture_width, texture_width, device));
 
-            const u32 texture_width = TextureImage::toTextureSize(option, origin_width);
-            const u32 texture_height = TextureImage::toTextureSize(option, origin_height);
+            result->size.img_width = origin_width;
+            result->size.img_height = origin_height;
+            result->size.tex_width = texture_width;
+            result->size.tex_height = texture_height;
 
-            // make texture
-            result.reset(new TextureImage(origin_width, origin_height, device));
+            // テクスチャ用メモリを確保する
             result->bind();
-            {
-                // 同一サイズなら一括転送
-                if (origin_width == texture_width && origin_height == texture_height) {
-                    glTexImage2D(GL_TEXTURE_2D, 0, PIXEL_FORMATS[pixelFormat], texture_width, texture_height, 0, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], raw_buffer);
-                    jclogf("texture load(%d x %d)", imageWidth, imageHeight);
-                } else {
-                    glTexImage2D(GL_TEXTURE_2D, 0, PIXEL_FORMATS[pixelFormat], texture_width, texture_height, 0, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], NULL);
-                    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, origin_width, origin_height, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], raw_buffer);
-                    result->size.tex_width = texture_width;
-                    result->size.tex_height = texture_height;
-                    jclogf("texture load(%dx%d) -> tex(%dx%d) %s", result->getWidth(), result->getHeight(), result->getTextureWidth(), result->getTextureHeight(), uri.getUri().c_str());
-                }
-            }
+            result->allocPixelMemory(TEXTURE_PIXEL_TYPE, TEXTURE_PIXEL_FORMAT, 0);
 
-            // 必要であればmipmapを生成する
-            if (result->isPowerOfTwoTexture() && option && option->gen_mipmap) {
-                jclogf("gen mipmap %s", uri.getUri().c_str());
-                result->genMipmaps();
-                result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-                result->setMagFilter(GL_LINEAR);
+            // テクスチャalloc時間を記録する
+            if (option) {
+                option->result.alloc_time_ms = Timer::lapseTimeMs(lock_time);
+                option->result.teximage_time_ms = 0;
             }
-
-            result->unbind();
-            result->alloced = jctrue;
-        } catch (EGLException &e) {
+        } catch (Exception &e) {
+            jcloge(e);
             // ref
             env->DeleteLocalRef(ndkImageDecoder);
             env->DeleteLocalRef(pixelBuffer);
             throw;
         }
 
-        if (option) {
-            option->result.devicelocked_time_ms = Timer::lapseTimeMs(lock_start_time);
+        // 分割読み込み数を設定する
+        u32 slice_loading_num = 1;
+        if (option && option->slice_loading > 0) {
+            slice_loading_num = option->slice_loading;
+        }
+        s32 pixel_y = 0;
+        s32 LOAD_HEIGHT = origin_height;
+
+        if (option && option->slice_loading > 0) {
+            LOAD_HEIGHT /= option->slice_loading;
+            if (LOAD_HEIGHT == 0) {
+                LOAD_HEIGHT = 1;
+            }
+        }
+
+        while (pixel_y < origin_height && !(*cancel_ptr)) {
+            try {
+                jctime lock_time = Timer::currentTime();
+                // lock
+                DeviceLock lock(device, jctrue);
+
+                if (option) {
+                    option->result.devicelocked_time_ms += Timer::lapseTimeMs(lock_time);
+                }
+
+                lock_time = Timer::currentTime();
+
+                result->bind();
+                result->copyPixelLine(raw_buffer, TEXTURE_PIXEL_TYPE, TEXTURE_PIXEL_FORMAT, 0, pixel_y, LOAD_HEIGHT);
+                if (option) {
+                    option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
+                }
+            } catch (EGLException &e) {
+                jcloge(e);
+                // ref
+                env->DeleteLocalRef(ndkImageDecoder);
+                env->DeleteLocalRef(pixelBuffer);
+                throw;
+            }
+
+            // 画像ヘッダを移動する
+            raw_buffer += (LOAD_HEIGHT * origin_width * 4);
+            pixel_y += LOAD_HEIGHT;
+
+            if (option && option->slice_sleep_time_ms > 0 && pixel_y < origin_height) {
+                Thread::sleep(option->slice_sleep_time_ms);
+            }
+        }
+
+        // delete ref
+        {
+            env->DeleteLocalRef(ndkImageDecoder);
+            env->DeleteLocalRef(pixelBuffer);
+
+            ndkImageDecoder = NULL;
+            pixelBuffer = NULL;
+        }
+
+        // 必要であればmipmapを生成する
+        if (option && option->gen_mipmap && result->isPowerOfTwoTexture()) {
+            try {
+                jctime lock_time = Timer::currentTime();
+                // lock
+                DeviceLock lock(device, jctrue);
+
+                if (option) {
+                    option->result.devicelocked_time_ms += Timer::lapseTimeMs(lock_time);
+                }
+
+                jclogf("gen mipmap %s", uri.getUri().c_str());
+                result->genMipmaps();
+                result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+                result->setMagFilter(GL_LINEAR);
+
+                if (option) {
+                    option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
+                }
+            } catch (Exception &e) {
+                jcloge(e);
+                throw;
+            }
+
         }
     }
 
-    env->DeleteLocalRef(ndkImageDecoder);
-    env->DeleteLocalRef(pixelBuffer);
     return result;
 }
 

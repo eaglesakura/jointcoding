@@ -43,11 +43,15 @@ enum PixelFormat_e {
     PixelFormat_RGBA8888,
 
     /**
+     * RGBA各要素を含み、プラットフォームに最適化した状態でロードする
+     * 各1byteは保証するが、RGBA並び順は保証しない。
+     *
+     * Android::高速に読み込めるため、その順で格納される。
      * 4byte
      * GL_BGRA_EXT
      * GL_UNSIGNED_BYTE
      */
-    PixelFormat_BGRA8888,
+    PixelFormat_NativeRGBA,
 };
 
 class Pixel {
