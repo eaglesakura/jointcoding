@@ -139,6 +139,13 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
             throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
         }
 
+#ifdef  EGL_TRIPLEBUFFER_MODE
+        {
+            // トリプルバッファ対応させる
+            eglSwapInterval(display, 2);
+        }
+#endif
+
     } else {
         EGLDisplay eglDisplay = display;
         EGLSurface eglReadSurface = EGL_NO_SURFACE;
