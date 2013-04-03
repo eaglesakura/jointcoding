@@ -300,6 +300,20 @@ public:
     }
 
     /**
+     * 最小値であればtrue
+     */
+    const jcboolean isMinValue() const {
+        return minValue == value;
+    }
+
+    /**
+     * 最大値であればtrue
+     */
+    const jcboolean isMaxValue() const {
+        return maxValue == value;
+    }
+
+    /**
      * 適当な式で修正を行った値を取得する
      *
      * @seel http://game.g.hatena.ne.jp/Nao_u/20110505

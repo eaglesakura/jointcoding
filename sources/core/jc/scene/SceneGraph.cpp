@@ -18,6 +18,23 @@ SceneGraph::~SceneGraph() {
 }
 
 /**
+ * 子の数をかぞえる
+ */
+u32 SceneGraph::getChildNum(const jcboolean recursion) {
+    u32 result = childs.size();
+    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+
+    if (recursion) {
+        while (itr != end) {
+            result += (*itr)->getChildNum(recursion);
+            ++itr;
+        }
+    }
+
+    return result;
+}
+
+/**
  * 子を追加する
  */
 void SceneGraph::pushBackChild(MSceneGraph child) {
@@ -98,7 +115,7 @@ void SceneGraph::removeChilds() {
 MSceneGraph SceneGraph::findScene(const scene_id uniqueId) const {
     assert(uniqueId != this->uniqueId);
 
-    std::list<MSceneGraph> *target_list = (std::list<MSceneGraph>*)&childs;
+    std::list<MSceneGraph> *target_list = (std::list<MSceneGraph>*) &childs;
     std::list<MSceneGraph>::iterator itr = target_list->begin(), end = target_list->end();
 
     while (itr != end) {

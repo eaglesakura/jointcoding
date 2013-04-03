@@ -55,6 +55,12 @@ public:
         return childs.size();
     }
 
+    /**
+     * 子の数をかぞえる
+     * trueを設定した場合、再帰的に子の数をかぞえる
+     */
+    virtual u32 getChildNum(const jcboolean recursion);
+
     virtual void setUniqueId(const scene_id set) {
         uniqueId = set;
     }
