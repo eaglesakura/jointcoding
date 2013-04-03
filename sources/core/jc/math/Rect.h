@@ -60,10 +60,31 @@ struct RectT {
         this->bottom = top + _height;
     }
 
+    /**
+     * 指定座標がBOTTOMになるように移動させる
+     */
+    void moveToBottom(const T bottom) {
+        const T _height = height();
+        this->bottom = bottom;
+        this->top = bottom - _height;
+    }
+
+    /**
+     * 左位置を設定する
+     */
     void moveToLeft(const T left) {
         const T _width = width();
         this->left = left;
         this->right =left + _width;
+    }
+
+    /**
+     * 右位置を設定する
+     */
+    void moveToRight(const T right) {
+        const T _width = width();
+        this->right =right;
+        this->left = right - _width;
     }
 
     /**
