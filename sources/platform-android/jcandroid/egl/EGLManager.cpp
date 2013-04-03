@@ -75,6 +75,14 @@ jcboolean printEGLError(const charactor* file, const s32 line) {
 
 namespace ndk {
 
+namespace {
+
+inline void syncCommands() {
+    glFinish();
+}
+
+}
+
 EGLManager::EGLManager() {
     display = getDefaultDisplay();
 
@@ -113,6 +121,8 @@ EGLStatus_e EGLManager::getStatus() const {
  * 指定したコンテキストとサーフェイスをカレントスレッドに割り当てる。
  */
 void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProtocol> surface) {
+    syncCommands();
+
     if( context.get() && surface.get() ) {
         EGLContextManager *contextManager = dynamic_cast<EGLContextManager*>(context.get());
         EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(surface.get());
@@ -171,8 +181,6 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
  * このメソッドは完了するまでブロックされる。
  */
 jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
-    glFinish();
-
     EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(displaySurface.get());
     const EGLSurface targetSurface = surfaceManager->getSurface();
     const EGLSurface currentSurface = eglGetCurrentSurface(EGL_DRAW);
@@ -181,6 +189,9 @@ jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
         return jcfalse;
     }
     jcboolean result = eglSwapBuffers(display, targetSurface);
+
+    syncCommands();
+
     if (!result || printEGLError(__FILE__, __LINE__)) {
         jclogf("Bad Surface(%x)", targetSurface);
     }

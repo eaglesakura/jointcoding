@@ -128,7 +128,7 @@ jcboolean GLState::printProgramError(const GLuint programObject, const GLint sta
 void GLState::syncContext() {
     jclog("------------------------- sync OpenGL ES Context ----------------------");
     // 命令の同期待を行う
-    glFinish();
+    finish();
     // 描画色を取得する
     {
         s32 colors[4] = { 0 };
