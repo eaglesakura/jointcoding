@@ -251,6 +251,13 @@ public:
     }
 
     /**
+     * 指定した秒数で1.0になるようなオフセット値を決定する
+     */
+    void calcOffset(const s32 frameRate, const double sec) {
+        setOffset(1.0 / sec / (double) frameRate);
+    }
+
+    /**
      * 現在地を設定する
      */
     void setValue(const T value) {
