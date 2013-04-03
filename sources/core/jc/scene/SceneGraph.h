@@ -37,6 +37,11 @@ class SceneGraph: public Object {
      */
     float renderingPriority;
 
+    /**
+     * 親を先に実行する
+     */
+    jcboolean parentAhead;
+
 protected:
     /**
      * 子参照
@@ -53,6 +58,18 @@ public:
 
     virtual u32 getChildrenNum() const {
         return childs.size();
+    }
+
+    virtual jcboolean isParentAhead() const {
+        return parentAhead;
+    }
+
+    /**
+     * 親を先に更新・描画を行う場合trueを設定する。
+     * デフォルトfalse = 子を優先して処理する
+     */
+    virtual void setParentAhead(const jcboolean set) {
+        parentAhead = set;
     }
 
     /**

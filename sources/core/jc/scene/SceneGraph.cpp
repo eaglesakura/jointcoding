@@ -12,6 +12,7 @@ SceneGraph::SceneGraph() {
     this->uniqueId = (scene_id) this;
     this->parent = NULL;
     this->renderingPriority = 1.0f;
+    this->parentAhead = jcfalse;
 }
 SceneGraph::~SceneGraph() {
 
@@ -165,6 +166,13 @@ void SceneGraph::removeFromParent() {
  * 更新作業を行う
  */
 jcboolean SceneGraph::update() {
+
+    jcboolean result = jcfalse;
+    // 先に更新する場合は処理する
+    if (isParentAhead()) {
+        result = onSelfUpdate();
+    }
+
     std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
@@ -183,7 +191,12 @@ jcboolean SceneGraph::update() {
         }
     }
 
-    return onSelfUpdate();
+    if (!isParentAhead()) {
+        // 後から更新する場合はこちら
+        return onSelfUpdate();
+    } else {
+        return result;
+    }
 }
 
 static bool compare_scenegraph(const MSceneGraph a, const MSceneGraph b) {
@@ -194,21 +207,31 @@ static bool compare_scenegraph(const MSceneGraph a, const MSceneGraph b) {
  * レンダリングを行う
  */
 void SceneGraph::rendering() {
-    std::list<MSceneGraph> renderingScenes;
-    // 元のリストをコピーする
-    std::copy(childs.begin(), childs.end(), std::back_inserter(renderingScenes));
 
-    // sort
-    renderingScenes.sort(compare_scenegraph);
-
-    // レンダリング作業
-    std::list<MSceneGraph>::iterator itr = renderingScenes.begin(), end = renderingScenes.end();
-    while (itr != end) {
-        (*itr)->rendering();
-        ++itr;
+    if (isParentAhead()) {
+        onSelfRendering();
     }
 
-    onSelfRendering();
+    // 子の処理を行う
+    {
+        std::list<MSceneGraph> renderingScenes;
+        // 元のリストをコピーする
+        std::copy(childs.begin(), childs.end(), std::back_inserter(renderingScenes));
+
+        // sort
+        renderingScenes.sort(compare_scenegraph);
+
+        // レンダリング作業
+        std::list<MSceneGraph>::iterator itr = renderingScenes.begin(), end = renderingScenes.end();
+        while (itr != end) {
+            (*itr)->rendering();
+            ++itr;
+        }
+    }
+
+    if (!isParentAhead()) {
+        onSelfRendering();
+    }
 }
 
 }

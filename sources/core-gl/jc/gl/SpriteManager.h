@@ -182,6 +182,15 @@ public:
     /**
      * 画像を描画する
      */
+    virtual void renderingImage( MTextureImage image, const s32 x, const s32 y, const float degree, const Color color) {
+        const u32 IMG_WIDTH = image->getWidth();
+        const u32 IMG_HEIGHT = image->getHeight();
+        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, IMG_WIDTH, IMG_HEIGHT, degree, color.rgba);
+    }
+
+    /**
+     * 画像を描画する
+     */
     virtual void renderingImage( MTextureImage image, const s32 x, const s32 y) {
         const u32 IMG_WIDTH = image->getWidth();
         const u32 IMG_HEIGHT = image->getHeight();
