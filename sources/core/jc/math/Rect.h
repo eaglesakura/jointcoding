@@ -176,6 +176,18 @@ RectT<T> createRectFromLTRB(const T x, const T y, const T r, const T b) {
     return result;
 }
 
+
+template<typename T>
+RectT<T> createRectFromCWH(const T centerX, const T centerY, const T width, const T height) {
+    RectT<T> result;
+    result.left = centerX - (width / 2);
+    result.top = centerY - (height / 2);
+    result.right = result.left + width;
+    result.bottom = result.top + height;
+
+    return result;
+}
+
 }
 
 #endif /* JCRECT_H_ */
