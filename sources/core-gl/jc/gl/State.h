@@ -34,6 +34,11 @@ enum GLBlendType_e {
      * 一般的なαブレンドを行う
      */
     GLBlendType_Alpha,
+
+    /**
+     * 加算ブレンディングを行う
+     */
+    GLBlendType_Add,
 };
 
 // #define  STATE_NO_CHECK
@@ -323,8 +328,8 @@ public:
      * デフォルト設定に従ってブレンドを行う
      */
     inline jcboolean blendFunc(const GLBlendType_e type) {
-        static const GLenum sfactor[] = { GL_SRC_ALPHA };
-        static const GLenum dfactor[] = { GL_ONE_MINUS_SRC_ALPHA };
+        static const GLenum sfactor[] = { GL_SRC_ALPHA, GL_SRC_ALPHA, };
+        static const GLenum dfactor[] = { GL_ONE_MINUS_SRC_ALPHA, GL_ONE };
 
         return blendFunc(sfactor[type], dfactor[type]);
     }
