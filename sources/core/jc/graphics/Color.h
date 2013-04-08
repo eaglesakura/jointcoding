@@ -128,6 +128,49 @@ union Color {
     }
 
     /**
+     * 色の加算を行う
+     */
+    inline Color operator+(const Color &col) const {
+        const u8 R = (u8) min<u32>(255, (s32) tag.r + (s32) col.tag.r);
+        const u8 G = (u8) min<u32>(255, (s32) tag.g + (s32) col.tag.g);
+        const u8 B = (u8) min<u32>(255, (s32) tag.b + (s32) col.tag.b);
+        const u8 A = (u8) min<u32>(255, (s32) tag.a + (s32) col.tag.a);
+        return fromRGBAi(R, G, B, A);
+    }
+
+    /**
+     * 色の加算を行う
+     */
+    inline Color& operator+=(const Color &col) {
+        tag.r = (u8) min<u32>(255, (s32) tag.r + (s32) col.tag.r);
+        tag.g = (u8) min<u32>(255, (s32) tag.g + (s32) col.tag.g);
+        tag.b = (u8) min<u32>(255, (s32) tag.b + (s32) col.tag.b);
+        tag.a = (u8) min<u32>(255, (s32) tag.a + (s32) col.tag.a);
+        return *this;
+    }
+
+    /**
+     * 色の減算を行う
+     */
+    inline Color operator-(const Color &col) const {
+        const u8 R = (u8) max<u32>(0, (s32) tag.r - (s32) col.tag.r);
+        const u8 G = (u8) max<u32>(0, (s32) tag.g - (s32) col.tag.g);
+        const u8 B = (u8) max<u32>(0, (s32) tag.b - (s32) col.tag.b);
+        const u8 A = (u8) max<u32>(0, (s32) tag.a - (s32) col.tag.a);
+        return fromRGBAi(R, G, B, A);
+    }
+
+    /**
+     * 色の減算を行う
+     */
+    inline Color& operator-=(const Color &col) {
+        tag.r = (u8) max<u32>(0, (s32) tag.r - (s32) col.tag.r);
+        tag.g = (u8) max<u32>(0, (s32) tag.g - (s32) col.tag.g);
+        tag.b = (u8) max<u32>(0, (s32) tag.b - (s32) col.tag.b);
+        tag.a = (u8) max<u32>(0, (s32) tag.a - (s32) col.tag.a);
+        return *this;
+    }
+    /**
      * 同一ならtrue
      */
     inline
@@ -180,7 +223,7 @@ union Color {
      * @param blend
      * @return
      */
-    static Color blendColor(const Color rgba0, const Color rgba1,  float blend) {
+    static Color blendColor(const Color rgba0, const Color rgba1, float blend) {
         Color result;
         blend = jc::minmax<float>(0, 1.0f, blend);
 

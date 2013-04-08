@@ -34,7 +34,7 @@ enum SpritePosition_e {
     /**
      * 下寄せ
      */
-    SpritePosition_Bottom = 0x1 << 2,
+    SpritePosition_Bottom = 0x1 << 3,
 
     /**
      * 上寄せ
@@ -302,7 +302,7 @@ public:
      * レンダリングを行う
      */
     virtual void rendering(MSpriteManager spriteManager) {
-        spriteManager->renderingImage(getRenderingTexture(), (s32) srcArea.left, (s32) srcArea.top, (s32) srcArea.width(), (s32) srcArea.height(), (s32) dstArea.left, (s32) dstArea.top, (s32) dstArea.width(), (s32) dstArea.height(), rotate, color.rgba);
+        spriteManager->renderingImage(getRenderingTexture(), srcArea.left, srcArea.top, srcArea.width(), srcArea.height(),  dstArea.left, dstArea.top, dstArea.width(), dstArea.height(), rotate, color.rgba);
     }
 };
 

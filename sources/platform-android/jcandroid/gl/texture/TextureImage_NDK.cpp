@@ -47,8 +47,8 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         return result;
     }
 
-    jobject ndkImageDecoder = ndk::ImageDecoder::decodeFromStream_unsafe(pJJInputStream->getJniStream()->getObject());
-    if (!ndkImageDecoder) {
+    jobject jImageDecoder = ndk::ImageDecoder::decodeFromStream_unsafe(pJJInputStream->getJniStream()->getObject());
+    if (!jImageDecoder) {
         // デコード失敗した
         jclog("decode fail...");
         return result;
@@ -59,9 +59,9 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     }
 
     // ラップして、必要な情報を取り出す
-    jobject pixelBuffer = ndk::ImageDecoder::getPixels_unsafe_(ndkImageDecoder);
-    s32 imageWidth = ndk::ImageDecoder::getWidth_(ndkImageDecoder);
-    s32 imageHeight = ndk::ImageDecoder::getHeight_(ndkImageDecoder);
+    jobject pixelBuffer = ndk::ImageDecoder::getPixels_unsafe_(jImageDecoder);
+    s32 imageWidth = ndk::ImageDecoder::getWidth_(jImageDecoder);
+    s32 imageHeight = ndk::ImageDecoder::getHeight_(jImageDecoder);
 
     // 仮ポインタ
     jcboolean cancel_flag = jcfalse;
@@ -131,7 +131,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         } catch (Exception &e) {
             jcloge(e);
             // ref
-            env->DeleteLocalRef(ndkImageDecoder);
+            env->DeleteLocalRef(jImageDecoder);
             env->DeleteLocalRef(pixelBuffer);
             throw;
         }
@@ -171,7 +171,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             } catch (EGLException &e) {
                 jcloge(e);
                 // ref
-                env->DeleteLocalRef(ndkImageDecoder);
+                env->DeleteLocalRef(jImageDecoder);
                 env->DeleteLocalRef(pixelBuffer);
                 throw;
             }
@@ -187,10 +187,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
 
         // delete ref
         {
-            env->DeleteLocalRef(ndkImageDecoder);
+            env->DeleteLocalRef(jImageDecoder);
             env->DeleteLocalRef(pixelBuffer);
 
-            ndkImageDecoder = NULL;
+            jImageDecoder = NULL;
             pixelBuffer = NULL;
         }
 
