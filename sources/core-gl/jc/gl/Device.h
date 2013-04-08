@@ -299,6 +299,10 @@ public:
      * 但し、その他のスレッドからの要求で呼び出し順が変化ある場合は何もしない。
      */
     virtual void waitLockRequest(const s32 sleepMs, const jcboolean *canceled) {
+        if (isCurrentThread()) {
+            // 既にスレッドロックされていたら何もしない
+            return;
+        }
         while (current_request != current_id) {
             if (canceled && (*canceled)) {
                 // キャンセルチェック
