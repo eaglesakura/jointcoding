@@ -192,7 +192,7 @@ public:
      * @param x
      * @param y
      */
-    Sprite* offsetSpritePosition(int x, int y) {
+    Sprite* offsetSpritePosition(float x, float y) {
         dstArea.offset(x, y);
         return this;
     }

@@ -8,6 +8,8 @@
 #ifndef JCRECT_H_
 #define JCRECT_H_
 
+#include    "jc/math/Math.h"
+
 namespace jc {
 
 /**
@@ -75,7 +77,7 @@ struct RectT {
     void moveToLeft(const T left) {
         const T _width = width();
         this->left = left;
-        this->right =left + _width;
+        this->right = left + _width;
     }
 
     /**
@@ -83,7 +85,7 @@ struct RectT {
      */
     void moveToRight(const T right) {
         const T _width = width();
-        this->right =right;
+        this->right = right;
         this->left = right - _width;
     }
 
@@ -122,25 +124,41 @@ struct RectT {
     }
 
     /**
+     * すべての値を四捨五入する
+     */
+    void round() {
+        left = jc::round(left);
+        top = jc::round(top);
+        right = jc::round(right);
+        bottom = jc::round(bottom);
+    }
+
+    void cutdown() {
+        left = (s32) left;
+        top = (s32) top;
+        right = (s32) right;
+        bottom = (s32) bottom;
+    }
+
+    /**
      * 面積を求める
      */
     T getAreaSize() const {
         return jc::abs(width() * height());
     }
 
-
     void copy(const RectT<s32> origin) {
-        left = (T)origin.left;
-        top = (T)origin.top;
-        right = (T)origin.right;
-        bottom = (T)origin.bottom;
+        left = (T) origin.left;
+        top = (T) origin.top;
+        right = (T) origin.right;
+        bottom = (T) origin.bottom;
     }
 
     void copy(const RectT<float> origin) {
-        left = (T)origin.left;
-        top = (T)origin.top;
-        right = (T)origin.right;
-        bottom = (T)origin.bottom;
+        left = (T) origin.left;
+        top = (T) origin.top;
+        right = (T) origin.right;
+        bottom = (T) origin.bottom;
     }
 };
 
@@ -175,7 +193,6 @@ RectT<T> createRectFromLTRB(const T x, const T y, const T r, const T b) {
 
     return result;
 }
-
 
 template<typename T>
 RectT<T> createRectFromCWH(const T centerX, const T centerY, const T width, const T height) {
