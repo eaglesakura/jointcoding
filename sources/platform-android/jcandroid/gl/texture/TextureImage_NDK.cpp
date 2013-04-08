@@ -59,7 +59,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     }
 
     // ラップして、必要な情報を取り出す
-    jobject pixelBuffer = ndk::ImageDecoder::getPixels_unsafe_(jImageDecoder);
+    jobject jPixelBuffer = ndk::ImageDecoder::getPixels_unsafe_(jImageDecoder);
     s32 imageWidth = ndk::ImageDecoder::getWidth_(jImageDecoder);
     s32 imageHeight = ndk::ImageDecoder::getHeight_(jImageDecoder);
 
@@ -71,7 +71,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     const GLenum TEXTURE_PIXEL_TYPE = PIXEL_TYPES[pixelFormat];
 
     {
-        u8* raw_buffer = (u8*) env->GetDirectBufferAddress(pixelBuffer);
+        u8* raw_buffer = (u8*) env->GetDirectBufferAddress(jPixelBuffer);
 
         jc_sa<u8> temp_buffer;
 
@@ -132,7 +132,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             jcloge(e);
             // ref
             env->DeleteLocalRef(jImageDecoder);
-            env->DeleteLocalRef(pixelBuffer);
+            env->DeleteLocalRef(jPixelBuffer);
             throw;
         }
 
@@ -163,6 +163,14 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
 
                 lock_time = Timer::currentTime();
 
+                // 読み込むライン数を修正する
+                if ((pixel_y + LOAD_HEIGHT) > origin_height) {
+                    LOAD_HEIGHT = (origin_height - pixel_y);
+                }
+
+                assert(LOAD_HEIGHT > 0);
+                assert((pixel_y + LOAD_HEIGHT) <= origin_height);
+
                 result->bind();
                 result->copyPixelLine(raw_buffer, TEXTURE_PIXEL_TYPE, TEXTURE_PIXEL_FORMAT, 0, pixel_y, LOAD_HEIGHT);
                 if (option) {
@@ -172,7 +180,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 jcloge(e);
                 // ref
                 env->DeleteLocalRef(jImageDecoder);
-                env->DeleteLocalRef(pixelBuffer);
+                env->DeleteLocalRef(jPixelBuffer);
                 throw;
             }
 
@@ -188,10 +196,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         // delete ref
         {
             env->DeleteLocalRef(jImageDecoder);
-            env->DeleteLocalRef(pixelBuffer);
+            env->DeleteLocalRef(jPixelBuffer);
 
             jImageDecoder = NULL;
-            pixelBuffer = NULL;
+            jPixelBuffer = NULL;
         }
 
         // 必要であればmipmapを生成する
