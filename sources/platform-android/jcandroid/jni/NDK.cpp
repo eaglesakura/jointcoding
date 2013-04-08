@@ -12,12 +12,14 @@ using namespace ndk;
 
 namespace ndk {
 
+namespace {
+
 /**
  * JavaVM
  */
 static JavaVM *g_javavm = NULL;
 
-static jcmutex ndkMutex;
+}
 
 JavaVM* NDK::getJavaVM() {
     return g_javavm;
@@ -38,8 +40,8 @@ JNIEnv* NDK::getJniEnv() {
  * VMを初期化する
  */
 void initJniEnv(JNIEnv *env) {
+
     if (!g_javavm) {
-        MutexLock lock(ndkMutex);
         if (!ndk::g_javavm) {
             env->GetJavaVM(&g_javavm);
         }
