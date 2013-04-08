@@ -378,6 +378,16 @@ typedef CounterT<s32> CounterI;
  */
 typedef CounterT<float> CounterF;
 
+/**
+ * 遷移値を管理するためのカウンターを作成する
+ */
+inline CounterF createTransitionCounter(const u32 frameRate, const double transSec) {
+    CounterF result;
+    result.setType(CounterType_EdgeStop);
+    result.calcOffset(frameRate, transSec);
+    return result;
+}
+
 }
 
 #endif /* COUNTER_H_ */
