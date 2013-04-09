@@ -74,6 +74,11 @@ static s32 g_sleep_booting_ms = 0;
  * スレッドを一定時間停止させる
  */
 void Thread::sleep(s32 ms) {
+    // 最初から停止時間が無いなら何もしない
+    if (ms <= 0) {
+        return;
+    }
+
     // スリープ時刻を設定
     const s32 sleepTime = jc::max(1, ms - g_sleep_booting_ms);
 

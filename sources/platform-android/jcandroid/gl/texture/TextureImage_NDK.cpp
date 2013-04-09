@@ -67,6 +67,9 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     jcboolean cancel_flag = jcfalse;
     jcboolean *cancel_ptr = option ? &option->load_cancel : &cancel_flag;
 
+    // デバイスの制御待ちチェック
+#define     device_wait(option) if(option && option->load_priority_down){ device->waitLockRequest(1, cancel_ptr); }
+
     const GLenum TEXTURE_PIXEL_FORMAT = PIXEL_FORMATS[pixelFormat];
     const GLenum TEXTURE_PIXEL_TYPE = PIXEL_TYPES[pixelFormat];
 
@@ -102,6 +105,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         // テクスチャを生成する
         try {
             jctime lock_time = Timer::currentTime();
+
+            // ロック優先度が低いなら、他のデバイスの制御待ちを行う
+            device_wait(option);
+
             // lock
             DeviceLock lock(device, jctrue);
 
@@ -154,6 +161,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         while (pixel_y < origin_height && !(*cancel_ptr)) {
             try {
                 jctime lock_time = Timer::currentTime();
+
+                // ロック優先度が低いなら、他のデバイスの制御待ちを行う
+                device_wait(option);
+
                 // lock
                 DeviceLock lock(device, jctrue);
 
@@ -206,6 +217,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         if (option && option->gen_mipmap && result->isPowerOfTwoTexture()) {
             try {
                 jctime lock_time = Timer::currentTime();
+
+                // ロック優先度が低いなら、他のデバイスの制御待ちを行う
+                device_wait(option);
+
                 // lock
                 DeviceLock lock(device, jctrue);
 

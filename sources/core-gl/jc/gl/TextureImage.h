@@ -44,6 +44,11 @@ struct TextureLoadOption {
     jcboolean load_cancel;
 
     /**
+     * 読込優先度を下げる（他のデバイスがロックされていないときに読み込み動作を行わせる
+     */
+    jcboolean load_priority_down;
+
+    /**
      * ラインごとに分割してデコードする
      * デバイスの占有時間を細かくすることでローディングスレッドの占有時間を小さくする
      */
@@ -82,7 +87,7 @@ struct TextureLoadOption {
      *
      */
     TextureLoadOption() {
-        convert_pot = gen_mipmap = load_cancel = jcfalse;
+        convert_pot = gen_mipmap = load_cancel = load_priority_down = jcfalse;
         result.alloc_time_ms = result.teximage_time_ms = result.devicelocked_time_ms = result.raw_load_time_ms = result.raw_pixelconvert_time_ms = 0;
         slice_loading = 1;
         slice_sleep_time_ms = 0;
