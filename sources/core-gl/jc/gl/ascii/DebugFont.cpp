@@ -74,5 +74,38 @@ void DebugFont::rendering(const String text, const s32 x, const s32 y) {
     }
 }
 
+/**
+ * レンダリングの幅・高さを計算する
+ */
+Vector2i DebugFont::calcRenderingSize(const String text) {
+    const charactor* font_charactors = text.c_str();
+    const s32 text_length = text.length();
+
+    s32 current_x = 0;
+    s32 current_y = 0;
+
+    s32 max_width = 0;
+    for (u32 i = 0; i < text_length; ++i) {
+        s8 font_index = (s8) font_charactors[i] - FONT_INDEX_HEAD;
+        if (font_charactors[i] == ' ') {
+            current_x += fontCharSize.x;
+        } else if (font_charactors[i] == '\n') {
+            current_x = 0;
+            current_y += fontCharSize.y;
+        } else if (font_index >= 0 && font_index < FONT_INDEX_NUM) {
+            current_x += fontCharSize.x;
+        }
+
+        max_width = jc::max(max_width, current_x);
+    }
+
+    // 最後が改行以外だったらもう一行分ずらす
+    if(font_charactors[text_length - 1] != '\n'){
+        current_y += fontCharSize.y;
+    }
+
+    return Vector2i(max_width, current_y);
+}
+
 }
 }

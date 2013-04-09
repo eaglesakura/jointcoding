@@ -79,14 +79,14 @@ public:
     /**
      * 文字色を設定する
      */
-    void setColor(const u32 rgba) {
+    virtual void setColor(const u32 rgba) {
         fontColor.rgba = rgba;
     }
 
     /**
      * 文字色を設定する
      */
-    void setColor(const Color color) {
+    virtual void setColor(const Color color) {
         fontColor = color;
     }
 
@@ -94,8 +94,21 @@ public:
      * デバッグ用文字列を画面に表示する
      * レンダリング速度が低いため注意すること。
      */
-    void rendering(const String text, const s32 x, const s32 y);
+    virtual void rendering(const String text, const s32 x, const s32 y);
 
+    /**
+     * レンダリングの幅・高さを計算する
+     */
+    virtual Vector2i calcRenderingSize(const String text);
+
+    /**
+     * レンダリングエリアを計算する
+     */
+    virtual RectI calcRenderingArea(const String text, const s32 x, const s32 y) {
+        Vector2i size = calcRenderingSize(text);
+        RectI result = createRectFromXYWH(x, y, size.x, size.y);
+        return result;
+    }
 };
 
 /**
