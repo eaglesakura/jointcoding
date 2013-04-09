@@ -73,17 +73,13 @@ static const charactor *VERTEX_SHADER_SOURCE =
 // テクスチャ操作
                 "   {"
                 "       mat = mat4(1.0);"
-// 移動行列を作成する
                 "       {"
+// スケーリング行列を作成する
+                "           mat[0][0] = poly_uv_w;"
+                "           mat[1][1] = poly_uv_h;"
+// 移動行列を作成する
                 "           mat[3][0] = poly_uv_u;"
                 "           mat[3][1] = poly_uv_v;"
-                "       }"
-// スケーリング行列を作成する
-                "       {"
-                "           temp = mat4(1.0);"
-                "           temp[0][0] = poly_uv_w;"
-                "           temp[1][1] = poly_uv_h;"
-                "           mat = mat * temp;"
                 "       }"
                 "       fTexCoord.xy = (mat * vTexCoord).xy;"
                 "   }"
