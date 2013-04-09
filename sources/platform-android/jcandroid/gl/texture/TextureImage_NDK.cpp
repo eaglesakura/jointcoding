@@ -229,6 +229,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 }
 
                 jclogf("gen mipmap %s", uri.getUri().c_str());
+                result->bind();
                 result->genMipmaps();
                 result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
                 result->setMagFilter(GL_LINEAR);
