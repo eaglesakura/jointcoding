@@ -130,7 +130,7 @@ protected:
     /**
      * 現在の環境にしたがってレンダリングさせる。
      */
-    virtual void rendering( s32 x, s32 y, s32 w, s32 h );
+    virtual void rendering(const float x, const float y, const float w, const float h );
 
 public:
     virtual ~SpriteManager();
@@ -138,7 +138,7 @@ public:
     /**
      * 四角形描画を行う
      */
-    virtual void renderingRect(const s32 x, const s32 y, const s32 w, const s32 h, const u32 rgba);
+    virtual void renderingRect(const float x, const float y, const float w, const float h, const u32 rgba);
 
     /**
      * 四角形描画を行う
@@ -151,7 +151,7 @@ public:
      * 四角形描画を行う
      */
     virtual void renderingRect(const RectF &dst, const u32 rgba) {
-        renderingRect(jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()), rgba);
+        renderingRect(dst.left, dst.top, dst.width(), dst.height(), rgba);
     }
 
     /**
@@ -161,22 +161,37 @@ public:
      * @param degree 画像の回転角（360度系）
      * @param rgba   画像の色補正（RGBA形式）
      */
-    virtual void renderingImage( MTextureImage image, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstW, const s32 dstH, const float degree, const u32 rgba);
+    virtual void renderingImage( MTextureImage image, const float srcX, const float srcY, const float srcW, const float srcH, const float dstX, const float dstY, const float dstW, const float dstH, const float degree, const u32 rgba);
+
+
+    /**
+     * 画像を描画する
+     * @param src{XYWH} テクスチャ内の座標をpix単位で指定する
+     * @param dst{XYWH} 描画先の座標をpix単位で指定する。
+     * @param degree 画像の回転角（360度系）
+     * @param rgba   画像の色補正（RGBA形式）
+     */
+    virtual void renderingImage( MTextureImage image, const float srcX, const float srcY, const float srcW, const float srcH, const float dstX, const float dstY, const float dstW, const float dstH) {
+        renderingImage(image, srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH, 0.0f, 0xFFFFFFFF);
+    }
+
 
     /**
      * 画像を描画する
      */
-    virtual void renderingImage( MTextureImage image, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstW, const s32 dstH) {
-        renderingImage(image, srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH, 0.0f, 0xFFFFFFFF);
+    virtual void renderingImage( MTextureImage image, const float x, const float y, const float width, const float height, const Color color) {
+        const u32 IMG_WIDTH = image->getWidth();
+        const u32 IMG_HEIGHT = image->getHeight();
+        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, width, height, 0.0f, color.rgba);
     }
 
     /**
      * 画像を描画する
      */
-    virtual void renderingImage( MTextureImage image, const s32 x, const s32 y, const Color color) {
+    virtual void renderingImage( MTextureImage image, const float x, const float y, const float width, const float height) {
         const u32 IMG_WIDTH = image->getWidth();
         const u32 IMG_HEIGHT = image->getHeight();
-        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, IMG_WIDTH, IMG_HEIGHT, 0.0f, color.rgba);
+        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, width, height, 0.0f, 0xFFFFFFFF);
     }
 
     /**
@@ -185,25 +200,7 @@ public:
     virtual void renderingImage( MTextureImage image, const float x, const float y, const Color color) {
         const u32 IMG_WIDTH = image->getWidth();
         const u32 IMG_HEIGHT = image->getHeight();
-        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, jc::round(x), jc::round(y), IMG_WIDTH, IMG_HEIGHT, 0.0f, color.rgba);
-    }
-
-    /**
-     * 画像を描画する
-     */
-    virtual void renderingImage( MTextureImage image, const s32 x, const s32 y, const float degree, const Color color) {
-        const u32 IMG_WIDTH = image->getWidth();
-        const u32 IMG_HEIGHT = image->getHeight();
-        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, IMG_WIDTH, IMG_HEIGHT, degree, color.rgba);
-    }
-
-    /**
-     * 画像を描画する
-     */
-    virtual void renderingImage( MTextureImage image, const s32 x, const s32 y) {
-        const u32 IMG_WIDTH = image->getWidth();
-        const u32 IMG_HEIGHT = image->getHeight();
-        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, IMG_WIDTH, IMG_HEIGHT);
+        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, IMG_WIDTH, IMG_HEIGHT, 0.0f, color.rgba);
     }
 
     /**
@@ -212,21 +209,21 @@ public:
     virtual void renderingImage( MTextureImage image, const float x, const float y) {
         const u32 IMG_WIDTH = image->getWidth();
         const u32 IMG_HEIGHT = image->getHeight();
-        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, jc::round(x), jc::round(y), IMG_WIDTH, IMG_HEIGHT);
+        renderingImage(image, 0, 0, IMG_WIDTH, IMG_HEIGHT, x, y, IMG_WIDTH, IMG_HEIGHT, 0.0f, 0xFFFFFFFF);
     }
 
     /**
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const RectI &dst) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height());
+        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height(), 0, 0xFFFFFFFF);
     }
 
     /**
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const RectF &dst) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()));
+        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height(), 0, 0xFFFFFFFF);
     }
 
     /**
@@ -240,7 +237,7 @@ public:
      * 画像を描画する
      */
     virtual void renderingImage( MTextureImage image, const RectF &dst, const u32 color) {
-        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), jc::round(dst.left), jc::round(dst.top), jc::round(dst.width()), jc::round(dst.height()), 0, color);
+        renderingImage(image, 0, 0, image->getWidth(), image->getHeight(), dst.left, dst.top, dst.width(), dst.height(), 0, color);
     }
 
     /**

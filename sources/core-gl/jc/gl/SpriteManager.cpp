@@ -311,14 +311,14 @@ void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_
 /**
  * 現在の環境にしたがってレンダリングさせる。
  */
-void SpriteManager::rendering(s32 x, s32 y, s32 width, s32 height) {
+void SpriteManager::rendering(const float x, const float y, const float width, const float height) {
     const float displayWidth = (float) device->getSurface()->getWidth();
     const float displayHeight = (float) device->getSurface()->getHeight();
 
-    const float sizeX = (float) width / (float) displayWidth * 2;
-    const float sizeY = (float) height / (float) displayHeight * 2;
-    const float sx = (float) x / (float) displayWidth * 2;
-    const float sy = (float) y / (float) displayHeight * 2;
+    const float sizeX = width / displayWidth * 2;
+    const float sizeY = height / displayHeight * 2;
+    const float sx = x / displayWidth * 2;
+    const float sy = y / displayHeight * 2;
     const float translateX = -1.0f + sizeX / 2.0f + sx;
     const float translateY = 1.0f - sizeY / 2.0f - sy;
 
@@ -333,14 +333,14 @@ void SpriteManager::rendering(s32 x, s32 y, s32 width, s32 height) {
 /**
  * 四角形描画を行う
  */
-void SpriteManager::renderingRect(const s32 x, const s32 y, const s32 w, const s32 h, const u32 rgba) {
+void SpriteManager::renderingRect(const float x, const float y, const float w, const float h, const u32 rgba) {
     renderingImage(whiteTexture, 0, 0, 0, 0, x, y, w, h, 0.0f, rgba);
 }
 
 /**
  * レンダリングを行う
  */
-void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s32 srcY, const s32 srcW, const s32 srcH, const s32 dstX, const s32 dstY, const s32 dstWidth, const s32 dstHeight, const float degree, const u32 rgba) {
+void SpriteManager::renderingImage(MTextureImage image, const float srcX, const float srcY, const float srcW, const float srcH, const float dstX, const float dstY, const float dstWidth, const float dstHeight, const float degree, const u32 rgba) {
 // シェーダーを切り替える
     shader->bind();
 
@@ -368,20 +368,19 @@ void SpriteManager::renderingImage(MTextureImage image, const s32 srcX, const s3
 
 //! テクスチャ描画位置を行列で操作する
     if (unifPolyUv != UNIFORM_DISABLE_INDEX && image != whiteTexture) {
-        const float TEXTURE_WIDTH = (float)image->getTextureWidth();
-        const float TEXTURE_HEIGHT = (float)image->getTextureHeight();
+        const float TEXTURE_WIDTH = (float) image->getTextureWidth();
+        const float TEXTURE_HEIGHT = (float) image->getTextureHeight();
 
-
-        const float sizeX = (float) srcW / TEXTURE_WIDTH;
-        const float sizeY = (float) srcH / TEXTURE_HEIGHT;
-        const float sx = (float) srcX / TEXTURE_WIDTH;
-        const float sy = (float) srcY / TEXTURE_HEIGHT;
+        const float sizeX = (float) jc::round(srcW) / TEXTURE_WIDTH;
+        const float sizeY = (float) jc::round(srcH) / TEXTURE_HEIGHT;
+        const float sx = (float) jc::round(srcX) / TEXTURE_WIDTH;
+        const float sy = (float) jc::round(srcY) / TEXTURE_HEIGHT;
 
         const float poly_uv[] = { sx, sy, sizeX, sizeY, };
         glUniform4fv(unifPolyUv, 1, poly_uv);
     }
 
-    this->rendering(dstX, dstY, dstWidth, dstHeight);
+    this->rendering(jc::round(dstX), jc::round(dstY), (s32) dstWidth, (s32) dstHeight);
 }
 
 /**
