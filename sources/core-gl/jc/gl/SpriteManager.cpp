@@ -97,8 +97,7 @@ static const charactor *FRAGMENT_SHADER_SOURCE = ""
         // color
         "        uniform mediump vec4    blendColor;"
         "        void main() {"
-        "            vec4 color = texture2D(tex, fTexCoord) * blendColor;"
-        "            gl_FragColor = color;"
+        "            gl_FragColor = texture2D(tex, fTexCoord) * blendColor;"
         "        }"
 //
 ;
@@ -179,8 +178,7 @@ static const charactor *FRAGMENT_EXTERNAL_SHADER_SOURCE = ""
 // color
         "        uniform mediump vec4    blendColor;"
         "        void main() {"
-        "            vec4 color = texture2D(tex, fTexCoord) * blendColor;"
-        "            gl_FragColor = color;"
+        "            gl_FragColor = texture2D(tex, fTexCoord) * blendColor;"
         "        }"
 //
 ;
