@@ -50,7 +50,7 @@ void FigureDataOutputStream::writeVector3(const Vector3f &v, const jcboolean tra
     {
     }
 
-    // FIXME ひとまず、昔作ったプログラムに合わせて出力修正
+    // MEMO ひとまず、昔作ったプログラムに合わせて出力修正
     this->writeFixed32(-temp.x, fixedbits);
     this->writeFixed32(temp.z, fixedbits);
     this->writeFixed32(-temp.y, fixedbits);
