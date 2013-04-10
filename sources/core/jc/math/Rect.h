@@ -160,6 +160,46 @@ struct RectT {
         right = (T) origin.right;
         bottom = (T) origin.bottom;
     }
+
+    /**
+     * 中央値を保ったままスケーリングする
+     */
+    void scaling(const float scale_x, const float scale_y) {
+        const T cen_x = centerX();
+        const T cen_y = centerY();
+        const T _width = (T) ((float) width() * scale_x);
+        const T _height = (T) ((float) height() * scale_y);
+
+        left = cen_x - (_width / 2);
+        top = cen_y - (_height / 2);
+        right = left + _width;
+        bottom = top + _height;
+    }
+
+    /**
+     * 中央値を保ったままスケーリングする
+     */
+    void scaling(const float scale) {
+        scaling(scale, scale);
+    }
+
+    RectT<T> createScaling(const float scale_x, const float scale_y) const {
+        const T cen_x = centerX();
+        const T cen_y = centerY();
+        const T _width = (T) ((float) width() * scale_x);
+        const T _height = (T) ((float) height() * scale_y);
+
+        RectT<T> result;
+        result.left = cen_x - (_width / 2);
+        result.top = cen_y - (_height / 2);
+        result.right = result.left + _width;
+        result.bottom = result.top + _height;
+        return result;
+    }
+
+    RectT<T> createScaling(const float scale) const {
+        return createScaling(scale, scale);
+    }
 };
 
 /**
