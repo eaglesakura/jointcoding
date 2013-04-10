@@ -9,7 +9,7 @@
 #include "jcandroid/jni/SystemMemory.h"
 
 namespace ndk {
-extern void initPlatform(MNativeContext context);
+extern void NativeContext_initPlatform(MNativeContext context);
 }
 
 using namespace ndk;
@@ -23,7 +23,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeI
     jclog("Java_com_eaglesakura_jc_android_app_NativeContext_nativeInitialize()");
     jc_sp<NativeContext> context = NativeContext::global(_this);
     jclog("Java_com_eaglesakura_jc_android_app_NativeContext_nativeInitialize() finished");
-    initPlatform(context);
+    NativeContext_initPlatform(context);
     return;
 }
 

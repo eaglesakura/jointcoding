@@ -120,13 +120,13 @@ static void initialize() {
 
 }
 
-#define __init(...)     if(!initialized) { initialize(); }
+#define GPUCapacity_init(...)     if(!initialized) { initialize(); }
 
 /**
  * レンダラー名を取得する
  */
 String GPUCapacity::getRenderer() {
-    __init();
+    GPUCapacity_init();
     return renderer;
 }
 
@@ -134,7 +134,7 @@ String GPUCapacity::getRenderer() {
  * ベンダー名を取得する
  */
 String GPUCapacity::getVendor() {
-    __init();
+    GPUCapacity_init();
     return vendor;
 }
 
@@ -142,7 +142,7 @@ String GPUCapacity::getVendor() {
  * 頂点属性の最大数を取得する。
  */
 u32 GPUCapacity::getMaxVertexAttributes() {
-    __init();
+    GPUCapacity_init();
     return maxVertexAttrbs;
 }
 
@@ -151,7 +151,7 @@ u32 GPUCapacity::getMaxVertexAttributes() {
  * この枚数を超えるテクスチャ処理は行えない。
  */
 u32 GPUCapacity::getMaxTextureUnits() {
-    __init();
+    GPUCapacity_init();
     return maxTextureUnits;
 }
 
@@ -159,7 +159,7 @@ u32 GPUCapacity::getMaxTextureUnits() {
  * テクスチャの一辺のサイズの最大値
  */
 u32 GPUCapacity::getMaxTextureSize() {
-    __init();
+    GPUCapacity_init();
     return maxTextureSize;
 }
 
@@ -167,7 +167,7 @@ u32 GPUCapacity::getMaxTextureSize() {
  * 頂点シェーダのUniformベクトル最大数を取得する
  */
 u32 GPUCapacity::getMaxUniformVectorsVs() {
-    __init();
+    GPUCapacity_init();
     return maxUniformVectorsVs;
 }
 
@@ -175,8 +175,9 @@ u32 GPUCapacity::getMaxUniformVectorsVs() {
  * フラグメントシェーダでのUniformベクトル最大数を取得する
  */
 u32 GPUCapacity::getMaxUniformVectorsFs() {
-    __init();
+    GPUCapacity_init();
     return maxUniformVectorsFs;
 }
 }
 }
+#undef GPUCapacity_init

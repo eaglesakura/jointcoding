@@ -289,6 +289,7 @@ jcboolean GLState::printGLError(const charactor* file, const s32 line, GLenum er
 
     jclogf("GL unknown error = 0x%x", error);
     return jctrue;
+#undef  LOG_GL
 }
 
 /*

@@ -6,18 +6,21 @@
 
 #include    "jcandroid/platform/PlatformImpl.h"
 
+namespace ndk {
+
 namespace {
 /**
  * プラットフォーム固有のコンテキスト
  */
-static MNativeContext g_context;
-
+static MNativeContext __g_NativeContext;
 }
 
-namespace ndk {
+void NativeContext_initPlatform(MNativeContext context) {
+    __g_NativeContext = context;
+}
 
-void initPlatform(MNativeContext context) {
-    g_context = context;
+MNativeContext& NativeContext_get() {
+    return __g_NativeContext;
 }
 
 }
@@ -35,7 +38,7 @@ s32 Platform::getPlatformVersionNumber() {
  * ファイルシステムアクセスクラスを取得する。
  */ //
 jc_sp<FileSystem> Platform::getFileSystem() {
-    static jc_sp<FileSystem> g_fileSystem( new ndk::NDKFileSystem(g_context));
+    static jc_sp<FileSystem> g_fileSystem( new ndk::NDKFileSystem(ndk::NativeContext_get()));
     return g_fileSystem;
 }
 

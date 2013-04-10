@@ -8,7 +8,7 @@
 #include "android-classes/ndkNativeFragment.h"
 #include "jcandroid/fragment/NativeFragmentBase.h"
 
-#define fragment    native_fragment(_this)
+#define NativeFragment_this    native_fragment(_this)
 
 extern "C" {
 
@@ -16,7 +16,7 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_fragment_NativeFragment_onActivityCreatedCompleteNative(JNIEnv *env, jobject _this, jobject bundle) {
     // call env reset
     initJniEnv(env);
-    fragment->onActivityCreatedComplete(_this,bundle);
+    NativeFragment_this->onActivityCreatedComplete(_this,bundle);
     return;
 }
 
@@ -25,7 +25,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_fragment_NativeFragment_o
     // call env reset
     initJniEnv(env);
 
-    fragment->onResumeCompleted(_this);
+    NativeFragment_this->onResumeCompleted(_this);
     return;
 }
 
@@ -34,7 +34,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_fragment_NativeFragment_o
     // call env reset
     initJniEnv(env);
 
-    fragment->onDestroyBegin(_this);
+    NativeFragment_this->onDestroyBegin(_this);
     return;
 }
 
@@ -43,7 +43,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_fragment_NativeFragment_o
     // call env reset
     initJniEnv(env);
 
-    fragment->onCreateCompleted(_this,bundle);
+    NativeFragment_this->onCreateCompleted(_this,bundle);
     return;
 }
 
@@ -52,7 +52,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_fragment_NativeFragment_o
     // call env reset
     initJniEnv(env);
 
-    fragment->onAttachCompleted(_this,activity);
+    NativeFragment_this->onAttachCompleted(_this,activity);
     return;
 }
 
@@ -61,7 +61,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_fragment_NativeFragment_o
     // call env reset
     initJniEnv(env);
 
-    fragment->onPauseBegin(_this);
+    NativeFragment_this->onPauseBegin(_this);
     return;
 }
 
@@ -70,9 +70,9 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_fragment_NativeFragment_o
     // call env reset
     initJniEnv(env);
 
-    fragment->onDetachBegin(_this);
+    NativeFragment_this->onDetachBegin(_this);
     return;
 }
 
 }
-
+#undef  NativeFragment_this

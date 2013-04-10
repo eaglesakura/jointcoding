@@ -14,8 +14,6 @@
 #include    "jc/gl/DeviceLock.h"
 #include    "jc/gl/PKMHeader.h"
 
-#define _BIND_CHECK(_this)      { if(_this->bindUnit < 0 ){ jclogf("texture not bind | this=( %x ) texture=( %d ) abort.", _this, _this->texture.get()); return; } }
-
 namespace jc {
 namespace gl {
 
@@ -87,7 +85,8 @@ s32 TextureImage::getFreeTextureUnitIndex() {
 }
 
 void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum) {
-    _BIND_CHECK(this);
+    assert(isBinded(NULL) == jctrue);
+
     // 空いているユニットを取得する
     jcboolean finished = jcfalse;
 
@@ -118,7 +117,7 @@ void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, con
  * @param srcPixelFormat GL_RGB | GL_RGBA
  */
 void TextureImage::allocPixelMemory(const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 miplevel) {
-    _BIND_CHECK(this);
+    assert(isBinded(NULL) == jctrue);
 
     if (!this->alloced) {
         this->alloced = jctrue;
@@ -131,7 +130,8 @@ void TextureImage::allocPixelMemory(const GLenum srcPixelType, const GLenum srcP
  * Minフィルタを変更する
  */
 void TextureImage::setMinFilter(GLint filter) {
-    _BIND_CHECK(this);
+    assert(isBinded(NULL) == jctrue);
+
     if (context.minFilter == filter) {
         return;
     }
@@ -144,7 +144,8 @@ void TextureImage::setMinFilter(GLint filter) {
  * Magフィルタを変更する
  */
 void TextureImage::setMagFilter(GLint filter) {
-    _BIND_CHECK(this);
+    assert(isBinded(NULL) == jctrue);
+
     if (context.magFilter == filter) {
         return;
     }
@@ -157,7 +158,7 @@ void TextureImage::setMagFilter(GLint filter) {
  * ラップモードを設定する
  */
 void TextureImage::setWrapS(GLint wrap) {
-    _BIND_CHECK(this);
+    assert(isBinded(NULL) == jctrue);
     if (context.wrapS == wrap) {
         return;
     }
@@ -170,7 +171,7 @@ void TextureImage::setWrapS(GLint wrap) {
  * ラップモードを設定する
  */
 void TextureImage::setWrapT(GLint wrap) {
-    _BIND_CHECK(this);
+    assert(isBinded(NULL) == jctrue);
     if (context.wrapT == wrap) {
         return;
     }
@@ -188,7 +189,7 @@ void TextureImage::genMipmaps() {
         jclogf("texture is non power of two %d x %d", size.tex_width, size.tex_height);
         return;
     }
-    _BIND_CHECK(this);
+    assert(isBinded(NULL) == jctrue);
     glGenerateMipmap(target);
 }
 
@@ -336,3 +337,5 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoa
 
 }
 }
+
+#undef _BIND_CHECK

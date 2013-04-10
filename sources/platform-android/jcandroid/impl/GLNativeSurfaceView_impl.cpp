@@ -17,8 +17,8 @@
 using namespace jc;
 static u32 g_index = 0;
 
-static void rendering_async_func(ndk::GLNativeSurfaceViewContext *context) {
-    jc::gl::MDevice device = context->getDevice();
+static void rendering_async_func(ndk::GLNativeSurfaceViewContext *GLNativeSurfaceView_context) {
+    jc::gl::MDevice device = GLNativeSurfaceView_context->getDevice();
 
     u32 current = (g_index++);
 
@@ -41,14 +41,14 @@ static void rendering_async_func(ndk::GLNativeSurfaceViewContext *context) {
             glClearColor(1, 1, 1, 1);
             device->postFrontBuffer();
         } else {
-            jclogf("abort thread(%x)", context);
+            jclogf("abort thread(%x)", GLNativeSurfaceView_context);
             return;
         }
     }
 }
 
-static void rendering_check(jc_sp<ndk::GLNativeSurfaceViewContext> context) {
-    jc::ThreadUtil::asyncFunction((jc::data_runnable_function)rendering_async_func, context, "rendering");
+static void rendering_check(jc_sp<ndk::GLNativeSurfaceViewContext> GLNativeSurfaceView_context) {
+    jc::ThreadUtil::asyncFunction((jc::data_runnable_function)rendering_async_func, GLNativeSurfaceView_context, "rendering");
 }
 
 #endif
@@ -57,13 +57,13 @@ using namespace ndk;
 
 extern "C" {
 
-#define context GLNativeSurfaceViewContext::getNativeContext(_this)
+#define GLNativeSurfaceView_context GLNativeSurfaceViewContext::getNativeContext(_this)
 
 // main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeSurfaceView_onSurfaceCreated(JNIEnv *env, jobject _this, jobject holder, jobject surface) {
     // call env reset
     initJniEnv(env);
-    context->onSurfaceCreated(surface);
+    GLNativeSurfaceView_context->onSurfaceCreated(surface);
     return;
 }
 
@@ -72,10 +72,10 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeSurfaceView_
     // call env reset
     initJniEnv(env);
 
-    context->onSurfaceChanged(surface, pixFormat, width, height);
+    GLNativeSurfaceView_context->onSurfaceChanged(surface, pixFormat, width, height);
 #ifdef RENDERING_CHECK
     {
-        rendering_check(context);
+        rendering_check(GLNativeSurfaceView_context);
     }
 #endif
 
@@ -87,7 +87,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeSurfaceView_
     // call env reset
     initJniEnv(env);
 
-    context->onSurfaceDestroyed(surface);
+    GLNativeSurfaceView_context->onSurfaceDestroyed(surface);
     return;
 }
 
@@ -105,7 +105,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeSurfaceView_
     // call env reset
     initJniEnv(env);
 
-    context->dispose();
+    GLNativeSurfaceView_context->dispose();
 
 #ifdef  RENDERING_CHECK
     g_index = 0;
@@ -115,3 +115,4 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeSurfaceView_
 }
 }
 
+#undef  GLNativeSurfaceView_context

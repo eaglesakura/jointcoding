@@ -4,9 +4,6 @@
  *  Created on: 2013/02/19
  */
 
-#ifndef FONTTEXTURE_CPP_
-#define FONTTEXTURE_CPP_
-
 #include    "jointcoding.h"
 #include    "jc/gl/FontTexture.h"
 
@@ -24,4 +21,3 @@ FontTexture::~FontTexture() {
 
 }
 }
-#endif /* FONTTEXTURE_CPP_ */

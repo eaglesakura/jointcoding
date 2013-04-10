@@ -8,8 +8,6 @@
 namespace jc {
 namespace gl {
 
-#define TRANSFORM_LOCAL
-
 GLFigure::GLFigure() {
 
 }

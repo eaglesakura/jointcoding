@@ -44,8 +44,12 @@ const static Quad::QuadVertex g_vertices[] = {
         { RIGHT, BOTTOM, 1.0f, 1.0f },
 // end
         };
-
 }
+
+#undef  LEFT
+#undef  TOP
+#undef  RIGHT
+#undef  BOTTOM
 
 /**
  * 矩形を構築する

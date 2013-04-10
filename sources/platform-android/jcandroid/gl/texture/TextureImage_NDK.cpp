@@ -246,6 +246,8 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
     }
 
     return result;
+
+#undef  device_wait
 }
 
 }

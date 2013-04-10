@@ -37,3 +37,5 @@ lint.xml
 android/release
 
 doc/
+
+*.gch
