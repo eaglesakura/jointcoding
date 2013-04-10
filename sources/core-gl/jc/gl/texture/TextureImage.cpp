@@ -8,7 +8,6 @@
 #include    "jc/gl/TextureImage.h"
 #include    "jc/math/Math.h"
 #include    "jc/platform/Platform.h"
-#include    "jc/graphics/jpeg/JpegImageDecoder.h"
 #include    "jc/gl/State.h"
 #include    "jc/gl/GPUCapacity.h"
 
