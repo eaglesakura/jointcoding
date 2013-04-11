@@ -236,6 +236,11 @@ class GLState: public Object {
     } scissorContext;
 
     /**
+     * glLineWidthの値
+     */
+    float lineWidthContext;
+
+    /**
      * ViewPort情報
      */
     RectI viewportContext;
@@ -350,6 +355,18 @@ public:
             CLEAR_GL_ERROR();
             glBlendFunc(sfactor, dfactor);
             PRINT_GL_ERROR();
+            return jctrue;
+        }
+        return jcfalse;
+    }
+
+    /**
+     * 描画する線の幅を設定する
+     */
+    inline jcboolean lineWidth(const float width) {
+        if (lineWidthContext != width) {
+            lineWidthContext = width;
+            glLineWidth(width);
             return jctrue;
         }
         return jcfalse;

@@ -163,7 +163,6 @@ public:
      */
     virtual void renderingImage( MTextureImage image, const float srcX, const float srcY, const float srcW, const float srcH, const float dstX, const float dstY, const float dstW, const float dstH, const float degree, const u32 rgba);
 
-
     /**
      * 画像を描画する
      * @param src{XYWH} テクスチャ内の座標をpix単位で指定する
@@ -174,7 +173,6 @@ public:
     virtual void renderingImage( MTextureImage image, const float srcX, const float srcY, const float srcW, const float srcH, const float dstX, const float dstY, const float dstW, const float dstH) {
         renderingImage(image, srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH, 0.0f, 0xFFFFFFFF);
     }
-
 
     /**
      * 画像を描画する
@@ -255,6 +253,21 @@ public:
      */
     virtual jc_sp<Quad> getRenderingQuad() const {
         return quad;
+    }
+
+    /**
+     * 線描画を開始する
+     */
+    virtual void startLineRendering() {
+        quad->setPrimitiveType(GL_LINE_LOOP);
+        device->getState()->lineWidth(2.0f);
+    }
+
+    /**
+     * 四角形描画を開始する
+     */
+    virtual void startQuadRendering() {
+        quad->setPrimitiveType(GL_TRIANGLE_FAN);
     }
 
     /**

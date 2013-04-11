@@ -13,6 +13,9 @@ namespace jc {
 namespace gl {
 
 GLState::GLState() {
+    {
+        lineWidthContext = 0.0f;
+    }
     // clear color
     {
         clearContext.clearColor = Color::fromRGBAi(0, 0, 0, 0);

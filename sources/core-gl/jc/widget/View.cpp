@@ -66,9 +66,18 @@ void View::layout(const RectF &area) {
 void View::renderingArea() {
     assert(isRegisteredWindow());
 
-    const Color color = Color::fromRGBAf(getRenderingPriority(), 0.0f, 1.0f, 0.5f);
-    const RectF area = getGlobalRenderingArea();
-    getSpriteManager()->renderingRect(area, color.rgba);
+    MSpriteManager spriteManager = getSpriteManager();
+    const RectF area = getGlobalRenderingArea().createScaling(0.99f);
+
+    {
+        Color color = Color::fromRGBAf(getRenderingPriority(), 0.0f, 1.0f, 0.5f);
+        spriteManager->renderingRect(area, color.rgba);
+    }
+
+    // 周りの線を描画する
+    spriteManager->startLineRendering();
+    spriteManager->renderingRect(area, 0x00FF00FF);
+    spriteManager->startQuadRendering();
 }
 
 /**
