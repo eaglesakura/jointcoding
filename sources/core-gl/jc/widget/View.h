@@ -18,6 +18,21 @@ namespace view {
 class WindowManager;
 
 /**
+ * Viewの表示状態を取得する
+ */
+enum ViewMode_e {
+    /**
+     * 表示状態
+     */
+    ViewMode_Visible,
+
+    /**
+     * 非表示状態
+     */
+    ViewMode_Invisible,
+};
+
+/**
  * UI構築用のView構造を提供する
  */
 class View: public SceneGraph {
@@ -38,6 +53,10 @@ private:
      */
     jcboolean touchable;
 
+    /**
+     * Viewの表示状態を取得する
+     */
+    ViewMode_e viewMode;
 protected:
     /**
      * Viewの配置
@@ -80,6 +99,27 @@ public:
     }
 
     /**
+     * 表示状態の場合trueを返す
+     */
+    virtual jcboolean isVisible() const {
+        return viewMode == ViewMode_Visible;
+    }
+
+    /**
+     * 非表示の場合trueを返す
+     */
+    virtual jcboolean isInvisible() const {
+        return viewMode == ViewMode_Invisible;
+    }
+
+    /**
+     * Viewの表示状態を設定する
+     */
+    virtual void setVisibly( const ViewMode_e mode) {
+        viewMode = mode;
+    }
+
+    /**
      * フォーカスを持っている場合はtrueを返す
      */
     virtual jcboolean hasFocus() const {
@@ -90,14 +130,14 @@ public:
      * フォーカスを持つことができるViewの場合はtrueを返す
      */
     virtual jcboolean isFocusable() const {
-        return focusable;
+        return focusable && isVisible();
     }
 
     /**
      * タッチを処理すべきViewである場合はtrueを返す
      */
     virtual jcboolean isTouchable() const {
-        return touchable;
+        return touchable && isVisible();
     }
 
     /**

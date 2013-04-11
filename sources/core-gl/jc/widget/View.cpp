@@ -12,6 +12,7 @@ namespace view {
 
 View::View() {
     this->focus = this->focusable = this->touchable = jcfalse;
+    this->viewMode = ViewMode_Visible;
 }
 
 View::~View() {
@@ -64,6 +65,11 @@ void View::layout(const RectF &area) {
  * デバッグ用にレンダリングを行う
  */
 void View::renderingArea() {
+    // 非表示状態の場合何もしない
+    if (!isVisible()) {
+        return;
+    }
+
     assert(isRegisteredWindow());
 
     MSpriteManager spriteManager = getSpriteManager();
