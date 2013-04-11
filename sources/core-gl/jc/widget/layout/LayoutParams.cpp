@@ -12,11 +12,9 @@ namespace view {
 /**
  * レイアウトの再配置を行う
  */
-void LayoutParams::layout(View *parent, View *target) {
-    assert(parent != NULL);
-    assert(target != NULL);
+void LayoutParams::layout(RectF *result, const RectF parentLocal) {
+    assert(result != NULL);
 
-    RectF parentLocal = parent->getLocalLayoutArea();
     RectF local;
 
     // 幅・高さを設定する
@@ -26,12 +24,10 @@ void LayoutParams::layout(View *parent, View *target) {
 
         if (layout_width <= 0) {
             width = parentLocal.width();
-            width -= (mergin_left + mergin_right);
         }
 
         if (layout_height <= 0) {
             height = parentLocal.width();
-            height -= (mergin_top + mergin_bottom);
         }
         local.right = width;
         local.bottom = height;
@@ -65,7 +61,7 @@ void LayoutParams::layout(View *parent, View *target) {
     }
 
     // 位置を確定する
-    target->layout(local);
+    *result = local;
 }
 
 }

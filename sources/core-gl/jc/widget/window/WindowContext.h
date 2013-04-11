@@ -9,6 +9,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/gl/SpriteManager.h"
+#include    "jc/scene/SceneGraph.h"
 
 namespace jc {
 namespace view {
@@ -16,6 +17,7 @@ namespace view {
 using namespace gl;
 
 class Window;
+class View;
 /**
  * View階層を維持するために必要なWindow共通情報を設定する
  */
@@ -63,6 +65,20 @@ public:
      */
     virtual void setSpriteManager(const MSpriteManager spriteManager) {
         this->spriteManager = spriteManager;
+    }
+
+    /**
+     * 特定のViewを検索する
+     * 循環参照に注意をすること
+     */
+    virtual jc_sp<View> findViewById(const scene_id id);
+
+    /**
+     * 特定シーンをルートから検索する
+     */
+    template<typename T>
+    jc_sp<T> findViewTo(const scene_id id) {
+        return jc_dynamic_cast<T>(findViewById(id));
     }
 };
 

@@ -23,6 +23,12 @@ public:
 
     virtual ~Window() {
     }
+
+    /**
+     * 自分自身のレンダリングを行う
+     */
+    virtual void onSelfRendering() {
+    }
 };
 
 /**

@@ -71,6 +71,13 @@ public:
     jc_sp<T> getExtension() const {
         return jc_dynamic_cast<T>(extension);
     }
+
+    /**
+     * イベントを作成する
+     */
+    static jc_sp<Event> createEvent( const s32 type, const jc_sp<Object> extension ) {
+        return jc_sp<Event>(new Event(type, extension));
+    }
 };
 
 /**

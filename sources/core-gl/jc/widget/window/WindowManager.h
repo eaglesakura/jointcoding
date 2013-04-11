@@ -67,6 +67,11 @@ public:
     }
 
     /**
+     * WindowへViewを追加する
+     */
+    virtual void addView(const MView view);
+
+    /**
      * ウィンドウ位置を描画する
      */
     virtual void setWindowArea(const RectF &area) const {
@@ -91,11 +96,25 @@ public:
      * @param numPass レンダリングするパス数
      */
     virtual void rendering(const s32 numPass = 1);
+
+    /**
+     * 特定のレイアウトへイベントを送信する
+     * ハンドルに成功したらtrueを返す
+     */
+    virtual jcboolean sendEvent(const scene_id layoutId, MEvent event);
+
+    /**
+     * 特定レイアウトへイベントを送信する
+     * ハンドルに成功したらtrueを返す
+     */
+    virtual jcboolean sendEvent(const scene_id layoutId, const s32 eventType, const jc_sp<Object> extension = jc_sp<Object>()) {
+        return sendEvent(layoutId, Event::createEvent(eventType, extension));
+    }
 };
 
-/**
- * managed
- */
+    /**
+     * managed
+     */
 typedef jc_sp<WindowManager> MWindowManager;
 
 }

@@ -10,6 +10,7 @@
 #include    "jc/math/Vec2.h"
 #include    "jc/math/Rect.h"
 #include    "jc/scene/SceneGraph.h"
+#include    "jc/widget/event/Event.h"
 #include    "jc/widget/window/WindowContext.h"
 
 namespace jc {
@@ -92,6 +93,28 @@ public:
     virtual void registerWindow();
 
     /**
+     * ウィンドウ位置を取得する
+     */
+    virtual RectF getWindowArea( );
+
+    /**
+     * 子Viewを検索する。
+     * 自身は含まないことに注意すること。
+     */
+    virtual jc_sp<View> findViewById( const scene_id id) const {
+        return findSceneTo<View>(id);
+    }
+
+    /**
+     * Windowを一時的に取得する。
+     * メンバとして持つと循環参照が行われる恐れがあるため、シーングラフ内では行わないこと。
+     */
+    virtual jc_sp<Window> lockWindow() {
+        assert(windowContext.get() != NULL);
+        return windowContext->lockWindow();
+    }
+
+    /**
      * ウィンドウと関連付けが済んでいる場合はtrueを返す
      */
     virtual jcboolean isRegisteredWindow() const {
@@ -120,6 +143,14 @@ public:
     }
 
     /**
+     * フォーカスを持てるかの設定を行う。
+     * デフォルトはtrue
+     */
+    virtual void setFocusable( const jcboolean set) {
+        this->focusable = set;
+    }
+
+    /**
      * フォーカスを持っている場合はtrueを返す
      */
     virtual jcboolean hasFocus() const {
@@ -131,6 +162,13 @@ public:
      */
     virtual jcboolean isFocusable() const {
         return focusable && isVisible();
+    }
+
+    /**
+     * タッチの可否を設定する
+     */
+    virtual void setTouchable(const jcboolean set) {
+        touchable = set;
     }
 
     /**
@@ -252,6 +290,18 @@ protected:
      * 自分自身のレンダリングを行う
      */
     virtual void onSelfRendering();
+
+    /**
+     * ウィンドウと関連付けがされた
+     */
+    virtual void onRegisterdWindow() {
+    }
+
+    /**
+     * イベントハンドリングを行う
+     */
+    virtual void handleEvent(MEvent event) {
+    }
 };
 
 /**

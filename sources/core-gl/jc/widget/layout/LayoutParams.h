@@ -55,13 +55,13 @@ public:
      * レイアウトのリクエスト幅
      * 負の値の場合、親Viewの幅が設定される
      */
-    s32 layout_width;
+    float layout_width;
 
     /**
      * レイアウトのリクエスト高さ
      * 負の値の場合、親Viewの高さが設定される
      */
-    s32 layout_height;
+    float layout_height;
 
     /**
      * 寄せ設定
@@ -71,22 +71,22 @@ public:
     /**
      * 左からのマージン
      */
-    s32 mergin_left;
+    float mergin_left;
 
     /**
      * 右からのマージン
      */
-    s32 mergin_right;
+    float mergin_right;
 
     /**
      * 上からのマージン
      */
-    s32 mergin_top;
+    float mergin_top;
 
     /**
      * 下からのマージン
      */
-    s32 mergin_bottom;
+    float mergin_bottom;
 
     LayoutParams() {
         // 幅・高さリセット
@@ -102,7 +102,7 @@ public:
     /**
      * レイアウトの再配置を行う
      */
-    virtual void layout(View *parent, View *target);
+    virtual void layout(RectF *result, const RectF parentLocal);
 };
 
 }

@@ -49,6 +49,14 @@ void WindowManager::handleEvents() {
 }
 
 /**
+ * WindowへViewを追加する
+ */
+void WindowManager::addView(const MView view) {
+    window->pushBackChild(view);
+}
+
+
+/**
  * 毎フレームの処理を行わせる
  * @param numPass レンダリングするパス数
  */
@@ -71,5 +79,19 @@ void WindowManager::rendering(const s32 numPass) {
         window->endPass(ScenePassType_Rendering);
     }
 }
+
+/**
+ * 特定のレイアウトへイベントを送信する
+ * ハンドルに成功したらtrueを返す
+ */
+jcboolean WindowManager::sendEvent(const scene_id layoutId, MEvent event) {
+    MView view = window->findSceneTo<View>(layoutId);
+    if(view) {
+        view->handleEvent(event);
+        return jctrue;
+    }
+    return jcfalse;
+}
+
 }
 }

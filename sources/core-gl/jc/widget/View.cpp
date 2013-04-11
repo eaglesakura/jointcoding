@@ -26,14 +26,17 @@ View::~View() {
  */
 void View::registerWindow() {
 
+    jcboolean sendMessage = jcfalse;
     // 登録されていなければ登録を行う
-    if (!windowContext) {
+    if (!windowContext && getParent()) {
         // 元をたどればWindowを手に入れられるはずである
         Window *window = getRootSceneTo<Window>();
         assert(window != NULL);
 
         // ウィンドウからコンテキストをコピーする
         this->windowContext = window->windowContext;
+
+        sendMessage = jctrue;
     }
 
     // 子も登録させる
@@ -47,11 +50,25 @@ void View::registerWindow() {
             ++itr;
         }
     }
+
+    // 登録完了したことを通知する
+    if(sendMessage) {
+        // 登録が完了した
+        onRegisterdWindow();
+    }
 }
 
             /**
-             * レイアウトを更新する。
+             * ウィンドウ位置を取得する
              */
+RectF View::getWindowArea() {
+    assert(windowContext.get() != NULL);
+    return windowContext->lockWindow()->getLocalLayoutArea();
+}
+
+/**
+ * レイアウトを更新する。
+ */
 void View::layout(const RectF &area) {
 
     // 違うエリアが設定されたらレイアウトを変更してメッセージを投げる
@@ -79,9 +96,9 @@ void View::renderingArea() {
     // 周りの線を描画する
     {
         Color color;
-        if(isVisible()) {
+        if (isVisible()) {
             color.rgba = 0x00FF00FF;
-        }else {
+        } else {
             color.rgba = 0x0000FF7F;
         }
         spriteManager->startLineRendering();
