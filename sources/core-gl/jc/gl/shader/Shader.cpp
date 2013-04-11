@@ -56,8 +56,8 @@ MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const
  * シェーダーの作成を行う。
  */
 MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charactor* sourceCode) {
-    CLEAR_GL_ERROR
-    ;
+    CLEAR_GL_ERROR();
+
     // シェーダオブジェクトを作成
     SharedResource shader;
     shader.alloc(vram, type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader);

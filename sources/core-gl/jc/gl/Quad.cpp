@@ -108,9 +108,8 @@ void Quad::rendering() {
         state->enableVertexAttribArray(attrCoords);
         state->vertexAttribPointer(attrCoords, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), NULL, sizeof(float) * 2);
     }
-    CLEAR_GL_ERROR
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    PRINT_GL_ERROR;
+    PRINT_GL_ERROR();
 }
 
 /**
@@ -122,9 +121,8 @@ void Quad::updateVertices(const QuadVertex *vertices) {
     state->bindBuffer(GL_ARRAY_BUFFER, this->vertices.get());
 
 // バッファ転送
-    CLEAR_GL_ERROR
     glBufferData(GL_ARRAY_BUFFER, sizeof(QuadVertex) * 4, vertices, GL_STATIC_DRAW);
-    PRINT_GL_ERROR;
+    PRINT_GL_ERROR();
 }
 
 

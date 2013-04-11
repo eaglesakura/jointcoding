@@ -320,6 +320,7 @@ void SpriteManager::rendering(const float x, const float y, const float width, c
 
 // データを転送する
     glUniform4fv(unifPolyData, 1, poly_data);
+    PRINT_GL_ERROR();
 
     quad->rendering();
 }

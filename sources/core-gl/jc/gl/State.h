@@ -10,15 +10,21 @@
 
 #include    "jc/mem/SmartPtr.h"
 #include    "jc/gl/GL.h"
+#include    "jc/gl/GPUCapacity.h"
 #include    "jc/math/Rect.h"
 #include    "jc/graphics/Color.h"
 
 namespace jc {
 namespace gl {
 
-#define     CLEAR_GL_ERROR       { glGetError(); }
-#define     PRINT_GL_ERROR     { GLState::printGLHasError(__FILE__, __LINE__); }
-
+#ifdef  DEBUG
+#define     CLEAR_GL_ERROR(...)       { glGetError(); }
+#define     PRINT_GL_ERROR(...)     { GLState::printGLHasError(__FILE__, __LINE__); }
+#else
+// release
+#define     CLEAR_GL_ERROR(...)       {  }
+#define     PRINT_GL_ERROR(...)     {  }
+#endif
 /**
  * 無効な属性インデックスを示す定数
  */
@@ -341,7 +347,9 @@ public:
         if (blendContext.src != sfactor || blendContext.dst != dfactor) {
             blendContext.src = sfactor;
             blendContext.dst = dfactor;
+            CLEAR_GL_ERROR();
             glBlendFunc(sfactor, dfactor);
+            PRINT_GL_ERROR();
             return jctrue;
         }
         return jcfalse;
@@ -455,15 +463,17 @@ public:
      * テクスチャユニットをActiveにする
      */
     inline jcboolean activeTexture(const s32 index) {
-        const s32 unit = toTextureUnit(index);
+        assert(index < caps.MAX_TEXTURE_UNITS);
 
+        const s32 unit = toTextureUnit(index);
         // 違うユニットがアクティブ化されていたら、アクティブにし直す
 #ifndef STATE_NO_CHECK
         if (unit != (s32) textureContext.active) {
 #endif
             textureContext.active = unit;
+            CLEAR_GL_ERROR();
             glActiveTexture(unit);
-
+            PRINT_GL_ERROR();
             return jctrue;
 #ifndef STATE_NO_CHECK
         }
@@ -482,16 +492,17 @@ public:
      * 引数のテクスチャがどれかにバインドされている場合、バインドを解除する。
      */
     inline void unbindTexture(const GLuint texture) {
-        const s32 active = textureContext.active;
+        const s32 active = toTextureIndex(textureContext.active);
         assert(active >= 0);
 
-        for (int i = 0; i < MAX_TEXTURE_UNIT; ++i) {
+        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
             if (textureContext.textures[i] == texture) {
                 // テクスチャが一致したからunbind
                 activeTexture(i);
                 bindTexture(textureContext.targets[i], 0);
             }
         }
+
         activeTexture(active);
     }
 
@@ -511,6 +522,7 @@ public:
             static s32 g_overrideTextureUnitIndex = 0;
             const s32 unitIndex = ((++g_overrideTextureUnitIndex) % caps.MAX_TEXTURE_UNITS);
 //            jclogf("texture unit = %d", unitIndex);
+            assert(unitIndex < caps.MAX_TEXTURE_UNITS);
             return unitIndex;
         } else {
             // 上書きせずにエラーを返す
@@ -551,8 +563,9 @@ public:
         if (currentTex != texture || currentTarget != target) {
             textureContext.textures[index] = texture;
             textureContext.targets[index] = target;
+            CLEAR_GL_ERROR();
             glBindTexture(target, texture);
-
+            PRINT_GL_ERROR();
             return jctrue;
         }
 
@@ -591,8 +604,9 @@ public:
         void* checkPtr = (ptr ? (void*) ptr : (void*) bindBufferContext.buffers[INDEX_GL_ARRAY_BUFFER]);
 
         if (attr->size != size || attr->type != type || attr->normalized != normalized || attr->stride != stride || attr->ptr != checkPtr || attr->offset != offset) {
+            CLEAR_GL_ERROR();
             glVertexAttribPointer(index, size, type, normalized, stride, (const void*) (((u8*) ptr) + offset));
-
+            PRINT_GL_ERROR();
             // 属性情報を書き換える
             attr->size = size;
             attr->type = type;

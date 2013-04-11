@@ -206,6 +206,7 @@ jcboolean TextureImage::isPowerOfTwoTexture() {
 
 s32 TextureImage::bind() {
     if (bindUnit >= 0) {
+        assert(bindUnit >= 0 && bindUnit < GPUCapacity::getMaxTextureUnits());
         if (state->isBindedTexture(bindUnit, target, texture.get())) {
             state->activeTexture(bindUnit);
             return bindUnit;
@@ -223,11 +224,11 @@ s32 TextureImage::bind() {
  * テクスチャをindex番のユニットに関連付ける
  */
 void TextureImage::bind(s32 index) {
-    assert(index >= 0);
+    assert(index >= 0 && index < GPUCapacity::getMaxTextureUnits());
 
     if (bindUnit == index) {
         if (state->isBindedTexture(bindUnit, target, texture.get())) {
-            state->activeTexture(index);
+            state->activeTexture(bindUnit);
             return;
         }
     } else if (bindUnit >= 0) {
