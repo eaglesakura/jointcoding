@@ -10,11 +10,19 @@
 #include    "jc/math/Vec2.h"
 #include    "jc/math/Rect.h"
 #include    "jc/scene/SceneGraph.h"
+#include    "jc/widget/window/WindowContext.h"
 
 namespace jc {
 namespace view {
 
-class View: SceneGraph {
+class WindowManager;
+
+/**
+ * UI構築用のView構造を提供する
+ */
+class View: public SceneGraph {
+private:
+    friend class WindowManager;
     /**
      * フォーカスを持つことが出来る場合true
      */
@@ -35,9 +43,29 @@ protected:
      * Viewの配置
      */
     RectF localArea;
+
+    /**
+     * ウィンドウの中心情報
+     */
+    jc_sp<WindowContext> windowContext;
+
 public:
     View();
     virtual ~View();
+
+    /**
+     * ウィンドウとViewを関連付ける。
+     * 必ずWindow（もしくは子View）にaddされた後に呼び出す。
+     * 関連付けない場合、WindowContextを得られない。
+     */
+    virtual void registerWindow();
+
+    /**
+     * ウィンドウと関連付けが済んでいる場合はtrueを返す
+     */
+    virtual jcboolean isRegisteredWindow() const {
+        return windowContext.get() != NULL;
+    }
 
     /**
      * フォーカスを持っている場合はtrueを返す
@@ -63,7 +91,14 @@ public:
     /**
      * 配置場所（ローカル位置）を取得する
      */
-    virtual RectF getLocalArea() {
+    virtual RectF getLocalRenderingArea() {
+        return localArea;
+    }
+
+    /**
+     * 衝突判定位置（ローカル座標）を取得する
+     */
+    virtual RectF getLocalIntersectArea() {
         return localArea;
     }
 
@@ -73,14 +108,27 @@ public:
     virtual void layout(const RectF &area);
 
     /**
-     * グローバル座標に変換した位置を取得する
+     * グローバル座標に変換した表示位置を取得する
      */
-    virtual RectF getGlobalArea() {
+    virtual RectF getGlobalRenderingArea() {
         RectF parent;
         if (getParent()) {
-            parent = getParentTo<View>()->getGlobalArea();
+            parent = getParentTo<View>()->getGlobalRenderingArea();
         }
-        RectF local = getLocalArea();
+        RectF local = getLocalRenderingArea();
+        local.offset(parent.left, parent.top);
+        return local;
+    }
+
+    /**
+     * グローバル座標に変換した衝突判定位置を取得する
+     */
+    virtual RectF getGlobalIntersectArea() {
+        RectF parent;
+        if (getParent()) {
+            parent = getParentTo<View>()->getGlobalRenderingArea();
+        }
+        RectF local = getLocalIntersectArea();
         local.offset(parent.left, parent.top);
         return local;
     }
@@ -89,7 +137,7 @@ public:
      * グローバル座標を指定し、衝突していればtrueを返す
      */
     virtual jcboolean isIntersect(const Vector2f &global) {
-        const RectF globalRect = getGlobalArea();
+        const RectF globalRect = getGlobalIntersectArea();
         return globalRect.isIntersect(global.x, global.y);
     }
 
@@ -137,15 +185,24 @@ public:
         // 何も見つからなかった
         return jc_sp<View>();
     }
-protected:
 
+    /**
+     * 自分自身のレンダリングを行う
+     */
+    virtual void onSelfRendering();
+
+protected:
     /**
      * レイアウトが変更された
      */
     virtual void onLayoutChanged(const RectF &newArea) {
-
     }
 };
+
+/**
+ * managed
+ */
+typedef jc_sp<View> MView;
 
 }
 }

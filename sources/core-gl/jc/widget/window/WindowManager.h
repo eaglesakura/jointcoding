@@ -10,6 +10,7 @@
 #include    "jc/widget/event/EventQueue.h"
 #include    "jc/widget/event/TouchEvent.h"
 #include    "jc/widget/window/Window.h"
+#include    "jc/widget/window/WindowContext.h"
 
 namespace jc {
 namespace view {
@@ -24,6 +25,12 @@ class WindowManager: public Object {
      * 描画ウィンドウのROOT
      */
     MWindow window;
+
+    /**
+     * レンダリング用のコンテキスト
+     */
+    MWindowContext windowContext;
+
 public:
     WindowManager();
     virtual ~WindowManager();
@@ -46,6 +53,13 @@ public:
     }
 
     /**
+     * ウィンドウ管理補助クラスを取得する
+     */
+    virtual MWindowContext getWindowContext() const {
+        return windowContext;
+    }
+
+    /**
      * ウィンドウを取得する
      */
     virtual MWindow getWindow() const {
@@ -58,6 +72,18 @@ public:
     virtual void setWindowArea(const RectF area) const {
         window->layout(area);
     }
+
+    /**
+     * 毎フレームの処理を行わせる
+     * @param numPass レンダリングするパス数
+     */
+    virtual void update(const s32 numPass);
+
+    /**
+     * レンダリングを行う
+     * @param numPass レンダリングするパス数
+     */
+    virtual void rendering(const s32 numPass);
 };
 
 /**

@@ -12,6 +12,8 @@ namespace view {
 WindowManager::WindowManager() {
     events.reset(new EventQueue());
     window.reset(new Window());
+    windowContext.reset(new WindowContext());
+    windowContext->setWindow(window);
 }
 
 WindowManager::~WindowManager() {
@@ -46,5 +48,28 @@ void WindowManager::handleEvents() {
     }
 }
 
+/**
+ * 毎フレームの処理を行わせる
+ * @param numPass レンダリングするパス数
+ */
+void WindowManager::update(const s32 numPass) {
+    for (s32 i = 0; i < numPass; ++i) {
+        window->beginPass(ScenePassType_Update, numPass);
+        window->update();
+        window->endPass(ScenePassType_Update);
+    }
+}
+
+/**
+ * レンダリングを行う
+ * @param numPass レンダリングするパス数
+ */
+void WindowManager::rendering(const s32 numPass) {
+    for (s32 i = 0; i < numPass; ++i) {
+        window->beginPass(ScenePassType_Rendering, numPass);
+        window->rendering();
+        window->endPass(ScenePassType_Rendering);
+    }
+}
 }
 }

@@ -10,6 +10,7 @@
 #include    "jc/system/Macro.h"
 #include    "jc/model/Object.h"
 #include    "jc/mem/SmartPtr.h"
+#include    "jc/math/Math.h"
 #include    <list>
 
 namespace jc {
@@ -18,6 +19,18 @@ class SceneGraph;
 typedef jc_sp<SceneGraph> MSceneGraph;
 
 typedef u64 scene_id;
+
+enum ScenePassType_e {
+    /**
+     * アップデートのパスを設定する
+     */
+    ScenePassType_Update,
+
+    /**
+     * レンダリングパスを設定する
+     */
+    ScenePassType_Rendering,
+};
 
 class SceneGraph: public Object {
     /**
@@ -94,45 +107,48 @@ public:
      * パス処理を開始する場合に呼び出す
      *
      * scene->beginPass(0);
+     * scene->endPass();
      * scene->beginPass(1);
+     * scene->endPass();
      * scene->beginPass(2);
      * scene->endPass();
      */
-    virtual void beginPass(const s32 pass) {
+    virtual void beginPass(const ScenePassType_e passType, const s32 pass) {
         assert(pass >= 0);
         currentPass = pass;
         if (isParentAhead()) {
-            onBeginPass(pass);
+            onBeginPass(passType, pass);
         }
 
         std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
-            (*itr)->beginPass(pass);
+            (*itr)->beginPass(passType, pass);
             ++itr;
         }
 
         if (!isParentAhead()) {
-            onBeginPass(pass);
+            onBeginPass(passType, pass);
         }
     }
 
     /**
      * パス動作を完了する
      */
-    virtual void endPass() {
+    virtual void endPass(const ScenePassType_e passType) {
+        const s32 finished_pass = jc::max(0, currentPass);
         currentPass = -1;
         if (isParentAhead()) {
-            onEndPass();
+            onEndPass(passType, finished_pass);
         }
 
         std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
-            (*itr)->endPass();
+            (*itr)->endPass(passType);
             ++itr;
         }
 
         if (!isParentAhead()) {
-            onEndPass();
+            onEndPass(passType, finished_pass);
         }
     }
 
@@ -236,10 +252,34 @@ public:
     }
 
     /**
+     * ROOTとなるクラスを取得する
+     */
+    virtual SceneGraph* getRootScene() const {
+        if(!parent) {
+            return NULL;
+        }
+
+        SceneGraph *result = parent;
+        // 先祖を辿る
+        if(result->parent) {
+            result = result->parent;
+        }
+        return result;
+    }
+
+    /**
      * 親クラスをキャストして取得する
      */
     template<typename T>
     T* getParentTo() const {
+        return dynamic_cast<T*>(parent);
+    }
+
+    /**
+     * ROOTクラスをキャストして取得する
+     */
+    template<typename T>
+    T* getRootSceneTo() const {
         return dynamic_cast<T*>(parent);
     }
 protected:
@@ -247,13 +287,13 @@ protected:
     /**
      * 現在のパスが開始された
      */
-    virtual void onBeginPass( const s32 pass) {
+    virtual void onBeginPass(const ScenePassType_e passType, const s32 pass) {
     }
 
     /**
      * パス動作が終了した
      */
-    virtual void onEndPass() {
+    virtual void onEndPass(const ScenePassType_e passType, const s32 pass) {
     }
 
     /**
