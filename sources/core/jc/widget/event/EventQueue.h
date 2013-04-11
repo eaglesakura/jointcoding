@@ -7,7 +7,9 @@
 #ifndef EVENTQUEUE_H_
 #define EVENTQUEUE_H_
 
-#include    "jc/widget/Event.h"
+#include    "jointcoding.h"
+#include    "jc/widget/event/Event.h"
+#include    <list>
 
 namespace jc {
 namespace view {
@@ -43,7 +45,7 @@ public:
     /**
      * イベントがひとつも無くなったらtrueを返す
      */
-    virtual jcboolean empty() const {
+    virtual jcboolean empty() {
         MutexLock lock(mutex);
         return events.empty();
     }
@@ -63,7 +65,37 @@ public:
 
         return result;
     }
+
+    /**
+     * イベントを全て削除して空の状態にする
+     */
+    virtual void clear() {
+        MutexLock lock(mutex);
+        events.clear();
+    }
+
+    /**
+     * 特定のイベントタイプのイベントを削除する
+     */
+    virtual void clear(const s32 eventType) {
+        MutexLock lock(mutex);
+        std::list<MEvent>::iterator itr = events.begin(), end = events.end();
+        while (itr != end) {
+            if ((*itr)->getType() == eventType) {
+                // イベントタイプがヒットしたら削除する
+                itr = events.erase(itr);
+                end = events.end();
+            } else {
+                ++itr;
+            }
+        }
+    }
 };
+
+/**
+ * managed
+ */
+typedef jc_sp<EventQueue> MEventQueue;
 
 }
 }

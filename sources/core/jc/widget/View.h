@@ -68,6 +68,11 @@ public:
     }
 
     /**
+     * レイアウトを更新する。
+     */
+    virtual void layout(const RectF &area);
+
+    /**
      * グローバル座標に変換した位置を取得する
      */
     virtual RectF getGlobalArea() {
@@ -110,15 +115,19 @@ public:
         while(itr != end) {
 
             jc_sp<View> check = jc_dynamic_cast<View>(*itr);
-            if(check->isTouchedView(global)) {
-                // タッチ対象になったからそれを返す
-                return check;
-            }
-            // 子の、更に子をチェックする
-            check = check->findTouchedView(global);
+
+            // 子がViewであるならチェックする
             if(check) {
-                // 孫以降に見つかったから、それを代理で返す
-                return check;
+                if(check->isTouchedView(global)) {
+                    // タッチ対象になったからそれを返す
+                    return check;
+                }
+                // 子の、更に子をチェックする
+                check = check->findTouchedView(global);
+                if(check) {
+                    // 孫以降に見つかったから、それを代理で返す
+                    return check;
+                }
             }
 
             // 次の子をチェックする
@@ -129,6 +138,13 @@ public:
         return jc_sp<View>();
     }
 protected:
+
+    /**
+     * レイアウトが変更された
+     */
+    virtual void onLayoutChanged(const RectF &newArea) {
+
+    }
 };
 
 }

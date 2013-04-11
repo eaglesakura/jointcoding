@@ -17,6 +17,16 @@ View::~View() {
 
 }
 
+/**
+ * レイアウトを更新する。
+ */
+void View::layout(const RectF &area) {
+    if (area != localArea) {
+        this->localArea = area;
+        onLayoutChanged(area);
+    }
+}
+
 
 }
 }

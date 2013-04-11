@@ -7,7 +7,7 @@
 #ifndef TOUCHEVENT_H_
 #define TOUCHEVENT_H_
 
-#include    "jc/widget/Event.h"
+#include    "jc/widget/event/Event.h"
 #include    "protocol/jcTouchEventProtocol.h"
 
 namespace jc {
@@ -36,7 +36,7 @@ public:
     /**
      * イベントを作成する
      */
-    MEvent createEvent( const jc_sp<TouchEventProtocol> event) {
+    static MEvent createEvent( const jc_sp<TouchEventProtocol> event) {
         jc_sp<TouchEventExtension> extension(new TouchEventExtension(event));
         MEvent result(new Event(EventType_Touch, extension));
         return result;

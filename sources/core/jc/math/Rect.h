@@ -104,6 +104,20 @@ struct RectT {
         return left == l && top == t && right == r && bottom == b;
     }
 
+    /**
+     * 同一の場合はtrueを返す
+     */
+    bool operator==(const RectT &check) const {
+        return left == check.left && top == check.top && right == check.right && bottom == check.bottom;
+    }
+
+    /**
+     * 違う場合はtrueを返す
+     */
+    bool operator!=(const RectT &check) const {
+        return !(left == check.left && top == check.top && right == check.right && bottom == check.bottom);
+    }
+
     T width() const {
         return abs(right - left);
     }
