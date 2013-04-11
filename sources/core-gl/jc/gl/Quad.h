@@ -53,6 +53,10 @@ class Quad: public Object {
      */
     void initialize();
 
+    /**
+     * レンダリングモード
+     */
+    GLenum primitiveType;
 public:
     /**
      * 矩形を構築する
@@ -69,6 +73,13 @@ public:
      * ATTRIBUTE_DISABLE_INDEXを指定することで、NULL（無効）にできる。
      */
     virtual void attributes(const s32 attribute_vertices, const s32 attribute_coords);
+
+    /**
+     * 描画するプリミティブの種類を変更する
+     */
+    virtual void setPrimitiveType(const GLenum type) {
+        this->primitiveType = type;
+    }
 
     /**
      * 描画を行う。

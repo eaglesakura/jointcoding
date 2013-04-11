@@ -36,12 +36,12 @@ const static Quad::QuadVertex g_vertices[] = {
          */
         // 左上
         { LEFT, TOP, 0.0f, 0.0f, },
-        // 右上
-        { RIGHT, TOP, 1.0f, 0.0f },
         // 左下
         { LEFT, BOTTOM, 0.0f, 1.0f },
         // 右下
         { RIGHT, BOTTOM, 1.0f, 1.0f },
+        // 右上
+        { RIGHT, TOP, 1.0f, 0.0f },
 // end
         };
 }
@@ -59,7 +59,11 @@ Quad::Quad(MDevice device) {
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->state = device->getState();
     this->vertices.alloc(device->getVRAM(), VRAM_VertexBufferObject);
+    this->primitiveType = GL_TRIANGLE_FAN;
     this->initialize();
+
+//    glLineWidth(2);
+//    primitiveType = GL_LINE_LOOP;
 }
 
 /**
@@ -108,7 +112,8 @@ void Quad::rendering() {
         state->enableVertexAttribArray(attrCoords);
         state->vertexAttribPointer(attrCoords, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), NULL, sizeof(float) * 2);
     }
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    CLEAR_GL_ERROR();
+    glDrawArrays(primitiveType, 0, 4);
     PRINT_GL_ERROR();
 }
 

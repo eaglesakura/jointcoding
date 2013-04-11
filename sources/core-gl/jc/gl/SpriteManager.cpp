@@ -128,8 +128,8 @@ static const charactor *VERTEX_EXTERNAL_SHADER_SOURCE =
 
                 "void main() {"
 // 位置操作
+                "   mediump mat4 mat = mat4(1.0);"
                 "   {"
-                "       mediump mat4 mat = mat4(1.0);"
                 "       mediump mat4 temp = mat4(1.0);"
 
 // 移動行列を作成する
@@ -184,14 +184,15 @@ static const charactor *FRAGMENT_EXTERNAL_SHADER_SOURCE = ""
 ;
 
 const static Quad::QuadVertex g_revert_vertices[] = {
-// 左上
+        // 左上
         { -0.5, 0.5, 0.0f, 1.0f, },
-        // 右上
-        { 0.5, 0.5, 1.0f, 1.0f },
         // 左下
         { -0.5, -0.5, 0.0f, 0.0f },
         // 右下
-        { 0.5, -0.5, 1.0f, 0.0f }, };
+        { 0.5, -0.5, 1.0f, 0.0f },
+        // 右上
+        { 0.5, 0.5, 1.0f, 1.0f },
+};
 //
 }
 
