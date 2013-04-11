@@ -65,25 +65,29 @@ void View::layout(const RectF &area) {
  * デバッグ用にレンダリングを行う
  */
 void View::renderingArea() {
-    // 非表示状態の場合何もしない
-    if (!isVisible()) {
-        return;
-    }
 
     assert(isRegisteredWindow());
 
     MSpriteManager spriteManager = getSpriteManager();
-    const RectF area = getGlobalRenderingArea().createScaling(0.99f);
+    const RectF area = getGlobalLayoutArea().createScaling(0.99f);
 
-    {
+    if (isVisible()) {
         Color color = Color::fromRGBAf(getRenderingPriority(), 0.0f, 1.0f, 0.5f);
         spriteManager->renderingRect(area, color.rgba);
     }
 
     // 周りの線を描画する
-    spriteManager->startLineRendering();
-    spriteManager->renderingRect(area, 0x00FF00FF);
-    spriteManager->startQuadRendering();
+    {
+        Color color;
+        if(isVisible()) {
+            color.rgba = 0x00FF00FF;
+        }else {
+            color.rgba = 0x0000FF7F;
+        }
+        spriteManager->startLineRendering();
+        spriteManager->renderingRect(area, color.rgba);
+        spriteManager->startQuadRendering();
+    }
 }
 
 /**

@@ -143,7 +143,7 @@ public:
     /**
      * 配置場所（ローカル位置）を取得する
      */
-    virtual RectF getLocalRenderingArea() {
+    virtual RectF getLocalLayoutArea() {
         return localArea;
     }
 
@@ -162,12 +162,15 @@ public:
     /**
      * グローバル座標に変換した表示位置を取得する
      */
-    virtual RectF getGlobalRenderingArea() {
+    virtual RectF getGlobalLayoutArea() {
         RectF parent;
         if (getParent()) {
-            parent = getParentTo<View>()->getGlobalRenderingArea();
+            View *parentView = getParentTo<View>();
+            if(parentView) {
+                parent = parentView->getGlobalLayoutArea();
+            }
         }
-        RectF local = getLocalRenderingArea();
+        RectF local = getLocalLayoutArea();
         local.offset(parent.left, parent.top);
         return local;
     }
@@ -178,7 +181,7 @@ public:
     virtual RectF getGlobalIntersectArea() {
         RectF parent;
         if (getParent()) {
-            parent = getParentTo<View>()->getGlobalRenderingArea();
+            parent = getParentTo<View>()->getGlobalLayoutArea();
         }
         RectF local = getLocalIntersectArea();
         local.offset(parent.left, parent.top);

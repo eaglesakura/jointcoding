@@ -30,10 +30,10 @@ struct RectT {
     }
 
     RectT(const RectT &origin) {
-        left = (T)origin.left;
-        top = (T)origin.top;
-        right = (T)origin.right;
-        bottom = (T)origin.bottom;
+        left = (T) origin.left;
+        top = (T) origin.top;
+        right = (T) origin.right;
+        bottom = (T) origin.bottom;
     }
 
     /**
@@ -75,6 +75,24 @@ struct RectT {
         const T _height = height();
         this->top = top;
         this->bottom = top + _height;
+    }
+
+    /**
+     * 指定座標がXの中央になるように移動させる
+     */
+    void moveToCenterX(const T center) {
+        const T _width = width();
+        left = center - (_width / 2);
+        right = left + _width;
+    }
+
+    /**
+     * 指定座標がYの中央になるように移動させる
+     */
+    void moveToCenterY(const T center ) {
+        const T _height = height();
+        top = center - (_height / 2);
+        bottom = top + _height;
     }
 
     /**
