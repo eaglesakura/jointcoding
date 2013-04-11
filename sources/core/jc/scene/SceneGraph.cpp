@@ -13,6 +13,8 @@ SceneGraph::SceneGraph() {
     this->parent = NULL;
     this->renderingPriority = 1.0f;
     this->parentAhead = jcfalse;
+    this->enableMultiPass = jcfalse;
+    this->currentPass = -1;
 }
 SceneGraph::~SceneGraph() {
 
@@ -170,7 +172,9 @@ jcboolean SceneGraph::update() {
     jcboolean result = jcfalse;
     // 先に更新する場合は処理する
     if (isParentAhead()) {
-        result = onSelfUpdate();
+        if (isFirstPass() || isMultipassEnable()) {
+            result = onSelfUpdate();
+        }
     }
 
     std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
@@ -192,8 +196,11 @@ jcboolean SceneGraph::update() {
     }
 
     if (!isParentAhead()) {
-        // 後から更新する場合はこちら
-        return onSelfUpdate();
+        if (isFirstPass() || isMultipassEnable()) {
+            return onSelfUpdate();
+        } else {
+            return jcfalse;
+        }
     } else {
         return result;
     }
@@ -209,7 +216,9 @@ static bool compare_scenegraph(const MSceneGraph a, const MSceneGraph b) {
 void SceneGraph::rendering() {
 
     if (isParentAhead()) {
-        onSelfRendering();
+        if (isFirstPass() || isMultipassEnable()) {
+            onSelfRendering();
+        }
     }
 
     // 子の処理を行う
@@ -230,7 +239,9 @@ void SceneGraph::rendering() {
     }
 
     if (!isParentAhead()) {
-        onSelfRendering();
+        if (isFirstPass() || isMultipassEnable()) {
+            onSelfRendering();
+        }
     }
 }
 

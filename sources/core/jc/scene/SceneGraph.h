@@ -42,15 +42,99 @@ class SceneGraph: public Object {
      */
     jcboolean parentAhead;
 
+    /**
+     * マルチパス動作を許可する
+     * デフォルトOFF
+     */
+    jcboolean enableMultiPass;
+
+    /**
+     * 現在の処理パス
+     * 複数パスでのレンダリング・更新用
+     * デフォルトは-1
+     */
+    s32 currentPass;
+
 protected:
     /**
      * 子参照
      */
     std::list<MSceneGraph> childs;
 
+    /**
+     * 現在の処理パスを取得する
+     */
+    virtual s32 getCurrentPass() const {
+        return currentPass;
+    }
+
+    /**
+     * マルチパスの動作を許可する場合true
+     * falseの場合、passが0以下の場合のみonSelfUpdate/onSelfRenderingが動作する
+     */
+    virtual void setMultipassEnable(const jcboolean set) {
+        enableMultiPass = set;
+    }
+
+    virtual jcboolean isMultipassEnable() const {
+        return enableMultiPass;
+    }
+
+    /**
+     * 最初のパスならtrue
+     */
+    virtual s32 isFirstPass() const {
+        return currentPass <= 0;
+    }
 public:
     SceneGraph();
     virtual ~SceneGraph();
+
+    /**
+     * パス処理を開始する場合に呼び出す
+     *
+     * scene->beginPass(0);
+     * scene->beginPass(1);
+     * scene->beginPass(2);
+     * scene->endPass();
+     */
+    virtual void beginPass(const s32 pass) {
+        assert(pass >= 0);
+        currentPass = pass;
+        if (isParentAhead()) {
+            onBeginPass(pass);
+        }
+
+        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        while (itr != end) {
+            (*itr)->beginPass(pass);
+            ++itr;
+        }
+
+        if (!isParentAhead()) {
+            onBeginPass(pass);
+        }
+    }
+
+    /**
+     * パス動作を完了する
+     */
+    virtual void endPass() {
+        currentPass = -1;
+        if (isParentAhead()) {
+            onEndPass();
+        }
+
+        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        while (itr != end) {
+            (*itr)->endPass();
+            ++itr;
+        }
+
+        if (!isParentAhead()) {
+            onEndPass();
+        }
+    }
 
     virtual scene_id getUniqueId() const {
         return uniqueId;
@@ -104,6 +188,15 @@ public:
     virtual MSceneGraph findScene(const scene_id uniqueId) const;
 
     /**
+     * 子を探して適当なクラスへキャストする
+     */
+    template<typename T>
+    jc_sp<T> findSceneTo(const scene_id uniqueId) const {
+        MSceneGraph result = findScene(uniqueId);
+        return jc_sp<T>( dynamic_cast<T*>(result.get()) );
+    }
+
+    /**
      * レンダリング優先度を取得する
      */
     virtual float getRenderingPriority() const {
@@ -134,6 +227,20 @@ public:
      * 子（プライオリティ順） -> 親の順番で描画される
      */
     virtual void rendering();
+
+protected:
+
+    /**
+     * 現在のパスが開始された
+     */
+    virtual void onBeginPass( const s32 pass) {
+    }
+
+    /**
+     * パス動作が終了した
+     */
+    virtual void onEndPass() {
+    }
 
     /**
      * 親シーンに統合されたタイミングで呼び出される

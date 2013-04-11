@@ -210,8 +210,8 @@ public:
                 break;
         }
 
-        result->setXYWH(0, 0, width, height);
-        result->offset(viewport.centerX() - result->centerX(), viewport.centerY() - result->centerY());
+        result->setXYWH(0, 0, jc::round(width), jc::round(height));
+        result->offset(jc::round(viewport.centerX() - result->centerX()), jc::round(viewport.centerY() - result->centerY()));
         return result;
     }
 
