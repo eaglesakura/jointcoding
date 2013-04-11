@@ -9,6 +9,7 @@
 
 #include    "jc/widget/event/EventQueue.h"
 #include    "jc/widget/event/TouchEvent.h"
+#include    "jc/widget/window/Window.h"
 
 namespace jc {
 namespace view {
