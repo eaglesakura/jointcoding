@@ -61,10 +61,23 @@ void View::layout(const RectF &area) {
 }
 
 /**
+ * デバッグ用にレンダリングを行う
+ */
+void View::renderingArea() {
+    assert(isRegisteredWindow());
+
+    const Color color = Color::fromRGBAf(getRenderingPriority(), 0.0f, 1.0f, 0.5f);
+    const RectF area = getGlobalRenderingArea();
+    getSpriteManager()->renderingRect(area, color.rgba);
+}
+
+/**
  * 自分自身のレンダリングを行う
  */
 void View::onSelfRendering() {
-
+#ifdef  DEBUG
+    renderingArea();
+#endif
 }
 
 }

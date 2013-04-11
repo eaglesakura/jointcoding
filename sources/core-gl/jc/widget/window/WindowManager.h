@@ -69,21 +69,28 @@ public:
     /**
      * ウィンドウ位置を描画する
      */
-    virtual void setWindowArea(const RectF area) const {
+    virtual void setWindowArea(const RectF &area) const {
         window->layout(area);
+    }
+
+    /**
+     * ウィンドウ位置を描画する
+     */
+    virtual void setWindowArea(const RectI &area) const {
+        window->layout(createRectFromLTRB<float>(area.left, area.top, area.right, area.bottom));
     }
 
     /**
      * 毎フレームの処理を行わせる
      * @param numPass レンダリングするパス数
      */
-    virtual void update(const s32 numPass);
+    virtual void update(const s32 numPass = 1);
 
     /**
      * レンダリングを行う
      * @param numPass レンダリングするパス数
      */
-    virtual void rendering(const s32 numPass);
+    virtual void rendering(const s32 numPass = 1);
 };
 
 /**

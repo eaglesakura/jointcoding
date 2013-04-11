@@ -11,8 +11,8 @@ namespace view {
 
 WindowManager::WindowManager() {
     events.reset(new EventQueue());
-    window.reset(new Window());
     windowContext.reset(new WindowContext());
+    window.reset(new Window(windowContext));
     windowContext->setWindow(window);
 }
 
@@ -54,7 +54,7 @@ void WindowManager::handleEvents() {
  */
 void WindowManager::update(const s32 numPass) {
     for (s32 i = 0; i < numPass; ++i) {
-        window->beginPass(ScenePassType_Update, numPass);
+        window->beginPass(ScenePassType_Update, i);
         window->update();
         window->endPass(ScenePassType_Update);
     }
@@ -66,7 +66,7 @@ void WindowManager::update(const s32 numPass) {
  */
 void WindowManager::rendering(const s32 numPass) {
     for (s32 i = 0; i < numPass; ++i) {
-        window->beginPass(ScenePassType_Rendering, numPass);
+        window->beginPass(ScenePassType_Rendering, i);
         window->rendering();
         window->endPass(ScenePassType_Rendering);
     }

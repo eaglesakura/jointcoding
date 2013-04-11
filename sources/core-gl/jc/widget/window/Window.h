@@ -17,7 +17,8 @@ namespace view {
  */
 class Window: public View {
 public:
-    Window() {
+    Window(const MWindowContext windowContext) {
+        this->windowContext = windowContext;
     }
 
     virtual ~Window() {

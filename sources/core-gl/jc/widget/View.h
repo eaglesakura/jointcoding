@@ -49,6 +49,18 @@ protected:
      */
     jc_sp<WindowContext> windowContext;
 
+    /**
+     * Spriteレンダリングクラスを取得する
+     */
+    virtual MSpriteManager getSpriteManager() const {
+        assert(windowContext.get() != NULL);
+        return windowContext->getSpriteManager();
+    }
+
+    /**
+     * デバッグ用にレンダリングを行う
+     */
+    virtual void renderingArea();
 public:
     View();
     virtual ~View();
@@ -186,17 +198,17 @@ public:
         return jc_sp<View>();
     }
 
-    /**
-     * 自分自身のレンダリングを行う
-     */
-    virtual void onSelfRendering();
-
 protected:
     /**
      * レイアウトが変更された
      */
     virtual void onLayoutChanged(const RectF &newArea) {
     }
+
+    /**
+     * 自分自身のレンダリングを行う
+     */
+    virtual void onSelfRendering();
 };
 
 /**

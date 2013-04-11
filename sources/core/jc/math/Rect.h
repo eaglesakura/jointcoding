@@ -29,6 +29,13 @@ struct RectT {
         bottom = 0;
     }
 
+    RectT(const RectT &origin) {
+        left = (T)origin.left;
+        top = (T)origin.top;
+        right = (T)origin.right;
+        bottom = (T)origin.bottom;
+    }
+
     /**
      * 中央地点を設定する
      */
