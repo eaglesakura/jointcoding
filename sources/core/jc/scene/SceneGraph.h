@@ -193,7 +193,7 @@ public:
     template<typename T>
     jc_sp<T> findSceneTo(const scene_id uniqueId) const {
         MSceneGraph result = findScene(uniqueId);
-        return jc_sp<T>( dynamic_cast<T*>(result.get()) );
+        return jc_dynamic_cast<T>(result);
     }
 
     /**
@@ -228,6 +228,20 @@ public:
      */
     virtual void rendering();
 
+    /**
+     * 親クラスを取得する
+     */
+    virtual SceneGraph* getParent() const {
+        return parent;
+    }
+
+    /**
+     * 親クラスをキャストして取得する
+     */
+    template<typename T>
+    T* getParentTo() const {
+        return dynamic_cast<T*>(parent);
+    }
 protected:
 
     /**

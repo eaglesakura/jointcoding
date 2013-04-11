@@ -44,6 +44,14 @@ struct RectT {
     }
 
     /**
+     * XとYがRectに含まれているならばtrueを返す
+     * 同一座標も含まれる。
+     */
+    jcboolean isIntersect(const T x, const T y) const {
+        return x >= left && x <= right && y >= top && y <= bottom;
+    }
+
+    /**
      * x/y/width/heightを指定する
      */
     void setXYWH(const T x, const T y, const T w, const T h) {
