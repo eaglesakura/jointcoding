@@ -128,6 +128,22 @@ public:
     virtual jcboolean sendEvent(const scene_id layoutId, const s32 eventType, const jc_sp<Object> extension = jc_sp<Object>()) {
         return window->sendEvent(layoutId, eventType, extension);
     }
+
+    /**
+     * 特定のレイアウトへイベントを送信する
+     * ハンドルに成功したらtrueを返す
+     */
+    virtual void broadcastEvent(MEvent event) {
+        return window->broadcastEvent(event);
+    }
+
+    /**
+     * 特定レイアウトへイベントを送信する
+     * ハンドルに成功したらtrueを返す
+     */
+    virtual void broadcastEvent(const s32 eventType, const jc_sp<Object> extension = jc_sp<Object>()) {
+        return window->broadcastEvent(Event::createEvent(eventType, extension));
+    }
 };
 
     /**

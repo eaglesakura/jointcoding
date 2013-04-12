@@ -74,6 +74,7 @@ void WindowManager::handleEvents() {
  */
 void WindowManager::addView(const MView view) {
     window->pushBackChild(view);
+    view->registerWindow();
 }
 
 /**
