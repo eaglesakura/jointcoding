@@ -12,6 +12,7 @@
 #include    "jc/scene/SceneGraph.h"
 #include    "jc/widget/event/Event.h"
 #include    "jc/widget/window/WindowContext.h"
+//#include    "jc/ui/TouchPoint.h"
 
 namespace jc {
 namespace view {
@@ -38,8 +39,9 @@ enum ViewMode_e {
  */
 class View: public SceneGraph {
 private:
-    friend class WindowManager;
     friend class Window;
+    friend class WindowManager;
+    friend class WindowTouchDetector;
     /**
      * フォーカスを持つことが出来る場合true
      */
@@ -281,6 +283,8 @@ public:
     }
 
 protected:
+    // オーバーライドされる
+
     /**
      * レイアウトが変更された
      */
@@ -301,8 +305,28 @@ protected:
     /**
      * イベントハンドリングを行う
      */
-    virtual void handleEvent(MEvent event) {
+    virtual void onEvent(MEvent event) {
     }
+
+    /**
+     * クリックされた
+     */
+    virtual void onClick( ) {
+
+    }
+
+protected:
+    // 基本制御系
+
+    /**
+     * どれかのViewがクリックされたらハンドリングを行う
+     */
+    virtual void dispatchClickEvent(const jc_sp<View> clicked);
+
+    /**
+     * 送信されたイベントを処理する
+     */
+    virtual void dispatchEvent(MEvent event);
 };
 
 /**

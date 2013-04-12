@@ -20,6 +20,19 @@ View::~View() {
 }
 
 /**
+ * Viewのクリック処理が行われた
+ */
+void View::dispatchClickEvent(const jc_sp<View> clicked) {
+}
+
+/**
+ * 送信されたイベントを処理する
+ */
+void View::dispatchEvent(MEvent event) {
+    onEvent(event);
+}
+
+/**
  * ウィンドウとViewを関連付ける。
  * 必ずWindow（もしくは子View）にaddされた後に呼び出す。
  * 関連付けない場合、WindowContextを得られない。
