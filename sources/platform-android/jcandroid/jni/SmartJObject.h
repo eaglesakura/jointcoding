@@ -41,6 +41,11 @@ protected:
     T obj;
 
     /**
+     * ブリッジのための拡張データ
+     */
+    jc_selp<Object> extra;
+
+    /**
      * 読み込み用のクラス
      */
     jclass clazz;
@@ -236,8 +241,29 @@ public:
         if(globalRef) {
             addGlobalRef();
         }
-
         return (*this);
+    }
+
+    /**
+     * 拡張データを取得する
+     */
+    jc_selp<Object> getExtraData( ) const {
+        return extra;
+    }
+
+    /**
+     * ダウンキャストして拡張データを取得する
+     */
+    template<typename DC>
+    jc_selp<DC> getExtraDataTo() const {
+        return extra.downcast<DC>();
+    }
+
+    /**
+     * 拡張データを設定する
+     */
+    void setExtraData( const jc_selp<Object> extra) {
+        this->extra = extra;
     }
 };
 
