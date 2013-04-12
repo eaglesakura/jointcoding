@@ -311,15 +311,11 @@ protected:
     /**
      * クリックされた
      */
-    virtual void onClick( ) {
-    }
-
+    virtual void onClick( );
     /**
      * フォーカス変更が行われた
      */
-    virtual void onFocusChanged(const jcboolean has) {
-    }
-
+    virtual void onFocusChanged(const jcboolean has);
 protected:
     // 基本制御系
 

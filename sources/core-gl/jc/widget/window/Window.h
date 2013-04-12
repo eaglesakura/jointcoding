@@ -16,8 +16,7 @@ namespace view {
  * すべてのViewを入れるためのRootとして機能する
  */
 class Window: public View {
-
-    void broadCastEvent(MView view, MEvent event);
+    static void broadCastEvent(MView view, MEvent event);
 public:
     Window(const MWindowContext windowContext) {
         this->windowContext = windowContext;

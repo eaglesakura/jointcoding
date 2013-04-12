@@ -78,6 +78,7 @@ void WindowTouchDetector::onTouchBegin(const TouchDetector* detector, const Touc
 void WindowTouchDetector::onSingleTouchEnd(const TouchDetector* detector, const TouchCompleteType_e type, const TouchPoint &point) {
     MView touchedView = windowContext->lockTouchTarget();
     MWindow window = windowContext->lockWindow();
+    assert(window.get() != NULL);
 
     if (!touchedView) {
         // 何も触ってなかった
@@ -90,13 +91,12 @@ void WindowTouchDetector::onSingleTouchEnd(const TouchDetector* detector, const 
 
     // まだタップされている場合、クリック処理を行う
     if (touchedView->isIntersect(touchPos)) {
-        jclogf("onClick(%x)", touchedView.get());
-
+//        jclogf("onClick(%x)", touchedView.get());
         // クリックイベントをブロードキャストする
         window->broadcastEvent(Event::createEvent(EventType_Click, touchedView));
     } else {
         // クリック完了する前にViewから離された
-        jclogf("onClick Out(%x)", touchedView.get());
+//        jclogf("onClick Out(%x)", touchedView.get());
     }
 
     // タッチターゲットを無効化しておく

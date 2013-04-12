@@ -15,7 +15,7 @@ namespace view {
 void Window::broadCastEvent(MView view, MEvent event) {
     view->dispatchEvent(event);
 
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    std::list<MSceneGraph>::iterator itr = view->childs.begin(), end = view->childs.end();
 
     while (itr != end) {
         MView child  = downcast<View>(*itr);
@@ -34,7 +34,7 @@ void Window::broadcastEvent(MEvent event) {
     std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
-        MView child = ::boost::dynamic_pointer_cast<View>(*itr);
+        MView child = downcast<View>(*itr);
 
         // 子にメッセージを贈る
         if (child) {

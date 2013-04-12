@@ -20,6 +20,21 @@ View::~View() {
 }
 
 /**
+ * クリックされた
+ */
+void View::onClick( ) {
+    jclogf("onClick(%x)", this);
+}
+
+/**
+ * フォーカス変更が行われた
+ */
+void View::onFocusChanged(const jcboolean has) {
+    jclogf("onFocusChange(%x) %s", this, has ? "true" : "false");
+}
+
+
+/**
  * Viewのクリック処理が行われた
  */
 void View::dispatchClickEvent(const jc_sp<View> clicked) {
@@ -50,6 +65,7 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
  * 送信されたイベントを処理する
  */
 void View::dispatchEvent(MEvent event) {
+    assert(event.get() != NULL);
 
     const s32 EVENT_TYPE = event->getType();
 
