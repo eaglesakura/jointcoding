@@ -214,6 +214,35 @@ union Color {
     }
 
     /**
+     * 色計算を行う。
+     * dstColor * (1.0 - srcAlpha) + srcColor * srcAlpha
+     */
+    static Color blendColorSrcAlpha(const Color dstColor, const Color srcColor) {
+        const float src_alpha = srcColor.af();
+        const float dst_alpha = 1.0f - src_alpha;
+
+        const float R = (dstColor.rf() * dst_alpha) + (srcColor.rf() * src_alpha);
+        const float G = (dstColor.gf() * dst_alpha) + (srcColor.gf() * src_alpha);
+        const float B = (dstColor.bf() * dst_alpha) + (srcColor.bf() * src_alpha);
+
+        return fromRGBAf(jc::minmax<float>(0, 1, R), jc::minmax<float>(0, 1, G), jc::minmax<float>(0, 1, B), src_alpha);
+    }
+
+    /**
+     * 色計算を行う。
+     * dstColor * (1.0 - srcAlpha) + srcColor * srcAlpha
+     */
+    static Color blendColorSrcAlpha(const Color dstColor, const Color srcColor, const float srcAlpha) {
+        const float dst_alpha = 1.0f - srcAlpha;
+
+        const float R = (dstColor.rf() * dst_alpha) + (srcColor.rf() * srcAlpha);
+        const float G = (dstColor.gf() * dst_alpha) + (srcColor.gf() * srcAlpha);
+        const float B = (dstColor.bf() * dst_alpha) + (srcColor.bf() * srcAlpha);
+
+        return fromRGBAf(jc::minmax<float>(0, 1, R), jc::minmax<float>(0, 1, G), jc::minmax<float>(0, 1, B), srcAlpha);
+    }
+
+    /**
      * 色をブレンドして返す。
      * 遷移は次の通り
      * blend = 0.0f -> rgba0
