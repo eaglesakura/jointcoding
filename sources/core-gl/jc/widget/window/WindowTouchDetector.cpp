@@ -18,34 +18,6 @@ WindowTouchDetector::WindowTouchDetector(MWindowContext windowContext) {
 }
 
 /**
- * タッチ対象のViewを選択する
- */
-void WindowTouchDetector::selectTouchTargetView(const TouchPoint &point) {
-    MView target = windowContext->lockTouchTarget();
-    MWindow window = windowContext->lockWindow();
-
-    assert(window.get() != NULL);
-    const Vector2f touchPos = point.getBeginPosition();
-
-    if (!target) {
-        // まだタッチが当たっていない場合はViewを取得する
-        target = window->findTouchedView(touchPos);
-    }
-
-    if (!target) {
-//        jclogf("target not found pos(%f, %f)", touchPos.x, touchPos.y);
-        return;
-    }
-    windowContext->setTouchTarget(target);
-#if 0
-    {
-        RectF area = target->getGlobalLayoutArea();
-        jclogf("findTarget(%x) LTRB(%d, %d, %d, %d)", target.get(), (s32)area.left, (s32)area.top, (s32)area.right, (s32)area.bottom);
-    }
-#endif
-}
-
-/**
  * Viewがクリックされた。
  * 指が離された瞬間に認識される
  * onDragEnd()とどちらかが呼び出される。
@@ -66,8 +38,35 @@ void WindowTouchDetector::onDragEnd(const TouchDetector *detector, const TouchPo
  * タッチが開始された
  */
 void WindowTouchDetector::onTouchBegin(const TouchDetector* detector, const TouchPoint &point) {
-//    log_point("onTouchBegin", point);
-    selectTouchTargetView(point);
+
+    jcboolean refreshTouch = jcfalse;   // タッチが更新されたらtrue
+    MView target = windowContext->lockTouchTarget();
+    MWindow window = windowContext->lockWindow();
+
+    assert(window.get() != NULL);
+    const Vector2f touchPos = point.getBeginPosition();
+
+    if (!target) {
+        // まだタッチが当たっていない場合はタッチを更新してViewを取得する
+        target = window->findTouchedView(touchPos);
+        refreshTouch = jctrue;
+    }
+
+    if (!target) {
+        return;
+    }
+
+    // タッチイベントをブロードキャストする
+    if (refreshTouch) {
+        // タッチ対象を更新する
+        windowContext->setTouchTarget(target);
+
+        // ダウンイベントを飛ばす
+        target->dispatchDownEvent(jctrue);
+
+        // タッチ開始イベントを飛ばす
+        window->broadcastEvent(Event::createEvent(EventType_Touch, target));
+    }
 }
 
 /**
@@ -88,6 +87,9 @@ void WindowTouchDetector::onSingleTouchEnd(const TouchDetector* detector, const 
 
     // まだ触れられているかをチェックする
     const Vector2f touchPos = point.getCurrentPosition();
+
+    // ダウンイベントを送信する
+    touchedView->dispatchDownEvent(jcfalse);
 
     // まだタップされている場合、クリック処理を行う
     if (touchedView->isIntersect(touchPos)) {

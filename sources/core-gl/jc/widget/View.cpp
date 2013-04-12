@@ -11,7 +11,7 @@ namespace jc {
 namespace view {
 
 View::View() {
-    this->focus = this->focusable = this->touchable = jctrue;
+    this->down = this->focus = this->focusable = this->touchable = jctrue;
     this->viewMode = ViewMode_Visible;
 }
 
@@ -22,7 +22,7 @@ View::~View() {
 /**
  * クリックされた
  */
-void View::onClick( ) {
+void View::onClick() {
     jclogf("onClick(%x)", this);
 }
 
@@ -33,6 +33,12 @@ void View::onFocusChanged(const jcboolean has) {
     jclogf("onFocusChange(%x) %s", this, has ? "true" : "false");
 }
 
+/**
+ * フォーカスダウン状態が更新された
+ */
+void View::onDownChanged(const jcboolean down_now) {
+    jclogf("onDownChanged(%x) %s", this, down_now ? "down" : "up");
+}
 
 /**
  * Viewのクリック処理が行われた
@@ -62,6 +68,24 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
 }
 
 /**
+ * ダウン状態の更新を行う
+ */
+void View::dispatchDownEvent(const jcboolean down) {
+    const jcboolean before_down = this->down;
+
+    if (isTouchable()) {
+        this->down = down;
+    } else {
+        this->down = jcfalse;
+    }
+
+    // 違いが生じたらメッセージを送信
+    if (before_down != this->down) {
+        onDownChanged(down);
+    }
+}
+
+/**
  * 送信されたイベントを処理する
  */
 void View::dispatchEvent(MEvent event) {
@@ -88,7 +112,7 @@ void View::dispatchEvent(MEvent event) {
 void View::registerWindow() {
 
     jcboolean sendMessage = jcfalse;
-    // 登録されていなければ登録を行う
+// 登録されていなければ登録を行う
     if (!windowContext && getParent()) {
         // 元をたどればWindowを手に入れられるはずである
         Window *window = getRootSceneTo<Window>();
@@ -100,7 +124,7 @@ void View::registerWindow() {
         sendMessage = jctrue;
     }
 
-    // 子も登録させる
+// 子も登録させる
     {
         std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
@@ -112,7 +136,7 @@ void View::registerWindow() {
         }
     }
 
-    // 登録完了したことを通知する
+// 登録完了したことを通知する
     if (sendMessage) {
         // 登録が完了した
         onRegisterdWindow();
@@ -132,7 +156,7 @@ RectF View::getWindowArea() {
  */
 void View::layout(const RectF &area) {
 
-    // 違うエリアが設定されたらレイアウトを変更してメッセージを投げる
+// 違うエリアが設定されたらレイアウトを変更してメッセージを投げる
     if (area != localArea) {
         this->localArea = area;
         onLayoutChanged(area);
@@ -154,7 +178,7 @@ void View::renderingArea() {
         spriteManager->renderingRect(area, color.rgba);
     }
 
-    // 周りの線を描画する
+// 周りの線を描画する
     {
         Color color;
         if (isVisible()) {

@@ -18,11 +18,6 @@ namespace view {
 class WindowTouchDetector: public Object, public TouchListener {
     MWindowContext windowContext;
 
-    /**
-     * タッチ対象のViewを選択する
-     */
-    void selectTouchTargetView(const TouchPoint &point);
-
 public:
     WindowTouchDetector(MWindowContext windowContext);
     virtual ~WindowTouchDetector() {

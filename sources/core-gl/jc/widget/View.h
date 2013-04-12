@@ -36,6 +36,11 @@ enum ViewMode_e {
 
 /**
  * UI構築用のView構造を提供する
+ *
+ * Viewの状態は下記を基本にする
+ * * フォーカス:キーやクリック等で「選択済み」の場合のみtrueとなる
+ * * ダウン：キーを押している最中、クリックをしている最中のみtrueになる
+ *      * フォーカスとダウンは同時に起こりえる
  */
 class View: public SceneGraph {
 private:
@@ -56,6 +61,11 @@ private:
      * タッチを行える場合true
      */
     jcboolean touchable;
+
+    /**
+     * ダウンを行なっている途中
+     */
+    jcboolean down;
 
     /**
      * Viewの表示状態を取得する
@@ -179,6 +189,13 @@ public:
      */
     virtual jcboolean isTouchable() const {
         return touchable && isVisible();
+    }
+
+    /**
+     * Viewがタッチかキーダウン状態にある場合true
+     */
+    virtual jcboolean isDown() const {
+        return down;
     }
 
     /**
@@ -312,10 +329,16 @@ protected:
      * クリックされた
      */
     virtual void onClick( );
+
     /**
-     * フォーカス変更が行われた
+     * フォーカス状態が更新された
      */
     virtual void onFocusChanged(const jcboolean has);
+
+    /**
+     * フォーカスダウン状態が更新された
+     */
+    virtual void onDownChanged(const jcboolean down_now);
 protected:
     // 基本制御系
 
@@ -323,6 +346,11 @@ protected:
      * どれかのViewがクリックされたらハンドリングを行う
      */
     virtual void dispatchClickEvent(const jc_sp<View> clicked);
+
+    /**
+     * ダウン状態の更新を行う
+     */
+    virtual void dispatchDownEvent(const jcboolean down);
 
     /**
      * 送信されたイベントを処理する
