@@ -69,7 +69,7 @@ public:
      */
     template<typename T>
     jc_sp<T> getExtension() const {
-        return jc_dynamic_cast<T>(extension);
+        return downcast<T>(extension);
     }
 
     /**

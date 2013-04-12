@@ -28,9 +28,15 @@ class WindowContext {
     jc_wp<Window> window;
 
     /**
+     * タッチ対象となっているView
+     */
+    jc_wp<View> touchTarget;
+
+    /**
      * レンダリング用のスプライトマネージャ
      */
     MSpriteManager spriteManager;
+
 public:
     WindowContext() {
     }
@@ -68,6 +74,27 @@ public:
     }
 
     /**
+     * タッチを当てられているViewを設定する
+     */
+    virtual void setTouchTarget( const jc_sp<View> view ) {
+        touchTarget = view;
+    }
+
+    /**
+     * タッチイベントのターゲットとなるViewを取得する
+     */
+    virtual jc_sp<View> lockTouchTarget( ) const {
+        return touchTarget.lock();
+    }
+
+    /**
+     * フォーカスを持っている場合はtrue
+     */
+    virtual jcboolean hasFocus() {
+        return !touchTarget.expired();
+    }
+
+    /**
      * 特定のViewを検索する
      * 循環参照に注意をすること
      */
@@ -78,7 +105,7 @@ public:
      */
     template<typename T>
     jc_sp<T> findViewTo(const scene_id id) {
-        return jc_dynamic_cast<T>(findViewById(id));
+        return downcast<T>(findViewById(id));
     }
 };
 

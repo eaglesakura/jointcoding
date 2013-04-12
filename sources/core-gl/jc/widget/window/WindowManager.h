@@ -31,6 +31,12 @@ class WindowManager: public Object {
      */
     MWindowContext windowContext;
 
+protected:
+    /**
+     * タッチイベントを処理する
+     */
+    virtual void handleTouchEvent(MEvent event);
+
 public:
     WindowManager();
     virtual ~WindowManager();

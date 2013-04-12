@@ -256,7 +256,7 @@ public:
         // 全チェックを行う
         while(itr != end) {
 
-            jc_sp<View> check = jc_dynamic_cast<View>(*itr);
+            jc_sp<View> check = downcast<View>(*itr);
 
             // 子がViewであるならチェックする
             if(check) {

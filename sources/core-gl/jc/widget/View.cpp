@@ -43,8 +43,8 @@ void View::registerWindow() {
     {
         std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
-            MView view = jc_dynamic_cast<View>(*itr);
-            if(view) {
+            MView view = downcast<View>(*itr);
+            if (view) {
                 view->registerWindow();
             }
             ++itr;
@@ -52,15 +52,15 @@ void View::registerWindow() {
     }
 
     // 登録完了したことを通知する
-    if(sendMessage) {
+    if (sendMessage) {
         // 登録が完了した
         onRegisterdWindow();
     }
 }
 
-            /**
-             * ウィンドウ位置を取得する
-             */
+/**
+ * ウィンドウ位置を取得する
+ */
 RectF View::getWindowArea() {
     assert(windowContext.get() != NULL);
     return windowContext->lockWindow()->getLocalLayoutArea();

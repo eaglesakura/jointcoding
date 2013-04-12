@@ -18,10 +18,18 @@
  */
 #define jc_sp ::boost::shared_ptr
 
+namespace jc {
+
+class Object;
 /**
- * スマートポインタのdynamic_castを行う
+ * スマートポインタのダウンキャストを行う
  */
-#define jc_dynamic_cast     ::boost::dynamic_pointer_cast
+template<typename T>
+jc_sp<T> downcast( const jc_sp<jc::Object> obj ) {
+    return ::boost::dynamic_pointer_cast<T>(obj);
+}
+
+}
 
 /**
  * 共有配列
@@ -31,6 +39,5 @@
  * 弱参照
  */
 #define jc_wp ::boost::weak_ptr
-
 
 #endif /* SMARTPTR_H_ */

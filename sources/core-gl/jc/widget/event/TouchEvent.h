@@ -43,6 +43,8 @@ public:
     }
 };
 
+typedef jc_sp<TouchEventExtension> MTouchEventExtension;
+
 }
 }
 

@@ -5,6 +5,7 @@
  */
 
 #include    "jc/widget/window/WindowManager.h"
+#include    "jc/widget/event/TouchEvent.h"
 
 namespace jc {
 namespace view {
@@ -28,6 +29,18 @@ void WindowManager::addEvent(MEvent event) {
     // イベントを末尾に登録する
     events->pushBackEvent(event);
 }
+/**
+ * タッチイベントを処理する
+ */
+void WindowManager::handleTouchEvent(MEvent event) {
+    MTouchEventExtension ext = event->getExtension<TouchEventExtension>();
+    assert(ext);
+
+    MView oldFocus = windowContext->lockTouchTarget();
+    if (!oldFocus) {
+        // まだたっちが当たっていない場合
+    }
+}
 
 /**
  * キューに溜まっているイベントの処理を行う
@@ -39,6 +52,12 @@ void WindowManager::handleEvents() {
         // 直近のイベントを取り出す
         MEvent event = events->popEvent();
         assert(event.get() != NULL);
+
+        switch (event->getType()) {
+            case EventType_Touch:
+                handleTouchEvent(event);
+                break;
+        }
 
         ++eventNum;
     }
@@ -54,7 +73,6 @@ void WindowManager::handleEvents() {
 void WindowManager::addView(const MView view) {
     window->pushBackChild(view);
 }
-
 
 /**
  * 毎フレームの処理を行わせる

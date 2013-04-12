@@ -209,7 +209,7 @@ public:
     template<typename T>
     jc_sp<T> findSceneTo(const scene_id uniqueId) const {
         MSceneGraph result = findScene(uniqueId);
-        return jc_dynamic_cast<T>(result);
+        return downcast<T>(result);
     }
 
     /**
