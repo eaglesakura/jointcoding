@@ -56,12 +56,6 @@ class SceneGraph: public Object {
     jcboolean parentAhead;
 
     /**
-     * マルチパス動作を許可する
-     * デフォルトOFF
-     */
-    jcboolean enableMultiPass;
-
-    /**
      * 現在の処理パス
      * 複数パスでのレンダリング・更新用
      * デフォルトは-1
@@ -82,21 +76,16 @@ protected:
     }
 
     /**
-     * マルチパスの動作を許可する場合true
-     * falseの場合、passが0以下の場合のみonSelfUpdate/onSelfRenderingが動作する
+     * 自身のレンダリングを許可するパスであるならtrueを返す。
      */
-    virtual void setMultipassEnable(const jcboolean set) {
-        enableMultiPass = set;
-    }
-
-    virtual jcboolean isMultipassEnable() const {
-        return enableMultiPass;
+    virtual jcboolean isSelfRenderingPass() const {
+        return currentPass <= 0;
     }
 
     /**
-     * 最初のパスならtrue
+     * 自身の更新を許可するパスであるならtrueを返す
      */
-    virtual s32 isFirstPass() const {
+    virtual jcboolean isSelfUpdatePass() const {
         return currentPass <= 0;
     }
 public:

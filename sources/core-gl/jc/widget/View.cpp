@@ -194,7 +194,7 @@ float View::getVisibleWeight() const {
  */
 jcboolean View::update() {
     // 初回パスのみ更新する
-    if (isFirstPass()) {
+    if (getCurrentPass() == 0) {
         // フォーカス状態を管理する
         if (hasFocus()) {
             ++focusCounter;
