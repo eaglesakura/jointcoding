@@ -172,16 +172,21 @@ void TouchDetector::onTouchEvent(TouchEventProtocol *event) {
 
         } else if (TouchEventProtocol::EVENT_TYPE_END == type) {
             if (isSingleTap()) {
-                // シングルタップ
+                // シングルタップ処理
                 if (_point->isDraging()) {
                     listener->onDragEnd(this, (*_point));
+                    listener->onSingleTouchEnd(this, TouchCompleteType_Drag, (*_point));
                 } else {
                     listener->onClick(this, (*_point));
+                    listener->onSingleTouchEnd(this, TouchCompleteType_SingleClick, (*_point));
                 }
+
+                // タッチが終わった
                 removeTouchPointFromId(event->getTouchID());
             } else {
                 const Vector2f center = getMultiTapCenter();
                 listener->onPinchEnd(this, center);
+//                listener->onTouchEnd(this, TouchCompleteType_Pinch, (*_point));
                 pinchDistance = 0.1f;
                 // マルチタップだったら、どっちのポイントも排除する
                 points.clear();

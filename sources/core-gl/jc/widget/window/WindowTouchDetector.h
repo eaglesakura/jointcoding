@@ -41,6 +41,14 @@ public:
     virtual void onTouchBegin(const TouchDetector* detector, const TouchPoint &point);
 
     /**
+     * タッチが終了された
+     * onTouchBegin -> onClick -> onTouchEnd
+     * onTouchBegin -> onDrag -> onDragEnd -> onTouchEnd
+     */
+    virtual void onSingleTouchEnd(const TouchDetector* detector, const TouchCompleteType_e type, const TouchPoint &point);
+
+
+    /**
      * Viewがドラッグされた
      */
     virtual void onDrag(const TouchDetector* detector, const TouchPoint &point);

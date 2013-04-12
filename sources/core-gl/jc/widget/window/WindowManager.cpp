@@ -39,13 +39,9 @@ void WindowManager::handleTouchEvent(MEvent event) {
     assert(ext);
 
     jc_sp<TouchEventProtocol> touchEvent = ext->getPlatformEvent();
-    Vector2f touchPos(touchEvent->getEventPosX(), touchEvent->getEventPosY());
+    assert(touchEvent.get() != NULL);
 
-    MView oldFocus = windowContext->lockTouchTarget();
-    if (!oldFocus) {
-        // まだタッチが当たっていない場合はViewを取得する
-        oldFocus = window->findTouchedView(touchPos);
-    }
+    touchDetector->onTouchEvent(touchEvent.get());
 }
 
 /**

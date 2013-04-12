@@ -18,6 +18,23 @@ namespace jc {
 
 class TouchDetector;
 
+enum TouchCompleteType_e {
+    /**
+     * クリックされた
+     */
+    TouchCompleteType_SingleClick,
+
+    /**
+     * ドラッグされた
+     */
+    TouchCompleteType_Drag,
+
+    /**
+     * ピンチ操作
+     */
+    TouchCompleteType_Pinch,
+};
+
 /**
  * タッチ操作のコールバックを受け取る。
  */
@@ -44,6 +61,13 @@ public:
      * タッチが開始された
      */
     virtual void onTouchBegin(const TouchDetector* detector, const TouchPoint &point) = 0;
+
+    /**
+     * タッチが終了された
+     * onTouchBegin -> onClick -> onTouchEnd
+     * onTouchBegin -> onDrag -> onDragEnd -> onTouchEnd
+     */
+    virtual void onSingleTouchEnd(const TouchDetector* detector, const TouchCompleteType_e type, const TouchPoint &point) = 0;
 
     /**
      * Viewがドラッグされた
