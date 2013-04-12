@@ -11,6 +11,8 @@
 #include    "jc/gl/SpriteManager.h"
 #include    "jc/scene/SceneGraph.h"
 
+#include    "jc/ui/TouchDetector.h"
+
 namespace jc {
 namespace view {
 
@@ -21,7 +23,7 @@ class View;
 /**
  * View階層を維持するために必要なWindow共通情報を設定する
  */
-class WindowContext {
+class WindowContext: public Object {
     /**
      * Window本体.
      */

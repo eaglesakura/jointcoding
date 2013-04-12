@@ -11,6 +11,7 @@
 #include    "jc/widget/event/TouchEvent.h"
 #include    "jc/widget/window/Window.h"
 #include    "jc/widget/window/WindowContext.h"
+#include    "jc/widget/window/WindowTouchDetector.h"
 
 namespace jc {
 namespace view {
@@ -31,6 +32,15 @@ class WindowManager: public Object {
      */
     MWindowContext windowContext;
 
+    /**
+     * ウィンドウ専用のタッチ判断クラス
+     */
+    MWindowTouchDetector windowTouchDetector;
+
+    /**
+     * ウィンドウの実解析を行う
+     */
+    MTouchDetector touchDetector;
 protected:
     /**
      * タッチイベントを処理する

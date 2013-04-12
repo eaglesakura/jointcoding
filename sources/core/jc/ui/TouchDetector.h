@@ -147,6 +147,11 @@ public:
     virtual void onTouchEvent(TouchEventProtocol *event);
 };
 
+/**
+ * managed
+ */
+typedef jc_sp<TouchDetector> MTouchDetector;
+
 }
 
 #endif /* JCTOUCHDETECTOR_H_ */

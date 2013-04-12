@@ -15,6 +15,8 @@ WindowManager::WindowManager() {
     windowContext.reset(new WindowContext());
     window.reset(new Window(windowContext));
     windowContext->setWindow(window);
+    windowTouchDetector.reset(new WindowTouchDetector(windowContext));
+    touchDetector.reset(new TouchDetector(windowTouchDetector));
 }
 
 WindowManager::~WindowManager() {
@@ -36,9 +38,13 @@ void WindowManager::handleTouchEvent(MEvent event) {
     MTouchEventExtension ext = event->getExtension<TouchEventExtension>();
     assert(ext);
 
+    jc_sp<TouchEventProtocol> touchEvent = ext->getPlatformEvent();
+    Vector2f touchPos(touchEvent->getEventPosX(), touchEvent->getEventPosY());
+
     MView oldFocus = windowContext->lockTouchTarget();
     if (!oldFocus) {
-        // まだたっちが当たっていない場合
+        // まだタッチが当たっていない場合はViewを取得する
+        oldFocus = window->findTouchedView(touchPos);
     }
 }
 
@@ -46,7 +52,7 @@ void WindowManager::handleTouchEvent(MEvent event) {
  * キューに溜まっているイベントの処理を行う
  */
 void WindowManager::handleEvents() {
-    // 処理したイベント数
+// 処理したイベント数
     s32 eventNum = 0;
     while (!events->empty()) {
         // 直近のイベントを取り出す
@@ -62,9 +68,9 @@ void WindowManager::handleEvents() {
         ++eventNum;
     }
 
-    if (eventNum) {
-        jclogf("Handle Events(%d)", eventNum);
-    }
+//    if (eventNum) {
+//        jclogf("Handle Events(%d)", eventNum);
+//    }
 }
 
 /**
