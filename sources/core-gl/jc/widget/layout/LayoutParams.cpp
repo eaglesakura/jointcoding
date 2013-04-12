@@ -41,10 +41,10 @@ void LayoutParams::layout(RectF *result, const RectF parentLocal) {
             local.moveToCenterX(parentLocal.centerX());
         } else if (gravity & LayoutGravity_Right) {
             // 右寄せ
-            local.moveToRight(parentLocal.width() - mergin_right);
+            local.moveToRight(parentLocal.width() - margin_right);
         } else {
             // 左寄せ
-            local.moveToLeft(mergin_left);
+            local.moveToLeft(margin_left);
         }
 
         // Y方向チェック
@@ -53,10 +53,12 @@ void LayoutParams::layout(RectF *result, const RectF parentLocal) {
             local.moveToCenterY(parentLocal.centerY());
         } else if (gravity & LayoutGravity_Bottom) {
             // 下寄せ
-            local.moveToBottom(parentLocal.height() - mergin_bottom);
+            local.moveToBottom(parentLocal.height() - margin_bottom);
+        } else if (gravity & LayoutGravity_OnTop) {
+            local.moveToBottom(parentLocal.top - margin_bottom);
         } else {
             // 上
-            local.moveToTop(mergin_top);
+            local.moveToTop(margin_top);
         }
     }
 

@@ -39,6 +39,7 @@ enum ViewMode_e {
 class View: public SceneGraph {
 private:
     friend class WindowManager;
+    friend class Window;
     /**
      * フォーカスを持つことが出来る場合true
      */

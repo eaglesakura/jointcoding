@@ -80,18 +80,5 @@ void WindowManager::rendering(const s32 numPass) {
     }
 }
 
-/**
- * 特定のレイアウトへイベントを送信する
- * ハンドルに成功したらtrueを返す
- */
-jcboolean WindowManager::sendEvent(const scene_id layoutId, MEvent event) {
-    MView view = window->findSceneTo<View>(layoutId);
-    if(view) {
-        view->handleEvent(event);
-        return jctrue;
-    }
-    return jcfalse;
-}
-
 }
 }
