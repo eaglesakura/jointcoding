@@ -11,7 +11,8 @@ namespace jc {
 namespace view {
 
 View::View() {
-    this->down = this->focus = this->focusable = this->touchable = jctrue;
+    this->down = this->focus = jcfalse;
+    this->focusable = this->touchable = jctrue;
     this->viewMode = ViewMode_Visible;
 
     // デフォルトのカウンターを整理

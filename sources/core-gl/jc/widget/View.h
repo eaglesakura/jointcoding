@@ -167,6 +167,20 @@ public:
     }
 
     /**
+     * フォーカス描画用のカウントを取得する
+     */
+    virtual float getFocusWeight() const {
+        return focusCounter.getValue(LeapType_Ease1);
+    }
+
+    /**
+     * ダウン描画用のカウンタを取得する
+     */
+    virtual float getDownWeight() const {
+        return downCounter.getValue(LeapType_Ease1);
+    }
+
+    /**
      * フォーカスを持てるかの設定を行う。
      * デフォルトはtrue
      */
