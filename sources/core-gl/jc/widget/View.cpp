@@ -17,6 +17,7 @@ View::View() {
 
     // デフォルトのカウンターを整理
     setWeightCounter(createTransitionCounter(60, 0.5));
+    visibleCounter.setValue(1.0f);
 }
 
 View::~View() {
@@ -172,6 +173,19 @@ void View::setWeightCounter(const CounterF newCounter) {
         downCounter = newCounter;
         downCounter.setValue(value);
     }
+    // 可視状態用
+    {
+        const float value = visibleCounter.getValue();
+        visibleCounter = newCounter;
+        visibleCounter.setValue(value);
+    }
+}
+
+/**
+ * 可視状態描画用のカウントを取得sルウ
+ */
+float View::getVisibleWeight() const {
+    return visibleCounter.getValue(LeapType_Ease1);
 }
 
 /**
@@ -193,6 +207,13 @@ jcboolean View::update() {
             ++downCounter;
         } else {
             --downCounter;
+        }
+
+        // 透過度を管理する
+        if (isVisible()) {
+            ++visibleCounter;
+        } else {
+            --visibleCounter;
         }
     }
 

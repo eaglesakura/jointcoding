@@ -69,6 +69,12 @@ private:
     jcboolean down;
 
     /**
+     * Viewの表示状態を取得する
+     */
+    ViewMode_e viewMode;
+protected:
+
+    /**
      * フォーカス状態を管理する遷移カウンター
      */
     CounterF focusCounter;
@@ -79,10 +85,10 @@ private:
     CounterF downCounter;
 
     /**
-     * Viewの表示状態を取得する
+     * 可視状態を管理する遷移カウンター
      */
-    ViewMode_e viewMode;
-protected:
+    CounterF visibleCounter;
+
     /**
      * Viewの配置
      */
@@ -167,17 +173,22 @@ public:
     }
 
     /**
+     * 可視状態描画用のカウントを取得sルウ
+     */
+    virtual float getVisibleWeight() const;
+
+    /**
      * フォーカス描画用のカウントを取得する
      */
-    virtual float getFocusWeight() const {
-        return focusCounter.getValue(LeapType_Ease1);
+    virtual float getFocusWeight(const jcboolean withVisibleCounter = jctrue) const {
+        return focusCounter.getValue(LeapType_Ease1) * (withVisibleCounter ? getVisibleWeight() : 1.0f);
     }
 
     /**
-     * ダウン描画用のカウンタを取得する
+     * ダウン描画用のカウントを取得する
      */
-    virtual float getDownWeight() const {
-        return downCounter.getValue(LeapType_Ease1);
+    virtual float getDownWeight(const jcboolean withVisibleCounter = jctrue) const {
+        return downCounter.getValue(LeapType_Ease1) * (withVisibleCounter ? getVisibleWeight() : 1.0f);
     }
 
     /**
