@@ -267,6 +267,11 @@ public:
     virtual void layout(const RectF &area);
 
     /**
+     * ネストされた小階層も含めた全体のレイアウトエリアを計算する
+     */
+    virtual RectF getGlobalLayoutAreaNest( );
+
+    /**
      * グローバル座標に変換した表示位置を取得する
      */
     virtual RectF getGlobalLayoutArea() {

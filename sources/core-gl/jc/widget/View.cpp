@@ -233,6 +233,41 @@ void View::layout(const RectF &area) {
 }
 
 /**
+ * ネストされた小階層も含めた全体のレイアウトエリアを計算する
+ */
+RectF View::getGlobalLayoutAreaNest() {
+    RectF result = getGlobalLayoutArea();
+
+    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+
+    while (itr != end) {
+
+        MView view = downcast<View>(*itr);
+        if (view) {
+            RectF child_global = view->getGlobalLayoutAreaNest();
+
+            result.left = jc::min<float>(result.left, child_global.left);
+            result.top = jc::min<float>(result.top, child_global.top);
+
+            if (result.left == 0) {
+                result.left = child_global.left;
+            }
+
+            if (result.top == 0) {
+                result.top = child_global.top;
+            }
+
+            result.right = jc::max<float>(result.right, child_global.right);
+            result.bottom = jc::max<float>(result.bottom, child_global.bottom);
+        }
+
+        ++itr;
+    }
+
+    return result;
+}
+
+/**
  * デバッグ用にレンダリングを行う
  */
 void View::renderingArea() {
