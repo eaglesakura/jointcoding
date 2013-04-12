@@ -47,21 +47,28 @@ void WindowManager::handleTouchEvent(MEvent event) {
 /**
  * キューに溜まっているイベントの処理を行う
  */
-void WindowManager::handleEvents() {
+void WindowManager::handleEvents(WindowEventHandler *listener) {
 // 処理したイベント数
-    s32 eventNum = 0;
+    s32 listenerEvents = 0;
     while (!events->empty()) {
         // 直近のイベントを取り出す
         MEvent event = events->popEvent();
         assert(event.get() != NULL);
 
-        switch (event->getType()) {
-            case EventType_Touch:
-                handleTouchEvent(event);
-                break;
+        // listenerがあるなら、リスナに処理を行わせる
+        if (listener && listener->handleEvent(event)) {
+            ++listenerEvents;
+            event.reset();
         }
 
-        ++eventNum;
+        // 処理が終わっていないなら通常ハンドリングを行う
+        if (event) {
+            switch (event->getType()) {
+                case EventType_Touch:
+                    handleTouchEvent(event);
+                    break;
+            }
+        }
     }
 
 //    if (eventNum) {

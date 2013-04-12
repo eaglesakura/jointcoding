@@ -280,7 +280,7 @@ public:
      */
     template<typename T>
     T* getRootSceneTo() const {
-        return dynamic_cast<T*>(parent);
+        return dynamic_cast<T*>(getRootScene());
     }
 protected:
 

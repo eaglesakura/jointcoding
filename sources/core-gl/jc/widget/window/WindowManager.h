@@ -16,6 +16,18 @@
 namespace jc {
 namespace view {
 
+class WindowEventHandler {
+public:
+    virtual ~WindowEventHandler() {
+    }
+
+    /**
+     * イベントハンドルをインターセプトする。
+     * trueを返した場合、ハンドリングに成功したとみなしてWindowManagerはそのeventのハンドリングを行わない。
+     */
+    virtual jcboolean handleEvent(MEvent event) = 0;
+};
+
 class WindowManager: public Object {
     /**
      * イベント管理
@@ -53,11 +65,16 @@ public:
 
     /**
      * キューに溜まっているイベントの処理を行う
+     * 適当なスレッドから毎フレームポーリングすることを前提とする。
+     * スレッドはプラットフォーム固有のメインスレッドである必要はない。
+     *
+     * @param listener イベントハンドルのリスナ。NULLを渡した場合は自動チェックを行う。
      */
-    virtual void handleEvents();
+    virtual void handleEvents(WindowEventHandler *listener = NULL);
 
     /**
-     * イベントを追加する
+     * イベントを追加する。
+     * マルチスレッドでの呼び出しを想定して組まれているため、内部的には安全に排他処理を行う。
      */
     virtual void addEvent(MEvent event);
 

@@ -20,7 +20,7 @@ void Window::broadCastEvent(MView view, MEvent event) {
     while (itr != end) {
         MView child  = downcast<View>(*itr);
         if (child) {
-            broadCastEvent(view, event);
+            broadCastEvent(child, event);
         }
         ++itr;
     }
