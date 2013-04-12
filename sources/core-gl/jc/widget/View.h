@@ -12,6 +12,7 @@
 #include    "jc/scene/SceneGraph.h"
 #include    "jc/widget/event/Event.h"
 #include    "jc/widget/window/WindowContext.h"
+#include    "jc/math/Counter.h"
 //#include    "jc/ui/TouchPoint.h"
 
 namespace jc {
@@ -53,19 +54,29 @@ private:
     jcboolean focusable;
 
     /**
-     * フォーカスを持っている場合true
-     */
-    jcboolean focus;
-
-    /**
      * タッチを行える場合true
      */
     jcboolean touchable;
 
     /**
+     * フォーカスを持っている場合true
+     */
+    jcboolean focus;
+
+    /**
      * ダウンを行なっている途中
      */
     jcboolean down;
+
+    /**
+     * フォーカス状態を管理する遷移カウンター
+     */
+    CounterF focusCounter;
+
+    /**
+     * ダウン状態を管理する遷移カウンター
+     */
+    CounterF downCounter;
 
     /**
      * Viewの表示状態を取得する
@@ -211,6 +222,19 @@ public:
     virtual RectF getLocalIntersectArea() {
         return localArea;
     }
+
+    /**
+     * 遷移カウンターを更新する
+     * フォーカス用、ダウン用が一括で更新される。
+     * 現在のvalueは維持される。
+     */
+    virtual void setWeightCounter(const CounterF newCounter);
+
+    /**
+     * 更新作業を行う
+     * trueを返すと「処理完了」とみなして排除する
+     */
+    virtual jcboolean update();
 
     /**
      * レイアウトを更新する。

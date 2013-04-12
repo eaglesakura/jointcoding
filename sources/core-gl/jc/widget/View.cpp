@@ -13,6 +13,9 @@ namespace view {
 View::View() {
     this->down = this->focus = this->focusable = this->touchable = jctrue;
     this->viewMode = ViewMode_Visible;
+
+    // デフォルトのカウンターを整理
+    setWeightCounter(createTransitionCounter(60, 0.5));
 }
 
 View::~View() {
@@ -149,6 +152,50 @@ void View::registerWindow() {
 RectF View::getWindowArea() {
     assert(windowContext.get() != NULL);
     return windowContext->lockWindow()->getLocalLayoutArea();
+}
+/**
+ * 遷移カウンターを更新する
+ * フォーカス用、ダウン用が一括で更新される。
+ * 現在のvalueは維持される。
+ */
+void View::setWeightCounter(const CounterF newCounter) {
+    // フォーカス用
+    {
+        const float value = focusCounter.getValue();
+        focusCounter = newCounter;
+        focusCounter.setValue(value);
+    }
+    // ダウン用
+    {
+        const float value = downCounter.getValue();
+        downCounter = newCounter;
+        downCounter.setValue(value);
+    }
+}
+
+/**
+ * 更新作業を行う
+ * trueを返すと「処理完了」とみなして排除する
+ */
+jcboolean View::update() {
+    // 初回パスのみ更新する
+    if (isFirstPass()) {
+        // フォーカス状態を管理する
+        if (hasFocus()) {
+            ++focusCounter;
+        } else {
+            --focusCounter;
+        }
+
+        // ダウン状態を管理する
+        if (isDown()) {
+            ++downCounter;
+        } else {
+            --downCounter;
+        }
+    }
+
+    return SceneGraph::update();
 }
 
 /**
