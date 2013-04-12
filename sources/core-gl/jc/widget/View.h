@@ -312,7 +312,12 @@ protected:
      * クリックされた
      */
     virtual void onClick( ) {
+    }
 
+    /**
+     * フォーカス変更が行われた
+     */
+    virtual void onFocusChanged(const jcboolean has) {
     }
 
 protected:

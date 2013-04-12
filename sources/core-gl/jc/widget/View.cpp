@@ -23,13 +23,45 @@ View::~View() {
  * Viewのクリック処理が行われた
  */
 void View::dispatchClickEvent(const jc_sp<View> clicked) {
+    const jcboolean before_focus = hasFocus();
+
+    if(clicked.get() == this) {
+        // 自分のクリックが行われた
+        if(isFocusable()) {
+            // フォーカス当てを行う
+            focus = jctrue;
+        }
+
+        // クリックメッセージを処理させる
+        onClick();
+    } else {
+        // フォーカスを外す
+        focus = jcfalse;
+    }
+
+    // フォーカスに違いが出たらメッセージ
+    if(before_focus != hasFocus()) {
+        onFocusChanged(hasFocus());
+    }
+
 }
 
 /**
  * 送信されたイベントを処理する
  */
 void View::dispatchEvent(MEvent event) {
-    onEvent(event);
+
+    const s32 EVENT_TYPE = event->getType();
+
+    switch (EVENT_TYPE) {
+        case EventType_Click:
+            dispatchClickEvent(event->getExtension<View>());
+            break;
+        default:
+            onEvent(event);
+            break;
+    }
+
 }
 
 /**

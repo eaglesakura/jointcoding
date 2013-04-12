@@ -25,6 +25,11 @@ enum EventType_e {
      * キーイベントが発行された
      */
     EventType_Key,
+
+    /**
+     * クリックイベントが行われた
+     */
+    EventType_Click,
 };
 
 /**
