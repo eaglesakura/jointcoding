@@ -68,7 +68,7 @@ public:
     /**
      * 現在タッチしている地点を取得する
      */
-    virtual const Vector2f getCurrentPosition() const {
+    virtual const Vector2f& getCurrentPosition() const {
         return currentPos;
     }
 

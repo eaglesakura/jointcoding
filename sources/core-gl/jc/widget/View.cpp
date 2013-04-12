@@ -11,7 +11,7 @@ namespace jc {
 namespace view {
 
 View::View() {
-    this->focus = this->focusable = this->touchable = jcfalse;
+    this->focus = this->focusable = this->touchable = jctrue;
     this->viewMode = ViewMode_Visible;
 }
 

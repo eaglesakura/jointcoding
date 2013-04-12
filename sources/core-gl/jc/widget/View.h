@@ -240,7 +240,7 @@ public:
      * 子は考慮しない。
      */
     virtual jcboolean isTouchedView(const Vector2f &global) {
-        if (!isFocusable() || !isTouchable()) {
+        if (!isTouchable()) {
             return jcfalse;
         }
         return isIntersect(global);

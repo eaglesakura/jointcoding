@@ -83,6 +83,13 @@ public:
     }
 
     /**
+     * タッチ対象をなくす
+     */
+    virtual void clearTouchTarget() {
+        touchTarget.reset();
+    }
+
+    /**
      * タッチイベントのターゲットとなるViewを取得する
      */
     virtual jc_sp<View> lockTouchTarget( ) const {
