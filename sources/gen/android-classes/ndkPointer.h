@@ -15,11 +15,14 @@ public:
     }
 
     static const ::jc::charactor* CLASS_SIGNATURE;
+    static jobject createSharedObjectInstance_unsafe(jint pointer);
     static void deleteSharedObjectPtr(jint int_0);
     virtual void dispose();
     static void dispose_(jobject _this);
     static jint getSharedObjectPtr(jint int_0);
+    static jobject createObjectPointerInstance_unsafe(jint pointer);
     static void deleteObjectPtr(jint int_0);
+    static jobject createVoidPointerInstance_unsafe(jint pointer);
     static void deleteVoidPtr(jint int_0);
     virtual jint getObjectPointer();
     static jint getObjectPointer_(jobject _this);

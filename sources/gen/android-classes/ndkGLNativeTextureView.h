@@ -19,16 +19,16 @@ public:
     static void onNativeGLSurfaceSizeChanged_(jobject _this, jobject surfacetexture_0, jint int_1, jint int_2);
     virtual jint onCreateNativeContext(jint int_0);
     static jint onCreateNativeContext_(jobject _this, jint int_0);
-    virtual void unlockEGL();
-    static void unlockEGL_(jobject _this);
-    virtual void lockEGL();
-    static void lockEGL_(jobject _this);
     virtual jint getNativeContextPointer();
     static jint getNativeContextPointer_(jobject _this);
+    virtual jobject getNativePointer_unsafe(jint key);
+    static jobject getNativePointer_unsafe_(jobject _this, jint key);
     virtual void onNativeGLInitialize(jobject surfacetexture_0, jint int_1, jint int_2);
     static void onNativeGLInitialize_(jobject _this, jobject surfacetexture_0, jint int_1, jint int_2);
     virtual void onDestroyNative();
     static void onDestroyNative_(jobject _this);
+    virtual void setNativePointer(jint key, jobject ptr);
+    static void setNativePointer_(jobject _this, jint key, jobject ptr);
     virtual void onNativeGLDestroyed(jobject surfacetexture_0);
     static void onNativeGLDestroyed_(jobject _this, jobject surfacetexture_0);
 

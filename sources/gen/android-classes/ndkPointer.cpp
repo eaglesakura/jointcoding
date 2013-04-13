@@ -9,10 +9,10 @@ const ::jc::charactor* Pointer::CLASS_SIGNATURE = "com/eaglesakura/jc/android/re
 
 static jclass class_Pointer = NULL;
 
-#define methods_Pointer_LENGTH 6
+#define methods_Pointer_LENGTH 9
 
 #if methods_Pointer_LENGTH
-static jmethodID methods_Pointer[6];
+static jmethodID methods_Pointer[9];
 #endif
 
 static void initialize_Pointer() {
@@ -30,12 +30,15 @@ static void initialize_Pointer() {
 
     // load methods
     {
-        methods_Pointer[0] = ::ndk::JniWrapper::loadMethod(class_Pointer, "deleteSharedObjectPtr", "(I)V", true);
-        methods_Pointer[1] = ::ndk::JniWrapper::loadMethod(class_Pointer, "dispose", "()V", false);
-        methods_Pointer[2] = ::ndk::JniWrapper::loadMethod(class_Pointer, "getSharedObjectPtr", "(I)I", true);
-        methods_Pointer[3] = ::ndk::JniWrapper::loadMethod(class_Pointer, "deleteObjectPtr", "(I)V", true);
-        methods_Pointer[4] = ::ndk::JniWrapper::loadMethod(class_Pointer, "deleteVoidPtr", "(I)V", true);
-        methods_Pointer[5] = ::ndk::JniWrapper::loadMethod(class_Pointer, "getObjectPointer", "()I", false);
+        methods_Pointer[0] = ::ndk::JniWrapper::loadMethod(class_Pointer, "createSharedObjectInstance", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", true);
+        methods_Pointer[1] = ::ndk::JniWrapper::loadMethod(class_Pointer, "deleteSharedObjectPtr", "(I)V", true);
+        methods_Pointer[2] = ::ndk::JniWrapper::loadMethod(class_Pointer, "dispose", "()V", false);
+        methods_Pointer[3] = ::ndk::JniWrapper::loadMethod(class_Pointer, "getSharedObjectPtr", "(I)I", true);
+        methods_Pointer[4] = ::ndk::JniWrapper::loadMethod(class_Pointer, "createObjectPointerInstance", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", true);
+        methods_Pointer[5] = ::ndk::JniWrapper::loadMethod(class_Pointer, "deleteObjectPtr", "(I)V", true);
+        methods_Pointer[6] = ::ndk::JniWrapper::loadMethod(class_Pointer, "createVoidPointerInstance", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", true);
+        methods_Pointer[7] = ::ndk::JniWrapper::loadMethod(class_Pointer, "deleteVoidPtr", "(I)V", true);
+        methods_Pointer[8] = ::ndk::JniWrapper::loadMethod(class_Pointer, "getObjectPointer", "()I", false);
 
     }
 }
@@ -44,10 +47,16 @@ Pointer::Pointer(jobject obj): ::ndk::JniWrapper(obj){
     initialize_Pointer();
 }
 
+jobject Pointer::createSharedObjectInstance_unsafe(jint pointer) {
+    CALL_JNIENV();
+    initialize_Pointer();
+    return (jobject) env->CallStaticObjectMethod(class_Pointer, methods_Pointer[0], pointer);
+}
+
 void Pointer::deleteSharedObjectPtr(jint int_0) {
     CALL_JNIENV();
     initialize_Pointer();
-    env->CallStaticVoidMethod(class_Pointer, methods_Pointer[0], int_0);
+    env->CallStaticVoidMethod(class_Pointer, methods_Pointer[1], int_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -73,19 +82,19 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_resource_jni_Pointer_dele
 
 void Pointer::dispose() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_Pointer[1]);
+    env->CallVoidMethod(this->getObject(), methods_Pointer[2]);
 }
 
 void Pointer::dispose_(jobject _this) {
     CALL_JNIENV();
     initialize_Pointer();
-    env->CallVoidMethod(_this, methods_Pointer[1]);
+    env->CallVoidMethod(_this, methods_Pointer[2]);
 }
 
 jint Pointer::getSharedObjectPtr(jint int_0) {
     CALL_JNIENV();
     initialize_Pointer();
-    return (jint) env->CallStaticIntMethod(class_Pointer, methods_Pointer[2], int_0);
+    return (jint) env->CallStaticIntMethod(class_Pointer, methods_Pointer[3], int_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -109,10 +118,16 @@ JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_resource_jni_Pointer_getS
 #endif
 
 
+jobject Pointer::createObjectPointerInstance_unsafe(jint pointer) {
+    CALL_JNIENV();
+    initialize_Pointer();
+    return (jobject) env->CallStaticObjectMethod(class_Pointer, methods_Pointer[4], pointer);
+}
+
 void Pointer::deleteObjectPtr(jint int_0) {
     CALL_JNIENV();
     initialize_Pointer();
-    env->CallStaticVoidMethod(class_Pointer, methods_Pointer[3], int_0);
+    env->CallStaticVoidMethod(class_Pointer, methods_Pointer[5], int_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -136,10 +151,16 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_resource_jni_Pointer_dele
 #endif
 
 
+jobject Pointer::createVoidPointerInstance_unsafe(jint pointer) {
+    CALL_JNIENV();
+    initialize_Pointer();
+    return (jobject) env->CallStaticObjectMethod(class_Pointer, methods_Pointer[6], pointer);
+}
+
 void Pointer::deleteVoidPtr(jint int_0) {
     CALL_JNIENV();
     initialize_Pointer();
-    env->CallStaticVoidMethod(class_Pointer, methods_Pointer[4], int_0);
+    env->CallStaticVoidMethod(class_Pointer, methods_Pointer[7], int_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -165,13 +186,13 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_resource_jni_Pointer_dele
 
 jint Pointer::getObjectPointer() {
     CALL_JNIENV();
-    return (jint) env->CallIntMethod(this->getObject(), methods_Pointer[5]);
+    return (jint) env->CallIntMethod(this->getObject(), methods_Pointer[8]);
 }
 
 jint Pointer::getObjectPointer_(jobject _this) {
     CALL_JNIENV();
     initialize_Pointer();
-    return (jint) env->CallIntMethod(_this, methods_Pointer[5]);
+    return (jint) env->CallIntMethod(_this, methods_Pointer[8]);
 }
 
 jc_sp<Pointer> Pointer::wrap(jobject obj) {

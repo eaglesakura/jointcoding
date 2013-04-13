@@ -56,8 +56,6 @@ using namespace ndk;
 
 extern "C" {
 
-#define GLNativeTextureView_context GLNativeTextureViewContext::getNativeContext(_this)
-
 // main
 JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint egl_flags) {
     // call env reset
@@ -78,7 +76,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLInitialize");
 
-    GLNativeTextureView_context->onGLInitialize(surfacetexture_0);
+    ndk::getJointContextPointer<GLNativeTextureViewContext>(_this, 0)->onGLInitialize(surfacetexture_0);
     return;
 }
 
@@ -90,7 +88,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLSurfaceSizeChanged");
 
-    GLNativeTextureView_context->onSurfaceSizeChanged(surfacetexture_0, width, height);
+    ndk::getJointContextPointer<GLNativeTextureViewContext>(_this, 0)->onSurfaceSizeChanged(surfacetexture_0, width, height);
 
 #ifdef  RENDERING_CHECK
     rendering_check(GLNativeTextureView_context);
@@ -106,7 +104,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume");
 
-    GLNativeTextureView_context->onSurfaceSizeChanged(surfacetexture_0, width, height);
+    ndk::getJointContextPointer<GLNativeTextureViewContext>(_this, 0)->onSurfaceSizeChanged(surfacetexture_0, width, height);
     return;
 }
 
@@ -118,7 +116,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLDestroyed");
 
-    GLNativeTextureView_context->onGLSuspend();
+    ndk::getJointContextPointer<GLNativeTextureViewContext>(_this, 0)->onGLSuspend();
     return;
 }
 
@@ -130,29 +128,10 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onDestroyNative");
 
-    GLNativeTextureView_context->dispose();
+    ndk::getJointContextPointer<GLNativeTextureViewContext>(_this, 0)->dispose();
     return;
 }
 
-// main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_lockEGL(JNIEnv *env, jobject _this) {
-    // add code.
-//    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_lockEGL");
-//    if(!context->lockEGL()) {
-//        jclog("lock failed...");
-//    }
-//
-//    // sync commands
-//    glFinish();
-}
-
-// main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_unlockEGL(JNIEnv *env, jobject _this) {
-    // add code.
-//    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_unlockEGL");
-//    context->unlockEGL();
-//    return;
-}
 }
 
 #undef  GLNativeTextureView_context

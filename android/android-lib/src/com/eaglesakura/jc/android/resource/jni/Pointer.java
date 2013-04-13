@@ -174,4 +174,35 @@ public class Pointer extends DisposableResource {
     @JCMethod(
               nativeMethod = true)
     static native int getSharedObjectPtr(int jc_sp_pointer);
+
+    /**
+     * 
+     * jc_sp<Object>* のポインタを設定する
+     * @param pointer
+     * @return
+     */
+    @JCMethod
+    public static Pointer createSharedObjectInstance(int pointer) {
+        return new Pointer(pointer, Mode.SharedObject);
+    }
+
+    /**
+     * void* のポインタを設定する
+     * @param pointer
+     * @return
+     */
+    @JCMethod
+    public static Pointer createVoidPointerInstance(int pointer) {
+        return new Pointer(pointer, Mode.VoidPointer);
+    }
+
+    /**
+     * Object* のポインタを設定する
+     * @param pointer
+     * @return
+     */
+    @JCMethod
+    public static Pointer createObjectPointerInstance(int pointer) {
+        return new Pointer(pointer, Mode.Object);
+    }
 }

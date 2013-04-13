@@ -5,6 +5,7 @@ import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
 import android.view.TextureView;
 
+import com.eaglesakura.jc.android.resource.jni.Jointable;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
 import com.eaglesakura.jc.android.resource.jni.Pointer.Mode;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -24,7 +25,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class GLNativeTextureView extends TextureView implements TextureView.SurfaceTextureListener {
+public class GLNativeTextureView extends TextureView implements TextureView.SurfaceTextureListener, Jointable {
 
     static final String TAG = GLNativeTextureView.class.getSimpleName();
     /**
@@ -179,20 +180,6 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
     }
 
     /**
-     * EGLを強制的にロックする。
-     */
-    @JCMethod(
-              nativeMethod = true)
-    public native void lockEGL();
-
-    /**
-     * EGLをアンロックする
-     */
-    @JCMethod(
-              nativeMethod = true)
-    public native void unlockEGL();
-
-    /**
      * EGL初期化を行う
      * @param egl_flags
      * @return
@@ -235,6 +222,18 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
     @JCMethod(
               nativeMethod = true)
     native void onNativeGLDestroyed(SurfaceTexture surface);
+
+    @Override
+    @JCMethod
+    public Pointer getNativePointer(int key) {
+        return nativeContext;
+    }
+
+    @Override
+    @JCMethod
+    public void setNativePointer(int key, Pointer ptr) {
+        nativeContext = ptr;
+    }
 
     /**
      * Viewの解放を行う。
