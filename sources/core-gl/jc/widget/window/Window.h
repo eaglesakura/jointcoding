@@ -23,6 +23,7 @@ public:
     }
 
     virtual ~Window() {
+        jclogf("delete Window(%x)", this);
     }
 
     /**

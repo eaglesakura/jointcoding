@@ -94,7 +94,17 @@ public:
      * Context変換
      */
     static GLNativeTextureViewContext* getNativeContext(jobject glNativeTextureView) {
+        assert(glNativeTextureView != NULL);
         return getJointContextPointer<GLNativeTextureViewContext>(glNativeTextureView, 0);
+    }
+
+    /**
+     * デバイスを取得する
+     */
+    static MDevice getDevice(jobject jGLNativeTextureView) {
+        GLNativeTextureViewContext *context = getNativeContext(jGLNativeTextureView);
+        assert(context != NULL);
+        return context->getDevice();
     }
 };
 
