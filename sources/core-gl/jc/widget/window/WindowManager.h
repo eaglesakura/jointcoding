@@ -28,6 +28,11 @@ public:
     virtual jcboolean handleEvent(MEvent event) = 0;
 };
 
+/**
+ * selection
+ */
+typedef jc_selp<WindowEventHandler> SWindowEventHandler;
+
 class WindowManager: public Object {
     /**
      * イベント管理
@@ -53,15 +58,33 @@ class WindowManager: public Object {
      * ウィンドウの実解析を行う
      */
     MTouchDetector touchDetector;
+
+    /**
+     * 拡張用のウィンドウハンドラ
+     */
+    SWindowEventHandler eventHandler;
+
 protected:
     /**
      * タッチイベントを処理する
      */
     virtual void handleTouchEvent(MEvent event);
 
+    /**
+     * 個々のイベント対応を行う
+     */
+    virtual void dispatchEvent(MEvent event);
+
 public:
     WindowManager();
     virtual ~WindowManager();
+
+    /**
+     * イベントハンドラを設定する
+     */
+    virtual void setWindowEventHandler(const SWindowEventHandler windowEventHandler) {
+        this->eventHandler = windowEventHandler;
+    }
 
     /**
      * キューに溜まっているイベントの処理を行う
@@ -70,7 +93,7 @@ public:
      *
      * @param listener イベントハンドルのリスナ。NULLを渡した場合は自動チェックを行う。
      */
-    virtual void handleEvents(WindowEventHandler *listener = NULL);
+    virtual void handleEvents();
 
     /**
      * イベントを追加する。

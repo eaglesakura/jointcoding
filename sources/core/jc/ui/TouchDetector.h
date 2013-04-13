@@ -90,6 +90,8 @@ public:
     virtual void onPinchEnd(const TouchDetector *detector, const Vector2f &center) = 0;
 };
 
+typedef jc_selp<TouchListener> STouchListener;
+
 /**
  * タッチの解析を行う
  * タッチ地点は今のところ2点まで認識させる。
@@ -103,7 +105,7 @@ class TouchDetector: public Object {
     /**
      * 通知するリスナ
      */
-    jc_sp<TouchListener> listener;
+    STouchListener listener;
 
     /**
      * 最後にチェックした場所のポイント感の距離
@@ -149,7 +151,7 @@ class TouchDetector: public Object {
     virtual float getMultiTapPointDistance() const;
 
 public:
-    TouchDetector(const jc_sp<TouchListener> listener );
+    TouchDetector(const STouchListener listener );
 
     virtual ~TouchDetector();
 

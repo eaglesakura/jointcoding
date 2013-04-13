@@ -8,7 +8,8 @@
 
 namespace jc {
 
-TouchDetector::TouchDetector(const jc_sp<TouchListener> listener ) {
+TouchDetector::TouchDetector(const STouchListener listener) {
+    assert(listener.expired());
     this->listener = listener;
     this->pinchDistance = 1;
 }
@@ -21,7 +22,7 @@ TouchDetector::~TouchDetector() {
  * IDを指定してポイント取得する
  */
 MTouchPoint TouchDetector::getTouchPointFromId(s32 id) {
-    for (int i = 0; i < (int)points.size(); ++i) {
+    for (int i = 0; i < (int) points.size(); ++i) {
         if (points[i]->getId() == id) {
             return points[i];
         }
@@ -51,7 +52,7 @@ void TouchDetector::removeTouchPointFromId(s32 id) {
  * インデックスを指定してポイント取得する
  */
 MTouchPoint TouchDetector::getTouchPointFromIndex(s32 index) {
-    if (index >= 0 && index < (int)points.size()) {
+    if (index >= 0 && index < (int) points.size()) {
         return points[index];
     }
 
@@ -102,6 +103,8 @@ void TouchDetector::onTouchEvent(TouchEventProtocol *event) {
 //        jclogf("id = %d | type = %d", event->getTouchID(), event->getEventType());
 //        jclogf( "touch v(%f, %f)", event->getEventPosX(), event->getEventPosY());
     }
+
+    assert(listener.expired());
 
     s32 id = event->getTouchID(); // タッチポイントのID
     s32 type = event->getEventType(); // イベントタイプ

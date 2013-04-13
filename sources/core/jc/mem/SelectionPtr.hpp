@@ -51,14 +51,16 @@ public:
     /**
      * 生ポインタで生成
      */
-    SelectionPtr(const T *p) {
-        this->raw = p;
+    template<typename T2>
+    SelectionPtr(const T2 *p) {
+        this->raw = (T*)p;
     }
 
     /**
      *
      */
-    SelectionPtr(const jc_sp<T> sp) {
+    template<typename T2>
+    SelectionPtr(const jc_sp<T2> &sp) {
         this->raw = NULL;
         this->shared = sp;
     }
@@ -66,7 +68,8 @@ public:
     /**
      *
      */
-    SelectionPtr(const jc_wp<T> wp) {
+    template<typename T2>
+    SelectionPtr(const jc_wp<T2> &wp) {
         this->raw = NULL;
         this->weak = wp;
     }
@@ -79,9 +82,22 @@ public:
     }
 
     /**
-     * アロー演算子
+     * 生ポインタを取得する
      */
-    T* operator->() {
+    T* get() {
+        if (raw) {
+            return raw;
+        } else if (shared) {
+            return shared.get();
+        } else {
+            return weak.lock().get();
+        }
+    }
+
+    /**
+     * 生ポインタを取得する
+     */
+    T* get() const {
         if (raw) {
             return raw;
         } else if (shared) {
@@ -94,14 +110,19 @@ public:
     /**
      * アロー演算子
      */
+    T* operator->() {
+        T* result = get();
+        assert(result != NULL);
+        return result;
+    }
+
+    /**
+     * アロー演算子
+     */
     const T* operator->() const {
-        if (raw) {
-            return raw;
-        } else if (shared) {
-            return shared.get();
-        } else {
-            return weak.lock().get();
-        }
+        T* result = get();
+        assert(result != NULL);
+        return result;
     }
 
     /**
@@ -113,21 +134,33 @@ public:
         shared.reset();
     }
 
+    /**
+     * ポインタをリセットする
+     */
     void reset(const T *p) {
         reset();
         raw = p;
     }
 
-    void reset(const jc_sp<T> p) {
+    /**
+     * ポインタをリセットする
+     */
+    void reset(const jc_sp<T> &p) {
         reset();
         shared = p;
     }
 
-    void reset(const jc_wp<T> p) {
+    /**
+     * ポインタをリセットする
+     */
+    void reset(const jc_wp<T> &p) {
         reset();
         weak = p;
     }
 
+    /**
+     * 特定の型へダウンキャストする
+     */
     template<typename DC>
     SelectionPtr<DC> downcast() const {
         SelectionPtr<DC> result;
@@ -141,6 +174,28 @@ public:
         }
 
         return result;
+    }
+
+    /**
+     * 同値である場合はtrue
+     */
+    bool operator==(const SelectionPtr &p) const {
+        return get() == dynamic_cast<T>(p.get());
+    }
+
+    /**
+     * 異なる値である場合はtrue
+     */
+    bool operator!=(const SelectionPtr &p) const {
+        return get() != dynamic_cast<T>(p.get());
+    }
+
+    operator bool() const {
+        return get() != NULL;
+    }
+
+    bool operator!() const {
+        return get() == NULL;
     }
 };
 }

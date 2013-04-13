@@ -43,37 +43,33 @@ void WindowManager::handleTouchEvent(MEvent event) {
 
     touchDetector->onTouchEvent(touchEvent.get());
 }
+/**
+ * 個々のイベント対応を行う
+ */
+void WindowManager::dispatchEvent(MEvent event) {
+    assert(event.get() != NULL);
+
+    if (!eventHandler || !eventHandler->handleEvent(event)) {
+        //  拡張ハンドリングを行わなかったら、自前のハンドリングを行う
+        switch (event->getType()) {
+            case EventType_Touch:
+                handleTouchEvent(event);
+                break;
+        }
+    }
+}
 
 /**
  * キューに溜まっているイベントの処理を行う
  */
-void WindowManager::handleEvents(WindowEventHandler *listener) {
+void WindowManager::handleEvents() {
 // 処理したイベント数
-    s32 listenerEvents = 0;
     while (!events->empty()) {
         // 直近のイベントを取り出す
         MEvent event = events->popEvent();
-        assert(event.get() != NULL);
-
-        // listenerがあるなら、リスナに処理を行わせる
-        if (listener && listener->handleEvent(event)) {
-            ++listenerEvents;
-            event.reset();
-        }
-
-        // 処理が終わっていないなら通常ハンドリングを行う
-        if (event) {
-            switch (event->getType()) {
-                case EventType_Touch:
-                    handleTouchEvent(event);
-                    break;
-            }
-        }
+        // 実行させる
+        dispatchEvent(event);
     }
-
-//    if (eventNum) {
-//        jclogf("Handle Events(%d)", eventNum);
-//    }
 }
 
 /**
