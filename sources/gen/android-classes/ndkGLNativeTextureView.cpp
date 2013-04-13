@@ -33,7 +33,7 @@ static void initialize_GLNativeTextureView() {
     // load methods
     {
         methods_GLNativeTextureView[0] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onNativeGLSurfaceSizeChanged", "(Landroid/graphics/SurfaceTexture;II)V", false);
-        methods_GLNativeTextureView[1] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onCreateNativeContext", "(I)I", false);
+        methods_GLNativeTextureView[1] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onCreateNativeContext", "(I)V", false);
         methods_GLNativeTextureView[2] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "getNativeContextPointer", "()I", false);
         methods_GLNativeTextureView[3] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "getNativePointer", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", false);
         methods_GLNativeTextureView[4] = ::ndk::JniWrapper::loadMethod(class_GLNativeTextureView, "onNativeGLInitialize", "(Landroid/graphics/SurfaceTexture;II)V", false);
@@ -101,9 +101,9 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 #endif
 
 
-jint GLNativeTextureView::onCreateNativeContext(jint int_0) {
+void GLNativeTextureView::onCreateNativeContext(jint int_0) {
     CALL_JNIENV();
-    return (jint) env->CallIntMethod(this->getObject(), methods_GLNativeTextureView[1], int_0);
+    env->CallVoidMethod(this->getObject(), methods_GLNativeTextureView[1], int_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -111,26 +111,26 @@ jint GLNativeTextureView::onCreateNativeContext(jint int_0) {
 
 extern "C" {
 // prototype
-JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint int_0);
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint int_0);
 }
 
 // main
-JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint int_0) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint int_0) {
     // call env reset
     initJniEnv(env);
     
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext");
     
-    return (jint) 0;
+    return;
 }
 #endif
 
 
-jint GLNativeTextureView::onCreateNativeContext_(jobject _this, jint int_0) {
+void GLNativeTextureView::onCreateNativeContext_(jobject _this, jint int_0) {
     CALL_JNIENV();
     initialize_GLNativeTextureView();
-    return (jint) env->CallIntMethod(_this, methods_GLNativeTextureView[1], int_0);
+    env->CallVoidMethod(_this, methods_GLNativeTextureView[1], int_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -138,18 +138,18 @@ jint GLNativeTextureView::onCreateNativeContext_(jobject _this, jint int_0) {
 
 extern "C" {
 // prototype
-JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint int_0);
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint int_0);
 }
 
 // main
-JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint int_0) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint int_0) {
     // call env reset
     initJniEnv(env);
     
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext");
     
-    return (jint) 0;
+    return;
 }
 #endif
 

@@ -7,7 +7,6 @@ import android.view.TextureView;
 
 import com.eaglesakura.jc.android.resource.jni.Jointable;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
-import com.eaglesakura.jc.android.resource.jni.Pointer.Mode;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCField;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -104,11 +103,10 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
             throw new RuntimeException(TAG + " callback is null...");
         }
 
-        int context = onCreateNativeContext(EGL_DEPTHBUFFER_ENABLE | EGL_STENCILBUFFER_ENABLE);
-        if (context == Pointer.NULL) {
-            throw new NullPointerException("native context is null...");
+        onCreateNativeContext(EGL_DEPTHBUFFER_ENABLE | EGL_STENCILBUFFER_ENABLE);
+        if (nativeContext == null) {
+            throw new RuntimeException("nativeContext == null");
         }
-        nativeContext = new Pointer(context, Mode.SharedObject);
 
         this.es2callback = callback;
 
@@ -186,7 +184,7 @@ public class GLNativeTextureView extends TextureView implements TextureView.Surf
      */
     @JCMethod(
               nativeMethod = true)
-    native int onCreateNativeContext(int egl_flags);
+    native void onCreateNativeContext(int egl_flags);
 
     /**
      * Nativeの削除を行う

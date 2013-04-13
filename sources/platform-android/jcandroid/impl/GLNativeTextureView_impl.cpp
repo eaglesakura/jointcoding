@@ -57,22 +57,16 @@ using namespace ndk;
 extern "C" {
 
 // main
-JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint egl_flags) {
-    // call env reset
-    initJniEnv(env);
-
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext(JNIEnv *env, jobject _this, jint egl_flags) {
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext");
 
     GLNativeTextureViewContext *nativeContext = new GLNativeTextureViewContext(egl_flags);
-    return (jint) new jc_sp<GLNativeTextureViewContext>(nativeContext);
+    setJointContextPointer_Object(_this, 0, (Object*)nativeContext);
 }
 
 // main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLInitialize(JNIEnv *env, jobject _this, jobject surfacetexture_0, jint int_1, jint int_2) {
-    // call env reset
-    initJniEnv(env);
-
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLInitialize");
 
@@ -82,9 +76,6 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 
 // main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLSurfaceSizeChanged(JNIEnv *env, jobject _this, jobject surfacetexture_0, jint width, jint height) {
-    // call env reset
-    initJniEnv(env);
-
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLSurfaceSizeChanged");
 
@@ -98,9 +89,6 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 
 // main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume(JNIEnv *env, jobject _this, jobject surfacetexture_0, jint width, jint height) {
-    // call env reset
-    initJniEnv(env);
-
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLResume");
 
@@ -110,9 +98,6 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 
 // main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLDestroyed(JNIEnv *env, jobject _this, jobject surfacetexture_0) {
-    // call env reset
-    initJniEnv(env);
-
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onNativeGLDestroyed");
 
@@ -122,9 +107,6 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 
 // main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onDestroyNative(JNIEnv *env, jobject _this) {
-    // call env reset
-    initJniEnv(env);
-
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onDestroyNative");
 
@@ -133,5 +115,3 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 }
 
 }
-
-#undef  GLNativeTextureView_context

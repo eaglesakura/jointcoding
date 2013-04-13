@@ -90,15 +90,11 @@ public:
         return device;
     }
 
-    virtual jcboolean lockEGL();
-
-    virtual void unlockEGL();
-
     /**
      * Context変換
      */
-    static jc_sp<GLNativeTextureViewContext>& getNativeContext(jobject glNativeTextureView) {
-        return *((jc_sp<GLNativeTextureViewContext>*)GLNativeTextureView::getNativeContextPointer_(glNativeTextureView));
+    static GLNativeTextureViewContext* getNativeContext(jobject glNativeTextureView) {
+        return getJointContextPointer<GLNativeTextureViewContext>(glNativeTextureView, 0);
     }
 };
 

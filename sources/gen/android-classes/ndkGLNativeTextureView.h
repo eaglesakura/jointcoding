@@ -17,8 +17,8 @@ public:
     static const ::jc::charactor* CLASS_SIGNATURE;
     virtual void onNativeGLSurfaceSizeChanged(jobject surfacetexture_0, jint int_1, jint int_2);
     static void onNativeGLSurfaceSizeChanged_(jobject _this, jobject surfacetexture_0, jint int_1, jint int_2);
-    virtual jint onCreateNativeContext(jint int_0);
-    static jint onCreateNativeContext_(jobject _this, jint int_0);
+    virtual void onCreateNativeContext(jint int_0);
+    static void onCreateNativeContext_(jobject _this, jint int_0);
     virtual jint getNativeContextPointer();
     static jint getNativeContextPointer_(jobject _this);
     virtual jobject getNativePointer_unsafe(jint key);
