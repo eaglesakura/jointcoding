@@ -57,6 +57,15 @@ jcboolean Window::sendEvent(const scene_id layoutId, MEvent event) {
     }
     return jcfalse;
 }
+/**
+ * 遷移カウンターを更新する
+ * View管理用が一括で更新される
+ * 現在のvalueは維持される。
+ */
+void Window::setWeightCounter(const float leapTimeSec) {
+    // Windowは特殊なクラスになるため、遷移設定を行わない
+}
+
 
 }
 }

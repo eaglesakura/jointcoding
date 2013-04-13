@@ -103,6 +103,23 @@ void WindowManager::rendering(const s32 numPass) {
         window->endPass(ScenePassType_Rendering);
     }
 }
+/**
+ * WindowManagerの処理ループ開始を宣言する
+ *
+ * loopBegin() -> update(nPass) -> rendering(nPass) -> loopEnd(withPost)
+ *
+ */
+void WindowManager::loopBegin() {
+    windowContext->loopController.beginFrame(); // コントローラーに開始を伝える
+}
+
+/**
+ * レンダリングの終了を宣言する。
+ * フロントバッファ転送バッファの可否を引数で設定する
+ */
+void WindowManager::loopEnd(const jcboolean withPostFrontBuffer) {
+    windowContext->loopController.endFrame(NULL, NULL); // コントローラーに終了を伝える
+}
 
 }
 }

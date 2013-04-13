@@ -142,6 +142,14 @@ public:
     }
 
     /**
+     * WindowManagerの処理ループ開始を宣言する
+     *
+     * loopBegin() -> update(nPass) -> rendering(nPass) -> loopEnd(withPost)
+     *
+     */
+    virtual void loopBegin();
+
+    /**
      * 毎フレームの処理を行わせる
      * @param numPass レンダリングするパス数
      */
@@ -152,6 +160,12 @@ public:
      * @param numPass レンダリングするパス数
      */
     virtual void rendering(const s32 numPass = 1);
+
+    /**
+     * レンダリングの終了を宣言する。
+     * フロントバッファ転送バッファの可否を引数で設定する
+     */
+    virtual void loopEnd(const jcboolean withPostFrontBuffer = jctrue);
 
     /**
      * 特定のレイアウトへイベントを送信する

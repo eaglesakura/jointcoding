@@ -50,6 +50,13 @@ public:
         return sendEvent(layoutId, Event::createEvent(eventType, extension));
     }
 
+    /**
+     * 遷移カウンターを更新する
+     * View管理用が一括で更新される
+     * 現在のvalueは維持される。
+     */
+    virtual void setWeightCounter(const float leapTimeSec);
+
 };
 
 /**

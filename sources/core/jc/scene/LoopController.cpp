@@ -38,6 +38,7 @@ void LoopController::beginFrame() {
  * @param result_sleep_timems != NULLの場合、次のフレームまでにスリープすべき時間を返す
  */
 void LoopController::endFrame(u32 *result_frame_timems, u32 *result_sleep_timems) {
+    // 現在時刻を打刻する
     beforeFrameFinishTime = Timer::currentTime();
 
     // 1フレームの所要時間を計算する

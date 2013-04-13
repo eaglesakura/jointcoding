@@ -16,8 +16,7 @@ View::View() {
     this->viewMode = ViewMode_Visible;
 
     // デフォルトのカウンターを整理
-    setWeightCounter(createTransitionCounter(60, 0.5));
-    visibleCounter.setValue(1.0f);
+    visibleCounter.setValueDirect(1.0f);
 }
 
 View::~View() {
@@ -126,6 +125,11 @@ void View::registerWindow() {
         // ウィンドウからコンテキストをコピーする
         this->windowContext = window->windowContext;
 
+        // コントローラーを作成する
+        {
+            setWeightCounter(0.2f);
+        }
+
         sendMessage = jctrue;
     }
 
@@ -160,24 +164,26 @@ RectF View::getWindowArea() {
  * フォーカス用、ダウン用が一括で更新される。
  * 現在のvalueは維持される。
  */
-void View::setWeightCounter(const CounterF newCounter) {
+void View::setWeightCounter(const float leapTimeSec) {
+    assert(isRegisteredWindow());
+
     // フォーカス用
     {
         const float value = focusCounter.getValue();
-        focusCounter = newCounter;
-        focusCounter.setValue(value);
+        focusCounter.initialize(windowContext, leapTimeSec);
+        focusCounter.setValueDirect(value);
     }
     // ダウン用
     {
         const float value = downCounter.getValue();
-        downCounter = newCounter;
-        downCounter.setValue(value);
+        downCounter.initialize(windowContext, leapTimeSec);
+        downCounter.setValueDirect(value);
     }
     // 可視状態用
     {
         const float value = visibleCounter.getValue();
-        visibleCounter = newCounter;
-        visibleCounter.setValue(value);
+        visibleCounter.initialize(windowContext, leapTimeSec);
+        visibleCounter.setValueDirect(value);
     }
 }
 
@@ -185,7 +191,7 @@ void View::setWeightCounter(const CounterF newCounter) {
  * 可視状態描画用のカウントを取得sルウ
  */
 float View::getVisibleWeight() const {
-    return visibleCounter.getValue(LeapType_Ease1);
+    return visibleCounter.getValue();
 }
 
 /**

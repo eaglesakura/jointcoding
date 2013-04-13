@@ -12,6 +12,7 @@
 #include    "jc/scene/SceneGraph.h"
 
 #include    "jc/ui/TouchDetector.h"
+#include    "jc/scene/LoopController.h"
 
 namespace jc {
 namespace view {
@@ -24,6 +25,8 @@ class View;
  * View階層を維持するために必要なWindow共通情報を設定する
  */
 class WindowContext: public Object {
+    friend class WindowManager;
+
     /**
      * Window本体.
      */
@@ -38,6 +41,11 @@ class WindowContext: public Object {
      * レンダリング用のスプライトマネージャ
      */
     MSpriteManager spriteManager;
+
+    /**
+     * ループ状態を管理するカウンタ
+     */
+    LoopController loopController;
 
 public:
     WindowContext() {
@@ -115,6 +123,13 @@ public:
     template<typename T>
     jc_sp<T> findViewTo(const scene_id id) {
         return downcast<T>(findViewById(id));
+    }
+
+    /**
+     * 前のフレームから現在の時間までの経過秒を取得する
+     */
+    virtual double getFrameElapsedSec() const {
+        return loopController.getElapsedSec();
     }
 };
 

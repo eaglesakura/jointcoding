@@ -13,6 +13,7 @@
 #include    "jc/widget/event/Event.h"
 #include    "jc/widget/window/WindowContext.h"
 #include    "jc/math/Counter.h"
+#include    "jc/widget/anim/TransactionCounter.h"
 //#include    "jc/ui/TouchPoint.h"
 
 namespace jc {
@@ -77,17 +78,17 @@ protected:
     /**
      * フォーカス状態を管理する遷移カウンター
      */
-    CounterF focusCounter;
+    TransactionCounter focusCounter;
 
     /**
      * ダウン状態を管理する遷移カウンター
      */
-    CounterF downCounter;
+    TransactionCounter downCounter;
 
     /**
      * 可視状態を管理する遷移カウンター
      */
-    CounterF visibleCounter;
+    TransactionCounter visibleCounter;
 
     /**
      * Viewの配置
@@ -181,14 +182,14 @@ public:
      * フォーカス描画用のカウントを取得する
      */
     virtual float getFocusWeight(const jcboolean withVisibleCounter = jctrue) const {
-        return focusCounter.getValue(LeapType_Ease1) * (withVisibleCounter ? getVisibleWeight() : 1.0f);
+        return focusCounter.getValue() * (withVisibleCounter ? getVisibleWeight() : 1.0f);
     }
 
     /**
      * ダウン描画用のカウントを取得する
      */
     virtual float getDownWeight(const jcboolean withVisibleCounter = jctrue) const {
-        return downCounter.getValue(LeapType_Ease1) * (withVisibleCounter ? getVisibleWeight() : 1.0f);
+        return downCounter.getValue() * (withVisibleCounter ? getVisibleWeight() : 1.0f);
     }
 
     /**
@@ -250,10 +251,10 @@ public:
 
     /**
      * 遷移カウンターを更新する
-     * フォーカス用、ダウン用が一括で更新される。
+     * View管理用が一括で更新される
      * 現在のvalueは維持される。
      */
-    virtual void setWeightCounter(const CounterF newCounter);
+    virtual void setWeightCounter(const float leapTimeSec);
 
     /**
      * 更新作業を行う

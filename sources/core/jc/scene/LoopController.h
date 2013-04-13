@@ -79,6 +79,13 @@ public:
     virtual jcboolean sleepToNextFrame();
 
     /**
+     * 前のフレームからの経過時間を取得する
+     */
+    virtual double getElapsedSec() const {
+        return elapsed_sec;
+    }
+
+    /**
      * 秒単位のパラメータをフレーム単位のパラメータに変換する。
      *
      */
