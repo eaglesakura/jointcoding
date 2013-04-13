@@ -9,10 +9,10 @@ const ::jc::charactor* Pointer::CLASS_SIGNATURE = "com/eaglesakura/jc/android/re
 
 static jclass class_Pointer = NULL;
 
-#define methods_Pointer_LENGTH 5
+#define methods_Pointer_LENGTH 6
 
 #if methods_Pointer_LENGTH
-static jmethodID methods_Pointer[5];
+static jmethodID methods_Pointer[6];
 #endif
 
 static void initialize_Pointer() {
@@ -35,6 +35,7 @@ static void initialize_Pointer() {
         methods_Pointer[2] = ::ndk::JniWrapper::loadMethod(class_Pointer, "getSharedObjectPtr", "(I)I", true);
         methods_Pointer[3] = ::ndk::JniWrapper::loadMethod(class_Pointer, "deleteObjectPtr", "(I)V", true);
         methods_Pointer[4] = ::ndk::JniWrapper::loadMethod(class_Pointer, "deleteVoidPtr", "(I)V", true);
+        methods_Pointer[5] = ::ndk::JniWrapper::loadMethod(class_Pointer, "getObjectPointer", "()I", false);
 
     }
 }
@@ -161,6 +162,17 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_resource_jni_Pointer_dele
 }
 #endif
 
+
+jint Pointer::getObjectPointer() {
+    CALL_JNIENV();
+    return (jint) env->CallIntMethod(this->getObject(), methods_Pointer[5]);
+}
+
+jint Pointer::getObjectPointer_(jobject _this) {
+    CALL_JNIENV();
+    initialize_Pointer();
+    return (jint) env->CallIntMethod(_this, methods_Pointer[5]);
+}
 
 jc_sp<Pointer> Pointer::wrap(jobject obj) {
     return jc_sp<Pointer>( new Pointer(obj));

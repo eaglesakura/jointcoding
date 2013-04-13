@@ -21,6 +21,8 @@ public:
     static jint getSharedObjectPtr(jint int_0);
     static void deleteObjectPtr(jint int_0);
     static void deleteVoidPtr(jint int_0);
+    virtual jint getObjectPointer();
+    static jint getObjectPointer_(jobject _this);
 
 
     static jc_sp<Pointer> wrap(jobject obj);

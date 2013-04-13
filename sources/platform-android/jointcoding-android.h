@@ -25,6 +25,7 @@ using namespace jc;
 #include	"jni.h"
 
 #include    "jcandroid/ndk-support.h"
+#include    "jcandroid/jni/Jointable.h"
 #include	"jcandroid/jni/SmartJObject.h"
 #include	"jcandroid/jni/JniWrapper.h"
 #include    "jcandroid/jni/JniArray.h"

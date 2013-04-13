@@ -134,6 +134,7 @@ public class Pointer extends DisposableResource {
      * ナマのポインタを取得する。
      * @return
      */
+    @JCMethod
     public int getObjectPointer() {
         if (pointer == NULL) {
             return NULL;
@@ -141,6 +142,10 @@ public class Pointer extends DisposableResource {
         return mode.rawPointer(pointer);
     }
 
+    /**
+     * ポインタの制御モードを取得する
+     * @return
+     */
     public Mode getMode() {
         return mode;
     }
