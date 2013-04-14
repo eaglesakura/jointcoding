@@ -196,9 +196,12 @@ public:
      * フォーカスを持てるかの設定を行う。
      * デフォルトはtrue
      */
-    virtual void setFocusable( const jcboolean set) {
-        this->focusable = set;
-    }
+    virtual void setFocusable( const jcboolean set);
+
+    /**
+     * フォーカス状態を変更する
+     */
+    virtual void requestFocus(const jcboolean has);
 
     /**
      * フォーカスを持っている場合はtrueを返す
@@ -406,6 +409,11 @@ protected:
      * ダウン状態の更新を行う
      */
     virtual void dispatchDownEvent(const jcboolean down);
+
+    /**
+     * フォーカスを失ってほしいリクエスト
+     */
+    virtual void dispatchLostFocusRequestEvent(const MEvent event);
 
     /**
      * 送信されたイベントを処理する

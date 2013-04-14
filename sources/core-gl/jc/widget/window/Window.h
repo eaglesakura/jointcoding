@@ -17,6 +17,7 @@ namespace view {
  */
 class Window: public View {
     static void broadCastEvent(MView view, MEvent event);
+    static MView findFocusView(MView view);
 public:
     Window(const MWindowContext windowContext) {
         this->windowContext = windowContext;
@@ -58,11 +59,16 @@ public:
      */
     virtual void setWeightCounter(const float leapTimeSec);
 
+    /**
+     * フォーカスを持っているViewを取得する
+     */
+    virtual MView findFocusedView( );
+
 };
 
-/**
- * managed
- */
+    /**
+     * managed
+     */
 typedef jc_sp<Window> MWindow;
 
 }

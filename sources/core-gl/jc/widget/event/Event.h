@@ -30,6 +30,11 @@ enum EventType_e {
      * クリックイベントが行われた
      */
     EventType_Click,
+
+    /**
+     * フォーカスを一度見失って欲しい
+     */
+    EventType_LostFocusRequest,
 };
 
 /**
@@ -80,7 +85,7 @@ public:
     /**
      * イベントを作成する
      */
-    static jc_sp<Event> createEvent( const s32 type, const jc_sp<Object> extension ) {
+    static jc_sp<Event> createEvent( const s32 type, const jc_sp<Object> extension = jc_sp<Object>() ) {
         return jc_sp<Event>(new Event(type, extension));
     }
 };

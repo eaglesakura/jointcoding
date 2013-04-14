@@ -24,6 +24,56 @@ View::~View() {
 }
 
 /**
+ * フォーカスを持てるかの設定を行う。
+ * デフォルトはtrue
+ */
+void View::setFocusable(const jcboolean set) {
+    const jcboolean _hasFocus = hasFocus();
+    this->focusable = set;
+
+    if (_hasFocus && !set) {
+        // フォーカスを持っていたのに、フォーカスを失ってしまった
+
+        // フォーカスアウトをリクエストする
+        requestFocus(jcfalse);
+    }
+}
+
+/**
+ * フォーカス状態を変更する
+ */
+void View::requestFocus(const jcboolean has) {
+    assert(isRegisteredWindow());
+
+    // フォーカスを持てないならそもそも何もしない
+    if (!isFocusable() && has) {
+        return;
+    }
+
+    // 状態が同じだったら何もしない
+    if (focus == has) {
+        return;
+    }
+
+    // 新たなフォーカスをONにするには、古いViewのフォーカスを消す必要がある
+    // Windowにフォーカスロストをブロードキャスト
+    if (has) {
+        MView focusView = lockWindow()->findFocusedView();
+        if (focusView && focusView.get() != this) {
+            focusView->requestFocus(jcfalse);
+        }
+    }
+
+    // 自分のフォーカス状態を書き換える
+    {
+        focus = has;
+    }
+
+    // メッセージを送る
+    onFocusChanged(has);
+}
+
+/**
  * クリックされた
  */
 void View::onClick() {
@@ -51,25 +101,36 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
     const jcboolean before_focus = hasFocus();
 
     if(clicked.get() == this) {
+        // クリックメッセージを処理させる
+        onClick();
+
+#if 0
         // 自分のクリックが行われた
         if(isFocusable()) {
             // フォーカス当てを行う
             focus = jctrue;
         }
+#else
+        requestFocus(jctrue);
+#endif
 
-        // クリックメッセージを処理させる
-        onClick();
     } else {
+#if 0
         // フォーカスを外す
         focus = jcfalse;
+#else
+        requestFocus(jcfalse);
+#endif
     }
 
-    // フォーカスに違いが出たらメッセージ
-    if(before_focus != hasFocus()) {
-        onFocusChanged(hasFocus());
-    }
+#if 0
+        // フォーカスに違いが出たらメッセージ
+        if(before_focus != hasFocus()) {
+            onFocusChanged(hasFocus());
+        }
+#endif
 
-}
+    }
 
 /**
  * ダウン状態の更新を行う
@@ -88,6 +149,17 @@ void View::dispatchDownEvent(const jcboolean down) {
         onDownChanged(down);
     }
 }
+/**
+ * フォーカスを失ってほしいリクエスト
+ */
+void View::dispatchLostFocusRequestEvent(const MEvent event) {
+    if (!focus) {
+        return;
+    }
+
+    focus = jcfalse;
+    onFocusChanged(jcfalse);
+}
 
 /**
  * 送信されたイベントを処理する
@@ -100,6 +172,9 @@ void View::dispatchEvent(MEvent event) {
     switch (EVENT_TYPE) {
         case EventType_Click:
             dispatchClickEvent(event->getExtension<View>());
+            break;
+        case EventType_LostFocusRequest:
+            dispatchEvent(event);
             break;
         default:
             onEvent(event);
@@ -281,25 +356,18 @@ void View::renderingArea() {
     assert(isRegisteredWindow());
 
     MSpriteManager spriteManager = getSpriteManager();
-    const RectF area = getGlobalLayoutArea().createScaling(0.99f);
 
+    Color color_fill;
+    Color color_line;
     if (isVisible()) {
-        Color color = Color::fromRGBAf(getRenderingPriority(), 0.0f, 1.0f, 0.5f);
-        spriteManager->renderingRect(area, color.rgba);
+        color_fill = Color::fromRGBAf(getRenderingPriority(), 0.0f, 1.0f, 0.5f);
+        color_line = Color::fromRGBAi(0, 255, 0, 255);
+    } else {
+        color_fill = Color::fromRGBAf(0, 0, 0, 0);
+        color_line = Color::fromRGBAi(0, 0, 255, 255);
     }
 
-// 周りの線を描画する
-    {
-        Color color;
-        if (isVisible()) {
-            color.rgba = 0x00FF00FF;
-        } else {
-            color.rgba = 0x0000FF7F;
-        }
-        spriteManager->startLineRendering();
-        spriteManager->renderingRect(area, color.rgba);
-        spriteManager->startQuadRendering();
-    }
+    spriteManager->renderingArea(getGlobalLayoutArea(), color_fill, color_line);
 }
 
 /**

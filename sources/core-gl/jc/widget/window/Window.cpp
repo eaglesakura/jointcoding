@@ -18,7 +18,7 @@ void Window::broadCastEvent(MView view, MEvent event) {
     std::list<MSceneGraph>::iterator itr = view->childs.begin(), end = view->childs.end();
 
     while (itr != end) {
-        MView child  = downcast<View>(*itr);
+        MView child = downcast<View>(*itr);
         if (child) {
             broadCastEvent(child, event);
         }
@@ -66,6 +66,37 @@ void Window::setWeightCounter(const float leapTimeSec) {
     // Windowは特殊なクラスになるため、遷移設定を行わない
 }
 
+MView Window::findFocusView(MView view) {
+    if (!view) {
+        return MView();
+    }
+
+    if (view->hasFocus()) {
+        return view;
+    }
+
+    std::list<MSceneGraph>::iterator itr = view->childs.begin(), end = view->childs.end();
+    while (itr != end) {
+        findFocusView(downcast<View>(*itr));
+        ++itr;
+    }
+
+    return MView();
+}
+
+/**
+ * フォーカスを持っているViewを取得する
+ */
+MView Window::findFocusedView() {
+
+    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    while (itr != end) {
+        findFocusView(downcast<View>(*itr));
+        ++itr;
+    }
+
+    return MView();
+}
 
 }
 }

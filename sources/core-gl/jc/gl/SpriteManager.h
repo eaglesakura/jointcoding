@@ -256,6 +256,32 @@ public:
     }
 
     /**
+     * デバッグ用のエリアレンダリング（fill色で塗りつぶし後、line色で線を描く）を行う。
+     */
+    virtual void renderingArea( const RectF &area, const rgba32 fillColor, const rgba32 lineColor) {
+        {
+            startQuadRendering();
+            renderingRect(area, fillColor);
+        }
+        {
+            RectF lineArea = area;
+            startLineRendering();
+            setLineWidth(2.0f);
+            lineArea.inset(1, 1);
+            renderingRect(lineArea, lineColor);
+        }
+        startQuadRendering();
+
+    }
+
+    /**
+     * 線レンダリングの幅を取得する
+     */
+    virtual void setLineWidth( const float width) {
+        device->getState()->lineWidth(2.0f);
+    }
+
+    /**
      * 線描画を開始する
      */
     virtual void startLineRendering() {

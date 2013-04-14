@@ -29,7 +29,8 @@ void LoopController::beginFrame() {
     const double elapsed_ms = (double) Timer::lapseTimeMs(beforeFrameFinishTime, frameBeginTime);
     // 経過時間を秒単位に変換する
     // 120分の１秒未満、もしくは15分の1秒以上の超過は不自然な値とみなしてシャットアウトする
-    elapsed_sec = jc::minmax<double>(1000.0 / 120.0, 1000 / 15.0, elapsed_ms / 1000.0f);
+    elapsed_sec = elapsed_ms / 1000.0f;
+    elapsed_sec = jc::minmax<double>(1.0 / 120.0, 1 / 15.0, elapsed_sec);
 }
 
 /**

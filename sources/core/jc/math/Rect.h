@@ -51,6 +51,16 @@ struct RectT {
     }
 
     /**
+     * 内側にX/Y分小さくする
+     */
+    void inset(const T x, const T y) {
+        left += x;
+        right -= x;
+        top += y;
+        bottom -= y;
+    }
+
+    /**
      * XとYがRectに含まれているならばtrueを返す
      * 同一座標も含まれる。
      */

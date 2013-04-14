@@ -279,6 +279,18 @@ public:
     }
 
     /**
+     * サーフェイスのデフォルトエリアを取得する
+     */
+    virtual RectF getSurfaceAreaF() const {
+        RectF result;
+        if (surface) {
+            result.right = surface->getWidth();
+            result.bottom = surface->getHeight();
+        }
+        return result;
+    }
+
+    /**
      * 左上起点のディスプレイ座標系から、左下起点のウィンドウ座標系へ変換する。
      *
      * resultのポインタをそのまま帰す。
