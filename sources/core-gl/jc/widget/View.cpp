@@ -12,7 +12,7 @@ namespace view {
 
 View::View() {
     this->down = this->focus = jcfalse;
-    this->focusable = this->touchable = jctrue;
+    this->enable = this->focusable = this->touchable = jctrue;
     this->viewMode = ViewMode_Visible;
 
     // デフォルトのカウンターを整理
@@ -20,6 +20,27 @@ View::View() {
 }
 
 View::~View() {
+
+}
+
+/**
+ * 状態の有効・無効を一括で切り替える
+ */
+void View::setEnable(const jcboolean enable) {
+    if (isEnable() == enable) {
+        return;
+    }
+
+    this->enable = enable;
+    if (hasFocus()) {
+        requestFocus(jcfalse);
+    }
+
+    if (down) {
+        dispatchDownEvent(jcfalse);
+    }
+
+    onEnableChanged(enable);
 
 }
 
@@ -74,6 +95,32 @@ void View::requestFocus(const jcboolean has) {
 }
 
 /**
+ * フォーカスを持っている場合はtrueを返す。
+ * 子孫を探索して、子孫がフォーカスを持っている場合もtrueを返す。
+ */
+jcboolean View::hasFocus(const jcboolean recursive) {
+    if (hasFocus()) {
+        return jctrue;
+    }
+
+    if (recursive) {
+        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        while (itr != end) {
+
+            MView view = downcast<View>(*itr);
+            if (view && view->hasFocus(jctrue)) {
+                // 子のフォーカス探索に成功した
+                return jctrue;
+            }
+            ++itr;
+        }
+    }
+
+    // 見つからなかった
+    return jcfalse;
+}
+
+/**
  * クリックされた
  */
 void View::onClick() {
@@ -103,34 +150,12 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
     if(clicked.get() == this) {
         // クリックメッセージを処理させる
         onClick();
-
-#if 0
-        // 自分のクリックが行われた
-        if(isFocusable()) {
-            // フォーカス当てを行う
-            focus = jctrue;
-        }
-#else
         requestFocus(jctrue);
-#endif
 
     } else {
-#if 0
-        // フォーカスを外す
-        focus = jcfalse;
-#else
         requestFocus(jcfalse);
-#endif
     }
-
-#if 0
-        // フォーカスに違いが出たらメッセージ
-        if(before_focus != hasFocus()) {
-            onFocusChanged(hasFocus());
-        }
-#endif
-
-    }
+}
 
 /**
  * ダウン状態の更新を行う

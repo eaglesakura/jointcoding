@@ -70,9 +70,15 @@ private:
     jcboolean down;
 
     /**
+     * 有効状態
+     */
+    jcboolean enable;
+
+    /**
      * Viewの表示状態を取得する
      */
     ViewMode_e viewMode;
+
 protected:
 
     /**
@@ -115,6 +121,19 @@ protected:
 public:
     View();
     virtual ~View();
+
+    /**
+     * 状態の有効・無効を一括で切り替える
+     */
+    virtual void setEnable(const jcboolean enable);
+
+    /**
+     * 有効・無効状態を問い合わせる
+     * default = true
+     */
+    virtual jcboolean isEnable() const {
+        return enable;
+    }
 
     /**
      * ウィンドウとViewを関連付ける。
@@ -211,10 +230,16 @@ public:
     }
 
     /**
+     * フォーカスを持っている場合はtrueを返す。
+     * 子孫を探索して、子孫がフォーカスを持っている場合もtrueを返す。
+     */
+    virtual jcboolean hasFocus(const jcboolean recursive);
+
+    /**
      * フォーカスを持つことができるViewの場合はtrueを返す
      */
     virtual jcboolean isFocusable() const {
-        return focusable && isVisible();
+        return focusable && isVisible() && isEnable();
     }
 
     /**
@@ -228,7 +253,7 @@ public:
      * タッチを処理すべきViewである場合はtrueを返す
      */
     virtual jcboolean isTouchable() const {
-        return touchable && isVisible();
+        return touchable && isVisible() && isEnable();
     }
 
     /**
@@ -392,6 +417,13 @@ protected:
      * フォーカス状態が更新された
      */
     virtual void onFocusChanged(const jcboolean has);
+
+    /**
+     * 有効・無効状態が変更された
+     */
+    virtual void onEnableChanged(const jcboolean enable) {
+
+    }
 
     /**
      * フォーカスダウン状態が更新された
