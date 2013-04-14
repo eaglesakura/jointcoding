@@ -6,6 +6,7 @@
 
 #include    "jc/widget/View.h"
 #include    "jc/widget/window/Window.h"
+#include    "jc/widget/RegisteredInitializer.h"
 
 namespace jc {
 namespace view {
@@ -249,6 +250,18 @@ void View::registerWindow() {
     if (sendMessage) {
         // 登録が完了した
         onRegisterdWindow();
+    }
+
+    // 初期化実行を行う
+    {
+        std::list<MRegisteredInitializer>::iterator itr = windowRegisteredInitializer.begin(), end = windowRegisteredInitializer.end();
+        while (itr != end) {
+            (*itr)->onRegisteredWindow(this, windowContext);
+            ++itr;
+        }
+
+        // 既存のイニシャライザリストを解放する
+        windowRegisteredInitializer.clear();
     }
 }
 

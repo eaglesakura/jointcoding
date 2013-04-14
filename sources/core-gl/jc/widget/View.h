@@ -20,6 +20,11 @@ namespace jc {
 namespace view {
 
 class WindowManager;
+class RegisteredInitializer;
+/**
+ * managed
+ */
+typedef jc_sp<RegisteredInitializer> MRegisteredInitializer;
 
 /**
  * Viewの表示状態を取得する
@@ -79,7 +84,19 @@ private:
      */
     ViewMode_e viewMode;
 
+    /**
+     * Window登録された時に初期化するための簡易コールバックリスト
+     */
+    std::list<MRegisteredInitializer> windowRegisteredInitializer;
+
 protected:
+
+    virtual void addRegisteredInitializer(const MRegisteredInitializer regInitializer) {
+        // Window登録されていてはいけない
+        assert(!isRegisteredWindow());
+
+        windowRegisteredInitializer.push_back(regInitializer);
+    }
 
     /**
      * フォーカス状態を管理する遷移カウンター
@@ -118,6 +135,7 @@ protected:
      * デバッグ用にレンダリングを行う
      */
     virtual void renderingArea();
+
 public:
     View();
     virtual ~View();
