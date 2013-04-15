@@ -15,7 +15,7 @@ WindowManager::WindowManager() {
     windowContext.reset(new WindowContext());
     window.reset(new Window(windowContext));
     windowContext->setWindow(window);
-    windowTouchDetector.reset(new WindowTouchDetector(windowContext));
+    windowTouchDetector.reset(new WindowEventListener(windowContext));
     touchDetector.reset(new TouchDetector(windowTouchDetector));
 }
 
@@ -36,13 +36,26 @@ void WindowManager::addEvent(MEvent event) {
  */
 void WindowManager::handleTouchEvent(MEvent event) {
     MTouchEventExtension ext = event->getExtension<TouchEventExtension>();
-    assert(ext);
+    assert(ext.get() != NULL);
 
     jc_sp<TouchEventProtocol> touchEvent = ext->getPlatformEvent();
     assert(touchEvent.get() != NULL);
 
     touchDetector->onTouchEvent(touchEvent.get());
 }
+
+/**
+ * キーイベントを処理する
+ */
+void WindowManager::handleKeyEvent(MEvent event) {
+    MKeyEventExtension ext = event->getExtension<KeyEventExtension>();
+    assert(ext.get() != NULL);
+
+    jc_sp<KeyEventProtocol> keyEvent = ext->getPlatformEvent();
+    assert(keyEvent.get() != NULL);
+
+}
+
 /**
  * 個々のイベント対応を行う
  */
@@ -54,6 +67,9 @@ void WindowManager::dispatchEvent(MEvent event) {
         switch (event->getType()) {
             case EventType_Touch:
                 handleTouchEvent(event);
+                break;
+            default:
+                jclogf("drop event handle Type(0x%x) Object(0x%x)", event->getType(), event->getExtension<Object>().get());
                 break;
         }
     }

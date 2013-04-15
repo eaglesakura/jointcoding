@@ -15,12 +15,12 @@ namespace view {
 /**
  * Window内部のタッチ・コントロールを行う
  */
-class WindowTouchDetector: public Object, public TouchListener {
+class WindowEventListener: public Object, public TouchListener {
     MWindowContext windowContext;
 
 public:
-    WindowTouchDetector(MWindowContext windowContext);
-    virtual ~WindowTouchDetector() {
+    WindowEventListener(MWindowContext windowContext);
+    virtual ~WindowEventListener() {
 
     }
 
@@ -72,7 +72,7 @@ public:
 /**
  * managed
  */
-typedef jc_sp<WindowTouchDetector> MWindowTouchDetector;
+typedef jc_sp<WindowEventListener> MWindowTouchDetector;
 
 }
 }

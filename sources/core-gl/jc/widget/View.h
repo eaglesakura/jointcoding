@@ -53,7 +53,7 @@ class View: public SceneGraph {
 private:
     friend class Window;
     friend class WindowManager;
-    friend class WindowTouchDetector;
+    friend class WindowEventListener;
     /**
      * フォーカスを持つことが出来る場合true
      */

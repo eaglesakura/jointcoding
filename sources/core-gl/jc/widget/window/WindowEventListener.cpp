@@ -4,7 +4,7 @@
  *  Created on: 2013/04/12
  */
 
-#include    "jc/widget/window/WindowTouchDetector.h"
+#include    "jc/widget/window/WindowEventListener.h"
 #include    "jc/widget/View.h"
 #include    "jc/widget/window/Window.h"
 
@@ -13,7 +13,7 @@ namespace view {
 
 #define log_point(msg, _point)   jclogf("%s v(%.1f, %.1f) id(%d)", msg, _point.getCurrentPosition().x, _point.getCurrentPosition().y, _point.getId())
 
-WindowTouchDetector::WindowTouchDetector(MWindowContext windowContext) {
+WindowEventListener::WindowEventListener(MWindowContext windowContext) {
     this->windowContext = windowContext;
 }
 
@@ -22,7 +22,7 @@ WindowTouchDetector::WindowTouchDetector(MWindowContext windowContext) {
  * 指が離された瞬間に認識される
  * onDragEnd()とどちらかが呼び出される。
  */
-void WindowTouchDetector::onClick(const TouchDetector* detector, const TouchPoint &point) {
+void WindowEventListener::onClick(const TouchDetector* detector, const TouchPoint &point) {
 //    log_point("onClick", point);
 }
 
@@ -30,14 +30,14 @@ void WindowTouchDetector::onClick(const TouchDetector* detector, const TouchPoin
  * ドラッグを終了させた。
  * onClick()とどちらかが呼び出される。
  */
-void WindowTouchDetector::onDragEnd(const TouchDetector *detector, const TouchPoint &point) {
+void WindowEventListener::onDragEnd(const TouchDetector *detector, const TouchPoint &point) {
 //    log_point("onDragEnd", point);
 }
 
 /**
  * タッチが開始された
  */
-void WindowTouchDetector::onTouchBegin(const TouchDetector* detector, const TouchPoint &point) {
+void WindowEventListener::onTouchBegin(const TouchDetector* detector, const TouchPoint &point) {
 
     jcboolean refreshTouch = jcfalse;   // タッチが更新されたらtrue
     MView target = windowContext->lockTouchTarget();
@@ -74,7 +74,7 @@ void WindowTouchDetector::onTouchBegin(const TouchDetector* detector, const Touc
  * onTouchBegin -> onClick -> onTouchEnd
  * onTouchBegin -> onDrag -> onDragEnd -> onTouchEnd
  */
-void WindowTouchDetector::onSingleTouchEnd(const TouchDetector* detector, const TouchCompleteType_e type, const TouchPoint &point) {
+void WindowEventListener::onSingleTouchEnd(const TouchDetector* detector, const TouchCompleteType_e type, const TouchPoint &point) {
     MView touchedView = windowContext->lockTouchTarget();
     MWindow window = windowContext->lockWindow();
     assert(window.get() != NULL);
@@ -108,28 +108,28 @@ void WindowTouchDetector::onSingleTouchEnd(const TouchDetector* detector, const 
 /**
  * Viewがドラッグされた
  */
-void WindowTouchDetector::onDrag(const TouchDetector* detector, const TouchPoint &point) {
+void WindowEventListener::onDrag(const TouchDetector* detector, const TouchPoint &point) {
 //    log_point("onDrag", point);
 }
 
 /**
  * マルチタッチが開始された
  */
-void WindowTouchDetector::onPinchBegin(const TouchDetector *detector, const Vector2f &center) {
+void WindowEventListener::onPinchBegin(const TouchDetector *detector, const Vector2f &center) {
     jclog("onPinchBegin");
 }
 
 /**
  * ピンチが変更された
  */
-void WindowTouchDetector::onPinchScaling(const TouchDetector *detector, const float scale, const Vector2f &center) {
+void WindowEventListener::onPinchScaling(const TouchDetector *detector, const float scale, const Vector2f &center) {
 //    jclog("onPinchScaling");
 }
 
 /**
  * ピンチ操作が終了された
  */
-void WindowTouchDetector::onPinchEnd(const TouchDetector *detector, const Vector2f &center) {
+void WindowEventListener::onPinchEnd(const TouchDetector *detector, const Vector2f &center) {
     jclog("onPinchEnd");
     windowContext->clearTouchTarget();
 }

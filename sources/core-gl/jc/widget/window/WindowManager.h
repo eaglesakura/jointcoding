@@ -8,10 +8,11 @@
 #define WINDOWMANAGER_H_
 
 #include    "jc/widget/event/EventQueue.h"
+#include    "jc/widget/event/KeyEvent.h"
 #include    "jc/widget/event/TouchEvent.h"
 #include    "jc/widget/window/Window.h"
 #include    "jc/widget/window/WindowContext.h"
-#include    "jc/widget/window/WindowTouchDetector.h"
+#include    "jc/widget/window/WindowEventListener.h"
 
 namespace jc {
 namespace view {
@@ -69,6 +70,11 @@ protected:
      * タッチイベントを処理する
      */
     virtual void handleTouchEvent(MEvent event);
+
+    /**
+     * キーイベントを処理する
+     */
+    virtual void handleKeyEvent(MEvent event);
 
     /**
      * 個々のイベント対応を行う
