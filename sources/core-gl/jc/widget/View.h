@@ -179,6 +179,11 @@ public:
     virtual s32 getViewIndex();
 
     /**
+     * 特定Indexの子Viewを取得する
+     */
+    virtual jc_sp<View> getChildViewAt(const s32 index);
+
+    /**
      * 兄弟Viewを取得する
      * 親を探索し、自分の兄弟インデックス+offsetのViewを探索する。
      * offset != 0でなければならない。
@@ -399,6 +404,8 @@ public:
      * 自分自身は含めない。 isTouchedView()が基準となる。
      */
     virtual jc_sp<View> findTouchedView( const Vector2f &global) {
+        assert(isRegisteredWindow());
+
         std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
 
         // 全チェックを行う
@@ -426,6 +433,23 @@ public:
 
         // 何も見つからなかった
         return jc_sp<View>();
+    }
+
+    /**
+     * 位置に適合するViewを兄弟から探して返す。
+     * 自分自身は含めない。 isTouchedView()が基準となる。
+     */
+    virtual jc_sp<View> findSiblingTouchedView( const Vector2f &global) {
+        assert(isRegisteredWindow());
+
+        View *parent = getParentTo<View>();
+        jc_sp<View> result = parent->findTouchedView(global);
+        if(result.get() == this) {
+            // 自身だったらNULLオブジェクトを返す
+            return jc_sp<View>();
+        }
+
+        return result;
     }
 
     /**

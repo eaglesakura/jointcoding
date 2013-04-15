@@ -177,6 +177,31 @@ jc_sp<View> View::findSibling(const s32 offset) {
     // 探索失敗した
     return MView();
 }
+/**
+ * 特定Indexの子Viewを取得する
+ */
+MView View::getChildViewAt(const s32 index) {
+    // インデックスを探す
+    s32 check_index = 0;
+    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+
+    while (itr != end) {
+        MView view = downcast<View>(*itr);
+        if (view) {
+            // 対象のインデックスだったら返す
+            if (check_index == index) {
+                return view;
+            }
+
+            // ヒットしなければ次を見る
+            ++check_index;
+        }
+        ++itr;
+    }
+
+    // 探索失敗した
+    return MView();
+}
 
 /**
  * クリックされた
