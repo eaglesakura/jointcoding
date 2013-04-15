@@ -229,7 +229,7 @@ public:
     }
 
     /**
-     * 可視状態描画用のカウントを取得sルウ
+     * 可視状態描画用のカウントを取得する
      */
     virtual float getVisibleWeight() const;
 
