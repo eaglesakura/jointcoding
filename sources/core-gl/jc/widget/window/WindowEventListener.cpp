@@ -134,6 +134,27 @@ void WindowEventListener::onPinchEnd(const TouchDetector *detector, const Vector
     windowContext->clearTouchTarget();
 }
 
+/**
+ * キーダウンを開始した
+ */
+void WindowEventListener::onKeyDown(KeyDetector *detector, const MKeyData keyData) {
+    jclogf("onKeyDown(%d)", keyData->getKeyCode());
+}
+
+/**
+ * キーを長押した
+ */
+void WindowEventListener::onKeyLongDown(KeyDetector *detector, const MKeyData keyData) {
+    jclogf("onKeyLongDown(%d)", keyData->getKeyCode());
+}
+
+/**
+ * キーを離した
+ */
+void WindowEventListener::onKeyUp(KeyDetector *detector, const MKeyData keyData) {
+    jclogf("onKeyUp(%d)", keyData->getKeyCode());
+}
+
 }
 }
 

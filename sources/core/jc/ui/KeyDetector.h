@@ -64,6 +64,11 @@ public:
     virtual void onKeyEvent(KeyEventProtocol *event);
 };
 
+/**
+ * managed
+ */
+typedef jc_sp<KeyDetector> MKeyDetector;
+
 }
 
 #endif /* KEYDETECTOR_H_ */

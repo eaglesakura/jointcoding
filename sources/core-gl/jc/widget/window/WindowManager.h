@@ -53,12 +53,17 @@ class WindowManager: public Object {
     /**
      * ウィンドウ専用のタッチ判断クラス
      */
-    MWindowTouchDetector windowTouchDetector;
+    MWindowEventListener windowEventListener;
 
     /**
-     * ウィンドウの実解析を行う
+     * タッチイベントの実解析を行う
      */
     MTouchDetector touchDetector;
+
+    /**
+     * キーイベントの実解析を行う
+     */
+    MKeyDetector keyDetector;
 
     /**
      * 拡張用のウィンドウハンドラ

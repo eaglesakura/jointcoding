@@ -12,6 +12,7 @@
 #include    "jc/scene/SceneGraph.h"
 
 #include    "jc/ui/TouchDetector.h"
+#include    "jc/ui/KeyDetector.h"
 #include    "jc/scene/LoopController.h"
 
 namespace jc {

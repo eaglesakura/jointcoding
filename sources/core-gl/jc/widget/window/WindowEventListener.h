@@ -15,7 +15,7 @@ namespace view {
 /**
  * Window内部のタッチ・コントロールを行う
  */
-class WindowEventListener: public Object, public TouchListener {
+class WindowEventListener: public Object, public TouchListener, public KeyListener {
     MWindowContext windowContext;
 
 public:
@@ -67,12 +67,28 @@ public:
      * ピンチ操作が終了された
      */
     virtual void onPinchEnd(const TouchDetector *detector, const Vector2f &center);
+
+
+    /**
+     * キーダウンを開始した
+     */
+    virtual void onKeyDown(KeyDetector *detector, const MKeyData keyData);
+
+    /**
+     * キーを長押した
+     */
+    virtual void onKeyLongDown(KeyDetector *detector, const MKeyData keyData);
+
+    /**
+     * キーを離した
+     */
+    virtual void onKeyUp(KeyDetector *detector, const MKeyData keyData);
 };
 
 /**
  * managed
  */
-typedef jc_sp<WindowEventListener> MWindowTouchDetector;
+typedef jc_sp<WindowEventListener> MWindowEventListener;
 
 }
 }
