@@ -122,6 +122,84 @@ jcboolean View::hasFocus(const jcboolean recursive) {
 }
 
 /**
+ * 親に登録されているView番号を取得する
+ */
+s32 View::getViewIndex() {
+    View *parent = getParentTo<View>();
+
+    // 呼び出し時、親がいなければならない
+    assert(isRegisteredWindow());
+    assert(parent != NULL);
+
+    s32 result = 0;
+    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+
+    while (itr != end) {
+        MView view = downcast<View>(*itr);
+        if (view) {
+
+            if (view.get() == this) {
+                return result;
+            }
+
+            // ヒットしなければ次を見る
+            ++result;
+        }
+        ++itr;
+    }
+
+    // 親に自分が登録されていないのは異常事態である
+    assert(false);
+    return -1;
+}
+
+/**
+ * 兄弟Viewを取得する
+ * 親を探索し、自分の兄弟インデックス+offsetのViewを探索する。
+ * offset != 0でなければならない。
+ * 見つからなかった場合NULLオブジェクトを返す
+ */ //
+jc_sp<View> View::findSibling(const s32 offset) {
+    View *parent = getParentTo<View>();
+
+    // 呼び出し時、親がいなければならない
+    assert(isRegisteredWindow());
+    assert(parent != NULL);
+
+    // 自身を呼び出す意味は無い
+    assert(offset != 0);
+
+    const s32 target_index = getViewIndex() + offset;
+
+    // 無効なインデックスであれば空を返す
+    if(target_index < 0 || target_index >= getParent()->getChildrenNum()) {
+        return MView();
+    }
+
+    // インデックスを探す
+
+    s32 check_index = 0;
+    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+
+    while (itr != end) {
+        MView view = downcast<View>(*itr);
+        if (view) {
+            // 対象のインデックスだったら返す
+            if(check_index == target_index) {
+                return view;
+            }
+
+            // ヒットしなければ次を見る
+            ++check_index;
+        }
+        ++itr;
+    }
+
+    // 探索失敗した
+    return MView();
+}
+
+/**
  * クリックされた
  */
 void View::onClick() {

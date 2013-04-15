@@ -174,6 +174,19 @@ public:
     }
 
     /**
+     * 親に登録されているView番号を取得する
+     */
+    virtual s32 getViewIndex();
+
+    /**
+     * 兄弟Viewを取得する
+     * 親を探索し、自分の兄弟インデックス+offsetのViewを探索する。
+     * offset != 0でなければならない。
+     * 見つからなかった場合NULLオブジェクトを返す
+     */
+    virtual jc_sp<View> findSibling(const s32 offset);
+
+    /**
      * Windowを一時的に取得する。
      * メンバとして持つと循環参照が行われる恐れがあるため、シーングラフ内では行わないこと。
      */
