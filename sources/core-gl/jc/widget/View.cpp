@@ -196,11 +196,8 @@ void View::dispatchEvent(MEvent event) {
     const s32 EVENT_TYPE = event->getType();
 
     switch (EVENT_TYPE) {
-        case EventType_Click:
+        case BroadcastType_Click:
             dispatchClickEvent(event->getExtension<View>());
-            break;
-        case EventType_LostFocusRequest:
-            dispatchEvent(event);
             break;
         default:
             onEvent(event);

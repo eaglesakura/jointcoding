@@ -25,16 +25,18 @@ enum EventType_e {
      * キーイベントが発行された
      */
     EventType_Key,
+};
 
+enum BroadcastType_e {
     /**
      * クリックイベントが行われた
      */
-    EventType_Click,
+    BroadcastType_Click = 0x00100000,
 
     /**
-     * フォーカスを一度見失って欲しい
+     * キーイベントが行われた
      */
-    EventType_LostFocusRequest,
+    BroadcastType_Key,
 };
 
 /**

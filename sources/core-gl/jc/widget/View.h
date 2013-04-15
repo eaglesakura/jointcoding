@@ -400,6 +400,74 @@ public:
         return jc_sp<View>();
     }
 
+    /**
+     * フォーカスを持つことができる最初のViewを探索する。
+     * 子 -> 子の子孫 -> 次の子 -> 子の子孫 の順番で探索される
+     */
+    virtual jc_sp<View> findFocusableView() {
+        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+
+        // 全チェックを行う
+        while(itr != end) {
+
+            jc_sp<View> check = downcast<View>(*itr);
+
+            // 子がViewであるならチェックする
+            if(check) {
+                if(check->isFocusable()) {
+                    // フォーカス対象になったからそれを返す
+                    return check;
+                }
+                // 子の、更に子をチェックする
+                check = check->findFocusableView();
+                if(check) {
+                    // 孫以降に見つかったから、それを代理で返す
+                    return check;
+                }
+            }
+
+            // 次の子をチェックする
+            ++itr;
+        }
+
+        // 何も見つからなかった
+        return jc_sp<View>();
+    }
+
+#if 1
+    /**
+     * フォーカスを持っているViewを取得する
+     */
+    virtual jc_sp<View> findFocusedView() {
+        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+
+        // 全チェックを行う
+        while(itr != end) {
+
+            jc_sp<View> check = downcast<View>(*itr);
+
+            // 子がViewであるならチェックする
+            if(check) {
+                if(check->hasFocus()) {
+                    // フォーカスを持っていたらtrueを返す
+                    return check;
+                }
+                // 子の、更に子をチェックする
+                check = check->findFocusedView();
+                if(check) {
+                    // 孫以降に見つかったから、それを代理で返す
+                    return check;
+                }
+            }
+
+            // 次の子をチェックする
+            ++itr;
+        }
+
+        // 何も見つからなかった
+        return jc_sp<View>();
+    }
+#endif
 protected:
     // オーバーライドされる
 

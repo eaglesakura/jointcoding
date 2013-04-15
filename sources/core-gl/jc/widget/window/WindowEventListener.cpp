@@ -39,7 +39,7 @@ void WindowEventListener::onDragEnd(const TouchDetector *detector, const TouchPo
  */
 void WindowEventListener::onTouchBegin(const TouchDetector* detector, const TouchPoint &point) {
 
-    jcboolean refreshTouch = jcfalse;   // タッチが更新されたらtrue
+    jcboolean refreshTouch = jcfalse; // タッチが更新されたらtrue
     MView target = windowContext->lockTouchTarget();
     MWindow window = windowContext->lockWindow();
 
@@ -95,7 +95,7 @@ void WindowEventListener::onSingleTouchEnd(const TouchDetector* detector, const 
     if (touchedView->isIntersect(touchPos)) {
 //        jclogf("onClick(%x)", touchedView.get());
         // クリックイベントをブロードキャストする
-        window->broadcastEvent(Event::createEvent(EventType_Click, touchedView));
+        window->broadcastEvent(Event::createEvent(BroadcastType_Click, touchedView));
     } else {
         // クリック完了する前にViewから離された
 //        jclogf("onClick Out(%x)", touchedView.get());
@@ -139,6 +139,25 @@ void WindowEventListener::onPinchEnd(const TouchDetector *detector, const Vector
  */
 void WindowEventListener::onKeyDown(KeyDetector *detector, const MKeyData keyData) {
     jclogf("onKeyDown(%d)", keyData->getKeyCode());
+
+    MWindow window = windowContext->lockWindow();
+    assert(window.get() != NULL);
+
+    MView focusView = window->findFocusedView();
+    if (!focusView) {
+        // フォーカスが無ければ、適当なフォーカスを当てる
+        focusView = window->findFocusableView();
+
+        jclogf("focused view(%x)", focusView.get());
+
+        // フォーカスターゲットを見つけたら、リクエストを投げる
+        if (focusView) {
+            focusView->requestFocus(jctrue);
+        }
+    }
+
+    // ブロードキャストする
+    window->broadcastEvent(Event::createEvent(BroadcastType_Key, keyData));
 }
 
 /**
@@ -146,6 +165,12 @@ void WindowEventListener::onKeyDown(KeyDetector *detector, const MKeyData keyDat
  */
 void WindowEventListener::onKeyLongDown(KeyDetector *detector, const MKeyData keyData) {
     jclogf("onKeyLongDown(%d)", keyData->getKeyCode());
+
+    MWindow window = windowContext->lockWindow();
+    assert(window.get() != NULL);
+
+    // ブロードキャストする
+    window->broadcastEvent(Event::createEvent(BroadcastType_Key, keyData));
 }
 
 /**
@@ -153,6 +178,12 @@ void WindowEventListener::onKeyLongDown(KeyDetector *detector, const MKeyData ke
  */
 void WindowEventListener::onKeyUp(KeyDetector *detector, const MKeyData keyData) {
     jclogf("onKeyUp(%d)", keyData->getKeyCode());
+
+    MWindow window = windowContext->lockWindow();
+    assert(window.get() != NULL);
+
+    // ブロードキャストする
+    window->broadcastEvent(Event::createEvent(BroadcastType_Key, keyData));
 }
 
 }
