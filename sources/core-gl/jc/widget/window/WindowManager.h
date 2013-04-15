@@ -10,6 +10,7 @@
 #include    "jc/widget/event/EventQueue.h"
 #include    "jc/widget/event/KeyEvent.h"
 #include    "jc/widget/event/TouchEvent.h"
+#include    "jc/widget/event/RequestFocusEvent.h"
 #include    "jc/widget/window/Window.h"
 #include    "jc/widget/window/WindowContext.h"
 #include    "jc/widget/window/WindowEventListener.h"
@@ -80,6 +81,11 @@ protected:
      * キーイベントを処理する
      */
     virtual void handleKeyEvent(MEvent event);
+
+    /**
+     * フォーカスリクエストイベント
+     */
+    virtual void handleRequestFocusEvent(MEvent event);
 
     /**
      * 個々のイベント対応を行う

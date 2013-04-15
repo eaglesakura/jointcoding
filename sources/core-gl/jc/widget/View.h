@@ -574,14 +574,20 @@ protected:
     virtual void dispatchDownEvent(const jcboolean down);
 
     /**
-     * フォーカスを失ってほしいリクエスト
+     * このViewにフォーカスが当たるようにリクエストされた
      */
-    virtual void dispatchLostFocusRequestEvent(const MEvent event);
+    virtual void dispatchRecuestFocus(const jcboolean has);
 
     /**
      * 送信されたイベントを処理する
      */
     virtual void dispatchEvent(MEvent event);
+
+    /**
+     * 自分自身を示すMViewを取得する。
+     * 循環参照に注意すること。
+     */
+    virtual jc_sp<View> getSelfManagedObject();
 };
 
 /**

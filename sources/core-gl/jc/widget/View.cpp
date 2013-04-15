@@ -7,6 +7,7 @@
 #include    "jc/widget/View.h"
 #include    "jc/widget/window/Window.h"
 #include    "jc/widget/RegisteredInitializer.h"
+#include    "jc/widget/event/RequestFocusEvent.h"
 
 namespace jc {
 namespace view {
@@ -67,32 +68,8 @@ void View::setFocusable(const jcboolean set) {
 void View::requestFocus(const jcboolean has) {
     assert(isRegisteredWindow());
 
-    // フォーカスを持てないならそもそも何もしない
-    if (!isFocusable() && has) {
-        return;
-    }
-
-    // 状態が同じだったら何もしない
-    if (focus == has) {
-        return;
-    }
-
-    // 新たなフォーカスをONにするには、古いViewのフォーカスを消す必要がある
-    // Windowにフォーカスロストをブロードキャスト
-    if (has) {
-        MView focusView = lockWindow()->findFocusedView();
-        if (focusView && focusView.get() != this) {
-            focusView->requestFocus(jcfalse);
-        }
-    }
-
-    // 自分のフォーカス状態を書き換える
-    {
-        focus = has;
-    }
-
-    // メッセージを送る
-    onFocusChanged(has);
+    // リクエストを保留させる
+    windowContext->sendEvent(RequestFocusEventExtension::createInstance(has, getSelfManagedObject()));
 }
 
 /**
@@ -175,6 +152,8 @@ jc_sp<View> View::findSibling(const s32 offset) {
     if(target_index < 0 || target_index >= getParent()->getChildrenNum()) {
         return MView();
     }
+
+    jclogf("SiblingTarget(%d)", target_index);
 
     // インデックスを探す
 
@@ -271,6 +250,8 @@ void View::dispatchDownEvent(const jcboolean down) {
         onDownChanged(down);
     }
 }
+
+#if 0
 /**
  * フォーカスを失ってほしいリクエスト
  */
@@ -281,6 +262,40 @@ void View::dispatchLostFocusRequestEvent(const MEvent event) {
 
     focus = jcfalse;
     onFocusChanged(jcfalse);
+}
+#endif
+
+/**
+ * このViewにフォーカスが当たるようにリクエストされた
+ */
+void View::dispatchRecuestFocus(const jcboolean has) {
+
+    // フォーカスを持てないならそもそも何もしない
+    if (!isFocusable() && has) {
+        return;
+    }
+
+    // 状態が同じだったら何もしない
+    if (focus == has) {
+        return;
+    }
+
+    // 新たなフォーカスをONにするには、古いViewのフォーカスを消す必要がある
+    // Windowにフォーカスロストをブロードキャスト
+    if (has) {
+        MView focusView = lockWindow()->findFocusedView();
+        if (focusView && focusView.get() != this) {
+            focusView->requestFocus(jcfalse);
+        }
+    }
+
+    // 自分のフォーカス状態を書き換える
+    {
+        focus = has;
+    }
+
+    // メッセージを送る
+    onFocusChanged(has);
 }
 
 /**
@@ -302,7 +317,27 @@ void View::dispatchEvent(MEvent event) {
             onEvent(event);
             break;
     }
+}
 
+/**
+ * 自分自身を示すMViewを取得する。
+ * 循環参照に注意すること。
+ */
+MView View::getSelfManagedObject() {
+    View *parent = getParentTo<View>();
+    assert(parent != NULL);
+
+    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+    while (itr != end) {
+        if ((*itr).get() == (SceneGraph*) this) {
+            return downcast<View>(*itr);
+        }
+        ++itr;
+    }
+
+    // 取得できないのは異常事態である
+    assert(false);
+    return MView();
 }
 
 /**

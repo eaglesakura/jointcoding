@@ -25,6 +25,11 @@ enum EventType_e {
      * キーイベントが発行された
      */
     EventType_Key,
+
+    /**
+     * Viewにフォーカスを当てるようにリクエストする
+     */
+    EventType_RequestFocus,
 };
 
 enum BroadcastType_e {

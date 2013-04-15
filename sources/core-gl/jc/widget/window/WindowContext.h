@@ -14,6 +14,7 @@
 #include    "jc/ui/TouchDetector.h"
 #include    "jc/ui/KeyDetector.h"
 #include    "jc/scene/LoopController.h"
+#include    "jc/widget/event/EventQueue.h"
 
 namespace jc {
 namespace view {
@@ -48,6 +49,10 @@ class WindowContext: public Object {
      */
     LoopController loopController;
 
+    /**
+     * イベント管理
+     */
+    MEventQueue events;
 public:
     WindowContext() {
     }
@@ -68,6 +73,13 @@ public:
      */
     virtual void setWindow(jc_wp<Window> window) {
         this->window = window;
+    }
+
+    /**
+     * イベントキュー管理クラスを設定する
+     */
+    virtual void setEventQueue(const MEventQueue events) {
+        this->events = events;
     }
 
     /**
@@ -131,6 +143,14 @@ public:
      */
     virtual double getFrameElapsedSec() const {
         return loopController.getElapsedSec();
+    }
+
+    /**
+     * イベントハンドラの最後尾にイベントを投げる
+     * 実行されるまではタイムラグがある
+     */
+    virtual void sendEvent(const MEvent event) {
+        events->pushBackEvent(event);
     }
 };
 

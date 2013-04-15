@@ -15,6 +15,7 @@ WindowManager::WindowManager() {
     windowContext.reset(new WindowContext());
     window.reset(new Window(windowContext));
     windowContext->setWindow(window);
+    windowContext->setEventQueue(events);
     windowEventListener.reset(new WindowEventListener(windowContext));
 
     touchDetector.reset(new TouchDetector(windowEventListener));
@@ -65,6 +66,19 @@ void WindowManager::handleKeyEvent(MEvent event) {
 }
 
 /**
+ * フォーカスリクエストイベント
+ */
+void WindowManager::handleRequestFocusEvent(MEvent event) {
+    assert(event->getType() == EventType_RequestFocus);
+
+    MRequestFocusEventExtension ext = event->getExtension<RequestFocusEventExtension>();
+    assert(ext.get() != NULL);
+    assert(ext->target.get() != NULL);
+
+    ext->target->dispatchRecuestFocus(ext->hasFocus);
+}
+
+/**
  * 個々のイベント対応を行う
  */
 void WindowManager::dispatchEvent(MEvent event) {
@@ -78,6 +92,9 @@ void WindowManager::dispatchEvent(MEvent event) {
                 break;
             case EventType_Key:
                 handleKeyEvent(event);
+                break;
+            case EventType_RequestFocus:
+                handleRequestFocusEvent(event);
                 break;
             default:
                 jclogf("drop event handle Type(0x%x) Object(0x%x)", event->getType(), event->getExtension<Object>().get());
