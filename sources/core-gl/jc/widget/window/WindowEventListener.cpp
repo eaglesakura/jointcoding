@@ -143,19 +143,6 @@ void WindowEventListener::onKeyDown(KeyDetector *detector, const MKeyData keyDat
     MWindow window = windowContext->lockWindow();
     assert(window.get() != NULL);
 
-    MView focusView = window->findFocusedView();
-    if (!focusView) {
-        // フォーカスが無ければ、適当なフォーカスを当てる
-        focusView = window->findFocusableView();
-
-        jclogf("focused view(%x)", focusView.get());
-
-        // フォーカスターゲットを見つけたら、リクエストを投げる
-        if (focusView) {
-            focusView->requestFocus(jctrue);
-        }
-    }
-
     // ブロードキャストする
     window->broadcastEvent(Event::createEvent(BroadcastType_Key, keyData));
 }
@@ -184,6 +171,23 @@ void WindowEventListener::onKeyUp(KeyDetector *detector, const MKeyData keyData)
 
     // ブロードキャストする
     window->broadcastEvent(Event::createEvent(BroadcastType_Key, keyData));
+
+    // フォーカスがないならフォーカスを探してあげる
+    {
+        MView focusView = window->findFocusedView();
+        if (!focusView) {
+            // フォーカスが無ければ、適当なフォーカスを当てる
+            focusView = window->findFocusableView();
+
+            jclogf("focused view(%x)", focusView.get());
+
+            // フォーカスターゲットを見つけたら、リクエストを投げる
+            if (focusView) {
+                focusView->requestFocus(jctrue);
+            }
+        }
+    }
+
 }
 
 }

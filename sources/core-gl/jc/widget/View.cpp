@@ -159,6 +159,24 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
 }
 
 /**
+ * どれかのキーが押された
+ */
+void View::dispatchKeyEvent(const MKeyData keyData) {
+    assert(keyData.get() != NULL);
+
+    // フォーカスを持っていなければ何もしない
+    if (!hasFocus()) {
+        return;
+    }
+
+    if (keyData->isPressing()) {
+        onKeyDown(keyData);
+    } else {
+        onKeyUp(keyData);
+    }
+}
+
+/**
  * ダウン状態の更新を行う
  */
 void View::dispatchDownEvent(const jcboolean down) {
@@ -198,6 +216,9 @@ void View::dispatchEvent(MEvent event) {
     switch (EVENT_TYPE) {
         case BroadcastType_Click:
             dispatchClickEvent(event->getExtension<View>());
+            break;
+        case BroadcastType_Key:
+            dispatchKeyEvent(event->getExtension<KeyData>());
             break;
         default:
             onEvent(event);

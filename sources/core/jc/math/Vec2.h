@@ -43,6 +43,13 @@ struct _Vector2 {
     }
 
     /**
+     * 加算を行う
+     */
+    _Vector2<T> operator+(const _Vector2 &v) const {
+        return _Vector2<T>(x + v.x, y + v.y);
+    }
+
+    /**
      * 減算を行う
      */
     _Vector2<T>& operator-=(const _Vector2 &v) {

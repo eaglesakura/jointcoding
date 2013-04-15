@@ -319,6 +319,21 @@ public:
     virtual RectF getGlobalLayoutAreaNest( );
 
     /**
+     * グローバル位置に変換する
+     */
+    virtual Vector2f toGlobalPosition(const Vector2f &localPosition) {
+        Vector2f parent_pos;
+        if (getParent()) {
+            View *parentView = getParentTo<View>();
+            if(parentView) {
+                parent_pos = parentView->toGlobalPosition(Vector2f());
+            }
+        }
+
+        return localPosition + parent_pos;
+    }
+
+    /**
      * グローバル座標に変換した表示位置を取得する
      */
     virtual RectF getGlobalLayoutArea() {
@@ -515,6 +530,18 @@ protected:
      * フォーカスダウン状態が更新された
      */
     virtual void onDownChanged(const jcboolean down_now);
+
+    /**
+     * キーが押下された
+     */
+    virtual void onKeyDown(const MKeyData keyData) {
+    }
+
+    /**
+     * キーが離された
+     */
+    virtual void onKeyUp(const MKeyData keyData) {
+    }
 protected:
     // 基本制御系
 
@@ -522,6 +549,11 @@ protected:
      * どれかのViewがクリックされたらハンドリングを行う
      */
     virtual void dispatchClickEvent(const jc_sp<View> clicked);
+
+    /**
+     * どれかのキーが押された
+     */
+    virtual void dispatchKeyEvent(const MKeyData keyData);
 
     /**
      * ダウン状態の更新を行う
