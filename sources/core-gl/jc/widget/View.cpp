@@ -393,6 +393,12 @@ void View::renderingArea() {
 
     assert(isRegisteredWindow());
 
+    const RectF area = getGlobalLayoutArea();
+    // レンダリングエリアが設定されてないなら何もしない
+    if (area.getAreaSize() == 0.0f) {
+        return;
+    }
+
     MSpriteManager spriteManager = getSpriteManager();
 
     Color color_fill;
