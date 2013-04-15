@@ -77,8 +77,8 @@ public:
     /**
      * ポインタが有効であればtrueを返す
      */
-    jcboolean expired() const {
-        return (raw || shared || weak.expired());
+    jcboolean exist() const {
+        return (raw || shared || !weak.expired());
     }
 
     /**

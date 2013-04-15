@@ -53,7 +53,7 @@ public:
     }
 
     virtual void onRegisteredWindow(View *view, MWindowContext windowContext) {
-        assert(target.expired());
+        assert(target.exist());
         target->initialize(windowContext, transactionTimeSec, leapType);
     }
 };

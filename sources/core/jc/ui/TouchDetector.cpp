@@ -9,7 +9,7 @@
 namespace jc {
 
 TouchDetector::TouchDetector(const STouchListener listener) {
-    assert(listener.expired());
+    assert(listener.exist());
     this->listener = listener;
     this->pinchDistance = 1;
 }
@@ -104,7 +104,7 @@ void TouchDetector::onTouchEvent(TouchEventProtocol *event) {
 //        jclogf( "touch v(%f, %f)", event->getEventPosX(), event->getEventPosY());
     }
 
-    assert(listener.expired());
+    assert(listener.exist());
 
     s32 id = event->getTouchID(); // タッチポイントのID
     s32 type = event->getEventType(); // イベントタイプ

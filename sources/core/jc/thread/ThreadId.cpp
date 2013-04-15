@@ -83,6 +83,10 @@ bool ThreadID::operator==(const ThreadID &id) {
     thread_id*_this = (thread_id*) (threadId);
     thread_id*_id = (thread_id*) (id.threadId);
 
+    if (_this == NULL || _id == NULL) {
+        return jcfalse;
+    }
+
     return (*_this) == (*_id);
 }
 
@@ -93,6 +97,10 @@ bool ThreadID::operator!=(const ThreadID &id) {
     thread_id*_this = (thread_id*) (threadId);
     thread_id*_id = (thread_id*) (id.threadId);
 
+    if (_this == NULL || _id == NULL) {
+        return jcfalse;
+    }
+
     return (*_this) != (*_id);
 }
 
@@ -100,7 +108,11 @@ bool ThreadID::operator!=(const ThreadID &id) {
  * 現在実行されているスレッドとThreadIDが一致した場合、trueを返す。
  */
 jcboolean ThreadID::isCurrent() {
-    return boost::this_thread::get_id() == *((thread_id*) threadId);
+    thread_id *id = (thread_id*) threadId;
+    if (id == NULL) {
+        return jcfalse;
+    }
+    return boost::this_thread::get_id() == *id;
 }
 
 /**
@@ -112,6 +124,10 @@ jcboolean ThreadID::equals(const ThreadID *id) {
     }
     thread_id*_this = (thread_id*) (threadId);
     thread_id*_id = (thread_id*) (id->threadId);
+
+    if (_this == NULL || _id == NULL) {
+        return jcfalse;
+    }
 
     return (*_this) == (*_id);
 }
