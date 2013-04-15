@@ -138,6 +138,13 @@ public:
     void setValueDirect(const float value) {
         counter.setValue(value);
     }
+
+    /**
+     * カウンタが停止していたらtrue
+     */
+    jcboolean isStopped() {
+        return counter.isStopped();
+    }
 };
 
 }

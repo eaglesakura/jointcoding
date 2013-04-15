@@ -72,7 +72,7 @@ void View::requestFocus(const jcboolean has) {
         dispatchRecuestFocus(jcfalse);
     } else {
         // リクエストを保留させる
-        windowContext->sendEvent(RequestFocusEventExtension::createInstance(has, getSelfManagedObject()));
+        windowContext->interruptionEvent(RequestFocusEventExtension::createInstance(has, getSelfManagedObject()));
     }
 
 }

@@ -241,6 +241,13 @@ public:
     }
 
     /**
+     * フォーカス状態
+     */
+    virtual float isFocusWeightStopped() {
+        return focusCounter.isStopped();
+    }
+
+    /**
      * ダウン描画用のカウントを取得する
      */
     virtual float getDownWeight(const jcboolean withVisibleCounter = jctrue) const {

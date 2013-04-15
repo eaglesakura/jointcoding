@@ -43,6 +43,14 @@ public:
     }
 
     /**
+     * イベントキューへ追加する
+     */
+    virtual void pushFrontEvent(const MEvent event) {
+        MutexLock lock(mutex);
+        events.push_front(event);
+    }
+
+    /**
      * イベントがひとつも無くなったらtrueを返す
      */
     virtual jcboolean empty() {

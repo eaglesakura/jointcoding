@@ -152,6 +152,13 @@ public:
     virtual void sendEvent(const MEvent event) {
         events->pushBackEvent(event);
     }
+    /**
+     * イベントハンドラの最前列にイベントを投げる
+     * 実行されるまではタイムラグがある
+     */
+    virtual void interruptionEvent(const MEvent event) {
+        events->pushFrontEvent(event);
+    }
 };
 
 /**
