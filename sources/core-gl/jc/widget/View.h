@@ -502,7 +502,6 @@ public:
         return jc_sp<View>();
     }
 
-#if 1
     /**
      * フォーカスを持っているViewを取得する
      */
@@ -535,7 +534,26 @@ public:
         // 何も見つからなかった
         return jc_sp<View>();
     }
-#endif
+
+    /**
+     * 一致するIDを全て列挙して返す
+     */
+    virtual s32 findViewListById(const scene_id id, std::list< jc_sp<View> > *result) {
+        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        while(itr != end) {
+            jc_sp<View> view = downcast<View>(*itr);
+            if(view) {
+                if(view->getUniqueId() == id) {
+                    result->push_back(view);
+                }
+
+                view->findViewListById(id, result);
+            }
+            ++itr;
+        }
+
+        return result->size();
+    }
 protected:
     // オーバーライドされる
 
