@@ -68,8 +68,13 @@ void View::setFocusable(const jcboolean set) {
 void View::requestFocus(const jcboolean has) {
     assert(isRegisteredWindow());
 
-    // リクエストを保留させる
-    windowContext->sendEvent(RequestFocusEventExtension::createInstance(has, getSelfManagedObject()));
+    if (!has) {
+        dispatchRecuestFocus(jcfalse);
+    } else {
+        // リクエストを保留させる
+        windowContext->sendEvent(RequestFocusEventExtension::createInstance(has, getSelfManagedObject()));
+    }
+
 }
 
 /**

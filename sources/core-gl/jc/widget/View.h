@@ -307,6 +307,20 @@ public:
     }
 
     /**
+     * Viewの幅を取得する
+     */
+    virtual float getViewWidth() const {
+        return localArea.width();
+    }
+
+    /**
+     * Viewの高さを取得する
+     */
+    virtual float getViewHeight() const {
+        return localArea.height();
+    }
+
+    /**
      * 衝突判定位置（ローカル座標）を取得する
      */
     virtual RectF getLocalIntersectArea() {
@@ -443,6 +457,8 @@ public:
         assert(isRegisteredWindow());
 
         View *parent = getParentTo<View>();
+        assert(parent != NULL);
+
         jc_sp<View> result = parent->findTouchedView(global);
         if(result.get() == this) {
             // 自身だったらNULLオブジェクトを返す

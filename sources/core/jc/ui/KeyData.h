@@ -56,21 +56,21 @@ public:
     /**
      * 対応するキーコードを取得する
      */
-    s32 getKeyCode() const {
+    virtual s32 getKeyCode() const {
         return keyCode;
     }
 
     /**
      * 押下中の場合はtrueを返す
      */
-    s32 isPressing() const {
+    virtual s32 isPressing() const {
         return endTime < beginTime;
     }
 
     /**
      * 押下された秒数を取得する
      */
-    s32 getPressTimeMS() const {
+    virtual s32 getPressTimeMS() const {
         if (endTime < beginTime) {
             // まだ離されていないため、現在時刻とのチェックを行う
             return Timer::lapseTimeMs(beginTime);
@@ -78,6 +78,32 @@ public:
             // 既に離されているため、既存の時間とのチェックを行う
             return Timer::lapseTimeMs(beginTime, endTime);
         }
+    }
+
+    /**
+     * カーソル（上下左右）用のキーだったらtrueを返す
+     */
+    virtual jcboolean isCursorKey() {
+        return keyCode == KeyEventProtocol::KEYCODE_LEFT //
+        || keyCode == KeyEventProtocol::KEYCODE_RIGHT //
+        || keyCode == KeyEventProtocol::KEYCODE_UP //
+        || keyCode == KeyEventProtocol::KEYCODE_DOWN;
+    }
+
+    virtual jcboolean isKeyDown() {
+        return keyCode == KeyEventProtocol::KEYCODE_DOWN;
+    }
+
+    virtual jcboolean isKeyUp() {
+        return keyCode == KeyEventProtocol::KEYCODE_UP;
+    }
+
+    virtual jcboolean isKeyLeft() {
+        return keyCode == KeyEventProtocol::KEYCODE_LEFT;
+    }
+
+    virtual jcboolean isKeyRight() {
+        return keyCode == KeyEventProtocol::KEYCODE_RIGHT;
     }
 private:
     /**
