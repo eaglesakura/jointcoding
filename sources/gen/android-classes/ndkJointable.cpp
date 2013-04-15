@@ -6,6 +6,7 @@
 namespace ndk {
 
 const ::jc::charactor* Jointable::CLASS_SIGNATURE = "com/eaglesakura/jc/android/resource/jni/Jointable";
+const ::jc::s32 Jointable::KEY_MAINCONTEXT = 0;
 
 static jclass class_Jointable = NULL;
 

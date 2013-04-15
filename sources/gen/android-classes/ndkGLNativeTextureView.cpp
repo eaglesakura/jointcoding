@@ -6,6 +6,7 @@
 namespace ndk {
 
 const ::jc::charactor* GLNativeTextureView::CLASS_SIGNATURE = "com/eaglesakura/jc/android/view/GLNativeTextureView";
+const ::jc::s32 GLNativeTextureView::KEY_MAINCONTEXT = 0;
 const ::jc::s32 GLNativeTextureView::EGL_DEPTHBUFFER_ENABLE = 1;
 const ::jc::s32 GLNativeTextureView::EGL_COLORBUFFER_BITS_DEFAULT = 0;
 

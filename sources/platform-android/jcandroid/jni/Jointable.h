@@ -7,6 +7,8 @@
 #ifndef JOINTABLE_H_
 #define JOINTABLE_H_
 
+#include    "android-classes/ndkJointable.h"
+
 namespace ndk {
 
 /**
@@ -24,7 +26,6 @@ extern void setJointContextPointer_Object(jobject jJointable, const s32 key, con
  */
 extern void setJointContextPointer_SharedObject(jobject jJointable, const s32 key, const void* pointer);
 
-
 /**
  * NDK接続用のクラスを取得する
  *
@@ -35,6 +36,8 @@ T* getJointContextPointer(const jobject jJointable, const s32 key) {
     extern void* getJointContextPointer_void(const jobject, const s32);
     return static_cast<T*>(getJointContextPointer_void(jJointable, key));
 }
+
+#define joint_context(jJointable, native_class_type)     ndk::getJointContextPointer<native_class_type>(jJointable, ndk::Jointable::KEY_MAINCONTEXT)
 
 }
 

@@ -1,6 +1,7 @@
 package com.eaglesakura.jc.android.resource.jni;
 
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
+import com.eaglesakura.lib.jc.annotation.jnimake.JCField;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
 /**
@@ -9,6 +10,13 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 @JCClass(
          cppNamespace = "ndk")
 public interface Jointable {
+
+    /**
+     * メインコンテキスト
+     */
+    @JCField
+    public static final int KEY_MAINCONTEXT = 0;
+
     /**
      * ポインタを設定する
      * @param key
@@ -24,4 +32,5 @@ public interface Jointable {
      */
     @JCMethod
     public Pointer getNativePointer(int key);
+
 }

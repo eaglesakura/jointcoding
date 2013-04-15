@@ -25,11 +25,11 @@ using namespace jc;
 #include	"jni.h"
 
 #include    "jcandroid/ndk-support.h"
-#include    "jcandroid/jni/Jointable.h"
 #include	"jcandroid/jni/SmartJObject.h"
 #include	"jcandroid/jni/JniWrapper.h"
 #include    "jcandroid/jni/JniArray.h"
 #include    "android-classes/ndkJniException.h"
 #include    "jcandroid/util/Utils.h"
+#include    "jcandroid/jni/Jointable.h"
 
 #endif /* JOINTCODING_ANDROID_H_ */

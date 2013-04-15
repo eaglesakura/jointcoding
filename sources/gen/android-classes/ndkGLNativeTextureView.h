@@ -32,6 +32,7 @@ public:
     virtual void onNativeGLDestroyed(jobject surfacetexture_0);
     static void onNativeGLDestroyed_(jobject _this, jobject surfacetexture_0);
 
+    static const ::jc::s32 KEY_MAINCONTEXT;
     static const ::jc::s32 EGL_DEPTHBUFFER_ENABLE;
     static const ::jc::s32 EGL_COLORBUFFER_BITS_DEFAULT;
 
