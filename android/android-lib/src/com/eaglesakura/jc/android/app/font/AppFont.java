@@ -1,5 +1,8 @@
 package com.eaglesakura.jc.android.app.font;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -159,7 +162,7 @@ public class AppFont {
      * height/widthの値は変更せず、オーバーする場合はテキストの末尾を削ってfooderTextに置き換える。
      * @param baseText
      * @param fooderText
-     * @param heightPixel
+     * @param heightPixel 1行の高さ
      * @param widthPixel
      * @return
      */
@@ -174,6 +177,46 @@ public class AppFont {
         }
 
         return tempText;
+    }
+
+    /**
+     * 特定サイズに収めることができる文字を生成する。
+     * height/widthの値は変更せず、オーバーする場合は折り返しを行う
+     * @param baseText
+     * @param fooderText
+     * @param heightPixel 1行の高さ
+     * @param widthPixel
+     * @return
+     */
+    public String calcTextInRectNewLine(final String baseText, int widthPixel, int heightPixel) {
+        final int fontSize = calcFontSize(baseText, heightPixel);
+        String allText = baseText;
+        Point tempTextSize = new Point();
+
+        List<String> result = new ArrayList<String>();
+
+        while (!allText.isEmpty()) {
+            int index = allText.length();
+            String tempText = allText;
+            while (tempText.length() > 0 && calcTextSize(tempText, fontSize, tempTextSize).x > widthPixel) {
+                tempText = allText.substring(0, --index);
+            }
+
+            result.add(tempText);
+            allText = allText.substring(tempText.length());
+        }
+
+        String tempResult = "";
+        int index = 0;
+        for (String txt : result) {
+            if (index > 0) {
+                tempResult += "\n";
+            }
+            tempResult += txt;
+            ++index;
+        }
+
+        return tempResult;
     }
 
     /**
