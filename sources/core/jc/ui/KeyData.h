@@ -120,6 +120,13 @@ public:
         return isKeyLeft() || isKeyRight();
     }
 
+    /**
+     * 決定キーに相当するキー制御ならtrue
+     */
+    virtual jcboolean isEnterKey() const {
+        return keyCode == KeyEventProtocol::KEYCODE_ENTER;
+    }
+
 private:
     /**
      * キーが押された

@@ -185,6 +185,11 @@ void WindowEventListener::onKeyUp(KeyDetector *detector, const MKeyData keyData)
             if (focusView) {
                 focusView->requestFocus(jctrue);
             }
+        } else {
+            // フォーカスがあるなら、クリックイベントを送信してあげる
+            if (keyData->isEnterKey()) {
+                window->broadcastEvent(Event::createEvent(BroadcastType_Click, focusView));
+            }
         }
     }
 

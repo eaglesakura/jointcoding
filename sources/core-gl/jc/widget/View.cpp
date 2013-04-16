@@ -335,6 +335,7 @@ void View::dispatchEvent(MEvent event) {
     assert(event.get() != NULL);
 
     const s32 EVENT_TYPE = event->getType();
+//    jclogf("dispatch event(%x) (%x)", EVENT_TYPE, this);
 
     switch (EVENT_TYPE) {
         case BroadcastType_Click:
