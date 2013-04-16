@@ -24,8 +24,12 @@ public class NativeIOUtil {
      */
     @JCMethod
     public static InputStream openFromAssets(String fileName, Context appContext) throws IOException {
-        InputStream is = appContext.getResources().getAssets().open(fileName);
-        return is;
+        try {
+            InputStream is = appContext.getResources().getAssets().open(fileName);
+            return is;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -37,6 +41,27 @@ public class NativeIOUtil {
      */
     @JCMethod
     public static InputStream openFromExternalStrage(String path, Context appContext) throws IOException {
-        return new FileInputStream(new File(Environment.getExternalStorageDirectory(), path));
+        try {
+            return new FileInputStream(new File(Environment.getExternalStorageDirectory(), path));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * SDカードからファイルを開く
+     * @param path
+     * @param appContext
+     * @return
+     * @throws IOException
+     */
+    @JCMethod
+    public static InputStream openFromLocalStrage(String path, Context appContext) throws IOException {
+        File directory = appContext.getFilesDir().getParentFile();
+        try {
+            return new FileInputStream(new File(directory, path));
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

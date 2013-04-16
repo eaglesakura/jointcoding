@@ -20,7 +20,9 @@ MInputStream FileSystem::openInputStream(const Uri &uri) {
     String scheme = uri.getScheme();
     String path = uri.getPath();
 
+#ifdef LOG_JAVAJOINTINPUTSTREAM
     jclogf("scheme = %s", scheme.c_str());
+#endif
     jclogf("path = %s", path.c_str());
 
     // アセットから読み込む
@@ -28,9 +30,13 @@ MInputStream FileSystem::openInputStream(const Uri &uri) {
         return this->openAsset(path);
     } else if (scheme == UriProtocol::SCHEME_EXTERNALSTRAGE) {
         return this->openExternalStrageFile(path);
+    } else if (scheme == UriProtocol::SCHEME_LOCALSTRAGE) {
+        return this->openLocalStrageFile(path);
     }
 
+    // 未実装
     jclogf("scheme error = %s", scheme.c_str());
+    assert(false);
     throw create_exception(FileNotFoundException, "scheme error");
 }
 

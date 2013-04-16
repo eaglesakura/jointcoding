@@ -37,6 +37,7 @@ public:
 protected:
     virtual MInputStream openAsset(const String fileName) = 0;
     virtual MInputStream openExternalStrageFile(const String fileName) = 0;
+    virtual MInputStream openLocalStrageFile(const String fileName) = 0;
 };
 
 }

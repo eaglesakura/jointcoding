@@ -9,10 +9,10 @@ const ::jc::charactor* NativeIOUtil::CLASS_SIGNATURE = "com/eaglesakura/jc/andro
 
 static jclass class_NativeIOUtil = NULL;
 
-#define methods_NativeIOUtil_LENGTH 2
+#define methods_NativeIOUtil_LENGTH 3
 
 #if methods_NativeIOUtil_LENGTH
-static jmethodID methods_NativeIOUtil[2];
+static jmethodID methods_NativeIOUtil[3];
 #endif
 
 static void initialize_NativeIOUtil() {
@@ -31,7 +31,8 @@ static void initialize_NativeIOUtil() {
     // load methods
     {
         methods_NativeIOUtil[0] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "openFromAssets", "(Ljava/lang/String;Landroid/content/Context;)Ljava/io/InputStream;", true);
-        methods_NativeIOUtil[1] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "openFromExternalStrage", "(Ljava/lang/String;Landroid/content/Context;)Ljava/io/InputStream;", true);
+        methods_NativeIOUtil[1] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "openFromLocalStrage", "(Ljava/lang/String;Landroid/content/Context;)Ljava/io/InputStream;", true);
+        methods_NativeIOUtil[2] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "openFromExternalStrage", "(Ljava/lang/String;Landroid/content/Context;)Ljava/io/InputStream;", true);
 
     }
 }
@@ -46,10 +47,16 @@ jobject NativeIOUtil::openFromAssets_unsafe(jstring fileName, jobject appContext
     return (jobject) env->CallStaticObjectMethod(class_NativeIOUtil, methods_NativeIOUtil[0], fileName, appContext);
 }
 
-jobject NativeIOUtil::openFromExternalStrage_unsafe(jstring path, jobject appContext) {
+jobject NativeIOUtil::openFromLocalStrage_unsafe(jstring path, jobject appContext) {
     CALL_JNIENV();
     initialize_NativeIOUtil();
     return (jobject) env->CallStaticObjectMethod(class_NativeIOUtil, methods_NativeIOUtil[1], path, appContext);
+}
+
+jobject NativeIOUtil::openFromExternalStrage_unsafe(jstring path, jobject appContext) {
+    CALL_JNIENV();
+    initialize_NativeIOUtil();
+    return (jobject) env->CallStaticObjectMethod(class_NativeIOUtil, methods_NativeIOUtil[2], path, appContext);
 }
 
 jc_sp<NativeIOUtil> NativeIOUtil::wrap(jobject obj) {

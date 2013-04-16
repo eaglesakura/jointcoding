@@ -23,6 +23,8 @@ public:
 protected:
     virtual MInputStream openAsset(const String fileName);
     virtual MInputStream openExternalStrageFile(const String fileName);
+    virtual MInputStream openLocalStrageFile(const String fileName);
+
 };
 
 }

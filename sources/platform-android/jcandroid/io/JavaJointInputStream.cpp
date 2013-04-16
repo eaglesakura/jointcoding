@@ -8,10 +8,13 @@
 #include    "jcandroid/io/JavaJointInputStream.h"
 #include    "jc/system/Exception.h"
 
+// #define LOG_JAVAJOINTINPUTSTREAM
+
 namespace ndk {
 
 JavaJointInputStream::JavaJointInputStream(jobject inputstream) {
     CALL_JNIENV();
+    assert(inputstream != NULL);
     this->stream = JniInputStream::global(inputstream);
 //    env->DeleteLocalRef(inputstream);
     // 一時領域を作成する。デフォルトは32kb
@@ -20,9 +23,13 @@ JavaJointInputStream::JavaJointInputStream(jobject inputstream) {
 
 JavaJointInputStream::~JavaJointInputStream() {
     try {
+#ifdef LOG_JAVAJOINTINPUTSTREAM
         jclog("java inputstream close");
+#endif
         this->close();
+#ifdef LOG_JAVAJOINTINPUTSTREAM
         jclog("java inputstream close finish");
+#endif
     } catch (const Exception &e) {
         jcloge(e);
     }
