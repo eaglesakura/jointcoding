@@ -21,7 +21,7 @@ WindowEventListener::WindowEventListener(MWindowContext windowContext) {
 /**
  * 最後にイベントハンドリングを行ってから何秒経過したかの値を取得する
  */
-double WindowEventListener::getElapsedLastEventHandle() const {
+double WindowEventListener::getElapsedLastEventHandleSec() const {
     return  Timer::lapseTimeSec(lastHandleTime);
 }
 

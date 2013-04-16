@@ -47,7 +47,7 @@ public:
     /**
      * 最後にイベントハンドリングを行ってから何秒経過したかの値を取得する
      */
-    virtual double getElapsedLastEventHandle() const;
+    virtual double getElapsedLastEventHandleSec() const;
 
     /**
      * Viewがクリックされた。

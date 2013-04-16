@@ -253,8 +253,15 @@ public:
     /**
      * ユーザーイベント（キーハンドリング、タップイベント）からの経過時刻を取得する
      */
-    virtual double getElapsedLastUserEventHandle() const {
-        return windowEventListener->getElapsedLastEventHandle();
+    virtual double getElapsedLastUserEventHandleSec() const {
+        return windowEventListener->getElapsedLastEventHandleSec();
+    }
+
+    /**
+     * 最後のユーザーイベントからの経過時刻をリセットする
+     */
+    virtual void resetElapsedLastUserEventHandleTime() {
+        windowEventListener->resetLastEventHandleTime();
     }
 };
 
