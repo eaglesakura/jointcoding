@@ -39,6 +39,17 @@ class LoopController: public Object {
      */
     u32 onceFrameTimeMs;
 
+    struct {
+        /**
+         * 最大フレームレート（標準は60fps）
+         */
+        u32 maxRate;
+
+        /**
+         * 最小フレームレート（標準は30fps）
+         */
+        u32 minRate;
+    } frameRateRange;
 public:
     LoopController();
 
@@ -64,6 +75,13 @@ public:
     virtual u32 getFrameRate() const {
         return frameRate;
     }
+
+    /**
+     * 可変フレームレートの範囲を設定する。
+     * minRateの設定値よりもフレームレートが下がった場合、強制的にminRateとして扱う
+     * maxRateの設定値よりもフレームレートが上がった場合、強制的にmaxRateとして扱う
+     */
+    virtual void setFrameRateRange(const u32 minRate, const u32 maxRate);
 
     /**
      * １フレームの動作を終了し、経過時間を返す。

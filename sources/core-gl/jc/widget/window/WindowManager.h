@@ -70,7 +70,6 @@ class WindowManager: public Object {
      * 拡張用のウィンドウハンドラ
      */
     SWindowEventHandler eventHandler;
-
 protected:
     /**
      * タッチイベントを処理する

@@ -15,6 +15,7 @@ LoopController::LoopController() {
     frameRate = 60;
     onceFrameTimeMs = 1000 / frameRate;
     elapsed_sec = (double) onceFrameTimeMs / 1000.0;
+    setFrameRateRange(15, 60);
 }
 
 LoopController::~LoopController() {
@@ -30,7 +31,7 @@ void LoopController::beginFrame() {
     // 経過時間を秒単位に変換する
     // 120分の１秒未満、もしくは15分の1秒以上の超過は不自然な値とみなしてシャットアウトする
     elapsed_sec = elapsed_ms / 1000.0f;
-    elapsed_sec = jc::minmax<double>(1.0 / 120.0, 1 / 15.0, elapsed_sec);
+    elapsed_sec = jc::minmax<double>(1.0 / (double)(frameRateRange.maxRate), 1.0 / (double)frameRateRange.minRate, elapsed_sec);
 }
 
 /**
@@ -52,6 +53,18 @@ void LoopController::endFrame(u32 *result_frame_timems, u32 *result_sleep_timems
         *result_sleep_timems = max<u32>(0, onceFrameTimeMs - frame_time);
     }
 }
+
+/**
+ * 可変フレームレートの範囲を設定する。
+ * minRateの設定値よりもフレームレートが下がった場合、強制的にminRateとして扱う
+ * maxRateの設定値よりもフレームレートが上がった場合、強制的にmaxRateとして扱う
+ */
+void LoopController::setFrameRateRange(const u32 minRate, const u32 maxRate) {
+    frameRateRange.minRate = jc::min<u32>(minRate, maxRate);
+    frameRateRange.maxRate = jc::max<u32>(minRate, maxRate);
+}
+
+
 
 /**
  * 次のフレームの開始時刻までsleepを行う

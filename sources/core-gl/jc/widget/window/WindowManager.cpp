@@ -20,6 +20,9 @@ WindowManager::WindowManager() {
 
     touchDetector.reset(new TouchDetector(windowEventListener));
     keyDetector.reset(new KeyDetector(windowEventListener));
+
+
+    windowContext->loopController.setFrameRateRange(20, 60);
 }
 
 WindowManager::~WindowManager() {
