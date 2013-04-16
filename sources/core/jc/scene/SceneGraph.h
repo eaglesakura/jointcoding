@@ -51,11 +51,6 @@ class SceneGraph: public Object {
     float renderingPriority;
 
     /**
-     * 親を先に実行する
-     */
-    jcboolean parentAhead;
-
-    /**
      * 現在の処理パス
      * 複数パスでのレンダリング・更新用
      * デフォルトは-1
@@ -105,19 +100,13 @@ public:
     virtual void beginPass(const ScenePassType_e passType, const s32 pass) {
         assert(pass >= 0);
         currentPass = pass;
-        if (isParentAhead()) {
-            onBeginPass(passType, pass);
-        }
 
         std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
             (*itr)->beginPass(passType, pass);
             ++itr;
         }
-
-        if (!isParentAhead()) {
-            onBeginPass(passType, pass);
-        }
+        onBeginPass(passType, pass);
     }
 
     /**
@@ -126,9 +115,6 @@ public:
     virtual void endPass(const ScenePassType_e passType) {
         const s32 finished_pass = jc::max(0, currentPass);
         currentPass = -1;
-        if (isParentAhead()) {
-            onEndPass(passType, finished_pass);
-        }
 
         std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
@@ -136,9 +122,7 @@ public:
             ++itr;
         }
 
-        if (!isParentAhead()) {
-            onEndPass(passType, finished_pass);
-        }
+        onEndPass(passType, finished_pass);
     }
 
     virtual scene_id getUniqueId() const {
@@ -147,18 +131,6 @@ public:
 
     virtual u32 getChildrenNum() const {
         return childs.size();
-    }
-
-    virtual jcboolean isParentAhead() const {
-        return parentAhead;
-    }
-
-    /**
-     * 親を先に更新・描画を行う場合trueを設定する。
-     * デフォルトfalse = 子を優先して処理する
-     */
-    virtual void setParentAhead(const jcboolean set) {
-        parentAhead = set;
     }
 
     /**

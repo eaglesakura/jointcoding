@@ -12,7 +12,6 @@ SceneGraph::SceneGraph() {
     this->uniqueId = (scene_id) this;
     this->parent = NULL;
     this->renderingPriority = 1.0f;
-    this->parentAhead = jcfalse;
     this->currentPass = -1;
 }
 SceneGraph::~SceneGraph() {
@@ -168,14 +167,6 @@ void SceneGraph::removeFromParent() {
  */
 jcboolean SceneGraph::update() {
 
-    jcboolean result = jcfalse;
-    // 先に更新する場合は処理する
-    if (isParentAhead()) {
-        if (isSelfUpdatePass()) {
-            result = onSelfUpdate();
-        }
-    }
-
     std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
@@ -194,14 +185,10 @@ jcboolean SceneGraph::update() {
         }
     }
 
-    if (!isParentAhead()) {
-        if (isSelfUpdatePass()) {
-            return onSelfUpdate();
-        } else {
-            return jcfalse;
-        }
+    if (isSelfUpdatePass()) {
+        return onSelfUpdate();
     } else {
-        return result;
+        return jcfalse;
     }
 }
 
@@ -213,12 +200,6 @@ static bool compare_scenegraph(const MSceneGraph a, const MSceneGraph b) {
  * レンダリングを行う
  */
 void SceneGraph::rendering() {
-
-    if (isParentAhead()) {
-        if (isSelfRenderingPass()) {
-            onSelfRendering();
-        }
-    }
 
     // 子の処理を行う
     {
@@ -237,10 +218,8 @@ void SceneGraph::rendering() {
         }
     }
 
-    if (!isParentAhead()) {
-        if (isSelfRenderingPass()) {
-            onSelfRendering();
-        }
+    if (isSelfRenderingPass()) {
+        onSelfRendering();
     }
 }
 

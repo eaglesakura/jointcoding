@@ -166,9 +166,10 @@ public class AppFont {
      * @param widthPixel
      * @return
      */
-    public String calcTextInRect(final String baseText, final String fooderText, int widthPixel, int heightPixel) {
-        final int fontSize = calcFontSize(baseText, heightPixel);
-        String tempText = baseText;
+    public String calcTextInRect(final String baseText, final String fooderText, boolean forceFooder, int widthPixel,
+            int heightPixel) {
+        String tempText = forceFooder ? (baseText + fooderText) : baseText;
+        final int fontSize = calcFontSize(tempText, heightPixel);
         Point tempTextSize = new Point();
 
         int index = baseText.length();
