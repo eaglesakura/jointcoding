@@ -30,6 +30,11 @@ enum EventType_e {
      * Viewにフォーカスを当てるようにリクエストする
      */
     EventType_RequestFocus,
+
+    /**
+     * WindowManagerから定期的に呼び出されるコールバック命令
+     */
+    EventType_Tick,
 };
 
 enum BroadcastType_e {

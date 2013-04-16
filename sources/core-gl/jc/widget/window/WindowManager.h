@@ -28,6 +28,13 @@ public:
      * trueを返した場合、ハンドリングに成功したとみなしてWindowManagerはそのeventのハンドリングを行わない。
      */
     virtual jcboolean handleEvent(MEvent event) = 0;
+
+    /**
+     * 定期コールイベントのハンドリングを行う
+     * elapsed_sec 前回呼び出しからの経過秒
+     */
+    virtual void handleTickEvent(const double elapsed_sec) {
+    }
 };
 
 /**
@@ -70,6 +77,20 @@ class WindowManager: public Object {
      * 拡張用のウィンドウハンドラ
      */
     SWindowEventHandler eventHandler;
+
+    struct {
+        /**
+         * 定期呼び出しを行う間隔
+         * 負の値の場合、定期コールを行わない
+         */
+        double tickCallTime;
+
+        /**
+         * 最後に定期コールを行った時刻
+         * tickCallTimeが負の値の場合、定期コールを行わない
+         */
+        jctime lastTickTime;
+    } tick;
 protected:
     /**
      * タッチイベントを処理する
@@ -220,6 +241,20 @@ public:
      */
     virtual void setFramerateRange( const s32 minFrameRate, const s32 maxFrameRate) {
         windowContext->loopController.setFrameRateRange(minFrameRate, maxFrameRate);
+    }
+
+    /**
+     * 定期コールイベントを発行させる。
+     * 負の値を設定した場合、コールを行わない。
+     * @param callback_sec 何秒間隔で呼び出すかのチェック
+     */
+    virtual void setTickCallbackTime( const double callback_sec);
+
+    /**
+     * ユーザーイベント（キーハンドリング、タップイベント）からの経過時刻を取得する
+     */
+    virtual double getElapsedLastUserEventHandle() const {
+        return windowEventListener->getElapsedLastEventHandle();
     }
 };
 

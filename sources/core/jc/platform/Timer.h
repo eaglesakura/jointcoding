@@ -43,6 +43,21 @@ public:
     }
 
     /**
+     * 時刻tからの経過時間をミリ秒単位で取得する
+     */
+    inline static u64 lapseTimeMsLong(const jctime &t) {
+        const jctime now = currentTime();
+        return (now - t).total_milliseconds();
+    }
+
+    /**
+     * 時刻tからの経過時間を秒単位で取得する
+     */
+    inline static double lapseTimeSec(const jctime &t) {
+        return (double) lapseTimeMsLong(t) / 1000.0;
+    }
+
+    /**
      * beforeからafterの経過時間をミリ秒単位で取得する
      */
     inline static s32 lapseTimeMs(const jctime &before, const jctime &after) {

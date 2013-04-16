@@ -16,13 +16,38 @@ namespace view {
  * Window内部のタッチ・コントロールを行う
  */
 class WindowEventListener: public Object, public TouchListener, public KeyListener {
+    /**
+     *
+     */
     MWindowContext windowContext;
 
+    /**
+     * 最後にイベントハンドリングを行った時刻
+     */
+    jctime lastHandleTime;
 public:
     WindowEventListener(MWindowContext windowContext);
     virtual ~WindowEventListener() {
-
     }
+
+    /**
+     * 最後にイベントハンドリングを行った時刻を取得する
+     */
+    virtual jctime getLastEventHandleTime() const {
+        return lastHandleTime;
+    }
+
+    /**
+     * 最後にハンドリングした時刻をリセットする
+     */
+    virtual void resetLastEventHandleTime() {
+        lastHandleTime = Timer::currentTime();
+    }
+
+    /**
+     * 最後にイベントハンドリングを行ってから何秒経過したかの値を取得する
+     */
+    virtual double getElapsedLastEventHandle() const;
 
     /**
      * Viewがクリックされた。
@@ -68,7 +93,6 @@ public:
      */
     virtual void onPinchEnd(const TouchDetector *detector, const Vector2f &center);
 
-
     /**
      * キーダウンを開始した
      */
@@ -83,6 +107,7 @@ public:
      * キーを離した
      */
     virtual void onKeyUp(KeyDetector *detector, const MKeyData keyData);
+
 };
 
 /**
