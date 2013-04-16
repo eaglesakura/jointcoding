@@ -95,6 +95,11 @@ protected:
     MThreadID threadId;
 
     /**
+     * スレッドIDを設定するためのmutex
+     */
+    jcmutex thread_mutex;
+
+    /**
      * 現在のリクエストID
      * リクエストの予約番号として処理される。
      */
@@ -105,6 +110,11 @@ protected:
      * DeviceLockが開放される度にデクリメントされる
      */
     request_id current_id;
+private:
+    inline void setThreadId(MThreadID id) {
+        MutexLock lock(thread_mutex);
+        threadId = id;
+    }
 
 private:
     // for DeviceLock
@@ -145,6 +155,7 @@ private:
      * Deviceがカレント設定されているスレッドIDを取得する。
      */
     inline MThreadID getCurrentThreadId() {
+        MutexLock lock(thread_mutex);
         return threadId;
     }
 public:
@@ -235,7 +246,7 @@ public:
      * 呼び出しをされているのがカレントスレッドに当たる場合はtrueを返す。
      */
     virtual jcboolean isCurrentThread() {
-        MThreadID id = threadId;
+        MThreadID id = getCurrentThreadId();
 
         // threadがそもそも設定されていないならfalseしかない
         if (!id) {

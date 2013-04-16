@@ -39,13 +39,13 @@ jcboolean Device::makeCurrent(EGLMakeCurrent_e type) {
             egl->current(context, surface);
 
             // 現在のスレッドIDに割り当てる
-            threadId.reset(new ThreadID());
+            setThreadId(MThreadID(new ThreadID()));
             return jctrue;
         case EGLMakeCurrent_Unbind:
             egl->current(EGL_NULL_CONTEXT, EGL_NULL_SURFACE);
 
             // スレッドIDを廃棄する
-            threadId.reset();
+            setThreadId(MThreadID());
             return jctrue;
     }
     return jcfalse;
@@ -87,7 +87,7 @@ void Device::dispose() {
     }
 
     // スレッドの廃棄を行う
-    threadId.reset();
+    setThreadId(MThreadID());
 }
 
 }
