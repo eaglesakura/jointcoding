@@ -561,6 +561,25 @@ public:
 
         return result->size();
     }
+
+    /**
+     * 自分の子からフォーカスのインデックスを取得する
+     */
+    virtual s32 getFocusChildViewIndex(const jcboolean recursive) const {
+        std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+
+        s32 index = 0;
+        while(itr != end) {
+            jc_sp<View> view = downcast<View>(*itr);
+            if(view && view->hasFocus(recursive)) {
+                return index;
+            }
+            ++index;
+            ++itr;
+        }
+
+        return -1;
+    }
 protected:
     // オーバーライドされる
 

@@ -90,34 +90,34 @@ public:
         || keyCode == KeyEventProtocol::KEYCODE_DOWN;
     }
 
-    virtual jcboolean isKeyDown() const {
+    virtual jcboolean isDownKey() const {
         return keyCode == KeyEventProtocol::KEYCODE_DOWN;
     }
 
-    virtual jcboolean isKeyUp() const {
+    virtual jcboolean isUpKey() const {
         return keyCode == KeyEventProtocol::KEYCODE_UP;
     }
 
-    virtual jcboolean isKeyLeft() const {
+    virtual jcboolean isLeftKey() const {
         return keyCode == KeyEventProtocol::KEYCODE_LEFT;
     }
 
-    virtual jcboolean isKeyRight() const {
+    virtual jcboolean isRightKey() const {
         return keyCode == KeyEventProtocol::KEYCODE_RIGHT;
     }
 
     /**
      * 垂直方向のキー制御ならtrue
      */
-    virtual jcboolean isKeyVertical() const {
-        return isKeyDown() || isKeyUp();
+    virtual jcboolean isVerticalKey() const {
+        return isDownKey() || isUpKey();
     }
 
     /**
      * 水平方向のキー制御ならtrue
      */
-    virtual jcboolean isKeyHorizontal() const {
-        return isKeyLeft() || isKeyRight();
+    virtual jcboolean isHorizontalKey() const {
+        return isLeftKey() || isRightKey();
     }
 
     /**
@@ -125,6 +125,13 @@ public:
      */
     virtual jcboolean isEnterKey() const {
         return keyCode == KeyEventProtocol::KEYCODE_ENTER;
+    }
+
+    /**
+     * 戻るキーに相当するキー制御ならtrue
+     */
+    virtual jcboolean isBackKey() const {
+        return keyCode == KeyEventProtocol::KEYCODE_BACK;
     }
 
 private:

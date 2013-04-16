@@ -28,6 +28,7 @@ public class NativeKeyEvent implements KeyEventProtocol {
         codeMaps.put(KeyEvent.KEYCODE_DPAD_RIGHT, KEYCODE_RIGHT);
         codeMaps.put(KeyEvent.KEYCODE_DPAD_CENTER, KEYCODE_ENTER);
         codeMaps.put(KeyEvent.KEYCODE_ENTER, KEYCODE_ENTER);
+        codeMaps.put(KeyEvent.KEYCODE_BACK, KEYCODE_BACK);
     }
 
     /**
@@ -71,6 +72,15 @@ public class NativeKeyEvent implements KeyEventProtocol {
     @JCMethod
     public int getKeyCode() {
         return jcKeyCode;
+    }
+
+    /**
+     * キーマッピングを追加する
+     * @param androidKeyCode Android端末のキーコード
+     * @param jointKeyCode 対応するNDK側のキーコード
+     */
+    public static void addKeyMapping(int androidKeyCode, int jointKeyCode) {
+        codeMaps.put(androidKeyCode, jointKeyCode);
     }
 
     public static NativeKeyEvent createInstance(KeyEvent event) {
