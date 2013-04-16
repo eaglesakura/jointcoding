@@ -214,6 +214,13 @@ public:
     virtual void broadcastEvent(const s32 eventType, const jc_sp<Object> extension = jc_sp<Object>()) {
         return window->broadcastEvent(Event::createEvent(eventType, extension));
     }
+
+    /**
+     * フレームレートの範囲を設定する
+     */
+    virtual void setFramerateRange( const s32 minFrameRate, const s32 maxFrameRate) {
+        windowContext->loopController.setFrameRateRange(minFrameRate, maxFrameRate);
+    }
 };
 
     /**
