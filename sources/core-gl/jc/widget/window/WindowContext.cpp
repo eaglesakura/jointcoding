@@ -16,7 +16,22 @@ namespace view {
     MWindow window = lockWindow();
     assert(window.get());
 
-    MView view = window->findSceneTo<View>(id);
+    MView view = window->findViewById(id);
     return view;
-}}
+}
+
+/**
+ * 特定のViewを検索する
+ * 循環参照に注意をすること
+ */
+jc_sp<View> WindowContext::findEnableViewById(const scene_id id) {
+    MWindow window = lockWindow();
+    assert(window.get());
+
+    MView view = window->findEnableViewById(id);
+    return view;
+}
+
+}
+
 }

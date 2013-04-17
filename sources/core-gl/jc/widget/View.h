@@ -569,8 +569,8 @@ public:
         /**
          * 一致するIDを全て列挙して返す
          */
-        virtual s32 findViewListById(const scene_id id, std::list< jc_sp<View> > *result) {
-            std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        virtual s32 findViewListById(const scene_id id, std::list< jc_sp<View> > *result) const {
+            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
             while(itr != end) {
                 jc_sp<View> view = downcast<View>(*itr);
                 if(view) {
@@ -584,6 +584,51 @@ public:
             }
 
             return result->size();
+        }
+
+        /**
+         * 一致するIDで有効なViewを全て列挙して返す
+         */
+        virtual s32 findEnableViewListById(const scene_id id, std::list< jc_sp<View> > *result) const {
+            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            while(itr != end) {
+                jc_sp<View> view = downcast<View>(*itr);
+                if(view) {
+                    if(view->getUniqueId() == id && view->isEnable()) {
+                        result->push_back(view);
+                    }
+
+                    view->findViewListById(id, result);
+                }
+                ++itr;
+            }
+
+            return result->size();
+        }
+
+        /**
+         * 有効なViewを探して返す
+         */
+        virtual jc_sp<View> findEnableViewById(const scene_id id) const {
+            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            while(itr != end) {
+                jc_sp<View> view = downcast<View>(*itr);
+                if(view) {
+                    if(view->getUniqueId() == id && view->isEnable()) {
+                        return view;
+                    }
+
+                    // 子も探索する
+                    view = view->findEnableViewById(id);
+                    if(view) {
+                        // 孫以降がヒットした
+                        return view;
+                    }
+                }
+                ++itr;
+            }
+
+            return jc_sp<View>();
         }
 
         /**

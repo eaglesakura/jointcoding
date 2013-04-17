@@ -131,6 +131,12 @@ public:
     virtual jc_sp<View> findViewById(const scene_id id);
 
     /**
+     * 特定のViewを検索する
+     * 循環参照に注意をすること
+     */
+    virtual jc_sp<View> findEnableViewById(const scene_id id);
+
+    /**
      * 特定シーンをルートから検索する
      */
     template<typename T>
