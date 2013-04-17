@@ -63,7 +63,7 @@ public:
     /**
      * 押下中の場合はtrueを返す
      */
-    virtual s32 isPressing() const {
+    virtual jcboolean isPressing() const {
         return endTime < beginTime;
     }
 

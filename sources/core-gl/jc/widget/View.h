@@ -109,6 +109,12 @@ protected:
     virtual void addTransacationInitializer(const jc_selp<TransactionCounter> counter, const float transaction_sec, const LeapType_e type = LeapType_Ease1);
 
     /**
+     * クリック反応するキーの場合trueを返す。
+     * 標準ではENTERキー
+     */
+    virtual jcboolean isClickableKey(const MKeyData key) const;
+
+    /**
      * フォーカス状態を管理する遷移カウンター
      */
     TransactionCounter focusCounter;

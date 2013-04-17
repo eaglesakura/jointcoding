@@ -33,6 +33,14 @@ void View::addTransacationInitializer(const jc_selp<TransactionCounter> counter,
 }
 
 /**
+ * クリック反応するキーの場合trueを返す。
+ * 標準ではENTERキー
+ */
+jcboolean View::isClickableKey(const MKeyData key) const {
+    return key->isEnterKey();
+}
+
+/**
  * 状態の有効・無効を一括で切り替える
  */
 void View::setEnable(const jcboolean enable) {
@@ -275,6 +283,10 @@ void View::dispatchKeyEvent(const MKeyData keyData) {
     } else {
         onKeyUp(keyData);
     }
+
+    if(isClickableKey(keyData)) {
+        dispatchDownEvent(keyData->isPressing());
+    }
 }
 
 /**
@@ -511,7 +523,7 @@ jcboolean View::update() {
             ++downCounter;
 
             // カウンタが一番上まで行ったらダウンチェックしてもとに戻す
-            if(downCounter.isMaxValue() && !isDown()) {
+            if (downCounter.isMaxValue() && !isDown()) {
                 down_inc = jcfalse;
             }
 
