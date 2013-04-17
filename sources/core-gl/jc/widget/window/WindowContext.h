@@ -159,6 +159,14 @@ public:
     virtual void interruptionEvent(const MEvent event) {
         events->pushFrontEvent(event);
     }
+
+    /**
+     * 秒間パラメーターをフレームパラメーターに変換する
+     */
+    template<typename T>
+    T toFrameValue(const T secValue) {
+        return loopController.sec2frame<T>(secValue);
+    }
 };
 
 /**
