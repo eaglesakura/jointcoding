@@ -13,7 +13,7 @@ namespace jc {
 namespace view {
 
 View::View() {
-    this->down = this->focus = jcfalse;
+    this->down = this->down_inc = this->focus = jcfalse;
     this->enable = this->focusable = this->touchable = jctrue;
     this->viewMode = ViewMode_Visible;
 
@@ -291,6 +291,11 @@ void View::dispatchDownEvent(const jcboolean down) {
 
     // 違いが生じたらメッセージを送信
     if (before_down != this->down) {
+        if (this->down) {
+            // インクリメントモードをtrueに変更
+            down_inc = jctrue;
+        }
+
         onDownChanged(down);
     }
 }
@@ -502,8 +507,14 @@ jcboolean View::update() {
         }
 
         // ダウン状態を管理する
-        if (isDown()) {
+        if (down_inc) {
             ++downCounter;
+
+            // カウンタが一番上まで行ったらダウンチェックしてもとに戻す
+            if(downCounter.isMaxValue() && !isDown()) {
+                down_inc = jcfalse;
+            }
+
         } else {
             --downCounter;
         }

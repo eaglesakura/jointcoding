@@ -126,6 +126,20 @@ public:
     }
 
     /**
+     * カウンタが最大値である場合はtrueを返す
+     */
+    jcboolean isMaxValue() const {
+        return counter.getValue() == counter.getMaxValue();
+    }
+
+    /**
+     * カウンタが最小値である場合はtrueを返す
+     */
+    jcboolean isMinValue() const {
+        return counter.getMinValue() == counter.getMinValue();
+    }
+
+    /**
      * 現在値を設定する
      */
     float getValue(const LeapType_e type) const {

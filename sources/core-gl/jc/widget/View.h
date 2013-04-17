@@ -75,6 +75,11 @@ private:
     jcboolean down;
 
     /**
+     * ダウン状態のインクリメントを続ける場合はtrue
+     */
+    jcboolean down_inc;
+
+    /**
      * 有効状態
      */
     jcboolean enable;

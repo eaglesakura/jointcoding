@@ -241,6 +241,14 @@ public:
         return maxValue - minValue;
     }
 
+    T getMaxValue() const {
+        return maxValue;
+    }
+
+    T getMinValue() const {
+        return minValue;
+    }
+
     /**
      * オフセットを設定する
      */
@@ -347,6 +355,13 @@ public:
     }
 
     /**
+     * 停止状態を設定する
+     */
+    void setStopped(const jcboolean set) {
+        stopped = set;
+    }
+
+    /**
      * 反転した回数を取得する
      */
     const u32 getRevertCount() const {
@@ -365,6 +380,20 @@ public:
      */
     jcboolean isIncrement() const {
         return inc;
+    }
+
+    /**
+     * インクリメントモードを反転する
+     */
+    void reverIncrementMode() {
+        inc = !inc;
+    }
+
+    /**
+     * インクリメントモードを更新する
+     */
+    void setIncrementMode(const jcboolean set) {
+        inc = set;
     }
 };
 
