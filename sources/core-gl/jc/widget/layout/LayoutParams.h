@@ -48,70 +48,74 @@ enum LayoutGravity_e {
      */
     LayoutGravity_Center = (0x01 << 2) | (0x01 << 3),
 
-
     /**
      * 親Layoutの上に乗るように修正する
      */
     LayoutGravity_OnTop = 0x01 << 4,
+
+    /**
+     * 親Layoutの下に配置されるように修正する
+     */
+    LayoutGravity_ToUnder = 0x01 << 5,
 }
 ;
 
 class LayoutParams: public Object {
 public:
-/**
- * レイアウトのリクエスト幅
- * 負の値の場合、親Viewの幅が設定される
- */
-float layout_width;
+    /**
+     * レイアウトのリクエスト幅
+     * 負の値の場合、親Viewの幅が設定される
+     */
+    float layout_width;
 
-/**
- * レイアウトのリクエスト高さ
- * 負の値の場合、親Viewの高さが設定される
- */
-float layout_height;
+    /**
+     * レイアウトのリクエスト高さ
+     * 負の値の場合、親Viewの高さが設定される
+     */
+    float layout_height;
 
-/**
- * 寄せ設定
- */
-s32 gravity;
+    /**
+     * 寄せ設定
+     */
+    s32 gravity;
 
-/**
- * 左からのマージン
- */
-float margin_left;
+    /**
+     * 左からのマージン
+     */
+    float margin_left;
 
-/**
- * 右からのマージン
- */
-float margin_right;
+    /**
+     * 右からのマージン
+     */
+    float margin_right;
 
-/**
- * 上からのマージン
- */
-float margin_top;
+    /**
+     * 上からのマージン
+     */
+    float margin_top;
 
-/**
- * 下からのマージン
- */
-float margin_bottom;
+    /**
+     * 下からのマージン
+     */
+    float margin_bottom;
 
-LayoutParams() {
-    // 幅・高さリセット
-    layout_width = layout_height = -1;
-    // マージンリセット
-    margin_left = margin_right = margin_top = margin_bottom = 0;
-    gravity = 0x00000000;
-}
+    LayoutParams() {
+        // 幅・高さリセット
+        layout_width = layout_height = -1;
+        // マージンリセット
+        margin_left = margin_right = margin_top = margin_bottom = 0;
+        gravity = 0x00000000;
+    }
 
-virtual ~LayoutParams() {
-}
+    virtual ~LayoutParams() {
+    }
 
-/**
- * レイアウトの再配置を行う
- * @param result 結果の格納先
- * @param parentLocal 基準となるLocal座標
- */
-virtual void layout(RectF *result, const RectF parentLocal);
+    /**
+     * レイアウトの再配置を行う
+     * @param result 結果の格納先
+     * @param parentLocal 基準となるLocal座標
+     */
+    virtual void layout(RectF *result, const RectF parentLocal);
 };
 
 }

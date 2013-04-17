@@ -55,7 +55,11 @@ void LayoutParams::layout(RectF *result, const RectF parentLocal) {
             // 下寄せ
             local.moveToBottom(parentLocal.height() - margin_bottom);
         } else if (gravity & LayoutGravity_OnTop) {
+            // 親Layoutの上に配置
             local.moveToBottom(parentLocal.top - margin_bottom);
+        } else if (gravity & LayoutGravity_ToUnder) {
+            // 親Layoutの下に配置
+            local.moveToTop(parentLocal.bottom + margin_top);
         } else {
             // 上
             local.moveToTop(margin_top);
