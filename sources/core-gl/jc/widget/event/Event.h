@@ -62,10 +62,16 @@ class Event: Object {
      * イベントの種類
      */
     s32 type;
+
+    /**
+     * 全Viewにブロードキャストを行う場合true
+     */
+    jcboolean broadcast;
 public:
     Event(const s32 EventType_type, jc_sp<Object> extension) {
         this->type = EventType_type;
         this->extension = extension;
+        this->broadcast = jcfalse;
     }
 
     virtual ~Event() {
@@ -87,6 +93,20 @@ public:
     }
 
     /**
+     * ブロードキャスト属性が付与されている場合true
+     */
+    jcboolean isBroadcast() const {
+        return broadcast;
+    }
+
+    /**
+     * ブロードキャスト属性を設定する
+     */
+    void setBroadcast(const jcboolean set) {
+        broadcast = set;
+    }
+
+    /**
      * 拡張クラスを取得する
      */
     template<typename T>
@@ -99,6 +119,15 @@ public:
      */
     static jc_sp<Event> createEvent( const s32 type, const jc_sp<Object> extension = jc_sp<Object>() ) {
         return jc_sp<Event>(new Event(type, extension));
+    }
+
+    /**
+     * ブロードキャストを作成する
+     */
+    static jc_sp<Event> createBroadcast( const s32 type, const jc_sp<Object> extension = jc_sp<Object>() ) {
+        jc_sp<Event> result = jc_sp<Event>(new Event(type, extension));
+        result->broadcast = jctrue;
+        return result;
     }
 };
 

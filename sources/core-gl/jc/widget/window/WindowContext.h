@@ -164,7 +164,7 @@ public:
      * 秒間パラメーターをフレームパラメーターに変換する
      */
     template<typename T>
-    T toFrameValue(const T secValue) {
+    T frameValue(const T secValue) {
         return loopController.sec2frame<T>(secValue);
     }
 };

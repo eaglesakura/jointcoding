@@ -9,10 +9,10 @@ const ::jc::charactor* NativeContext::CLASS_SIGNATURE = "com/eaglesakura/jc/andr
 
 static jclass class_NativeContext = NULL;
 
-#define methods_NativeContext_LENGTH 8
+#define methods_NativeContext_LENGTH 9
 
 #if methods_NativeContext_LENGTH
-static jmethodID methods_NativeContext[8];
+static jmethodID methods_NativeContext[9];
 #endif
 
 static void initialize_NativeContext() {
@@ -33,11 +33,12 @@ static void initialize_NativeContext() {
         methods_NativeContext[0] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getBootingId", "()Ljava/lang/String;", true);
         methods_NativeContext[1] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isNativeDebuggable", "()Z", true);
         methods_NativeContext[2] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "nativeInitialize", "()V", false);
-        methods_NativeContext[3] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "gc", "()V", true);
-        methods_NativeContext[4] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getAppContext", "()Landroid/content/Context;", false);
-        methods_NativeContext[5] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isNativeLogOutput", "()Z", true);
-        methods_NativeContext[6] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isUIThread", "()Z", true);
-        methods_NativeContext[7] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "nativeGC", "()V", true);
+        methods_NativeContext[3] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "showToast", "(Ljava/lang/String;Z)V", true);
+        methods_NativeContext[4] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "gc", "()V", true);
+        methods_NativeContext[5] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getAppContext", "()Landroid/content/Context;", false);
+        methods_NativeContext[6] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isNativeLogOutput", "()Z", true);
+        methods_NativeContext[7] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isUIThread", "()Z", true);
+        methods_NativeContext[8] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "nativeGC", "()V", true);
 
     }
 }
@@ -132,27 +133,33 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeI
 #endif
 
 
+void NativeContext::showToast(jstring message, jboolean longTime) {
+    CALL_JNIENV();
+    initialize_NativeContext();
+    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[3], message, longTime);
+}
+
 void NativeContext::gc() {
     CALL_JNIENV();
     initialize_NativeContext();
-    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[3]);
+    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[4]);
 }
 
 jobject NativeContext::getAppContext_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeContext[4]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeContext[5]);
 }
 
 jobject NativeContext::getAppContext_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jobject) env->CallObjectMethod(_this, methods_NativeContext[4]);
+    return (jobject) env->CallObjectMethod(_this, methods_NativeContext[5]);
 }
 
 jboolean NativeContext::isNativeLogOutput() {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jboolean) env->CallStaticBooleanMethod(class_NativeContext, methods_NativeContext[5]);
+    return (jboolean) env->CallStaticBooleanMethod(class_NativeContext, methods_NativeContext[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -179,13 +186,13 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isN
 jboolean NativeContext::isUIThread() {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jboolean) env->CallStaticBooleanMethod(class_NativeContext, methods_NativeContext[6]);
+    return (jboolean) env->CallStaticBooleanMethod(class_NativeContext, methods_NativeContext[7]);
 }
 
 void NativeContext::nativeGC() {
     CALL_JNIENV();
     initialize_NativeContext();
-    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[7]);
+    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[8]);
 }
 #if 0
 #include "jointcoding-android.h"

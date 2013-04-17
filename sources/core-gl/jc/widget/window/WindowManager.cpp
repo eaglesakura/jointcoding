@@ -103,7 +103,12 @@ void WindowManager::dispatchEvent(MEvent event) {
                 handleRequestFocusEvent(event);
                 break;
             default:
-                jclogf("drop event handle Type(0x%x) Object(0x%x)", event->getType(), event->getExtension<Object>().get());
+                if (event->isBroadcast()) {
+                    // ウィンドウにブロードキャストを送信する
+                    window->broadcastEvent(event);
+                } else {
+                    jcalertf("drop event handle Type(0x%x) Object(0x%x)", event->getType(), event->getExtension<Object>().get());
+                }
                 break;
         }
     }

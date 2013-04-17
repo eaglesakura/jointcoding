@@ -272,6 +272,11 @@ public:
  */
 typedef SmartJObject<jobject> JObject;
 
+/**
+ * jstringのラッパ
+ */
+typedef SmartJObject<jstring> JString;
+
 }
 
 #endif /* JCSMARTJOBJECT_H_ */

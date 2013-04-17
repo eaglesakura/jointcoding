@@ -141,6 +141,14 @@ protected:
      */
     virtual void renderingArea();
 
+    /**
+     * 秒間パラメーターをフレームパラメーターに変換する
+     */
+    template<typename T>
+    T frameValue(const T secValue) {
+        assert(isRegisteredWindow());
+        return windowContext->frameValue<T>(secValue);
+    }
 public:
     View();
     virtual ~View();

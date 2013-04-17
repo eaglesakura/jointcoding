@@ -19,6 +19,7 @@ public:
     static jboolean isNativeDebuggable();
     virtual void nativeInitialize();
     static void nativeInitialize_(jobject _this);
+    static void showToast(jstring message, jboolean longTime);
     static void gc();
     virtual jobject getAppContext_unsafe();
     static jobject getAppContext_unsafe_(jobject _this);

@@ -5,7 +5,9 @@ import java.util.UUID;
 import android.content.Context;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.widget.Toast;
 
+import com.eaglesakura.jc.android.thread.UIHandler;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -133,6 +135,24 @@ public class NativeContext {
     @JCMethod(
               nativeMethod = true)
     public static native boolean isNativeLogOutput();
+
+    /**
+     * デバッグ用のトーストを表示する
+     * @param message
+     */
+    @JCMethod
+    public static void showToast(final String message, final boolean longTime) {
+        if (!isUIThread()) {
+            UIHandler.postUI(new Runnable() {
+                @Override
+                public void run() {
+                    showToast(message, longTime);
+                }
+            });
+            return;
+        }
+        Toast.makeText(g_instance.appContext, message, longTime ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * 
