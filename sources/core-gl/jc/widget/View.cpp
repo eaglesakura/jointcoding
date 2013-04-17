@@ -245,10 +245,17 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
     if(clicked.get() == this) {
         // クリックメッセージを処理させる
         onClick();
-        requestFocus(jctrue);
 
+        // 自分にフォーカス属性があるなら、フォーカス変更させる
+        if(isFocusable()) {
+            requestFocus(jctrue);
+        }
     } else {
-        requestFocus(jcfalse);
+
+        // クリック対象にフォーカス属性があるなら、フォーカス変更させる
+        if(clicked->isFocusable()) {
+            requestFocus(jcfalse);
+        }
     }
 }
 
