@@ -69,6 +69,13 @@ struct RectT {
     }
 
     /**
+     * 面積を持たない場合trueを返す
+     */
+    jcboolean empty() {
+        return (left == right) || (top == bottom);
+    }
+
+    /**
      * x/y/width/heightを指定する
      */
     void setXYWH(const T x, const T y, const T w, const T h) {
@@ -99,7 +106,7 @@ struct RectT {
     /**
      * 指定座標がYの中央になるように移動させる
      */
-    void moveToCenterY(const T center ) {
+    void moveToCenterY(const T center) {
         const T _height = height();
         top = center - (_height / 2);
         bottom = top + _height;
@@ -256,6 +263,20 @@ struct RectT {
 
     RectT<T> createScaling(const float scale) const {
         return createScaling(scale, scale);
+    }
+
+    /**
+     * 水平方向が長い四角形の場合true
+     */
+    jcboolean isHorizontalLong() const {
+        return width() > height();
+    }
+
+    /**
+     * 垂直方向が長い四角形の場合true
+     */
+    jcboolean isVerticalLong() const {
+        return width() < height();
     }
 };
 

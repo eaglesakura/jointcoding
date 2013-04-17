@@ -21,7 +21,8 @@ WindowManager::WindowManager() {
     touchDetector.reset(new TouchDetector(windowEventListener));
     keyDetector.reset(new KeyDetector(windowEventListener));
 
-    windowContext->loopController.setFrameRateRange(20, 60);
+    // 可変フレームレート範囲を設定
+    windowContext->loopController.setFrameRateRange(30, 60);
 
     tick.lastTickTime = Timer::currentTime();
     tick.tickCallTime = -1.0;

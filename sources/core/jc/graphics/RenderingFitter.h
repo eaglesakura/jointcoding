@@ -165,10 +165,10 @@ public:
         RectF area;
         getDefaultRenderingArea(fitting, &area);
 
-        result->left = (s32)area.left;
-        result->top = (s32)area.top;
-        result->right = (s32)area.right;
-        result->bottom = (s32)area.bottom;
+        result->left = (s32) area.left;
+        result->top = (s32) area.top;
+        result->right = (s32) area.right;
+        result->bottom = (s32) area.bottom;
 
         return result;
     }
@@ -180,15 +180,15 @@ public:
      * @return
      */
     RectF* getDefaultRenderingArea(const FitType_e fitting, RectF *result) const {
-        float width = 0;
-        float height = 0;
+        double width = 0;
+        double height = 0;
         switch (fitting) {
             case Fittype_Long:
                 if (isYLongViewport()) {
                     width = viewport.width();
                     height = width / aspect;
 
-                    const float mul = height / viewport.height();
+                    const double mul = (double) height / (double) viewport.height();
                     if (mul > 1) {
                         width /= mul;
                         height /= mul;
@@ -198,7 +198,7 @@ public:
                     height = viewport.height();
                     width = height * aspect;
 
-                    const float mul = width / viewport.width();
+                    const double mul = (double) width / (double) viewport.width();
                     if (mul > 1) {
                         width /= mul;
                         height /= mul;
@@ -212,6 +212,17 @@ public:
 
         result->setXYWH(0, 0, jc::round(width), jc::round(height));
         result->offset(jc::round(viewport.centerX() - result->centerX()), jc::round(viewport.centerY() - result->centerY()));
+
+        // 誤差を修正する
+        if (jc::abs<float>(result->width() - viewport.width()) <= 2) {
+            result->left = viewport.left;
+            result->right = viewport.right;
+        }
+        if(jc::abs<float>(result->height() - viewport.height()) <= 2) {
+            result->top = viewport.top;
+            result->bottom = viewport.bottom;
+        }
+
         return result;
     }
 

@@ -145,6 +145,20 @@ public:
     jcboolean isStopped() {
         return counter.isStopped();
     }
+
+    /**
+     * 内部カウンターを取得する
+     */
+    CounterF& getCounter() {
+        return counter;
+    }
+
+    /**
+     * 内部カウンターを取得する
+     */
+    const CounterF& getCounter() const {
+        return counter;
+    }
 };
 
 }

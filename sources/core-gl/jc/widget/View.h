@@ -99,6 +99,11 @@ protected:
     }
 
     /**
+     * 遷移カウンターをイニシャライザリストに登録する
+     */
+    virtual void addTransacationInitializer(const jc_selp<TransactionCounter> counter, const float transaction_sec, const LeapType_e type = LeapType_Ease1);
+
+    /**
      * フォーカス状態を管理する遷移カウンター
      */
     TransactionCounter focusCounter;
@@ -430,253 +435,253 @@ public:
         std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
 
         // 全チェックを行う
-        while(itr != end) {
+            while(itr != end) {
 
-            jc_sp<View> check = downcast<View>(*itr);
+                jc_sp<View> check = downcast<View>(*itr);
 
-            // 子がViewであるならチェックする
-            if(check) {
-                if(check->isTouchedView(global)) {
-                    // タッチ対象になったからそれを返す
-                    return check;
-                }
-                // 子の、更に子をチェックする
-                check = check->findTouchedView(global);
+                // 子がViewであるならチェックする
                 if(check) {
-                    // 孫以降に見つかったから、それを代理で返す
-                    return check;
+                    if(check->isTouchedView(global)) {
+                        // タッチ対象になったからそれを返す
+                        return check;
+                    }
+                    // 子の、更に子をチェックする
+                    check = check->findTouchedView(global);
+                    if(check) {
+                        // 孫以降に見つかったから、それを代理で返す
+                        return check;
+                    }
                 }
+
+                // 次の子をチェックする
+                ++itr;
             }
 
-            // 次の子をチェックする
-            ++itr;
-        }
-
-        // 何も見つからなかった
-        return jc_sp<View>();
-    }
-
-    /**
-     * 位置に適合するViewを兄弟から探して返す。
-     * 自分自身は含めない。 isTouchedView()が基準となる。
-     */
-    virtual jc_sp<View> findSiblingTouchedView( const Vector2f &global) {
-        assert(isRegisteredWindow());
-
-        View *parent = getParentTo<View>();
-        assert(parent != NULL);
-
-        jc_sp<View> result = parent->findTouchedView(global);
-        if(result.get() == this) {
-            // 自身だったらNULLオブジェクトを返す
+            // 何も見つからなかった
             return jc_sp<View>();
         }
 
-        return result;
-    }
+        /**
+         * 位置に適合するViewを兄弟から探して返す。
+         * 自分自身は含めない。 isTouchedView()が基準となる。
+         */
+        virtual jc_sp<View> findSiblingTouchedView( const Vector2f &global) {
+            assert(isRegisteredWindow());
 
-    /**
-     * フォーカスを持つことができる最初のViewを探索する。
-     * 子 -> 子の子孫 -> 次の子 -> 子の子孫 の順番で探索される
-     */
-    virtual jc_sp<View> findFocusableView() {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+            View *parent = getParentTo<View>();
+            assert(parent != NULL);
 
-        // 全チェックを行う
-        while(itr != end) {
+            jc_sp<View> result = parent->findTouchedView(global);
+            if(result.get() == this) {
+                // 自身だったらNULLオブジェクトを返す
+                return jc_sp<View>();
+            }
 
-            jc_sp<View> check = downcast<View>(*itr);
+            return result;
+        }
 
-            // 子がViewであるならチェックする
-            if(check) {
-                if(check->isFocusable()) {
-                    // フォーカス対象になったからそれを返す
-                    return check;
-                }
-                // 子の、更に子をチェックする
-                check = check->findFocusableView();
+        /**
+         * フォーカスを持つことができる最初のViewを探索する。
+         * 子 -> 子の子孫 -> 次の子 -> 子の子孫 の順番で探索される
+         */
+        virtual jc_sp<View> findFocusableView() {
+            std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+
+            // 全チェックを行う
+            while(itr != end) {
+
+                jc_sp<View> check = downcast<View>(*itr);
+
+                // 子がViewであるならチェックする
                 if(check) {
-                    // 孫以降に見つかったから、それを代理で返す
-                    return check;
+                    if(check->isFocusable()) {
+                        // フォーカス対象になったからそれを返す
+                        return check;
+                    }
+                    // 子の、更に子をチェックする
+                    check = check->findFocusableView();
+                    if(check) {
+                        // 孫以降に見つかったから、それを代理で返す
+                        return check;
+                    }
                 }
+
+                // 次の子をチェックする
+                ++itr;
             }
 
-            // 次の子をチェックする
-            ++itr;
+            // 何も見つからなかった
+            return jc_sp<View>();
         }
 
-        // 何も見つからなかった
-        return jc_sp<View>();
-    }
+        /**
+         * フォーカスを持っているViewを取得する
+         */
+        virtual jc_sp<View> findFocusedView() {
+            std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
 
-    /**
-     * フォーカスを持っているViewを取得する
-     */
-    virtual jc_sp<View> findFocusedView() {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+            // 全チェックを行う
+            while(itr != end) {
 
-        // 全チェックを行う
-        while(itr != end) {
+                jc_sp<View> check = downcast<View>(*itr);
 
-            jc_sp<View> check = downcast<View>(*itr);
-
-            // 子がViewであるならチェックする
-            if(check) {
-                if(check->hasFocus()) {
-                    // フォーカスを持っていたらtrueを返す
-                    return check;
-                }
-                // 子の、更に子をチェックする
-                check = check->findFocusedView();
+                // 子がViewであるならチェックする
                 if(check) {
-                    // 孫以降に見つかったから、それを代理で返す
-                    return check;
-                }
-            }
-
-            // 次の子をチェックする
-            ++itr;
-        }
-
-        // 何も見つからなかった
-        return jc_sp<View>();
-    }
-
-    /**
-     * 一致するIDを全て列挙して返す
-     */
-    virtual s32 findViewListById(const scene_id id, std::list< jc_sp<View> > *result) {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
-        while(itr != end) {
-            jc_sp<View> view = downcast<View>(*itr);
-            if(view) {
-                if(view->getUniqueId() == id) {
-                    result->push_back(view);
+                    if(check->hasFocus()) {
+                        // フォーカスを持っていたらtrueを返す
+                        return check;
+                    }
+                    // 子の、更に子をチェックする
+                    check = check->findFocusedView();
+                    if(check) {
+                        // 孫以降に見つかったから、それを代理で返す
+                        return check;
+                    }
                 }
 
-                view->findViewListById(id, result);
+                // 次の子をチェックする
+                ++itr;
             }
-            ++itr;
+
+            // 何も見つからなかった
+            return jc_sp<View>();
         }
 
-        return result->size();
-    }
+        /**
+         * 一致するIDを全て列挙して返す
+         */
+        virtual s32 findViewListById(const scene_id id, std::list< jc_sp<View> > *result) {
+            std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+            while(itr != end) {
+                jc_sp<View> view = downcast<View>(*itr);
+                if(view) {
+                    if(view->getUniqueId() == id) {
+                        result->push_back(view);
+                    }
 
-    /**
-     * 自分の子からフォーカスのインデックスを取得する
-     */
-    virtual s32 getFocusChildViewIndex(const jcboolean recursive) const {
-        std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
-
-        s32 index = 0;
-        while(itr != end) {
-            jc_sp<View> view = downcast<View>(*itr);
-            if(view && view->hasFocus(recursive)) {
-                return index;
+                    view->findViewListById(id, result);
+                }
+                ++itr;
             }
-            ++index;
-            ++itr;
+
+            return result->size();
         }
 
-        return -1;
-    }
-protected:
-    // オーバーライドされる
+        /**
+         * 自分の子からフォーカスのインデックスを取得する
+         */
+        virtual s32 getFocusChildViewIndex(const jcboolean recursive) const {
+            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+
+            s32 index = 0;
+            while(itr != end) {
+                jc_sp<View> view = downcast<View>(*itr);
+                if(view && view->hasFocus(recursive)) {
+                    return index;
+                }
+                ++index;
+                ++itr;
+            }
+
+            return -1;
+        }
+    protected:
+        // オーバーライドされる
+
+        /**
+         * レイアウトが変更された
+         */
+        virtual void onLayoutChanged(const RectF &newArea) {
+        }
+
+        /**
+         * 自分自身のレンダリングを行う
+         */
+        virtual void onSelfRendering();
+
+        /**
+         * ウィンドウと関連付けがされた
+         */
+        virtual void onRegisterdWindow() {
+        }
+
+        /**
+         * イベントハンドリングを行う
+         */
+        virtual void onEvent(MEvent event) {
+        }
+
+        /**
+         * クリックされた
+         */
+        virtual void onClick( );
+
+        /**
+         * フォーカス状態が更新された
+         */
+        virtual void onFocusChanged(const jcboolean has);
+
+        /**
+         * 有効・無効状態が変更された
+         */
+        virtual void onEnableChanged(const jcboolean enable) {
+
+        }
+
+        /**
+         * フォーカスダウン状態が更新された
+         */
+        virtual void onDownChanged(const jcboolean down_now);
+
+        /**
+         * キーが押下された
+         */
+        virtual void onKeyDown(const MKeyData keyData) {
+        }
+
+        /**
+         * キーが離された
+         */
+        virtual void onKeyUp(const MKeyData keyData) {
+        }
+    protected:
+        // 基本制御系
+
+        /**
+         * どれかのViewがクリックされたらハンドリングを行う
+         */
+        virtual void dispatchClickEvent(const jc_sp<View> clicked);
+
+        /**
+         * どれかのキーが押された
+         */
+        virtual void dispatchKeyEvent(const MKeyData keyData);
+
+        /**
+         * ダウン状態の更新を行う
+         */
+        virtual void dispatchDownEvent(const jcboolean down);
+
+        /**
+         * このViewにフォーカスが当たるようにリクエストされた
+         */
+        virtual void dispatchRecuestFocus(const jcboolean has);
+
+        /**
+         * 送信されたイベントを処理する
+         */
+        virtual void dispatchEvent(MEvent event);
+
+        /**
+         * 自分自身を示すMViewを取得する。
+         * 循環参照に注意すること。
+         */
+        virtual jc_sp<View> getSelfManagedObject();
+    };
 
     /**
-     * レイアウトが変更された
+     * managed
      */
-    virtual void onLayoutChanged(const RectF &newArea) {
-    }
-
-    /**
-     * 自分自身のレンダリングを行う
-     */
-    virtual void onSelfRendering();
-
-    /**
-     * ウィンドウと関連付けがされた
-     */
-    virtual void onRegisterdWindow() {
-    }
-
-    /**
-     * イベントハンドリングを行う
-     */
-    virtual void onEvent(MEvent event) {
-    }
-
-    /**
-     * クリックされた
-     */
-    virtual void onClick( );
-
-    /**
-     * フォーカス状態が更新された
-     */
-    virtual void onFocusChanged(const jcboolean has);
-
-    /**
-     * 有効・無効状態が変更された
-     */
-    virtual void onEnableChanged(const jcboolean enable) {
-
-    }
-
-    /**
-     * フォーカスダウン状態が更新された
-     */
-    virtual void onDownChanged(const jcboolean down_now);
-
-    /**
-     * キーが押下された
-     */
-    virtual void onKeyDown(const MKeyData keyData) {
-    }
-
-    /**
-     * キーが離された
-     */
-    virtual void onKeyUp(const MKeyData keyData) {
-    }
-protected:
-    // 基本制御系
-
-    /**
-     * どれかのViewがクリックされたらハンドリングを行う
-     */
-    virtual void dispatchClickEvent(const jc_sp<View> clicked);
-
-    /**
-     * どれかのキーが押された
-     */
-    virtual void dispatchKeyEvent(const MKeyData keyData);
-
-    /**
-     * ダウン状態の更新を行う
-     */
-    virtual void dispatchDownEvent(const jcboolean down);
-
-    /**
-     * このViewにフォーカスが当たるようにリクエストされた
-     */
-    virtual void dispatchRecuestFocus(const jcboolean has);
-
-    /**
-     * 送信されたイベントを処理する
-     */
-    virtual void dispatchEvent(MEvent event);
-
-    /**
-     * 自分自身を示すMViewを取得する。
-     * 循環参照に注意すること。
-     */
-    virtual jc_sp<View> getSelfManagedObject();
-};
-
-/**
- * managed
- */
 typedef jc_sp<View> MView;
 
 }

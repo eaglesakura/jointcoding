@@ -26,6 +26,13 @@ View::~View() {
 }
 
 /**
+ * 遷移カウンターをイニシャライザリストに登録する
+ */
+void View::addTransacationInitializer(const jc_selp<TransactionCounter> counter, const float transaction_sec, const LeapType_e type) {
+    addRegisteredInitializer(jc_sp<TransactionInitializer>( new TransactionInitializer(counter, transaction_sec, type)) );
+}
+
+/**
  * 状態の有効・無効を一括で切り替える
  */
 void View::setEnable(const jcboolean enable) {

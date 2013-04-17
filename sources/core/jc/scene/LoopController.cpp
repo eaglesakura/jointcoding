@@ -26,12 +26,11 @@ LoopController::~LoopController() {
  * フレーム動作を開始する
  */
 void LoopController::beginFrame() {
-    frameBeginTime = Timer::currentTime();
-    const double elapsed_ms = (double) Timer::lapseTimeMs(beforeFrameFinishTime, frameBeginTime);
     // 経過時間を秒単位に変換する
     // 120分の１秒未満、もしくは15分の1秒以上の超過は不自然な値とみなしてシャットアウトする
-    elapsed_sec = elapsed_ms / 1000.0f;
+    elapsed_sec = Timer::lapseTimeSec(beforeFrameFinishTime);
     elapsed_sec = jc::minmax<double>(1.0 / (double)(frameRateRange.maxRate), 1.0 / (double)frameRateRange.minRate, elapsed_sec);
+    frameBeginTime = Timer::currentTime();
 }
 
 /**
