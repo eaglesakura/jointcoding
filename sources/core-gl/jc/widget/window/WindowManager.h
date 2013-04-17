@@ -78,6 +78,32 @@ class WindowManager: public Object {
      */
     SWindowEventHandler eventHandler;
 
+#if 0
+    struct TickCall {
+        /**
+         * 定期呼び出しを行う間隔
+         * 負の値の場合、定期コールを行わない
+         */
+        double tickCallTime;
+
+        /**
+         * 最後に定期コールを行った時刻
+         * tickCallTimeが負の値の場合、定期コールを行わない
+         */
+        jctime lastTickTime;
+
+        /**
+         * 呼び出しID
+         */
+        u32 id;
+    };
+
+    /**
+     * 呼び出しを行うコールバックタイム一覧
+     */
+    std::list<TickCall> ticks;
+#endif
+
     struct {
         /**
          * 定期呼び出しを行う間隔
