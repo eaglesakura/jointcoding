@@ -135,6 +135,9 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 option->result.alloc_time_ms = Timer::lapseTimeMs(lock_time);
                 option->result.teximage_time_ms = 0;
             }
+
+            // テクスチャロードはfinish待ちを行う
+            glFinish();
         } catch (Exception &e) {
             jcloge(e);
             // ref
@@ -187,6 +190,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 if (option) {
                     option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
                 }
+
+
+                // テクスチャロードはfinish待ちを行う
+                glFinish();
             } catch (EGLException &e) {
                 jcloge(e);
                 // ref
@@ -234,6 +241,8 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
                 result->setMagFilter(GL_LINEAR);
 
+                // テクスチャロードはfinish待ちを行う
+                glFinish();
                 if (option) {
                     option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
                 }
