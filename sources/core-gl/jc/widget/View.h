@@ -103,6 +103,12 @@ protected:
         windowRegisteredInitializer.push_back(regInitializer);
     }
 
+    virtual void resetDownFocusCounter() {
+        down_inc = jcfalse;
+        downCounter.getCounter().setIncrementMode(jctrue);
+        downCounter.getCounter().reset();
+    }
+
     /**
      * 遷移カウンターをイニシャライザリストに登録する
      */
