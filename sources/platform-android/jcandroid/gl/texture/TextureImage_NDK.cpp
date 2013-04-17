@@ -72,7 +72,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
 
     const GLenum TEXTURE_PIXEL_FORMAT = PIXEL_FORMATS[pixelFormat];
     const GLenum TEXTURE_PIXEL_TYPE = PIXEL_TYPES[pixelFormat];
-
+    const s32 ONCE_PIXEL_BYTES = Pixel::getPixelBytes(pixelFormat);
     {
         u8* raw_buffer = (u8*) env->GetDirectBufferAddress(jPixelBuffer);
 
@@ -191,7 +191,6 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                     option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
                 }
 
-
                 // テクスチャロードはfinish待ちを行う
                 glFinish();
             } catch (EGLException &e) {
@@ -203,7 +202,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             }
 
             // 画像ヘッダを移動する
-            raw_buffer += (LOAD_HEIGHT * origin_width * 4);
+            raw_buffer += (LOAD_HEIGHT * origin_width * ONCE_PIXEL_BYTES);
             pixel_y += LOAD_HEIGHT;
 
             if (option && option->slice_sleep_time_ms > 0 && pixel_y < origin_height) {
