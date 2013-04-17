@@ -406,6 +406,10 @@ void View::registerWindow() {
         {
             setWeightCounter(0.2f);
         }
+        // 非表示なら表示を消す
+        if (isInvisible()) {
+            visibleCounter.setValueDirect(0);
+        }
 
         sendMessage = jctrue;
     }
