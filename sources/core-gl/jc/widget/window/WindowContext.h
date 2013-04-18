@@ -53,8 +53,27 @@ class WindowContext: public Object {
      * イベント管理
      */
     MEventQueue events;
+
+    /**
+     * WindowContextが管理するシステム時間
+     * 毎フレームgetFrameElapsedSec()の時間だけ加算される。
+     * 可変フレームレートかつ、フレーム落ち無視のチェックに利用する。
+     */
+    jctime windowTime;
+
+    void onWindowLoopBegin() {
+        loopController.beginFrame();
+        // 前の時間からの経過時間を記録する
+        windowTime = Timer::delayTime(windowTime, loopController.getElapsedSec());
+    }
+
+    void onWindowLoopEnd() {
+        loopController.endFrame(NULL, NULL); // コントローラーに終了を伝える
+    }
+
 public:
     WindowContext() {
+        windowTime = Timer::currentTime();
     }
 
     virtual ~WindowContext() {
@@ -164,6 +183,14 @@ public:
      */
     virtual void interruptionEvent(const MEvent event) {
         events->pushFrontEvent(event);
+    }
+
+    /**
+     * ウィンドウコンテキストが保持する現在時刻を取得する。
+     * フレーム落ちが発生すると、現実時刻よりも少しずつ遅くなっていく。
+     */
+    virtual const jctime& systemTime() const {
+        return windowTime;
     }
 
     /**

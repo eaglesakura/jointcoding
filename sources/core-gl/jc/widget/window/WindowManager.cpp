@@ -179,7 +179,7 @@ void WindowManager::rendering(const s32 numPass) {
  *
  */
 void WindowManager::loopBegin() {
-    windowContext->loopController.beginFrame(); // コントローラーに開始を伝える
+    windowContext->onWindowLoopBegin();
 }
 
 /**
@@ -187,7 +187,7 @@ void WindowManager::loopBegin() {
  * フロントバッファ転送バッファの可否を引数で設定する
  */
 void WindowManager::loopEnd(const jcboolean withPostFrontBuffer) {
-    windowContext->loopController.endFrame(NULL, NULL); // コントローラーに終了を伝える
+    windowContext->onWindowLoopEnd();
 }
 
 /**

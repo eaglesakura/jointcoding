@@ -28,6 +28,20 @@ public:
     }
 
     /**
+     * 指定時刻から指定ミリ秒ずらした時刻を取得する
+     */
+    inline static jctime delayTime(const jctime &time, const s32 milliSec) {
+        return time + boost::posix_time::milliseconds(milliSec);
+    }
+
+    /**
+     * 指定時刻から指定ミリ秒ずらした時刻を取得する
+     */
+    inline static jctime delayTime(const jctime &time, const double sec) {
+        return time + boost::posix_time::milliseconds((s32)(sec * 1000.0));
+    }
+
+    /**
      * 現在時刻を取得する
      */
     inline static jctime currentTime() {

@@ -14,6 +14,7 @@
 #include    "jc/widget/window/WindowContext.h"
 #include    "jc/math/Counter.h"
 #include    "jc/widget/anim/TransactionCounter.h"
+#include    "jc/widget/anim/WindowTimer.h"
 //#include    "jc/ui/TouchPoint.h"
 
 namespace jc {
@@ -96,6 +97,9 @@ private:
 
 protected:
 
+    /**
+     * Window登録時のイニシャライザを追加する
+     */
     virtual void addRegisteredInitializer(const MRegisteredInitializer regInitializer) {
         // Window登録されていてはいけない
         assert(!isRegisteredWindow());
@@ -103,6 +107,9 @@ protected:
         windowRegisteredInitializer.push_back(regInitializer);
     }
 
+    /**
+     * 押下フォーカスの遷移をリセットする。
+     */
     virtual void resetDownFocusCounter() {
         down_inc = jcfalse;
         downCounter.getCounter().setIncrementMode(jctrue);
@@ -113,6 +120,11 @@ protected:
      * 遷移カウンターをイニシャライザリストに登録する
      */
     virtual void addTransacationInitializer(const jc_selp<TransactionCounter> counter, const float transaction_sec, const LeapType_e type = LeapType_Ease1);
+
+    /**
+     * タイマーをイニシャライザリストに登録する
+     */
+    virtual void addTimerInitializer(const jc_selp<WindowTimer> timer, const u32 timeMilliSec);
 
     /**
      * クリック反応するキーの場合trueを返す。

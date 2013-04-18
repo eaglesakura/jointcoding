@@ -9,6 +9,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/widget/View.h"
+#include    "jc/widget/anim/WindowTimer.h"
 
 namespace jc {
 namespace view {
@@ -44,6 +45,8 @@ class TransactionInitializer: public RegisteredInitializer {
     LeapType_e leapType;
 public:
     TransactionInitializer(const jc_selp<TransactionCounter> target, const float transTimeSec, const LeapType_e type = LeapType_Ease1 ) {
+        assert(target.get() != NULL);
+
         this->target = target;
         this->transactionTimeSec = transTimeSec;
         this->leapType = type;
@@ -55,6 +58,32 @@ public:
     virtual void onRegisteredWindow(View *view, MWindowContext windowContext) {
         assert(target.exist());
         target->initialize(windowContext, transactionTimeSec, leapType);
+    }
+};
+
+/**
+ * 時限タイマーの初期化を行う
+ */
+class TimerInitializer: public RegisteredInitializer {
+
+    /**
+     * 設定用タイマー
+     */
+    jc_selp<WindowTimer> target;
+public:
+    TimerInitializer(const jc_selp<WindowTimer> target, const u32 timeMilliSec ) {
+        assert(target.exist());
+        this->target = target;
+
+        WindowTimer *timer = target.get();
+        timer->setTimerMS(timeMilliSec);
+    }
+
+    virtual ~TimerInitializer() {
+    }
+
+    virtual void onRegisteredWindow(View *view, MWindowContext windowContext) {
+
     }
 };
 

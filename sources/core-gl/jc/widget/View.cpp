@@ -33,6 +33,13 @@ void View::addTransacationInitializer(const jc_selp<TransactionCounter> counter,
 }
 
 /**
+ * タイマーをイニシャライザリストに登録する
+ */
+void View::addTimerInitializer(const jc_selp<WindowTimer> timer, const u32 timeMilliSec) {
+    addRegisteredInitializer(jc_sp<RegisteredInitializer>(new TimerInitializer(timer, timeMilliSec)));
+}
+
+/**
  * クリック反応するキーの場合trueを返す。
  * 標準ではENTERキー
  */
@@ -284,7 +291,7 @@ void View::dispatchKeyEvent(const MKeyData keyData) {
         onKeyUp(keyData);
     }
 
-    if(isClickableKey(keyData)) {
+    if (isClickableKey(keyData)) {
         dispatchDownEvent(keyData->isPressing());
     }
 }
