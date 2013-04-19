@@ -65,6 +65,13 @@ public:
     }
 
     /**
+     * 時限設定をミリ秒単位で行う
+     */
+    void setTimerSec(const double timeSec) {
+        this->timeMilliSeconds = (u32) (timeSec * 1000.0);
+    }
+
+    /**
      * 経過時刻を取得する
      */
     u32 elapseMs() const {
@@ -83,6 +90,12 @@ public:
      */
     jcboolean over() const {
         assert(windowContext.get() != NULL);
+
+        // 0以下の場合、常にfalseを返す。
+        if (timeMilliSeconds <= 0) {
+            return jcfalse;
+        }
+
         return Timer::lapseTimeMs(startTime, windowContext->systemTime()) >= timeMilliSeconds;
     }
 

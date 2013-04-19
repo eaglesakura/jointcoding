@@ -104,19 +104,10 @@ class WindowManager: public Object {
     std::list<TickCall> ticks;
 #endif
 
-    struct {
-        /**
-         * 定期呼び出しを行う間隔
-         * 負の値の場合、定期コールを行わない
-         */
-        double tickCallTime;
-
-        /**
-         * 最後に定期コールを行った時刻
-         * tickCallTimeが負の値の場合、定期コールを行わない
-         */
-        jctime lastTickTime;
-    } tick;
+    /**
+     * 呼び出しタイマー
+     */
+    WindowTimer tick;
 protected:
     /**
      * タッチイベントを処理する

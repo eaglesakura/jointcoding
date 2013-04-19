@@ -20,12 +20,10 @@ WindowManager::WindowManager() {
 
     touchDetector.reset(new TouchDetector(windowEventListener));
     keyDetector.reset(new KeyDetector(windowEventListener));
+    tick.initialize(windowContext, -1);
 
     // 可変フレームレート範囲を設定
     windowContext->loopController.setFrameRateRange(30, 60);
-
-    tick.lastTickTime = Timer::currentTime();
-    tick.tickCallTime = -1.0;
 }
 
 WindowManager::~WindowManager() {
@@ -127,17 +125,10 @@ void WindowManager::handleEvents() {
     }
 
     // 定期コールイベントを処理する
-    if (tick.tickCallTime > 0) {
-        double eTime = Timer::lapseTimeSec(tick.lastTickTime);
-        if (eTime >= tick.tickCallTime) {
-            // 指定秒を超えていたら、コールバックを行う
-
-            if (eventHandler) {
-                eventHandler->handleTickEvent(eTime);
-            }
-
-            tick.lastTickTime = Timer::currentTime();
-        }
+    if (eventHandler && tick.over()) {
+        // 指定秒を超えていたら、コールバックを行う
+        eventHandler->handleTickEvent(tick.elapseSec());
+        tick.reset();
     }
 }
 
@@ -196,8 +187,7 @@ void WindowManager::loopEnd(const jcboolean withPostFrontBuffer) {
  * @param callback_sec 何秒間隔で呼び出すかのチェック
  */
 void WindowManager::setTickCallbackTime(const double callback_sec) {
-    tick.lastTickTime = Timer::currentTime();
-    tick.tickCallTime = callback_sec;
+    tick.setTimerSec(callback_sec);
 }
 
 }
