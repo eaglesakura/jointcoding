@@ -575,19 +575,15 @@ RectF View::getGlobalLayoutAreaNest() {
         if (view) {
             RectF child_global = view->getGlobalLayoutAreaNest();
 
-            result.left = jc::min<float>(result.left, child_global.left);
-            result.top = jc::min<float>(result.top, child_global.top);
-
-            if (result.left == 0) {
-                result.left = child_global.left;
+            if (result.empty()) {
+                result = child_global;
+            } else {
+                result.left = jc::min<float>(result.left, child_global.left);
+                result.top = jc::min<float>(result.top, child_global.top);
+                result.right = jc::max<float>(result.right, child_global.right);
+                result.bottom = jc::max<float>(result.bottom, child_global.bottom);
             }
 
-            if (result.top == 0) {
-                result.top = child_global.top;
-            }
-
-            result.right = jc::max<float>(result.right, child_global.right);
-            result.bottom = jc::max<float>(result.bottom, child_global.bottom);
         }
 
         ++itr;
