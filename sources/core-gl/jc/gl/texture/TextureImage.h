@@ -46,8 +46,9 @@ struct TextureLoadOption {
     /**
      * ラインごとに分割してデコードする
      * デバイスの占有時間を細かくすることでローディングスレッドの占有時間を小さくする
+     * 縦ピクセル数×横ピクセル数を判断する
      */
-    s32 slice_loading;
+    s32 slice_loading_pixel;
 
     /**
      * スライス読込時に一度sleepする時間
@@ -84,7 +85,7 @@ struct TextureLoadOption {
     TextureLoadOption() {
         convert_pot = gen_mipmap = load_cancel = load_priority_down = jcfalse;
         result.alloc_time_ms = result.teximage_time_ms = result.devicelocked_time_ms = result.raw_load_time_ms = result.raw_pixelconvert_time_ms = 0;
-        slice_loading = 1;
+        slice_loading_pixel = 4096 * 4096;
         slice_sleep_time_ms = 0;
     }
 };

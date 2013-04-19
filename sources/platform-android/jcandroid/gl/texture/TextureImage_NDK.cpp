@@ -147,18 +147,12 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
         }
 
         // 分割読み込み数を設定する
-        u32 slice_loading_num = 1;
-        if (option && option->slice_loading > 0) {
-            slice_loading_num = option->slice_loading;
-        }
         s32 pixel_y = 0;
         s32 LOAD_HEIGHT = origin_height;
 
-        if (option && option->slice_loading > 0) {
-            LOAD_HEIGHT /= option->slice_loading;
-            if (LOAD_HEIGHT == 0) {
-                LOAD_HEIGHT = 1;
-            }
+        // １回ごとに読み込むピクセル数を設定する
+        if (option && option->slice_loading_pixel > 0) {
+            LOAD_HEIGHT = jc::max<s32>(option->slice_loading_pixel / origin_width, 16);
         }
 
         while (pixel_y < origin_height && !(*cancel_ptr)) {

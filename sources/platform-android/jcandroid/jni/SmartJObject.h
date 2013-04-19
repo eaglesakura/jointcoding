@@ -167,9 +167,9 @@ public:
     /**
      * 同一性を検証する
      */
-    virtual jcboolean equals(jobject obj) const {
+    virtual jcboolean equals(jobject other) const {
         CALL_JNIENV();
-        return env->CallBooleanMethod(obj, method_equals, obj);
+        return env->CallBooleanMethod(obj, method_equals, other);
     }
 
     /**
