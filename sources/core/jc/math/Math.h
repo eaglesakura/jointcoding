@@ -6,6 +6,7 @@
  */
 
 #include <math.h>
+#include    "jc/system/Macro.h"
 
 #ifndef JCMATH_H_
 #define JCMATH_H_

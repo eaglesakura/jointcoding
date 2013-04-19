@@ -5,8 +5,8 @@
  *      Author: Takeshi
  */
 
-#include    "jc/gl/Shader.h"
-#include    "jc/gl/ShaderProgram.h"
+#include    "jc/gl/shader/Shader.h"
+#include    "jc/gl/shader/ShaderProgram.h"
 #include    "jc/system/Exception.h"
 
 namespace jc {
@@ -17,6 +17,7 @@ ShaderProgram::ShaderProgram(const SharedResource &program, const MGLState state
     this->state = state;
     glGetProgramiv(program.get(), GL_ACTIVE_ATTRIBUTES, (GLint*) &attributes);
     glGetProgramiv(program.get(), GL_ACTIVE_ATTRIBUTES, (GLint*) &uniforms);
+    assert_gl();
     this->vertexShader = vertexShader;
     this->fragmentShader = fragmentShader;
 }
@@ -161,6 +162,7 @@ jc_sp<ShaderProgram> ShaderProgram::link(MDevice device, const MGLShader vertexS
     glAttachShader(program.get(), fragmentShader->getShader().get());
     // シェーダをリンクさせる
     glLinkProgram(program.get());
+    assert_gl();
 
     if (GLState::printProgramError(program.get(), GL_LINK_STATUS)) {
         // リンクに失敗したからエラーを返す

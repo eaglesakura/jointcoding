@@ -8,6 +8,7 @@
 #ifndef JCMATRIX4X4_H_
 #define JCMATRIX4X4_H_
 
+#include    "jointcoding.h"
 #include    "jc/system/Macro.h"
 #include    "jc/math/Math.h"
 #include    "jc/math/Angle.h"

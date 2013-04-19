@@ -5,13 +5,13 @@
  */
 
 #include    "jointcoding-android.h"
-#include    "jc/gl/TextureImage.h"
 #include    "jc/platform/Platform.h"
-#include    "android-classes/ndkImageDecoder.h"
-#include    "jcandroid/io/JavaJointInputStream.h"
-
-#include    "jc/gl/DeviceLock.h"
 #include    "jc/platform/Timer.h"
+#include    "jcandroid/io/JavaJointInputStream.h"
+#include    "android-classes/ndkImageDecoder.h"
+
+#include    "jc/gl/gpu/DeviceLock.hpp"
+#include    "jc/gl/texture/TextureImage.h"
 
 namespace jc {
 namespace gl {

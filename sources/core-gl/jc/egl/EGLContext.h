@@ -8,8 +8,8 @@
 #define JCGLEGLCONTEXT_H_
 
 #include    "jc/system/Macro.h"
-#include    "jc/gl/State.h"
-#include    "jc/gl/VRAM.h"
+#include    "jc/gl/context/State.h"
+#include    "jc/gl/gpu/VRAM.h"
 
 namespace jc {
 namespace gl {

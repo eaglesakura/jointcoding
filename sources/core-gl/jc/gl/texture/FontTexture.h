@@ -7,7 +7,7 @@
 #ifndef FONTTEXTURE_H_
 #define FONTTEXTURE_H_
 
-#include    "jc/gl/TextureImage.h"
+#include    "jc/gl/texture/TextureImage.h"
 
 namespace jc {
 namespace gl {

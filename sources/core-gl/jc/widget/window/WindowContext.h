@@ -8,7 +8,7 @@
 #define WINDOWCONTEXT_H_
 
 #include    "jointcoding.h"
-#include    "jc/gl/SpriteManager.h"
+#include    "jc/gl/GL2D.h"
 #include    "jc/scene/SceneGraph.h"
 
 #include    "jc/ui/TouchDetector.h"

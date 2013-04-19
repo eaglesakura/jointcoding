@@ -27,11 +27,11 @@ public:
     /**
      * レンダラー名を取得する
      */
-    static String getRenderer();
+    static const String& getRenderer();
     /**
      * ベンダー名を取得する
      */
-    static String getVendor();
+    static const String& getVendor();
 
     /**
      * 頂点属性の最大数を取得する。

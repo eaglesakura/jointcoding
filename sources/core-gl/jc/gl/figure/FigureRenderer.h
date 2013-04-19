@@ -7,8 +7,8 @@
 #ifndef FIGURERENDERER_H_
 #define FIGURERENDERER_H_
 
-#include    "jc/gl/figure/Camera.h"
-#include    "jc/gl/ShaderProgram.h"
+#include    "jc/gl/figure/Camera.hpp"
+#include    "jc/gl/shader/ShaderProgram.h"
 #include    "jc/gl/figure/GLFigure.h"
 
 namespace jc {

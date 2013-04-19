@@ -9,8 +9,8 @@
 
 #include    "jointcoding.h"
 #include    "jc/math/Rect.h"
-#include    "jc/gl/TextureImage.h"
-#include    "jc/gl/SpriteManager.h"
+#include    "jc/gl/texture/TextureImage.h"
+#include    "jc/gl/sprite/SpriteManager.h"
 
 namespace jc {
 namespace gl {

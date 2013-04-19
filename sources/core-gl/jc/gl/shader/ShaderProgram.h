@@ -9,9 +9,9 @@
 #define JCGLSHADERPROGRAM_H_
 
 #include    "jc/mem/SmartPtr.h"
-#include    "jc/gl/Shader.h"
 #include    "jc/io/Uri.h"
-#include    "jc/gl/Device.h"
+#include    "jc/gl/gpu/Device.h"
+#include    "jc/gl/shader/Shader.h"
 
 #define JCGL_NOTFOUND_ATTR  -1
 

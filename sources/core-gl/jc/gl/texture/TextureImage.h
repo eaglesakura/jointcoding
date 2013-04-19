@@ -8,10 +8,10 @@
 #ifndef JCTEXTUREIMAGE_H_
 #define JCTEXTUREIMAGE_H_
 
-#include    "jc/gl/GL.h"
-#include    "jc/graphics/ImageDecoder.h"
-#include    "jc/gl/Device.h"
 #include    "jc/io/Uri.h"
+#include    "jc/gl/GL.h"
+#include    "jc/gl/gpu/Device.h"
+#include    "jc/graphics/TextureTable.hpp"
 
 namespace jc {
 namespace gl {
@@ -20,11 +20,6 @@ namespace gl {
  * ETC1テクスチャの拡張子（PKM形式)
  */
 #define JC_TEXTURE_EXT_PKM "pkm"
-
-/**
- * Jpegテクスチャの拡張子
- */
-#define JC_TEXTURE_EXT_JPEG "jpg"
 
 struct TextureLoadOption {
     /**
@@ -351,6 +346,18 @@ public:
  * managed
  */
 typedef jc_sp<TextureImage> MTextureImage;
+
+
+/**
+ * GLで利用するテクスチャテーブル
+ */
+typedef TextureTable<TextureImage> GLTextureTable;
+
+/**
+ * managed
+ */
+typedef jc_sp<GLTextureTable> MGLTextureTable;
+
 
 }
 }

@@ -16,22 +16,6 @@
 namespace ndk {
 
 /**
- * GLNativeSurfaceViewからGLレンダリング用のDeviceを取得する。
- * Deviceは自動的に復帰が行われる。
- */
-jc::gl::MDevice ViewUtil::getDeviceFromSurfaceView(jobject GLNativeSurfaceView_instance) {
-    return GLNativeSurfaceViewContext::getNativeContext(GLNativeSurfaceView_instance)->getDevice();
-}
-
-/**
- * GLNativeTexureViewからGLレンダリング用のDeviceを取得する。
- * Deviceは自動的に復帰が行われる。
- */
-jc::gl::MDevice ViewUtil::getDeviceFromTextureView(jobject GLNativeTextureView_instance) {
-    return GLNativeTextureViewContext::getNativeContext(GLNativeTextureView_instance)->getDevice();
-}
-
-/**
  * onClickListenerをセッティングする。
  * 古いリスナは上書きされる。
  */

@@ -4,9 +4,11 @@
  *  Created on: 2012/06/25
  *      Author: Takeshi
  */
-#include    "jc/gl/State.h"
+
+#include    "jointcoding.h"
 #include    "jc/math/Math.h"
-#include    "jc/gl/GPUCapacity.h"
+#include    "jc/gl/gpu/GPUCapacity.h"
+#include    "jc/gl/context/State.h"
 #include    "jc/mem/MemoryUtil.h"
 
 namespace jc {
@@ -91,7 +93,7 @@ jcboolean GLState::printShaderError(const GLuint shaderObject, const GLint statu
         // エラーメッセージを取得
         glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &infoLen);
         if (infoLen > 1) {
-            jc_sa<charactor> message( new charactor[infoLen] );
+            jc_sa<charactor> message(new charactor[infoLen]);
             glGetShaderInfoLog(shaderObject, infoLen, NULL, message.get());
             jclogf("shader error :: %s", message.get());
         } else {
@@ -115,7 +117,7 @@ jcboolean GLState::printProgramError(const GLuint programObject, const GLint sta
         // エラーメッセージを取得
         glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
         if (infoLen > 1) {
-            jc_sa<charactor> message( new charactor[infoLen] );
+            jc_sa<charactor> message(new charactor[infoLen]);
             glGetProgramInfoLog(programObject, infoLen, NULL, message.get());
             jclogf("shader error :: %s", message.get());
         }
@@ -258,11 +260,12 @@ void GLState::print(const charactor* file, const s32 line) const {
 /**
  * GLがエラーを持っている場合出力して、それ以外は何もしない。
  */
-void GLState::printGLHasError(const charactor* file, const s32 line) {
+jcboolean GLState::printGLHasError(const charactor* file, const s32 line) {
     GLenum error = glGetError();
     if (error != GL_NO_ERROR) {
-        printGLError(file, line, error);
+        return printGLError(file, line, error);
     }
+    return jcfalse;
 }
 
 /**
@@ -287,7 +290,6 @@ jcboolean GLState::printGLError(const charactor* file, const s32 line, GLenum er
 //        LOG_GL(GL_STACK_UNDERFLOW);
         LOG_GL(GL_OUT_OF_MEMORY);
 //        LOG_GL(GL_TABLE_TOO_LARGE);
-//        LOG_GL(GL_INVALID_ENUM);
     }
 
     jclogf("GL unknown error = 0x%x", error);

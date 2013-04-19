@@ -5,7 +5,7 @@
  */
 
 #include    "jointcoding.h"
-#include    "jc/gl/FontTexture.h"
+#include    "jc/gl/texture/FontTexture.h"
 
 namespace jc {
 namespace gl {

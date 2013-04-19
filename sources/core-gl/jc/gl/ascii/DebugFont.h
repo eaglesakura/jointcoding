@@ -7,8 +7,8 @@
 #ifndef DEBUGFONT_H_
 #define DEBUGFONT_H_
 
-#include    "jc/gl/SpriteManager.h"
-#include    "jc/gl/FontTexture.h"
+#include    "jc/gl/sprite/SpriteManager.h"
+#include    "jc/gl/texture/FontTexture.h"
 #include    "jc/math/Vec2.h"
 
 namespace jc {

@@ -7,7 +7,7 @@
 #ifndef NDKDEVICEUTIL_H_
 #define NDKDEVICEUTIL_H_
 
-#include    "jc/gl/Device.h"
+#include    "jc/gl/gpu/Device.h"
 #include    "jni.h"
 
 namespace ndk {

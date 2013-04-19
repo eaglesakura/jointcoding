@@ -4,15 +4,11 @@
  *  Created on: 2012/07/22
 
  */
-#include    "jc/gl/GL.h"
-#include    "jc/gl/TextureImage.h"
 #include    "jc/math/Math.h"
 #include    "jc/platform/Platform.h"
-#include    "jc/gl/State.h"
-#include    "jc/gl/GPUCapacity.h"
-
-#include    "jc/gl/DeviceLock.h"
-#include    "jc/gl/PKMHeader.h"
+#include    "jc/gl/texture/PKMHeader.h"
+#include    "jc/gl/texture/TextureImage.h"
+#include    "jc/gl/gpu/DeviceLock.hpp"
 
 namespace jc {
 namespace gl {
@@ -325,6 +321,7 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoa
 
             jclogf("etc1 size(%d x %d)", width, height);
             glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, header->getWidth(), header->getHeight(), 0, length, (void*) temp.get());
+            assert_gl();
         }
         result->unbind();
 

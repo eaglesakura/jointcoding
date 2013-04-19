@@ -4,7 +4,7 @@
  *  Created on: 2012/09/11
  */
 
-#include    "jc/gl/Device.h"
+#include    "jc/gl/gpu/Device.h"
 
 namespace jc {
 namespace gl {

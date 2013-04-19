@@ -5,7 +5,7 @@
  */
 
 #include    "jc/gl/ascii/DebugFont.h"
-#include    "jc/gl/GPUCapacity.h"
+#include    "jc/gl/gpu/GPUCapacity.h"
 
 namespace jc {
 namespace gl {

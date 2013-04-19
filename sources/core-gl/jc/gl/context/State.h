@@ -10,7 +10,7 @@
 
 #include    "jc/mem/SmartPtr.h"
 #include    "jc/gl/GL.h"
-#include    "jc/gl/GPUCapacity.h"
+#include    "jc/gl/gpu/GPUCapacity.h"
 #include    "jc/math/Rect.h"
 #include    "jc/graphics/Color.h"
 
@@ -18,13 +18,12 @@ namespace jc {
 namespace gl {
 
 #ifdef  DEBUG
-#define     CLEAR_GL_ERROR(...)       { glGetError(); }
-#define     PRINT_GL_ERROR(...)     { GLState::printGLHasError(__FILE__, __LINE__); }
+#define     assert_gl(...)    { ::jc::gl::GLState::printGLHasError(__FILE__, __LINE__); }
 #else
 // release
-#define     CLEAR_GL_ERROR(...)       {  }
-#define     PRINT_GL_ERROR(...)     {  }
+#define     assert_gl(...)    { }
 #endif
+
 /**
  * 無効な属性インデックスを示す定数
  */
@@ -267,6 +266,7 @@ public:
      */
     inline void clear(const u32 flags = (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)) {
         glClear(flags);
+        assert_gl();
     }
 
     /**
@@ -275,9 +275,7 @@ public:
      */
     inline jcboolean clearColorf(const GLclampf r, const GLclampf g, const GLclampf b, const GLclampf a) {
         Color temp = Color::fromRGBAf(r, g, b, a);
-#ifndef STATE_NO_CHECK
         if (temp != clearContext.clearColor) {
-#endif
             // 色が違うからコマンド呼び出し
             glClearColor(r, g, b, a);
 
@@ -285,10 +283,8 @@ public:
             clearContext.clearColor = temp;
 
             return jctrue;
-#ifndef STATE_NO_CHECK
         }
         return jcfalse;
-#endif
     }
 
     /**
@@ -302,6 +298,8 @@ public:
             } else {
                 glDisable(GL_DEPTH_TEST);
             }
+
+            assert_gl();
             return jctrue;
         }
         return jcfalse;
@@ -314,6 +312,8 @@ public:
         if (depthContext.func != func) {
             depthContext.func = func;
             glDepthFunc(func);
+
+            assert_gl();
             return jctrue;
         }
         return jcfalse;
@@ -330,6 +330,8 @@ public:
             } else {
                 glDisable(GL_BLEND);
             }
+
+            assert_gl();
             return jctrue;
         }
         return jcfalse;
@@ -352,9 +354,10 @@ public:
         if (blendContext.src != sfactor || blendContext.dst != dfactor) {
             blendContext.src = sfactor;
             blendContext.dst = dfactor;
-            CLEAR_GL_ERROR();
+
             glBlendFunc(sfactor, dfactor);
-            PRINT_GL_ERROR();
+            assert_gl();
+
             return jctrue;
         }
         return jcfalse;
@@ -367,6 +370,8 @@ public:
         if (lineWidthContext != width) {
             lineWidthContext = width;
             glLineWidth(width);
+            assert_gl();
+
             return jctrue;
         }
         return jcfalse;
@@ -381,16 +386,14 @@ public:
         const s32 top = y;
         const s32 right = x + width;
         const s32 bottom = y + height;
-#ifndef STATE_NO_CHECK
         if (!viewportContext.equalsLTRB(left, top, right, bottom)) {
-#endif
             glViewport(x, y, width, height);
+            assert_gl();
+
             viewportContext.setXYWH(x, y, width, height);
             return jctrue;
-#ifndef STATE_NO_CHECK
         }
         return jcfalse;
-#endif
     }
 
     /**
@@ -421,16 +424,14 @@ public:
         const s32 top = y;
         const s32 right = x + width;
         const s32 bottom = y + height;
-#ifndef STATE_NO_CHECK
         if (!scissorContext.box.equalsLTRB(left, top, right, bottom)) {
-#endif
             glScissor(x, y, width, height);
+            assert_gl();
+
             scissorContext.box.setXYWH(x, y, width, height);
             return jctrue;
-#ifndef STATE_NO_CHECK
         }
         return jcfalse;
-#endif
     }
 
     /**
@@ -440,18 +441,15 @@ public:
      */
     inline jcboolean bindBuffer(GLenum target, GLuint buffer) {
         const s32 index = target - GL_ARRAY_BUFFER;
-#ifndef STATE_NO_CHECK
         if (bindBufferContext.buffers[index] != buffer) {
-#endif
             // バッファが一致しないから呼び出す
             glBindBuffer(target, buffer);
             // バッファを保存する
             bindBufferContext.buffers[index] = buffer;
+            assert_gl();
             return jctrue;
-#ifndef STATE_NO_CHECK
         }
         return jcfalse;
-#endif
     }
 
     /**
@@ -481,21 +479,15 @@ public:
      */
     inline jcboolean activeTexture(const s32 index) {
         assert(index < caps.MAX_TEXTURE_UNITS);
-
         const s32 unit = toTextureUnit(index);
         // 違うユニットがアクティブ化されていたら、アクティブにし直す
-#ifndef STATE_NO_CHECK
         if (unit != (s32) textureContext.active) {
-#endif
             textureContext.active = unit;
-            CLEAR_GL_ERROR();
             glActiveTexture(unit);
-            PRINT_GL_ERROR();
+            assert_gl();
             return jctrue;
-#ifndef STATE_NO_CHECK
         }
         return jcfalse;
-#endif
     }
 
     /**
@@ -573,6 +565,7 @@ public:
     inline jcboolean bindTexture(const GLenum target, const GLuint texture) {
         const s32 index = getActiveTextureIndex();
         assert(index >= 0 && index < caps.MAX_TEXTURE_UNITS);
+
         const GLuint currentTex = textureContext.textures[index];
         const GLenum currentTarget = textureContext.targets[index];
 
@@ -580,9 +573,8 @@ public:
         if (currentTex != texture || currentTarget != target) {
             textureContext.textures[index] = texture;
             textureContext.targets[index] = target;
-            CLEAR_GL_ERROR();
             glBindTexture(target, texture);
-            PRINT_GL_ERROR();
+            assert_gl();
             return jctrue;
         }
 
@@ -596,8 +588,9 @@ public:
     inline jcboolean useProgram(const GLuint shaderProgram) {
         if (shaderProgramContext.usingProgram != shaderProgram) {
             glUseProgram(shaderProgram);
-            shaderProgramContext.usingProgram = shaderProgram;
+            assert_gl();
 
+            shaderProgramContext.usingProgram = shaderProgram;
             return jctrue;
         }
         return jcfalse;
@@ -621,9 +614,9 @@ public:
         void* checkPtr = (ptr ? (void*) ptr : (void*) bindBufferContext.buffers[INDEX_GL_ARRAY_BUFFER]);
 
         if (attr->size != size || attr->type != type || attr->normalized != normalized || attr->stride != stride || attr->ptr != checkPtr || attr->offset != offset) {
-            CLEAR_GL_ERROR();
             glVertexAttribPointer(index, size, type, normalized, stride, (const void*) (((u8*) ptr) + offset));
-            PRINT_GL_ERROR();
+            assert_gl();
+
             // 属性情報を書き換える
             attr->size = size;
             attr->type = type;
@@ -642,16 +635,13 @@ public:
      */
     inline jcboolean enableVertexAttribArray(const GLuint index) {
         // 無効化されているため、有効化する
-#ifndef STATE_NO_CHECK
         if (!vertexAttrContext.buffers[index].enable) {
-#endif
             vertexAttrContext.buffers[index].enable = jctrue;
             glEnableVertexAttribArray(index);
+            assert_gl();
             return jctrue;
-#ifndef STATE_NO_CHECK
         }
         return jcfalse;
-#endif
     }
 
     /**
@@ -660,16 +650,13 @@ public:
      */
     inline jcboolean disableVertexAttribArray(const GLuint index) {
         // 有効化されているため、無効化する
-#ifndef STATE_NO_CHECK
         if (vertexAttrContext.buffers[index].enable) {
-#endif
             vertexAttrContext.buffers[index].enable = jcfalse;
             glDisableVertexAttribArray(index);
+            assert_gl();
             return jcfalse;
-#ifndef STATE_NO_CHECK
         }
         return jcfalse;
-#endif
     }
 
     /**
@@ -706,7 +693,7 @@ public:
     /**
      * GLがエラーを持っている場合出力して、それ以外は何もしない。
      */
-    static void printGLHasError(const charactor* file, const s32 line);
+    static jcboolean printGLHasError(const charactor* file, const s32 line);
 
     /**
      * GLエラー出力を行う

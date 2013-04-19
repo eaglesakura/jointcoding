@@ -5,8 +5,8 @@
  */
 
 #include    "jointcoding-android.h"
-#include    "jc/gl/FontTexture.h"
 #include    "jc/platform/Platform.h"
+#include    "jc/gl/texture/FontTexture.h"
 #include    "android-classes/ndkImageDecoder.h"
 #include    "android-classes/ndkAppFont.h"
 

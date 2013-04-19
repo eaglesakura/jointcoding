@@ -3,7 +3,7 @@
  *
  *  Created on: 2012/10/05
  */
-#include    "jc/gl/SpriteManager.h"
+#include    "jc/gl/sprite/SpriteManager.h"
 
 namespace jc {
 namespace gl {
@@ -321,8 +321,7 @@ void SpriteManager::rendering(const float x, const float y, const float width, c
 
 // データを転送する
     glUniform4fv(unifPolyData, 1, poly_data);
-    PRINT_GL_ERROR();
-
+    assert_gl();
     quad->rendering();
 }
 

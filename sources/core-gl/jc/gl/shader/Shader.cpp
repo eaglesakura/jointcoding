@@ -5,10 +5,11 @@
  *      Author: Takeshi
  */
 
-#include    "jc/gl/Shader.h"
+#include    "jointcoding.h"
 #include    "jc/system/Exception.h"
 #include    "jc/platform/Platform.h"
-#include    "jc/gl/State.h"
+#include    "jc/gl/context/State.h"
+#include    "jc/gl/shader/Shader.h"
 
 namespace jc {
 namespace gl {
@@ -56,8 +57,6 @@ MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const
  * シェーダーの作成を行う。
  */
 MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charactor* sourceCode) {
-    CLEAR_GL_ERROR();
-
     // シェーダオブジェクトを作成
     SharedResource shader;
     shader.alloc(vram, type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader);
@@ -68,6 +67,7 @@ MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charac
     glShaderSource(shader.get(), 1, &sourceCode, &src_length);
     // コンパイル
     glCompileShader(shader.get());
+    assert_gl();
     // エラーチェック
     if (GLState::printShaderError(shader.get(), GL_COMPILE_STATUS)) {
         shader.release();

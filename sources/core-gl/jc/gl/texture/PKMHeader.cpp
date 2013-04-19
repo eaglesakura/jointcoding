@@ -4,7 +4,7 @@
  *  Created on: 2013/02/25
  */
 
-#include    "jc/gl/PKMHeader.h"
+#include    "jc/gl/texture/PKMHeader.h"
 #include    "jc/data/BinaryInputStream.h"
 #include    "jc/mem/MemoryUtil.h"
 

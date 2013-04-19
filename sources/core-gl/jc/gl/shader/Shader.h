@@ -9,9 +9,9 @@
 #define JCGLSHADER_H_
 
 #include    "jc/mem/SmartPtr.h"
-#include    "jc/gl/GL.h"
 #include    "jc/io/Uri.h"
-#include    "jc/gl/Device.h"
+#include    "jc/gl/GL.h"
+#include    "jc/gl/gpu/Device.h"
 
 namespace jc {
 namespace gl {

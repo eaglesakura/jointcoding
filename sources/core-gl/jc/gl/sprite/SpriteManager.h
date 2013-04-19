@@ -7,12 +7,11 @@
 #ifndef JCGLSPRITEMANAGER_H_
 #define JCGLSPRITEMANAGER_H_
 
-#include    "jc/gl/Device.h"
-#include    "jc/gl/Quad.h"
-#include    "jc/gl/ShaderProgram.h"
-#include    "jc/gl/TextureImage.h"
-#include    "jc/gl/Quad.h"
 #include    "jc/math/Matrix.h"
+#include    "jc/gl/gpu/Device.h"
+#include    "jc/gl/sprite/Quad.h"
+#include    "jc/gl/shader/ShaderProgram.h"
+#include    "jc/gl/texture/TextureImage.h"
 
 namespace jc {
 namespace gl {

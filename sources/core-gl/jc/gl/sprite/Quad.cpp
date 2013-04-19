@@ -4,9 +4,9 @@
  *  Created on: 2012/10/03
  */
 
-#include    "jc/gl/Quad.h"
 #include    "jc/math/Vec2.h"
 #include    "jc/math/Vec3.h"
+#include    "jc/gl/sprite/Quad.h"
 
 namespace jc {
 namespace gl {
@@ -112,9 +112,8 @@ void Quad::rendering() {
         state->enableVertexAttribArray(attrCoords);
         state->vertexAttribPointer(attrCoords, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), NULL, sizeof(float) * 2);
     }
-    CLEAR_GL_ERROR();
     glDrawArrays(primitiveType, 0, 4);
-    PRINT_GL_ERROR();
+    assert_gl();
 }
 
 /**
@@ -127,7 +126,7 @@ void Quad::updateVertices(const QuadVertex *vertices) {
 
 // バッファ転送
     glBufferData(GL_ARRAY_BUFFER, sizeof(QuadVertex) * 4, vertices, GL_STATIC_DRAW);
-    PRINT_GL_ERROR();
+    assert_gl();
 }
 
 

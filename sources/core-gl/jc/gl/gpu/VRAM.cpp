@@ -4,8 +4,8 @@
  *  Created on: 2012/09/25
  */
 
-#include    "jc/gl/VRAM.h"
 #include    "jc/gl/GL.h"
+#include    "jc/gl/gpu/VRAM.h"
 
 //     #define PRINT_VRAM
 

@@ -9,8 +9,8 @@
 #define JCGLVERTEXBUFFEROBJECT_H_
 
 #include    "jointcoding.h"
-#include    "jc/gl/VRAM.h"
-#include    "jc/gl/Device.h"
+#include    "jc/gl/gpu/VRAM.h"
+#include    "jc/gl/gpu/Device.h"
 
 namespace jc {
 namespace gl {

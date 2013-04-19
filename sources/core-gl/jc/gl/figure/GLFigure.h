@@ -11,12 +11,12 @@
 
 #include    "jc/math/Transform.h"
 #include    "jc/graphics/figure/data/FigureDataLoader.h"
-#include    "jc/graphics/figure/TextureTable.h"
+#include    "jc/graphics/TextureTable.hpp"
 #include    "jc/graphics/figure/animator/AnimationClip.h"
-#include    "jc/gl/TextureImage.h"
+#include    "jc/gl/texture/TextureImage.h"
 
-#include    "jc/gl/IndexBufferObject.h"
-#include    "jc/gl/VertexBufferObject.h"
+#include    "jc/gl/vbo/IndexBufferObject.hpp"
+#include    "jc/gl/vbo/VertexBufferObject.hpp"
 
 #include    <vector>
 
@@ -143,16 +143,6 @@ public:
 };
 
 typedef jc_sp<FigureNode> MFigureNode;
-
-/**
- * GLで利用するテクスチャテーブル
- */
-typedef TextureTable<TextureImage> GLTextureTable;
-
-/**
- * managed
- */
-typedef jc_sp<GLTextureTable> MGLTextureTable;
 
 /**
  * 3D上に表示するフィギュアを構築する

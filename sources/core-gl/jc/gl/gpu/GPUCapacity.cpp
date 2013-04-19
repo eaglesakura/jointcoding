@@ -5,7 +5,7 @@
  *      Author: Takeshi
  */
 #include    "jc/gl/GL.h"
-#include    "jc/gl/GPUCapacity.h"
+#include    "jc/gl/gpu/GPUCapacity.h"
 #include    "jc/system/StringUtil.h"
 #include    "jc/collection/OrderAccessList.h"
 #include    <vector>
@@ -74,7 +74,7 @@ static void initialize() {
         String tempExtensions = (const charactor*) glGetString(GL_EXTENSIONS);
         split(tempExtensions, " ", &temp);
 
-        for (int i = 0; i < (int)temp.size(); ++i) {
+        for (int i = 0; i < (int) temp.size(); ++i) {
             extensions.add(temp[i]);
         }
     }
@@ -125,7 +125,7 @@ static void initialize() {
 /**
  * レンダラー名を取得する
  */
-String GPUCapacity::getRenderer() {
+const String& GPUCapacity::getRenderer() {
     GPUCapacity_init();
     return renderer;
 }
@@ -133,7 +133,7 @@ String GPUCapacity::getRenderer() {
 /**
  * ベンダー名を取得する
  */
-String GPUCapacity::getVendor() {
+const String& GPUCapacity::getVendor() {
     GPUCapacity_init();
     return vendor;
 }

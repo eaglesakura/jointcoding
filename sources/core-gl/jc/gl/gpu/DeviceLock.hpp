@@ -8,7 +8,7 @@
 #define JCGLGPULOCK_H_
 
 #include    "jc/mem/SmartPtr.h"
-#include    "jc/gl/Device.h"
+#include    "jc/gl/gpu/Device.h"
 
 namespace jc {
 namespace gl {
