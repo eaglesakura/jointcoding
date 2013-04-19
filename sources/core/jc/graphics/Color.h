@@ -52,6 +52,10 @@ union Color {
         rgba = origin.rgba;
     }
 
+    Color(const rgba32 color) {
+        rgba = color;
+    }
+
     inline
     float rf() const {
         return (float) tag.r / 255.0f;

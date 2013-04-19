@@ -241,14 +241,14 @@ void View::onClick() {
  * フォーカス変更が行われた
  */
 void View::onFocusChanged(const jcboolean has) {
-    jclogf("onFocusChange(%x) %s", this, has ? "true" : "false");
+//    jclogf("onFocusChange(%x) %s", this, has ? "true" : "false");
 }
 
 /**
  * フォーカスダウン状態が更新された
  */
 void View::onDownChanged(const jcboolean down_now) {
-    jclogf("onDownChanged(%x) %s", this, down_now ? "down" : "up");
+//    jclogf("onDownChanged(%x) %s", this, down_now ? "down" : "up");
 }
 
 /**
