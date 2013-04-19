@@ -22,7 +22,7 @@ WindowEventListener::WindowEventListener(MWindowContext windowContext) {
  * 最後にイベントハンドリングを行ってから何秒経過したかの値を取得する
  */
 double WindowEventListener::getElapsedLastEventHandleSec() const {
-    return  Timer::lapseTimeSec(lastHandleTime);
+    return  Timer::lapseTimeSec(lastHandleTime, windowContext->systemTime());
 }
 
 /**
@@ -32,7 +32,7 @@ double WindowEventListener::getElapsedLastEventHandleSec() const {
  */
 void WindowEventListener::onClick(const TouchDetector* detector, const TouchPoint &point) {
 //    log_point("onClick", point);
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
 }
 
 /*
@@ -41,14 +41,14 @@ void WindowEventListener::onClick(const TouchDetector* detector, const TouchPoin
  */
 void WindowEventListener::onDragEnd(const TouchDetector *detector, const TouchPoint &point) {
 //    log_point("onDragEnd", point);
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
 }
 
 /**
  * タッチが開始された
  */
 void WindowEventListener::onTouchBegin(const TouchDetector* detector, const TouchPoint &point) {
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
 
     jcboolean refreshTouch = jcfalse; // タッチが更新されたらtrue
     MView target = windowContext->lockTouchTarget();
@@ -86,7 +86,8 @@ void WindowEventListener::onTouchBegin(const TouchDetector* detector, const Touc
  * onTouchBegin -> onDrag -> onDragEnd -> onTouchEnd
  */
 void WindowEventListener::onSingleTouchEnd(const TouchDetector* detector, const TouchCompleteType_e type, const TouchPoint &point) {
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
+
     MView touchedView = windowContext->lockTouchTarget();
     MWindow window = windowContext->lockWindow();
     assert(window.get() != NULL);
@@ -121,7 +122,7 @@ void WindowEventListener::onSingleTouchEnd(const TouchDetector* detector, const 
  * Viewがドラッグされた
  */
 void WindowEventListener::onDrag(const TouchDetector* detector, const TouchPoint &point) {
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
 //    log_point("onDrag", point);
 }
 
@@ -129,7 +130,7 @@ void WindowEventListener::onDrag(const TouchDetector* detector, const TouchPoint
  * マルチタッチが開始された
  */
 void WindowEventListener::onPinchBegin(const TouchDetector *detector, const Vector2f &center) {
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
     jclog("onPinchBegin");
 }
 
@@ -137,7 +138,7 @@ void WindowEventListener::onPinchBegin(const TouchDetector *detector, const Vect
  * ピンチが変更された
  */
 void WindowEventListener::onPinchScaling(const TouchDetector *detector, const float scale, const Vector2f &center) {
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
 //    jclog("onPinchScaling");
 }
 
@@ -146,7 +147,7 @@ void WindowEventListener::onPinchScaling(const TouchDetector *detector, const fl
  */
 void WindowEventListener::onPinchEnd(const TouchDetector *detector, const Vector2f &center) {
     jclog("onPinchEnd");
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
     windowContext->clearTouchTarget();
 }
 
@@ -155,7 +156,7 @@ void WindowEventListener::onPinchEnd(const TouchDetector *detector, const Vector
  */
 void WindowEventListener::onKeyDown(KeyDetector *detector, const MKeyData keyData) {
     jclogf("onKeyDown(%d)", keyData->getKeyCode());
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
 
     MWindow window = windowContext->lockWindow();
     assert(window.get() != NULL);
@@ -169,7 +170,7 @@ void WindowEventListener::onKeyDown(KeyDetector *detector, const MKeyData keyDat
  */
 void WindowEventListener::onKeyLongDown(KeyDetector *detector, const MKeyData keyData) {
     jclogf("onKeyLongDown(%d)", keyData->getKeyCode());
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
 
     MWindow window = windowContext->lockWindow();
     assert(window.get() != NULL);
@@ -183,7 +184,7 @@ void WindowEventListener::onKeyLongDown(KeyDetector *detector, const MKeyData ke
  */
 void WindowEventListener::onKeyUp(KeyDetector *detector, const MKeyData keyData) {
     jclogf("onKeyUp(%d)", keyData->getKeyCode());
-    lastHandleTime = Timer::currentTime();
+    resetLastEventHandleTime();
 
     MWindow window = windowContext->lockWindow();
     assert(window.get() != NULL);

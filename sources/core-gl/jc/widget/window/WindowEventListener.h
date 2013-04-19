@@ -41,7 +41,7 @@ public:
      * 最後にハンドリングした時刻をリセットする
      */
     virtual void resetLastEventHandleTime() {
-        lastHandleTime = Timer::currentTime();
+        lastHandleTime = windowContext->systemTime();
     }
 
     /**
