@@ -65,6 +65,20 @@ public:
     }
 
     /**
+     * 経過時刻を取得する
+     */
+    u32 elapseMs() const {
+        return Timer::lapseTimeMs(startTime, windowContext->systemTime());
+    }
+
+    /**
+     * 経過時刻を取得する
+     */
+    double elapseSec() const {
+        return Timer::lapseTimeSec(startTime, windowContext->systemTime());
+    }
+
+    /**
      * 制限時間をオーバーした場合true
      */
     jcboolean over() const {

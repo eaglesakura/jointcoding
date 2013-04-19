@@ -289,6 +289,13 @@ public:
     virtual void resetElapsedLastUserEventHandleTime() {
         windowEventListener->resetLastEventHandleTime();
     }
+
+    /**
+     * WindowManager時刻を取得する
+     */
+    virtual const jctime& systemTime() const {
+        return windowContext->systemTime();
+    }
 };
 
     /**
