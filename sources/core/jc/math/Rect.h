@@ -247,6 +247,19 @@ struct RectT {
         scaling(scale, scale);
     }
 
+    /**
+     * 内側にnだけ移動させた四角形を作成する
+     */
+    RectT<T> createInset(const T x, const T y) const {
+        RectT<T> result;
+        result.left = (left + x);
+        result.top = (top + y);
+        result.right = (right - x);
+        result.bottom = (bottom - y);
+
+        return result;
+    }
+
     RectT<T> createScaling(const float scale_x, const float scale_y) const {
         const T cen_x = centerX();
         const T cen_y = centerY();

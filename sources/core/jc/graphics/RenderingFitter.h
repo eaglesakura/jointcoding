@@ -81,6 +81,17 @@ public:
     }
 
     /**
+     * レンダリング範囲を設定する。
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
+    void setViewport(const RectF vp) {
+        viewport = vp;
+    }
+
+    /**
      * 画像の幅・高さから画像のアスペクトを設定する。
      * @param width
      * @param height
