@@ -208,15 +208,15 @@ void SpriteManager::initialize(MDevice device) {
 
     this->unifPolyData = shader->getUniformLocation("poly_data");
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
-    this->unifAspect = shader->getUniformLocation("aspect");
-    assert(unifAspect != UNIFORM_DISABLE_INDEX);
 
-    this->unifRotate = shader->getUniformLocation("rotate");
-    assert(unifRotate != UNIFORM_DISABLE_INDEX);
     this->unifTexture = shader->getUniformLocation("tex");
     assert(unifTexture != UNIFORM_DISABLE_INDEX);
     this->unifBlendColor = shader->getUniformLocation("blendColor");
     assert(unifBlendColor != UNIFORM_DISABLE_INDEX);
+
+
+    aspect.setUniformLocation(shader, "aspect");
+    rotate.setUniformLocation(shader, "rotate");
 
     {
         // optional
@@ -256,18 +256,14 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     }
 
     {
-        this->shaderContext.rotate = 0;
         this->shaderContext.bindedTextureIndex = 0;
-        this->shaderContext.aspect = 0;
     }
 
     this->unifPolyData = UNIFORM_DISABLE_INDEX;
-    this->unifRotate = UNIFORM_DISABLE_INDEX;
     this->unifTexM = UNIFORM_DISABLE_INDEX;
     this->unifTexture = UNIFORM_DISABLE_INDEX;
     this->unifPolyUv = UNIFORM_DISABLE_INDEX;
     this->unifBlendColor = UNIFORM_DISABLE_INDEX;
-    this->unifAspect = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
     this->shaderContext.blendColor = Color::fromRGBAi(0, 0, 0, 0);
@@ -294,13 +290,8 @@ void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
  * サーフェイスのアスペクト比を設定する
  */
 void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_height) {
-    const float aspect = (float) surface_width / (float) surface_height;
-
     shader->bind();
-    if (shaderContext.aspect != aspect) {
-        shaderContext.aspect = aspect;
-        glUniform1f(unifAspect, aspect);
-    }
+    aspect.uploadFloat1((float) surface_width / (float) surface_height);
 }
 
 /**
@@ -356,10 +347,7 @@ void SpriteManager::renderingImage(MTextureImage image, const float srcX, const 
     }
 
     // ポリゴン回転を設定する
-    if (shaderContext.rotate != degree) {
-        shaderContext.rotate = degree;
-        glUniform1f(unifRotate, jc::degree2radian(degree));
-    }
+    rotate.uploadFloat1(jc::degree2radian(degree));
 
 //! テクスチャ描画位置を行列で操作する
     if (unifPolyUv != UNIFORM_DISABLE_INDEX && image != whiteTexture) {

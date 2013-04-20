@@ -37,6 +37,14 @@ public:
     }
 
     /**
+     * 要素を取得する
+     */
+    vector_type get(const u32 index) const {
+        assert(vector_length > index);
+        return vec[index];
+    }
+
+    /**
      * float値を1つ転送する
      */
     jcboolean uploadFloat1(const float x) {

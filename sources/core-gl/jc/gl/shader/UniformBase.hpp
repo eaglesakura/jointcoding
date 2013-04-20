@@ -19,11 +19,6 @@ protected:
      */
     GLint uniform;
 
-    /**
-     * 関連付けられたシェーダー
-     */
-    MGLShaderProgram program;
-
     UniformBase() {
         uniform = UNIFORM_DISABLE_INDEX;
     }
@@ -44,7 +39,6 @@ public:
     jcboolean setUniofrmLocation(const MGLShaderProgram program, const charactor* name) {
         uniform = program->getUniformLocation(name);
         if (valid()) {
-            this->program = program;
             return jctrue;
         } else {
             return jcfalse;

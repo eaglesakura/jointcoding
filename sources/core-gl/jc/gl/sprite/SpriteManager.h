@@ -36,6 +36,16 @@ protected:
     MDevice device;
 
     /**
+     * 回転角
+     */
+    FloatUniform rotate;
+
+    /**
+     * アスペクト比
+     */
+    FloatUniform aspect;
+
+    /**
      * 頂点属性インデックス
      * @shader_attribute vPosition
      */
@@ -52,11 +62,6 @@ protected:
      * @shader_uniform poly_data
      */
     s32 unifPolyData;
-
-    /**
-     * ポリゴンの回転
-     */
-    s32 unifRotate;
 
     /**
      * テクスチャ行列用uniform
@@ -81,11 +86,6 @@ protected:
     s32 unifBlendColor;
 
     /**
-     * 画面アスペクト比
-     */
-    s32 unifAspect;
-
-    /**
      * 四角形描画用の白テクスチャ
      */
     MTextureImage whiteTexture;
@@ -94,19 +94,6 @@ protected:
      * 保持しておくべきシェーダー設定値
      */
     struct {
-        /**
-         * 回転角度情報
-         * 同値が設定されている場合、何もしない。
-         * degreeで設定する。
-         * 初期値は0.0
-         */
-        float rotate;
-
-        /**
-         * サーフェイスのアスペクト比
-         */
-        float aspect;
-
         /**
          * バインドされたテクスチャ番号
          */
