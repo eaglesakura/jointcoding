@@ -205,17 +205,14 @@ void SpriteManager::initialize(MDevice device) {
     assert(attrVertices != ATTRIBUTE_DISABLE_INDEX);
     assert(attrCoords != ATTRIBUTE_DISABLE_INDEX);
 
-    this->unifPolyData = shader->getUniformLocation("poly_data");
-    assert(unifPolyData != UNIFORM_DISABLE_INDEX);
-
+    uniform.poly_data.setUniformLocation(shader, "poly_data");
+    uniform.poly_uv.setUniformLocation(shader, "poly_uv");
     uniform.texture.setUniformLocation(shader, "tex");
     uniform.color.setUniformLocation(shader, "blendColor");
     uniform.aspect.setUniformLocation(shader, "aspect");
     uniform.rotate.setUniformLocation(shader, "rotate");
 
     {
-        // optional
-        this->unifPolyUv = shader->getUniformLocation("poly_uv");
         this->unifTexM = shader->getUniformLocation("unif_texm");
         if (unifTexM != UNIFORM_DISABLE_INDEX) {
             setTextureMatrix(Matrix4x4());
@@ -250,9 +247,7 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     }
     assert(this->shader.get() != NULL);
 
-    this->unifPolyData = UNIFORM_DISABLE_INDEX;
     this->unifTexM = UNIFORM_DISABLE_INDEX;
-    this->unifPolyUv = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
     this->initialize(device);
@@ -286,21 +281,23 @@ void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_
  * 現在の環境にしたがってレンダリングさせる。
  */
 void SpriteManager::rendering(const float x, const float y, const float width, const float height) {
-    const float displayWidth = (float) device->getSurface()->getWidth();
-    const float displayHeight = (float) device->getSurface()->getHeight();
 
-    const float sizeX = width / displayWidth * 2;
-    const float sizeY = height / displayHeight * 2;
-    const float sx = x / displayWidth * 2;
-    const float sy = y / displayHeight * 2;
-    const float translateX = -1.0f + sizeX / 2.0f + sx;
-    const float translateY = 1.0f - sizeY / 2.0f - sy;
+    {
+        // ポリゴンのXYWH情報を生成する
+        const float displayWidth = (float) device->getSurface()->getWidth();
+        const float displayHeight = (float) device->getSurface()->getHeight();
 
-    float poly_data[] = { translateX, translateY, sizeX, sizeY };
+        const float sizeX = width / displayWidth * 2;
+        const float sizeY = height / displayHeight * 2;
+        const float sx = x / displayWidth * 2;
+        const float sy = y / displayHeight * 2;
+        const float translateX = -1.0f + sizeX / 2.0f + sx;
+        const float translateY = 1.0f - sizeY / 2.0f - sy;
+        // データを転送する
+        uniform.poly_data.uploadFloat4(translateX, translateY, sizeX, sizeY);
+    }
 
-// データを転送する
-    glUniform4fv(unifPolyData, 1, poly_data);
-    assert_gl();
+    // レンダリングを行う
     quad->rendering();
 }
 
@@ -325,7 +322,7 @@ void SpriteManager::renderingImage(MTextureImage image, const float srcX, const 
     uniform.rotate.uploadFloat1(jc::degree2radian(degree));
 
 //! テクスチャ描画位置を行列で操作する
-    if (unifPolyUv != UNIFORM_DISABLE_INDEX && image != whiteTexture) {
+    if (image != whiteTexture) {
         const float TEXTURE_WIDTH = (float) image->getTextureWidth();
         const float TEXTURE_HEIGHT = (float) image->getTextureHeight();
 
@@ -334,8 +331,7 @@ void SpriteManager::renderingImage(MTextureImage image, const float srcX, const 
         const float sx = (float) jc::round(srcX) / TEXTURE_WIDTH;
         const float sy = (float) jc::round(srcY) / TEXTURE_HEIGHT;
 
-        const float poly_uv[] = { sx, sy, sizeX, sizeY, };
-        glUniform4fv(unifPolyUv, 1, poly_uv);
+        uniform.poly_uv.uploadFloat4(sx, sy, sizeX, sizeY);
     }
 
     this->rendering(jc::round(dstX), jc::round(dstY), (s32) dstWidth, (s32) dstHeight);

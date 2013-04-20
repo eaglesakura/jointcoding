@@ -48,21 +48,9 @@ protected:
     s32 attrCoords;
 
     /**
-     * ポリゴン情報のuniformインデックス
-     * @shader_uniform poly_data
-     */
-    s32 unifPolyData;
-
-    /**
      * テクスチャ行列用uniform
      */
     s32 unifTexM;
-
-    /**
-     * テクスチャUVのuniformインデックス
-     * @shader_uniform poly_uv
-     */
-    s32 unifPolyUv;
 
     /**
      * 四角形描画用の白テクスチャ
@@ -79,6 +67,16 @@ protected:
          * アスペクト比
          */
         FloatUniform aspect;
+
+        /**
+         * ポリゴンデータ用
+         */
+        Vector4fUniofrm poly_data;
+
+        /**
+         * ポリゴンUV用
+         */
+        Vector4fUniofrm poly_uv;
 
         /**
          * ブレンド色
