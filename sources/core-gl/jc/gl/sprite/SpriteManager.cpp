@@ -211,12 +211,10 @@ void SpriteManager::initialize(MDevice device) {
     uniform.color.setUniformLocation(shader, "blendColor");
     uniform.aspect.setUniformLocation(shader, "aspect");
     uniform.rotate.setUniformLocation(shader, "rotate");
-
-    {
-        this->unifTexM = shader->getUniformLocation("unif_texm");
-        if (unifTexM != UNIFORM_DISABLE_INDEX) {
-            setTextureMatrix(Matrix4x4());
-        }
+    uniform.texture_matrix.setUniformLocation(shader, "unif_texm");
+    if (uniform.texture_matrix.valid()) {
+        // テクスチャ行列が有効なら単位行列をデフォルト指定する
+        setTextureMatrix(Matrix4x4());
     }
 
     this->quad.reset(new Quad(device));
@@ -247,7 +245,6 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     }
     assert(this->shader.get() != NULL);
 
-    this->unifTexM = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
     this->initialize(device);
@@ -261,12 +258,8 @@ SpriteManager::~SpriteManager() {
  * テクスチャ用行列を設定する
  */
 void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
-    if (unifTexM == UNIFORM_DISABLE_INDEX) {
-        return;
-    }
-
     shader->bind();
-    glUniformMatrix4fv(unifTexM, 1, GL_FALSE, (const float*) m.m);
+    uniform.texture_matrix.upload(m);
 }
 
 /**
@@ -274,7 +267,7 @@ void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
  */
 void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_height) {
     shader->bind();
-    uniform.aspect.uploadFloat1((float) surface_width / (float) surface_height);
+    uniform.aspect.upload((float) surface_width / (float) surface_height);
 }
 
 /**
@@ -294,7 +287,7 @@ void SpriteManager::rendering(const float x, const float y, const float width, c
         const float translateX = -1.0f + sizeX / 2.0f + sx;
         const float translateY = 1.0f - sizeY / 2.0f - sy;
         // データを転送する
-        uniform.poly_data.uploadFloat4(translateX, translateY, sizeX, sizeY);
+        uniform.poly_data.upload(translateX, translateY, sizeX, sizeY);
     }
 
     // レンダリングを行う
@@ -319,7 +312,7 @@ void SpriteManager::renderingImage(MTextureImage image, const float srcX, const 
     // ブレンド色を設定する
     uniform.color.upload(rgba);
     // ポリゴン回転を設定する
-    uniform.rotate.uploadFloat1(jc::degree2radian(degree));
+    uniform.rotate.upload(jc::degree2radian(degree));
 
 //! テクスチャ描画位置を行列で操作する
     if (image != whiteTexture) {
@@ -331,7 +324,7 @@ void SpriteManager::renderingImage(MTextureImage image, const float srcX, const 
         const float sx = (float) jc::round(srcX) / TEXTURE_WIDTH;
         const float sy = (float) jc::round(srcY) / TEXTURE_HEIGHT;
 
-        uniform.poly_uv.uploadFloat4(sx, sy, sizeX, sizeY);
+        uniform.poly_uv.upload(sx, sy, sizeX, sizeY);
     }
 
     this->rendering(jc::round(dstX), jc::round(dstY), (s32) dstWidth, (s32) dstHeight);

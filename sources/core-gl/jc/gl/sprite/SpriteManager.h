@@ -48,11 +48,6 @@ protected:
     s32 attrCoords;
 
     /**
-     * テクスチャ行列用uniform
-     */
-    s32 unifTexM;
-
-    /**
      * 四角形描画用の白テクスチャ
      */
     MTextureImage whiteTexture;
@@ -87,6 +82,11 @@ protected:
          * テクスチャ
          */
         TextureUniform texture;
+
+        /**
+         * テクスチャ行列
+         */
+        MatrixUniform texture_matrix;
     } uniform;
 
     /**

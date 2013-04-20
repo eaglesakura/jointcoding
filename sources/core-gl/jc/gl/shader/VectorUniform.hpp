@@ -41,13 +41,16 @@ public:
      */
     vector_type get(const u32 index) const {
         assert(vector_length > index);
+
         return vec[index];
     }
 
     /**
      * float値を1つ転送する
      */
-    jcboolean uploadFloat1(const float x) {
+    jcboolean upload(const float x) {
+        assert(vector_length >= 1);
+
         if (!valid()) {
             return jcfalse;
         }
@@ -64,7 +67,7 @@ public:
     /**
      * float値を2つ転送する
      */
-    jcboolean uploadFloat2(const float x, const float y) {
+    jcboolean upload(const float x, const float y) {
         assert(vector_length >= 2);
 
         if (!valid()) {
@@ -84,14 +87,14 @@ public:
     /**
      * ベクトルを転送する
      */
-    jcboolean uploadFloat2(const Vector2f &v) {
-        return uploadFloat2(v.x, v.y);
+    jcboolean upload(const Vector2f &v) {
+        return upload(v.x, v.y);
     }
 
     /**
      * float値を3つ転送する
      */
-    jcboolean uploadFloat3(const float x, const float y, const float z) {
+    jcboolean upload(const float x, const float y, const float z) {
         assert(vector_length >= 3);
 
         if (!valid()) {
@@ -112,14 +115,14 @@ public:
     /**
      * ベクトルを転送する
      */
-    jcboolean uploadFloat3(const Vector3f &v) {
-        return uploadFloat3(v.x, v.y, v.z);
+    jcboolean upload(const Vector3f &v) {
+        return upload(v.x, v.y, v.z);
     }
 
     /**
      * float値を4つ転送する
      */
-    jcboolean uploadFloat4(const float x, const float y, const float z, const float w) {
+    jcboolean upload(const float x, const float y, const float z, const float w) {
         assert(vector_length >= 4);
 
         if (!valid()) {
@@ -141,14 +144,14 @@ public:
     /**
      * float値を4つ転送する
      */
-    jcboolean uploadFloat4(const Vector4f &v) {
-        return uploadFloat4(v.x, v.y, v.z, v.w);
+    jcboolean upload(const Vector4f &v) {
+        return upload(v.x, v.y, v.z, v.w);
     }
 
     /**
      * 44行列を転送する
      */
-    jcboolean uploadMatrix44(const float *pMatrix) {
+    jcboolean upload(const float *pMatrix) {
         assert(vector_length >= 16);
         assert(pMatrix != NULL);
 
@@ -179,8 +182,8 @@ public:
     /**
      * 44行列を転送する
      */
-    jcboolean uploadMatrix44(const Matrix4x4 &m) {
-        return uploadMatrix44((const float*) (&m));
+    jcboolean upload(const Matrix4x4 &m) {
+        return upload((const float*) (&m));
     }
 };
 
