@@ -13,6 +13,10 @@
 #include    "jc/gl/shader/ShaderProgram.h"
 #include    "jc/gl/texture/TextureImage.h"
 
+#include    "jc/gl/shader/VectorUniform.hpp"
+#include    "jc/gl/shader/TextureUniform.hpp"
+#include    "jc/gl/shader/ColorUniform.hpp"
+
 namespace jc {
 namespace gl {
 
