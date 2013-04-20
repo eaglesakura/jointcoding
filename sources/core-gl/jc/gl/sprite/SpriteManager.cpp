@@ -184,15 +184,14 @@ static const charactor *FRAGMENT_EXTERNAL_SHADER_SOURCE = ""
 ;
 
 const static Quad::QuadVertex g_revert_vertices[] = {
-        // 左上
+// 左上
         { -0.5, 0.5, 0.0f, 1.0f, },
         // 左下
         { -0.5, -0.5, 0.0f, 0.0f },
         // 右下
         { 0.5, -0.5, 1.0f, 0.0f },
         // 右上
-        { 0.5, 0.5, 1.0f, 1.0f },
-};
+        { 0.5, 0.5, 1.0f, 1.0f }, };
 //
 }
 
@@ -209,14 +208,10 @@ void SpriteManager::initialize(MDevice device) {
     this->unifPolyData = shader->getUniformLocation("poly_data");
     assert(unifPolyData != UNIFORM_DISABLE_INDEX);
 
-    this->unifTexture = shader->getUniformLocation("tex");
-    assert(unifTexture != UNIFORM_DISABLE_INDEX);
-    this->unifBlendColor = shader->getUniformLocation("blendColor");
-    assert(unifBlendColor != UNIFORM_DISABLE_INDEX);
-
-
-    aspect.setUniformLocation(shader, "aspect");
-    rotate.setUniformLocation(shader, "rotate");
+    uniform.texture.setUniformLocation(shader, "tex");
+    uniform.color.setUniformLocation(shader, "blendColor");
+    uniform.aspect.setUniformLocation(shader, "aspect");
+    uniform.rotate.setUniformLocation(shader, "rotate");
 
     {
         // optional
@@ -252,21 +247,14 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
 // シェーダーが設定されて無ければ、組み込みで起動する
     if (!shader) {
         this->shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
-        assert(this->shader.get() != NULL);
     }
-
-    {
-        this->shaderContext.bindedTextureIndex = 0;
-    }
+    assert(this->shader.get() != NULL);
 
     this->unifPolyData = UNIFORM_DISABLE_INDEX;
     this->unifTexM = UNIFORM_DISABLE_INDEX;
-    this->unifTexture = UNIFORM_DISABLE_INDEX;
     this->unifPolyUv = UNIFORM_DISABLE_INDEX;
-    this->unifBlendColor = UNIFORM_DISABLE_INDEX;
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
-    this->shaderContext.blendColor = Color::fromRGBAi(0, 0, 0, 0);
     this->initialize(device);
 }
 
@@ -291,7 +279,7 @@ void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
  */
 void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_height) {
     shader->bind();
-    aspect.uploadFloat1((float) surface_width / (float) surface_height);
+    uniform.aspect.uploadFloat1((float) surface_width / (float) surface_height);
 }
 
 /**
@@ -329,25 +317,12 @@ void SpriteManager::renderingRect(const float x, const float y, const float w, c
 void SpriteManager::renderingImage(MTextureImage image, const float srcX, const float srcY, const float srcW, const float srcH, const float dstX, const float dstY, const float dstWidth, const float dstHeight, const float degree, const u32 rgba) {
 // シェーダーを切り替える
     shader->bind();
-
-// 変更前のテクスチャを保持しておく
-    {
-        const s32 old_bindedTextureIndex = shaderContext.bindedTextureIndex;
-// テクスチャ番号を設定する
-        shaderContext.bindedTextureIndex = image->bind();
-        if (old_bindedTextureIndex != shaderContext.bindedTextureIndex) {
-            glUniform1i(unifTexture, shaderContext.bindedTextureIndex);
-        }
-    }
-
-// ブレンド色を設定する
-    if (shaderContext.blendColor.rgba != rgba) {
-        shaderContext.blendColor = Color::fromRGBAi(rgba);
-        glUniform4f(unifBlendColor, shaderContext.blendColor.rf(), shaderContext.blendColor.gf(), shaderContext.blendColor.bf(), shaderContext.blendColor.af());
-    }
-
+    // テクスチャを転送する
+    uniform.texture.upload(image);
+    // ブレンド色を設定する
+    uniform.color.upload(rgba);
     // ポリゴン回転を設定する
-    rotate.uploadFloat1(jc::degree2radian(degree));
+    uniform.rotate.uploadFloat1(jc::degree2radian(degree));
 
 //! テクスチャ描画位置を行列で操作する
     if (unifPolyUv != UNIFORM_DISABLE_INDEX && image != whiteTexture) {

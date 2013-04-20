@@ -31,7 +31,8 @@ public:
     /**
      * GPUにアップロードを行う
      */
-    jcboolean upload(const MTextureImage tex) {
+    jcboolean upload(MTextureImage tex) {
+        assert(tex.get() != NULL);
 
         if (!valid()) {
             return jcfalse;
@@ -39,7 +40,7 @@ public:
 
         const u32 texUnit = tex->bind();
         if (bindUnit != texUnit) {
-            glUniform1i(uniform, bindUnit);
+            glUniform1i(uniform, texUnit);
             assert_gl();
             bindUnit = texUnit;
             return jctrue;

@@ -36,16 +36,6 @@ protected:
     MDevice device;
 
     /**
-     * 回転角
-     */
-    FloatUniform rotate;
-
-    /**
-     * アスペクト比
-     */
-    FloatUniform aspect;
-
-    /**
      * 頂点属性インデックス
      * @shader_attribute vPosition
      */
@@ -69,41 +59,37 @@ protected:
     s32 unifTexM;
 
     /**
-     * テクスチャ情報のuniformインデックス
-     * @shader_uniform tex
-     */
-    s32 unifTexture;
-
-    /**
      * テクスチャUVのuniformインデックス
      * @shader_uniform poly_uv
      */
     s32 unifPolyUv;
 
     /**
-     * ポリゴンのブレンド色
-     */
-    s32 unifBlendColor;
-
-    /**
      * 四角形描画用の白テクスチャ
      */
     MTextureImage whiteTexture;
 
-    /**
-     * 保持しておくべきシェーダー設定値
-     */
     struct {
         /**
-         * バインドされたテクスチャ番号
+         * 回転角
          */
-        s32 bindedTextureIndex;
+        FloatUniform rotate;
 
         /**
-         * ポリゴンのブレンド色
+         * アスペクト比
          */
-        Color blendColor;
-    } shaderContext;
+        FloatUniform aspect;
+
+        /**
+         * ブレンド色
+         */
+        ColorUniform color;
+
+        /**
+         * テクスチャ
+         */
+        TextureUniform texture;
+    } uniform;
 
     /**
      * レンダリング用の板ポリゴン
