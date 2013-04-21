@@ -40,7 +40,7 @@ public:
 
         const u32 texUnit = tex->bind();
         if (bindUnit != texUnit) {
-            glUniform1i(uniform, texUnit);
+            glUniform1i(location, texUnit);
             assert_gl();
             bindUnit = texUnit;
             return jctrue;

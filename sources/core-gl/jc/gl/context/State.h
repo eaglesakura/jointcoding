@@ -18,7 +18,7 @@ namespace jc {
 namespace gl {
 
 #ifdef  DEBUG
-#define     assert_gl(...)    { ::jc::gl::GLState::printGLHasError(__FILE__, __LINE__); }
+#define     assert_gl(...)    { assert(::jc::gl::GLState::printGLHasError(__FILE__, __LINE__) == jcfalse); }
 #else
 // release
 #define     assert_gl(...)    { }
@@ -691,7 +691,8 @@ public:
     void print(const charactor* file, const s32 line) const;
 
     /**
-     * GLがエラーを持っている場合出力して、それ以外は何もしない。
+     * GLがエラーを持っている場合出力してtrueを返す。
+     * それ以外はなにもしないでfalseを返す。
      */
     static jcboolean printGLHasError(const charactor* file, const s32 line);
 

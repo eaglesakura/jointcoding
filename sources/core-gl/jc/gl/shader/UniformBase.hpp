@@ -17,10 +17,10 @@ protected:
     /**
      * Uniformインデックス
      */
-    GLint uniform;
+    GLint location;
 
     UniformBase() {
-        uniform = UNIFORM_DISABLE_INDEX;
+        location = UNIFORM_DISABLE_INDEX;
     }
 public:
 
@@ -31,27 +31,28 @@ public:
      * Uniform値が有効ならばtrueを返す
      */
     jcboolean valid() const {
-        return uniform != UNIFORM_DISABLE_INDEX;
+        return location != UNIFORM_DISABLE_INDEX;
     }
+
+    /**
+     * Uniformロケーションを取得する。
+     * 無効な場合、UNIFORM_DISABLE_INDEXが帰る.
+     */
+    GLint getLocation() const {
+        return location;
+    }
+
     /**
      * uniform locationを取得する
      */
-    jcboolean setUniofrmLocation(const MGLShaderProgram program, const charactor* name) {
-        uniform = program->getUniformLocation(name);
+    jcboolean setLocation(const MGLShaderProgram program, const charactor* name) {
+        location = program->getUniformLocation(name);
         if (valid()) {
             return jctrue;
         } else {
             return jcfalse;
         }
     }
-
-    /**
-     * uniofrm locationを取得する
-     */
-    jcboolean setUniformLocation(const MGLShaderProgram program, const String &name) {
-        return setUniofrmLocation(program, (const charactor*) name.c_str());
-    }
-
 };
 
 }

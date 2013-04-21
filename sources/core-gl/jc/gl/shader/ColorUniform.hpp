@@ -35,7 +35,7 @@ public:
         }
 
         if (color != c.rgba) {
-            glUniform4f(uniform, c.rf(), c.gf(), c.bf(), c.af());
+            glUniform4f(location, c.rf(), c.gf(), c.bf(), c.af());
             assert_gl();
             color = c.rgba;
             return jctrue;

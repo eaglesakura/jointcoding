@@ -56,7 +56,7 @@ public:
         }
 
         if (vec[0] != x) {
-            glUniform1f(uniform, x);
+            glUniform1f(location, x);
             assert_gl();
             vec[0] = x;
             return jctrue;
@@ -75,7 +75,7 @@ public:
         }
 
         if (vec[0] != x || vec[1] != y) {
-            glUniform2f(uniform, x, y);
+            glUniform2f(location, x, y);
             assert_gl();
             vec[0] = x;
             vec[1] = y;
@@ -102,7 +102,7 @@ public:
         }
 
         if (vec[0] != x || vec[1] != y || vec[3] != z) {
-            glUniform3f(uniform, x, y, z);
+            glUniform3f(location, x, y, z);
             assert_gl();
             vec[0] = x;
             vec[1] = y;
@@ -130,7 +130,7 @@ public:
         }
 
         if (vec[0] != x || vec[1] != y || vec[3] != z || vec[4] != w) {
-            glUniform4f(uniform, x, y, z, w);
+            glUniform4f(location, x, y, z, w);
             assert_gl();
             vec[0] = x;
             vec[1] = y;
@@ -173,7 +173,7 @@ public:
             return jcfalse;
         }
 
-        glUniformMatrix4fv(uniform, 1, GL_FALSE, pMatrix);
+        glUniformMatrix4fv(location, 1, GL_FALSE, pMatrix);
         assert_gl();
 
         return jctrue;

@@ -36,13 +36,13 @@ void SpriteManager::initialize(MDevice device) {
     assert(attrVertices != ATTRIBUTE_DISABLE_INDEX);
     assert(attrCoords != ATTRIBUTE_DISABLE_INDEX);
 
-    uniform.poly_data.setUniformLocation(shader, "poly_data");
-    uniform.poly_uv.setUniformLocation(shader, "poly_uv");
-    uniform.texture.setUniformLocation(shader, "tex");
-    uniform.color.setUniformLocation(shader, "blendColor");
-    uniform.aspect.setUniformLocation(shader, "aspect");
-    uniform.rotate.setUniformLocation(shader, "rotate");
-    uniform.texture_matrix.setUniformLocation(shader, "unif_texm");
+    uniform.poly_data.setLocation(shader, "poly_data");
+    uniform.poly_uv.setLocation(shader, "poly_uv");
+    uniform.texture.setLocation(shader, "tex");
+    uniform.color.setLocation(shader, "blendColor");
+    uniform.aspect.setLocation(shader, "aspect");
+    uniform.rotate.setLocation(shader, "rotate");
+    uniform.texture_matrix.setLocation(shader, "unif_texm");
     if (uniform.texture_matrix.valid()) {
         // テクスチャ行列が有効なら単位行列をデフォルト指定する
         setTextureMatrix(Matrix4x4());

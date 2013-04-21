@@ -261,10 +261,12 @@ void GLState::print(const charactor* file, const s32 line) const {
  * GLがエラーを持っている場合出力して、それ以外は何もしない。
  */
 jcboolean GLState::printGLHasError(const charactor* file, const s32 line) {
+#ifdef DEBUG
     GLenum error = glGetError();
     if (error != GL_NO_ERROR) {
         return printGLError(file, line, error);
     }
+#endif
     return jcfalse;
 }
 
@@ -282,13 +284,13 @@ void GLState::printGLError(const charactor* file, const s32 line) {
 jcboolean GLState::printGLError(const charactor* file, const s32 line, GLenum error) {
 #define LOG_GL( error_enum )    case error_enum: ::jc::__logDebugF(error_enum != GL_NO_ERROR ? LogType_Alert : LogType_Debug, ::jc::__getFileName(file), "L %d | %s", line, #error_enum); return error != GL_NO_ERROR ? jctrue : jcfalse;
     switch (error) {
-        LOG_GL(GL_NO_ERROR);
         LOG_GL(GL_INVALID_ENUM);
         LOG_GL(GL_INVALID_VALUE);
         LOG_GL(GL_INVALID_OPERATION);
+        LOG_GL(GL_OUT_OF_MEMORY);
+        LOG_GL(GL_NO_ERROR);
 //        LOG_GL(GL_STACK_OVERFLOW);
 //        LOG_GL(GL_STACK_UNDERFLOW);
-        LOG_GL(GL_OUT_OF_MEMORY);
 //        LOG_GL(GL_TABLE_TOO_LARGE);
     }
 
