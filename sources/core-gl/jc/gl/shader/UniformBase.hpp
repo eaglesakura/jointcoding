@@ -47,11 +47,7 @@ public:
      */
     jcboolean setLocation(const MGLShaderProgram program, const charactor* name) {
         location = program->getUniformLocation(name);
-        if (valid()) {
-            return jctrue;
-        } else {
-            return jcfalse;
-        }
+        return valid();
     }
 };
 

@@ -75,23 +75,9 @@ public:
     virtual GLint getAttribLocation(const charactor* name) const;
 
     /**
-     * プログラム属性変数のロケーションを取得する
-     */
-    virtual GLint getAttribLocation(const String &name) const {
-        return getAttribLocation((const charactor*) name.c_str());
-    }
-
-    /**
      * uniform変数のロケーションを取得する
      */
     virtual GLint getUniformLocation(const charactor *name) const;
-
-    /**
-     * uniform変数のロケーションを取得する
-     */
-    virtual GLint getUniformLocation(const String &name) const {
-        return getUniformLocation((const charactor*) name.c_str());
-    }
 
     /**
      * Attribute数を取得する
