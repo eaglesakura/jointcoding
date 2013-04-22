@@ -131,6 +131,12 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             // テクスチャ用メモリを確保する
             result->bind();
             result->allocPixelMemory(TEXTURE_PIXEL_TYPE, TEXTURE_PIXEL_FORMAT, 0);
+            if (ONCE_PIXEL_BYTES != 4) {
+                // glTexImage2D用にパッキングを行う
+                // この呼出を行わない場合、テクセル境界が4byteとなってしまう
+                // 例えば2byte RGB565テクスチャの転送で4byte境界にされてしまい、テクスチャがうまいこと読み込めなくなってしまう
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            }
 
             // テクスチャalloc時間を記録する
             if (option) {
@@ -174,21 +180,18 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 lock_time = Timer::currentTime();
 
                 // 読み込むライン数を修正する
-                if ((pixel_y + LOAD_HEIGHT) > origin_height) {
-                    LOAD_HEIGHT = (origin_height - pixel_y);
-                }
-
+                LOAD_HEIGHT = jc::min<s32>(LOAD_HEIGHT, origin_height - pixel_y);
                 assert(LOAD_HEIGHT > 0);
                 assert((pixel_y + LOAD_HEIGHT) <= origin_height);
 
                 result->bind();
                 result->copyPixelLine(raw_buffer, TEXTURE_PIXEL_TYPE, TEXTURE_PIXEL_FORMAT, 0, pixel_y, LOAD_HEIGHT);
+                // テクスチャロードはfinish待ちを行う
+                glFinish();
+
                 if (option) {
                     option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
                 }
-
-                // テクスチャロードはfinish待ちを行う
-                glFinish();
             } catch (EGLException &e) {
                 jcloge(e);
                 // ref

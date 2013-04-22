@@ -38,6 +38,8 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             context.magFilter = GL_NEAREST;
             context.minFilter = GL_NEAREST;
+
+            assert_gl();
         }
         this->unbind();
     }
@@ -67,6 +69,8 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
             glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             context.magFilter = GL_NEAREST;
             context.minFilter = GL_NEAREST;
+
+            assert_gl();
         }
         this->unbind();
     }
@@ -83,28 +87,14 @@ s32 TextureImage::getFreeTextureUnitIndex() {
 void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum) {
     assert(isBinded(NULL) == jctrue);
 
-    // 空いているユニットを取得する
-    jcboolean finished = jcfalse;
-
     // 領域の確保が済んでいなければ確保する
     if (!this->alloced) {
-        this->alloced = jctrue;
-
-        if (lineHeader == 0 && lineNum == (s32) size.tex_height) {
-            // 一度に転送しきれる場合は全て転送してしまう
-            glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, size.tex_width, size.tex_height, 0, srcPixelFormat, srcPixelType, src);
-            finished = jctrue;
-        } else {
-            // まずは空の領域を確保する
-            glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, size.tex_width, size.tex_height, 0, srcPixelFormat, srcPixelType, NULL);
-            finished = jcfalse;
-        }
+        allocPixelMemory(srcPixelType, srcPixelFormat, mipLevel);
     }
 
-    // 部分転送が必要なら転送する
-    if (!finished) {
-        glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_width, lineNum, srcPixelFormat, srcPixelType, src);
-    }
+    // 部分転送を行う
+    glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_width, lineNum, srcPixelFormat, srcPixelType, src);
+    assert_gl();
 }
 
 /**
@@ -119,6 +109,7 @@ void TextureImage::allocPixelMemory(const GLenum srcPixelType, const GLenum srcP
         this->alloced = jctrue;
         // まずは空の領域を確保する
         glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, size.tex_width, size.tex_height, 0, srcPixelFormat, srcPixelType, NULL);
+        assert_gl();
     }
 }
 
@@ -133,6 +124,7 @@ void TextureImage::setMinFilter(GLint filter) {
     }
 
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filter);
+    assert_gl();
     context.minFilter = filter;
 }
 
@@ -147,6 +139,7 @@ void TextureImage::setMagFilter(GLint filter) {
     }
 
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filter);
+    assert_gl();
     context.magFilter = filter;
 }
 
@@ -173,6 +166,7 @@ void TextureImage::setWrapT(GLint wrap) {
     }
 
     glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
+    assert_gl();
     context.wrapT = wrap;
 
 }
