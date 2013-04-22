@@ -86,6 +86,11 @@ private:
     jcboolean enable;
 
     /**
+     * 有効なレンダリングパス
+     */
+    s32 enableRenderingPass;
+
+    /**
      * Viewの表示状態を取得する
      */
     ViewMode_e viewMode;
@@ -166,6 +171,13 @@ protected:
     }
 
     /**
+     * レンダリングデバイスを取得するう
+     */
+    virtual MDevice getDevice() const {
+        assert(windowContext.get() != NULL);
+        return windowContext->getDevice();
+    }
+    /**
      * デバッグ用にレンダリングを行う
      */
     virtual void renderingArea();
@@ -178,6 +190,18 @@ protected:
         assert(isRegisteredWindow());
         return windowContext->frameValue<T>(secValue);
     }
+
+    /**
+     * 自身のレンダリングを許可するパスであるならtrueを返す。
+     */
+    virtual jcboolean isSelfRenderingPass() const {
+        if(!enableRenderingPass) {
+            SceneGraph::isSelfRenderingPass();
+        }
+
+        return (enableRenderingPass & (0x1 << getCurrentPass())) != 0;
+    }
+
 public:
     View();
     virtual ~View();
@@ -351,8 +375,15 @@ public:
     /**
      * 配置場所（ローカル位置）を取得する
      */
-    virtual RectF getLocalLayoutArea() {
+    virtual RectF getLocalLayoutArea() const {
         return localArea;
+    }
+
+    /**
+     * レイアウトサイズを取得する
+     */
+    virtual Vector2f getLocalLayoutSize() const {
+        return localArea.wh();
     }
 
     /**
@@ -372,7 +403,7 @@ public:
     /**
      * 衝突判定位置（ローカル座標）を取得する
      */
-    virtual RectF getLocalIntersectArea() {
+    virtual RectF getLocalIntersectArea() const {
         return localArea;
     }
 
@@ -395,14 +426,19 @@ public:
     virtual void layout(const RectF &area);
 
     /**
+     * 親と同じ領域になるようにエリアを設定する
+     */
+    virtual void layoutFillParent(const RectF &parentLocal);
+
+    /**
      * ネストされた小階層も含めた全体のレイアウトエリアを計算する
      */
-    virtual RectF getGlobalLayoutAreaNest( );
+    virtual RectF getGlobalLayoutAreaNest( ) const;
 
     /**
      * グローバル位置に変換する
      */
-    virtual Vector2f toGlobalPosition(const Vector2f &localPosition) {
+    virtual Vector2f toGlobalPosition(const Vector2f &localPosition) const {
         Vector2f parent_pos;
         if (getParent()) {
             View *parentView = getParentTo<View>();
@@ -417,7 +453,7 @@ public:
     /**
      * グローバル座標に変換した表示位置を取得する
      */
-    virtual RectF getGlobalLayoutArea() {
+    virtual RectF getGlobalLayoutArea() const {
         RectF parent;
         if (getParent()) {
             View *parentView = getParentTo<View>();
@@ -431,9 +467,19 @@ public:
     }
 
     /**
+     * ローカルをグローバルに
+     */
+    virtual RectF toGlobalLayoutArea(const RectF &local) const {
+        const RectF selfGlobal = getGlobalLayoutArea();
+        RectF temp = local;
+        temp.offset(selfGlobal.left, selfGlobal.top);
+        return temp;
+    }
+
+    /**
      * グローバル座標に変換した衝突判定位置を取得する
      */
-    virtual RectF getGlobalIntersectArea() {
+    virtual RectF getGlobalIntersectArea() const {
         RectF parent;
         if (getParent()) {
             parent = getParentTo<View>()->getGlobalLayoutArea();
@@ -446,7 +492,7 @@ public:
     /**
      * グローバル座標を指定し、衝突していればtrueを返す
      */
-    virtual jcboolean isIntersect(const Vector2f &global) {
+    virtual jcboolean isIntersect(const Vector2f &global) const {
         const RectF globalRect = getGlobalIntersectArea();
         return globalRect.isIntersect(global.x, global.y);
     }
@@ -455,7 +501,7 @@ public:
      * グローバル座標にタッチされた時に自分が処理すべきViewであるならtrueを返す。
      * 子は考慮しない。
      */
-    virtual jcboolean isTouchedView(const Vector2f &global) {
+    virtual jcboolean isTouchedView(const Vector2f &global) const {
         if (!isTouchable()) {
             return jcfalse;
         }
@@ -466,10 +512,10 @@ public:
      * 位置に適合するViewを子から探して返す。
      * 自分自身は含めない。 isTouchedView()が基準となる。
      */
-    virtual jc_sp<View> findTouchedView( const Vector2f &global) {
+    virtual jc_sp<View> findTouchedView( const Vector2f &global) const {
         assert(isRegisteredWindow());
 
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
 
         // 全チェックを行う
             while(itr != end) {
@@ -502,7 +548,7 @@ public:
          * 位置に適合するViewを兄弟から探して返す。
          * 自分自身は含めない。 isTouchedView()が基準となる。
          */
-        virtual jc_sp<View> findSiblingTouchedView( const Vector2f &global) {
+        virtual jc_sp<View> findSiblingTouchedView( const Vector2f &global) const {
             assert(isRegisteredWindow());
 
             View *parent = getParentTo<View>();
@@ -521,8 +567,8 @@ public:
          * フォーカスを持つことができる最初のViewを探索する。
          * 子 -> 子の子孫 -> 次の子 -> 子の子孫 の順番で探索される
          */
-        virtual jc_sp<View> findFocusableView() {
-            std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        virtual jc_sp<View> findFocusableView() const {
+            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
 
             // 全チェックを行う
             while(itr != end) {
@@ -554,8 +600,8 @@ public:
         /**
          * フォーカスを持っているViewを取得する
          */
-        virtual jc_sp<View> findFocusedView() {
-            std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        virtual jc_sp<View> findFocusedView() const {
+            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
 
             // 全チェックを行う
             while(itr != end) {
@@ -667,6 +713,22 @@ public:
 
             return -1;
         }
+
+        /**
+         * 有効になるレンダリングパスを設定する
+         * 0〜31までのパスをビットフラグを用いて設定している。
+         * default = 0x0
+         */
+        virtual void addRenderingPass(const s32 set) {
+            this->enableRenderingPass |= (0x1 << set);
+        }
+
+        /**
+         * レンダリングパスを無効にする
+         */
+        virtual void resetRenderingPass() {
+            this->enableRenderingPass = 0;
+        }
     protected:
         // オーバーライドされる
 
@@ -684,7 +746,7 @@ public:
         /**
          * ウィンドウと関連付けがされた
          */
-        virtual void onRegisterdWindow() {
+        virtual void onRegisteredWindow() {
         }
 
         /**

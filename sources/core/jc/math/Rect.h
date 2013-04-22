@@ -9,6 +9,7 @@
 #define JCRECT_H_
 
 #include    "jc/math/Math.h"
+#include    "jc/math/Vec2.h"
 
 namespace jc {
 
@@ -174,6 +175,27 @@ struct RectT {
 
     T centerY() const {
         return (top + bottom) / 2;
+    }
+
+    /**
+     * center
+     */
+    _Vector2<T> center() const {
+        return _Vector2<T>(centerX(), centerY());
+    }
+
+    /**
+     * width/height
+     */
+    _Vector2<T> wh() const {
+        return _Vector2<T>(width(), height());
+    }
+
+    /**
+     * left/top
+     */
+    _Vector2<T> lt() const {
+        return _Vector2<T>(left, top);
     }
 
     /**

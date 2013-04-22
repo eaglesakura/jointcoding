@@ -109,6 +109,13 @@ public:
     }
 
     /**
+     * レンダリングデバイスを取得する
+     */
+    virtual MDevice getDevice() const {
+        return spriteManager->getDevice();
+    }
+
+    /**
      * スプライト管理クラスを登録する
      */
     virtual void setSpriteManager(const MSpriteManager spriteManager) {

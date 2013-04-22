@@ -230,6 +230,13 @@ public:
     }
 
     /**
+     * レンダリングデバイスを取得する
+     */
+    virtual MDevice getDevice() const {
+        return device;
+    }
+
+    /**
      * デバッグ用のエリアレンダリング（fill色で塗りつぶし後、line色で線を描く）を行う。
      */
     virtual void renderingArea( const RectF &area, const rgba32 fillColor, const rgba32 lineColor) {

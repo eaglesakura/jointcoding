@@ -115,7 +115,16 @@ public:
      * @param result 結果の格納先
      * @param parentLocal 基準となるLocal座標
      */
-    virtual void layout(RectF *result, const RectF parentLocal);
+    virtual void layout(RectF *result, const Vector2f &parentLocalSize);
+
+    /**
+     * レイアウトの再配置を行う
+     * @param result 結果の格納先
+     * @param parentLocal 基準となるLocal座標
+     */
+    virtual void layout(RectF *result, const RectF &parentLocal) {
+        layout(result, parentLocal.wh());
+    }
 };
 
 }

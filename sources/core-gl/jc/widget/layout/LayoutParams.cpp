@@ -12,7 +12,7 @@ namespace view {
 /**
  * レイアウトの再配置を行う
  */
-void LayoutParams::layout(RectF *result, const RectF parentLocal) {
+void LayoutParams::layout(RectF *result, const Vector2f &parentLocalSize) {
     assert(result != NULL);
 
     RectF local;
@@ -23,11 +23,11 @@ void LayoutParams::layout(RectF *result, const RectF parentLocal) {
         s32 height = layout_height;
 
         if (layout_width <= 0) {
-            width = parentLocal.width();
+            width = parentLocalSize.x;
         }
 
         if (layout_height <= 0) {
-            height = parentLocal.width();
+            height = parentLocalSize.y;
         }
         local.right = width;
         local.bottom = height;
@@ -38,10 +38,10 @@ void LayoutParams::layout(RectF *result, const RectF parentLocal) {
         // X方向チェック
         if (gravity & LayoutGravity_CenterX) {
             // 中央寄せ
-            local.moveToCenterX(parentLocal.centerX());
+            local.moveToCenterX(parentLocalSize.x / 2);
         } else if (gravity & LayoutGravity_Right) {
             // 右寄せ
-            local.moveToRight(parentLocal.width() - margin_right);
+            local.moveToRight(parentLocalSize.x - margin_right);
         } else {
             // 左寄せ
             local.moveToLeft(margin_left);
@@ -50,16 +50,16 @@ void LayoutParams::layout(RectF *result, const RectF parentLocal) {
         // Y方向チェック
         if (gravity & LayoutGravity_CenterY) {
             // 中央寄せ
-            local.moveToCenterY(parentLocal.centerY());
+            local.moveToCenterY(parentLocalSize.y / 2);
         } else if (gravity & LayoutGravity_Bottom) {
             // 下寄せ
-            local.moveToBottom(parentLocal.height() - margin_bottom);
+            local.moveToBottom(parentLocalSize.y - margin_bottom);
         } else if (gravity & LayoutGravity_OnTop) {
             // 親Layoutの上に配置
-            local.moveToBottom(parentLocal.top - margin_bottom);
+            local.moveToBottom(-margin_bottom);
         } else if (gravity & LayoutGravity_ToUnder) {
             // 親Layoutの下に配置
-            local.moveToTop(parentLocal.bottom + margin_top);
+            local.moveToTop(parentLocalSize.y + margin_top);
         } else {
             // 上
             local.moveToTop(margin_top);

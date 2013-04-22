@@ -13,6 +13,7 @@ namespace jc {
 namespace view {
 
 View::View() {
+    this->enableRenderingPass = 0x0;
     this->down = this->down_inc = this->focus = jcfalse;
     this->enable = this->focusable = this->touchable = jctrue;
     this->viewMode = ViewMode_Visible;
@@ -453,7 +454,7 @@ void View::registerWindow() {
 // 登録完了したことを通知する
     if (sendMessage) {
         // 登録が完了した
-        onRegisterdWindow();
+        onRegisteredWindow();
     }
 
     // 初期化実行を行う
@@ -562,12 +563,19 @@ void View::layout(const RectF &area) {
 }
 
 /**
+ * 親と同じ領域になるようにエリアを設定する
+ */
+void View::layoutFillParent(const RectF &parentLocal) {
+    layout(createRectFromLTRB(0.0f, 0.0f, parentLocal.width(), parentLocal.height()));
+}
+
+/**
  * ネストされた小階層も含めた全体のレイアウトエリアを計算する
  */
-RectF View::getGlobalLayoutAreaNest() {
+RectF View::getGlobalLayoutAreaNest() const {
     RectF result = getGlobalLayoutArea();
 
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
 
