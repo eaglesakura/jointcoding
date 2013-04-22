@@ -33,6 +33,15 @@ public:
         }
     }
 
+    VectorUniform(MGLShaderProgram program, const charactor *name) {
+        // 0で初期化する
+        for (int i = 0; i < vector_length; ++i) {
+            vec[i] = (vector_type) 0;
+        }
+
+        setLocation(program, name);
+    }
+
     ~VectorUniform() {
     }
 

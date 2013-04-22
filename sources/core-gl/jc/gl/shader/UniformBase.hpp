@@ -35,6 +35,16 @@ public:
     }
 
     /**
+     * ロケーション設定を行う
+     */
+    void setLocation(const GLint location) {
+        // disable indexか0以上のロケーション設定が必要になる
+        assert(location == UNIFORM_DISABLE_INDEX || location > 0);
+
+        this->location = location;
+    }
+
+    /**
      * Uniformロケーションを取得する。
      * 無効な場合、UNIFORM_DISABLE_INDEXが帰る.
      */

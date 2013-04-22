@@ -9,6 +9,7 @@
 
 #include    "jc/system/Macro.h"
 #include    "jc/util/ImplCapsule.h"
+#include    <vector>
 
 namespace jc {
 
@@ -99,6 +100,11 @@ public:
      * 空文字だった場合、trueを返す
      */
     jcboolean empty() const;
+
+    /**
+     * 文字列をセパレーターに従って分割する
+     */
+    std::vector<String> split(const charactor *sep) const;
 
     /**
      * ネイティブクラスに変換して取得する

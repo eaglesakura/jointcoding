@@ -5,6 +5,7 @@
  */
 
 #include    "jointcoding.h"
+#include    "jc/system/StringUtil.h"
 #include    <string>
 
 namespace jc {
@@ -40,7 +41,6 @@ const s32 String::length() const {
 jcboolean String::empty() const {
     return _native->empty();
 }
-
 
 /**
  * C文字列を取得する
@@ -113,7 +113,6 @@ bool String::operator!=(const String &str) const {
     return a != b;
 }
 
-
 /**
  * map比較演算子
  */
@@ -144,6 +143,13 @@ s32 String::indexOf(const charactor *str) const {
 String String::substring(const s32 begin, const s32 end) const {
     string_t str = _native->substr(begin, end);
     return String(str.c_str());
+}
+/**
+ * 文字列をセパレーターに従って分割する
+ */std::vector<String> String::split(const charactor *sep) const {
+    std::vector<String> result;
+    jc::split((*this), String(sep), &result);
+    return result;
 }
 
 /**

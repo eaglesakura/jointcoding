@@ -91,6 +91,8 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 option->result.raw_pixelconvert_time_ms = Timer::lapseTimeMs(start_time);
             }
         } else {
+            assert(GPUCapacity::isSupport(GPUExtension_Texture_BGRA8888));
+
             if (option) {
                 option->result.raw_pixelconvert_time_ms = 0;
             }

@@ -14,7 +14,7 @@ namespace gl {
 
 namespace {
 
-const static Quad::QuadVertex g_revert_vertices[] = {
+const static QuadVertex g_revert_vertices[] = {
 // 左上
         { -0.5, 0.5, 0.0f, 1.0f, },
         // 左下
@@ -30,26 +30,28 @@ const static Quad::QuadVertex g_revert_vertices[] = {
  * 初期化を行う
  */
 void SpriteManager::initialize(MDevice device) {
-    this->attrVertices = shader->getAttribLocation("vPosition");
-    this->attrCoords = shader->getAttribLocation("vTexCoord");
 
-    assert(attrVertices != ATTRIBUTE_DISABLE_INDEX);
-    assert(attrCoords != ATTRIBUTE_DISABLE_INDEX);
-
-    uniform.poly_data.setLocation(shader, "poly_data");
-    uniform.poly_uv.setLocation(shader, "poly_uv");
-    uniform.texture.setLocation(shader, "tex");
-    uniform.color.setLocation(shader, "blendColor");
-    uniform.aspect.setLocation(shader, "aspect");
-    uniform.rotate.setLocation(shader, "rotate");
-    uniform.texture_matrix.setLocation(shader, "unif_texm");
-    if (uniform.texture_matrix.valid()) {
-        // テクスチャ行列が有効なら単位行列をデフォルト指定する
-        setTextureMatrix(Matrix4x4());
+    // uniformを設定する
+    {
+        uniform.poly_data.setLocation(shader, "poly_data");
+        uniform.poly_uv.setLocation(shader, "poly_uv");
+        uniform.texture.setLocation(shader, "tex");
+        uniform.color.setLocation(shader, "blendColor");
+        uniform.aspect.setLocation(shader, "aspect");
+        uniform.rotate.setLocation(shader, "rotate");
+        uniform.texture_matrix.setLocation(shader, "unif_texm");
+        if (uniform.texture_matrix.valid()) {
+            // テクスチャ行列が有効なら単位行列をデフォルト指定する
+            setTextureMatrix(Matrix4x4());
+        }
     }
 
-    this->quad.reset(new Quad(device));
-    quad->attributes(attrVertices, attrCoords);
+    // attrを設定する
+    {
+        this->quad.reset(new Quad(device));
+        quad->setPositionAttribute(QuadPositionAttribute(shader, "vPosition"));
+        quad->setCoordAttribute(QuadCoordAttribute(shader, "vTexCoord"));
+    }
 
     {
         whiteTexture.reset(new TextureImage(1, 1, device));

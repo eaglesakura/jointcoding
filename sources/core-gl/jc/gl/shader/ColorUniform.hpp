@@ -23,6 +23,11 @@ public:
         color = 0;
     }
 
+    ColorUniform(MGLShaderProgram program, const charactor *name) {
+        color = 0;
+        setLocation(program, name);
+    }
+
     ~ColorUniform() {
     }
 

@@ -13,6 +13,7 @@ namespace jc {
 namespace gl {
 
 class VertexAttributeBase {
+protected:
     GLint location;
 public:
     VertexAttributeBase() {
@@ -41,7 +42,20 @@ public:
     /**
      * ロケーション設定を行う
      */
+    void setLocation(const GLint location) {
+        // disable indexか0以上のロケーション設定が必要になる
+        assert(location == ATTRIBUTE_DISABLE_INDEX || location > 0);
+
+        this->location = location;
+    }
+
+    /**
+     * ロケーション設定を行う
+     */
     jcboolean setLocation(const MGLShaderProgram shader, const charactor* name) {
+        assert(shader.get() != NULL);
+        assert(name != NULL);
+
         location = shader->getAttribLocation(name);
         return valid();
     }
@@ -49,12 +63,13 @@ public:
     /**
      * 頂点属性の設定を行う
      */
-    jcboolean setAttribute(MGLState state, const GLint size, const GLenum type, const GLboolean normalized, const GLsizei stride, const GLvoid* ptr, const u32 offset) {
+    jcboolean attributePointer(MGLState state, const GLint size, const GLenum type, const GLboolean normalized, const GLsizei stride, const GLvoid* ptr, const u32 offset) {
         // 無効な場合は何もしない
         if (!valid()) {
             return jcfalse;
         }
 
+        state->enableVertexAttribArray(location);
         return state->vertexAttribPointer(location, size, type, normalized, stride, ptr, offset);
     }
 };

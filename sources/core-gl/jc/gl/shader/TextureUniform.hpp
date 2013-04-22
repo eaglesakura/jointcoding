@@ -24,6 +24,12 @@ public:
         bindUnit = -1;
     }
 
+    TextureUniform(MGLShaderProgram program, const charactor *name) {
+        bindUnit = -1;
+        setLocation(program, name);
+    }
+
+
     ~TextureUniform() {
 
     }

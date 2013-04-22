@@ -15,6 +15,9 @@ namespace jc {
 namespace gl {
 
 GLState::GLState() {
+    // GPUステータスを取り出す
+    GPUCapacity::initialize();
+
     {
         lineWidthContext = 0.0f;
     }

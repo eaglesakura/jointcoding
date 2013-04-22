@@ -12,7 +12,6 @@
 namespace jc {
 namespace gl {
 
-
 /**
  * 頂点構造体を利用した頂点属性
  *
@@ -28,18 +27,47 @@ public:
     VertexAttribute() {
     }
 
+    VertexAttribute(MGLShaderProgram program, const charactor *name) {
+        setLocation(program, name);
+    }
+
     ~VertexAttribute() {
+    }
+
+    /**
+     * 有効化する
+     */
+    jcboolean enable(MGLState state) {
+        if (!valid()) {
+            return jcfalse;
+        }
+
+        return state->enableVertexAttribArray(location);
+    }
+
+    /**
+     * 無効化する
+     */
+    jcboolean disable(MGLState state) {
+        if (!valid()) {
+            return jcfalse;
+        }
+
+        return state->disableVertexAttribArray(location);
     }
 
     /**
      * 頂点属性の設定を行う
      */
-    jcboolean setAttribute(const GLvoid* ptr = NULL) {
+    jcboolean attributePointer(MGLState state, const GLvoid* ptr = NULL, const jcboolean withEnable = jctrue) {
         // 無効な場合は何もしない
         if (!valid()) {
             return jcfalse;
         }
 
+        if (withEnable) {
+            enable(state);
+        }
         return state->vertexAttribPointer(location, attr_size, attr_type, attr_normalized, sizeof(vertex_struct), ptr, offset_header);
     }
 };

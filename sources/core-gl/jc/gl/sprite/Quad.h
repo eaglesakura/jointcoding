@@ -8,10 +8,33 @@
 #define JCGLQUAD_H_
 
 #include    "jc/gl/GL.h"
+#include    "jc/math/Vec2.h"
 #include    "jc/gl/gpu/Device.h"
+#include    "jc/gl/shader/VertexAttribute.hpp"
 
 namespace jc {
 namespace gl {
+
+/**
+ * 四角形構築用の頂点構造体
+ */
+struct QuadVertex {
+    float x;
+    float y;
+
+    float u;
+    float v;
+};
+
+/**
+ * 位置属性
+ */
+typedef VertexAttribute<QuadVertex, 2, GL_FLOAT, GL_FALSE, 0> QuadPositionAttribute;
+
+/**
+ * UV属性
+ */
+typedef VertexAttribute<QuadVertex, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2f)> QuadCoordAttribute;
 
 /**
  * 矩形ポリゴンを管理する。
@@ -38,15 +61,17 @@ class Quad: public Object {
      */
     SharedResource vertices;
 
-    /**
-     * 頂点バッファの属性インデックス
-     */
-    s32 attrVertices;
+    struct {
+        /**
+         * 位置情報
+         */
+        QuadPositionAttribute pos;
 
-    /**
-     * UVバッファの属性インデックス
-     */
-    s32 attrCoords;
+        /**
+         * UV情報
+         */
+        QuadCoordAttribute coord;
+    } attr;
 
     /**
      * 初期化を行う
@@ -69,10 +94,18 @@ public:
     virtual ~Quad();
 
     /**
-     * 属性インデックスを指定する。
-     * ATTRIBUTE_DISABLE_INDEXを指定することで、NULL（無効）にできる。
+     *
      */
-    virtual void attributes(const s32 attribute_vertices, const s32 attribute_coords);
+    virtual void setPositionAttribute(const QuadPositionAttribute &attr) {
+        this->attr.pos = attr;
+    }
+
+    /**
+     *
+     */
+    virtual void setCoordAttribute(const QuadCoordAttribute &attr) {
+        this->attr.coord = attr;
+    }
 
     /**
      * 描画するプリミティブの種類を変更する
@@ -86,20 +119,6 @@ public:
      * レンダリング環境はバインド元に従う。
      */
     virtual void rendering();
-
-    struct QuadVertex {
-        /**
-         * pos
-         */
-        float x;
-        float y;
-
-        /**
-         * UV
-         */
-        float u;
-        float v;
-    };
 
     /**
      * 頂点情報を更新する。

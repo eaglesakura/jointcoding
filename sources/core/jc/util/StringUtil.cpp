@@ -30,7 +30,7 @@ namespace jc {
  * @param delim 分割用の文字列
  * @param result 格納先のベクター
  */
-::jc::s32 split(String origin, String delim, jc_varray<String> *result) {
+::jc::s32 split(const String &origin, const String &delim, jc_varray<String> *result) {
     const std::string &str = origin.get_native<std::string>();
     const std::string &dlm = delim.get_native<std::string>();
     jc_varray<std::string> temp;

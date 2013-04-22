@@ -34,7 +34,7 @@ static String version;
 /**
  * 保持しているエクステンション
  */
-static OrderAccessList<String> extensions;
+static std::vector<String> extensions;
 
 /**
  * 頂点属性の最大数
@@ -61,7 +61,21 @@ static u32 maxUniformVectorsVs = 0;
  */
 static u32 maxUniformVectorsFs = 0;
 
-static void initialize() {
+/**
+ * 拡張設定
+ */
+static u32 extension_flags[(GPUExtension_Num + 31) / 32] = { 0 };
+
+}
+
+/**
+ * 初期化を行う
+ */
+void GPUCapacity::initialize() {
+    if (initialized) {
+        return;
+    }
+
     initialized = jctrue;
 
     renderer = (const charactor*) glGetString(GL_RENDERER);
@@ -70,12 +84,50 @@ static void initialize() {
 
     // エクステンション一覧を取得する
     {
-        std::vector<String> temp;
-        String tempExtensions = (const charactor*) glGetString(GL_EXTENSIONS);
-        split(tempExtensions, " ", &temp);
+        const charactor *pExtensions = (const charactor*) glGetString(GL_EXTENSIONS);
+        split(pExtensions, " ", &extensions);
+#if 0
+        /**
+         * ETC1に対応している
+         */
+        GPUExtension_Texture_ETC1,
 
-        for (int i = 0; i < (int) temp.size(); ++i) {
-            extensions.add(temp[i]);
+        /**
+         * PVRTC対応
+         */
+        GPUExtension_Texture_PVRTC,
+
+        /**
+         * BGRAテクスチャ対応
+         */
+        GPUExtension_Texture_BGRA8888,
+
+        /**
+         * external画像
+         * for Android（support SurfaceTexture）
+         */
+        GPUExtension_OES_EGL_image_external,
+#endif
+#define EXTENSION_NAME(def) #def
+        const charactor* EXTENSION_NAMES[] = {
+        //
+        EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture),//
+        EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), //
+                EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), //
+                EXTENSION_NAME(GL_OES_EGL_image_external), //
+                EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), //
+                };
+
+        // 対応している拡張機能を調べる
+        for (int i = 0; i < (sizeof(EXTENSION_NAMES) / sizeof(charactor*)); ++i) {
+            if (strstr(pExtensions, EXTENSION_NAMES[i])) {
+                const s32 extension_index = i / 32;
+                // check index
+                assert( extension_index < (sizeof(extension_flags) / sizeof(u32)));
+                extension_flags[extension_index] |= (0x1 << (i % 32));
+
+                jclogf("supported extension(%s)", EXTENSION_NAMES[i]);
+            }
         }
     }
 
@@ -102,10 +154,11 @@ static void initialize() {
 
 // エクステンション一覧を出力する
         {
-            OrderAccessList<String>::Iterator itr = extensions.iterator();
-            while (itr->hasNext()) {
-                String ext = itr->next();
-                jclogf("GL_EXTENSIONS = %s", ext.c_str());
+            std::vector<String>::const_iterator itr = extensions.begin(), end = extensions.end();
+
+            while (itr != end) {
+                jclogf("GL_EXTENSIONS = %s", (*itr).c_str());
+                ++itr;
             }
         }
 
@@ -118,15 +171,10 @@ static void initialize() {
     jclog("-----------------------------");
 }
 
-}
-
-#define GPUCapacity_init(...)     if(!initialized) { initialize(); }
-
 /**
  * レンダラー名を取得する
  */
 const String& GPUCapacity::getRenderer() {
-    GPUCapacity_init();
     return renderer;
 }
 
@@ -134,7 +182,6 @@ const String& GPUCapacity::getRenderer() {
  * ベンダー名を取得する
  */
 const String& GPUCapacity::getVendor() {
-    GPUCapacity_init();
     return vendor;
 }
 
@@ -142,7 +189,6 @@ const String& GPUCapacity::getVendor() {
  * 頂点属性の最大数を取得する。
  */
 u32 GPUCapacity::getMaxVertexAttributes() {
-    GPUCapacity_init();
     return maxVertexAttrbs;
 }
 
@@ -151,7 +197,6 @@ u32 GPUCapacity::getMaxVertexAttributes() {
  * この枚数を超えるテクスチャ処理は行えない。
  */
 u32 GPUCapacity::getMaxTextureUnits() {
-    GPUCapacity_init();
     return maxTextureUnits;
 }
 
@@ -159,7 +204,6 @@ u32 GPUCapacity::getMaxTextureUnits() {
  * テクスチャの一辺のサイズの最大値
  */
 u32 GPUCapacity::getMaxTextureSize() {
-    GPUCapacity_init();
     return maxTextureSize;
 }
 
@@ -167,7 +211,6 @@ u32 GPUCapacity::getMaxTextureSize() {
  * 頂点シェーダのUniformベクトル最大数を取得する
  */
 u32 GPUCapacity::getMaxUniformVectorsVs() {
-    GPUCapacity_init();
     return maxUniformVectorsVs;
 }
 
@@ -175,9 +218,21 @@ u32 GPUCapacity::getMaxUniformVectorsVs() {
  * フラグメントシェーダでのUniformベクトル最大数を取得する
  */
 u32 GPUCapacity::getMaxUniformVectorsFs() {
-    GPUCapacity_init();
     return maxUniformVectorsFs;
 }
+
+/**
+ * GPU拡張機能をサポートするかを調べる
+ */
+jcboolean GPUCapacity::isSupport(const GPUExtension_e extension) {
+    // Extension領域内チェック
+    assert(extension >= 0 && extension < GPUExtension_Num);
+
+    const s32 extension_index = extension / 32;
+    const u32 flag = 0x1 << (extension % 32);
+
+    return (extension_flags[extension_index] & flag) == flag;
+}
+
 }
 }
-#undef GPUCapacity_init

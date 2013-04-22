@@ -13,13 +13,12 @@ namespace gl {
 
 namespace {
 
-
 #define LEFT    -0.5
 #define TOP     0.5
 #define RIGHT   0.5
 #define BOTTOM  -0.5
 
-const static Quad::QuadVertex g_vertices[] = {
+const static QuadVertex g_vertices[] = {
 //
         /**
          // 位置情報
@@ -55,8 +54,6 @@ const static Quad::QuadVertex g_vertices[] = {
  * 矩形を構築する
  */
 Quad::Quad(MDevice device) {
-    this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
-    this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->state = device->getState();
     this->vertices.alloc(device->getVRAM(), VRAM_VertexBufferObject);
     this->primitiveType = GL_TRIANGLE_FAN;
@@ -84,34 +81,21 @@ Quad::~Quad() {
 }
 
 /**
- * 属性インデックスを指定する。
- * ATTRIBUTE_DISABLE_INDEXを指定することで、NULL（無効）にできる。
- */
-void Quad::attributes(const s32 attribute_vertices, const s32 attribute_coords) {
-    attrVertices = attribute_vertices;
-    attrCoords = attribute_coords;
-}
-
-/**
  * 描画を行う。
  * レンダリング環境はバインド元に従う。
  */
 void Quad::rendering() {
     state->bindBuffer(GL_ARRAY_BUFFER, vertices.get());
 
-    // 頂点バッファ
-    if (attrVertices >= 0) {
-        state->enableVertexAttribArray(attrVertices);
-        state->vertexAttribPointer(attrVertices, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), NULL, 0);
-    } else {
-        // attrVが存在しないならレンダリングできない。
+    // 位置属性が存在しないならレンダリングできない
+    if (!attr.pos.valid()) {
         return;
     }
-    // UVバッファ
-    if (attrCoords >= 0) {
-        state->enableVertexAttribArray(attrCoords);
-        state->vertexAttribPointer(attrCoords, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), NULL, sizeof(float) * 2);
-    }
+
+    // 頂点バッファ
+    attr.pos.attributePointer(state);
+    attr.coord.attributePointer(state);
+
     glDrawArrays(primitiveType, 0, 4);
     assert_gl();
 }
@@ -128,7 +112,6 @@ void Quad::updateVertices(const QuadVertex *vertices) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(QuadVertex) * 4, vertices, GL_STATIC_DRAW);
     assert_gl();
 }
-
 
 }
 }
