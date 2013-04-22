@@ -158,6 +158,9 @@ void SpriteManager::renderingImage(MTextureImage image, const float srcX, const 
         const float sy = (float) jc::round(srcY) / TEXTURE_HEIGHT;
 
         uniform.poly_uv.upload(sx, sy, sizeX, sizeY);
+    }else {
+        // UV値を0に設定して、テクスチャキャッシュを使わせる
+        uniform.poly_uv.upload(0, 0, 0, 0);
     }
 
     this->rendering(jc::round(dstX), jc::round(dstY), (s32) dstWidth, (s32) dstHeight);

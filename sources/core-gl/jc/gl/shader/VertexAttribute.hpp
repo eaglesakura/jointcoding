@@ -35,34 +35,17 @@ public:
     }
 
     /**
-     * 有効化する
-     */
-    jcboolean enable(MGLState state) {
-        if (!valid()) {
-            return jcfalse;
-        }
-
-        return state->enableVertexAttribArray(location);
-    }
-
-    /**
-     * 無効化する
-     */
-    jcboolean disable(MGLState state) {
-        if (!valid()) {
-            return jcfalse;
-        }
-
-        return state->disableVertexAttribArray(location);
-    }
-
-    /**
      * 頂点属性の設定を行う
      */
     jcboolean attributePointer(MGLState state, const GLvoid* ptr = NULL, const jcboolean withEnable = jctrue) {
         // 無効な場合は何もしない
         if (!valid()) {
             return jcfalse;
+        }
+
+        // 無効化済みの場合は無効化する
+        if(!attrEnable) {
+            return state->disableVertexAttribArray(location);
         }
 
         if (withEnable) {

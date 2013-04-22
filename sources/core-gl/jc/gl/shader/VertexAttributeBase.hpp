@@ -14,10 +14,20 @@ namespace gl {
 
 class VertexAttributeBase {
 protected:
+    /**
+     * ロケーション
+     */
     GLint location;
+
+    /**
+     * 有効・無効フラグ
+     * falseが設定されている場合、強制的にdisableする
+     */
+    jcboolean attrEnable;
 public:
     VertexAttributeBase() {
         location = ATTRIBUTE_DISABLE_INDEX;
+        attrEnable = jctrue;
     }
 
     ~VertexAttributeBase() {
@@ -61,16 +71,37 @@ public:
     }
 
     /**
-     * 頂点属性の設定を行う
+     * 有効化する
      */
-    jcboolean attributePointer(MGLState state, const GLint size, const GLenum type, const GLboolean normalized, const GLsizei stride, const GLvoid* ptr, const u32 offset) {
-        // 無効な場合は何もしない
+    jcboolean enable(MGLState state) {
         if (!valid()) {
             return jcfalse;
         }
+        return state->enableVertexAttribArray(location);
+    }
 
-        state->enableVertexAttribArray(location);
-        return state->vertexAttribPointer(location, size, type, normalized, stride, ptr, offset);
+    /**
+     * 無効化する
+     */
+    jcboolean disable(MGLState state) {
+        if (!valid()) {
+            return jcfalse;
+        }
+        return state->disableVertexAttribArray(location);
+    }
+
+    /**
+     * 属性を利用する
+     */
+    void use() {
+        attrEnable = jctrue;
+    }
+
+    /**
+     * 属性を利用しない
+     */
+    void unuse() {
+        attrEnable = jcfalse;
     }
 };
 
