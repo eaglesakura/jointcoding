@@ -132,9 +132,7 @@ public:
     /**
      * タッチ対象をなくす
      */
-    virtual void clearTouchTarget() {
-        touchTarget.reset();
-    }
+    virtual void clearTouchTarget();
 
     /**
      * タッチイベントのターゲットとなるViewを取得する

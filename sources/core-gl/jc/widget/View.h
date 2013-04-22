@@ -53,6 +53,7 @@ enum ViewMode_e {
 class View: public SceneGraph {
 private:
     friend class Window;
+    friend class WindowContext;
     friend class WindowManager;
     friend class WindowEventListener;
     /**

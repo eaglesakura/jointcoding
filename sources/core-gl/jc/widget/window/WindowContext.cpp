@@ -32,6 +32,18 @@ jc_sp<View> WindowContext::findEnableViewById(const scene_id id) {
     return view;
 }
 
+/**
+ * タッチ対象をなくす
+ */
+void WindowContext::clearTouchTarget() {
+    // タッチターゲットがあるならフォーカスを外す
+    MView view = touchTarget.lock();
+    if (view && view->isDown()) {
+        view->dispatchDownEvent(jcfalse);
+    }
+    touchTarget.reset();
+}
+
 }
 
 }
