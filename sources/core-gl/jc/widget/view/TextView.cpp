@@ -16,6 +16,9 @@ TextView::TextView() {
     textGravity = LayoutGravity_Left | LayoutGravity_Top;
     multilineGravity = TextMultilineGravity_Left;
     fontHeightPixel = 24;
+
+    // テキストはRead-Onlyのため、アクションは起こせない
+    setFocusable(jcfalse);
 }
 
 TextView::~TextView() {

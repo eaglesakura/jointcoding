@@ -356,6 +356,11 @@ void View::dispatchRecuestFocus(const jcboolean has) {
         if (focusView && focusView.get() != this) {
             focusView->requestFocus(jcfalse);
         }
+    } else {
+        // フォーカスを失ったら、downイベントも無くなる
+        if (isDown()) {
+            dispatchDownEvent(jcfalse);
+        }
     }
 
     // 自分のフォーカス状態を書き換える
