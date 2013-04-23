@@ -168,6 +168,13 @@ public:
     }
 
     /**
+     * 内部カウンタをリセットする
+     */
+    void reset() {
+        counter.reset();
+    }
+
+    /**
      * 内部カウンターを取得する
      */
     const CounterF& getCounter() const {

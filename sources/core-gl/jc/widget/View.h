@@ -296,6 +296,13 @@ public:
     }
 
     /**
+     * 視覚状態を設定する
+     */
+    virtual void setVisiblyWeight(const float set) {
+        visibleCounter.setValueDirect(set);
+    }
+
+    /**
      * 可視状態描画用のカウントを取得する
      */
     virtual float getVisibleWeight() const;
@@ -697,6 +704,31 @@ public:
         }
 
         /**
+         * 有効なViewを探して返す
+         */
+        virtual jc_sp<View> findDisableViewById(const scene_id id) const {
+            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            while(itr != end) {
+                jc_sp<View> view = downcast<View>(*itr);
+                if(view) {
+                    if(view->getUniqueId() == id && !view->isEnable()) {
+                        return view;
+                    }
+
+                    // 子も探索する
+                    view = view->findDisableViewById(id);
+                    if(view) {
+                        // 孫以降がヒットした
+                        return view;
+                    }
+                }
+                ++itr;
+            }
+
+            return jc_sp<View>();
+        }
+
+        /**
          * 自分の子からフォーカスのインデックスを取得する
          */
         virtual s32 getFocusChildViewIndex(const jcboolean recursive) const {
@@ -730,6 +762,11 @@ public:
         virtual void resetRenderingPass() {
             this->enableRenderingPass = 0;
         }
+
+        /**
+         * すべてのViewのフォーカス値がゼロであることを確認する
+         */
+        virtual jcboolean isAllFocusWeightZero(const jcboolean recursive = jctrue) const;
     protected:
         // オーバーライドされる
 

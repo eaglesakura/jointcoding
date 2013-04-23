@@ -575,6 +575,30 @@ void View::layoutFillParent(const RectF &parentLocal) {
 }
 
 /**
+ * すべてのViewのフォーカス値がゼロであることを確認する
+ */
+jcboolean View::isAllFocusWeightZero(const jcboolean recursive) const {
+    if (getFocusWeight() > 0) {
+        return jcfalse;
+    }
+
+    std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+
+    while (itr != end) {
+        MView view = downcast<View>(*itr);
+        if (view) {
+            if (!view->isAllFocusWeightZero(recursive)) {
+                return jcfalse;
+            }
+        }
+
+        ++itr;
+    }
+
+    return jctrue;
+}
+
+/**
  * ネストされた小階層も含めた全体のレイアウトエリアを計算する
  */
 RectF View::getGlobalLayoutAreaNest() const {
