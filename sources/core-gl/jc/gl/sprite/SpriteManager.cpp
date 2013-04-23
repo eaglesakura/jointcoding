@@ -55,10 +55,10 @@ void SpriteManager::initialize(MDevice device) {
 
     {
         whiteTexture.reset(new TextureImage(1, 1, device));
-        Color pix = Color::fromRGBAf(1.0f, 1.0f, 1.0f, 1.0f);
         whiteTexture->bind();
         {
-            whiteTexture->copyPixelLine(&pix, GL_UNSIGNED_BYTE, GL_RGBA, 0, 0, 1);
+            u16 rgb565 = 0xFFFF;
+            whiteTexture->copyPixelLine(&rgb565, PixelFormat_RGB565, 0, 0, 1);
         }
         whiteTexture->unbind();
     }
@@ -158,7 +158,7 @@ void SpriteManager::renderingImage(MTextureImage image, const float srcX, const 
         const float sy = (float) jc::round(srcY) / TEXTURE_HEIGHT;
 
         uniform.poly_uv.upload(sx, sy, sizeX, sizeY);
-    }else {
+    } else {
         // UV値を0に設定して、テクスチャキャッシュを使わせる
         uniform.poly_uv.upload(0, 0, 0, 0);
     }

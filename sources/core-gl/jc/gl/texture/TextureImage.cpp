@@ -13,6 +13,20 @@
 namespace jc {
 namespace gl {
 
+namespace {
+static u32 PIXEL_TYPES[] = {
+//
+        GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,
+//
+        };
+static u32 PIXEL_FORMATS[] = {
+//
+        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_BGRA_EXT,
+//
+        };
+}
+
+
 TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     this->alloced = jcfalse;
     size.img_width = size.tex_width = width;
@@ -84,16 +98,16 @@ s32 TextureImage::getFreeTextureUnitIndex() {
     return state->getFreeTextureUnitIndex(jctrue);
 }
 
-void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum) {
+void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum) {
     assert(isBinded(NULL) == jctrue);
 
     // 領域の確保が済んでいなければ確保する
     if (!this->alloced) {
-        allocPixelMemory(srcPixelType, srcPixelFormat, mipLevel);
+        allocPixelMemory(pixelFormat, mipLevel);
     }
 
     // 部分転送を行う
-    glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_width, lineNum, srcPixelFormat, srcPixelType, src);
+    glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_width, lineNum, PIXEL_FORMATS[pixelFormat],PIXEL_TYPES[pixelFormat], src);
     assert_gl();
 }
 
@@ -102,13 +116,13 @@ void TextureImage::copyPixelLine(const void* src, const GLenum srcPixelType, con
  * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1 | GL_UNSIGNED_BYTE
  * @param srcPixelFormat GL_RGB | GL_RGBA
  */
-void TextureImage::allocPixelMemory(const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 miplevel) {
+void TextureImage::allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel) {
     assert(isBinded(NULL) == jctrue);
 
     if (!this->alloced) {
         this->alloced = jctrue;
         // まずは空の領域を確保する
-        glTexImage2D(GL_TEXTURE_2D, 0, srcPixelFormat, size.tex_width, size.tex_height, 0, srcPixelFormat, srcPixelType, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, PIXEL_FORMATS[pixelFormat], size.tex_width, size.tex_height, 0, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], NULL);
         assert_gl();
     }
 }

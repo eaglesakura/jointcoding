@@ -260,17 +260,18 @@ public:
     /**
      * 水平ラインごとにピクセルをコピーする
      * @param src コピー元のピクセル情報
-     * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1 | GL_UNSIGNED_BYTE
-     * @param srcPixelFormat GL_RGB | GL_RGBA
+     * @param pixelFormat 確保するピクセルのビット配置(RGB565、RGBA5551、RGB8、RGBA8、BGRA8）
+     * @param mipLevel
+     * @param lineHeader 転送を行うY位置
+     * @param lineNum 転送を行う量
      */
-    virtual void copyPixelLine(const void* src, const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum);
+    virtual void copyPixelLine(const void* src, const PixelFormat_e pixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum);
 
     /**
      * テクスチャピクセル用のメモリを確保する
-     * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1 | GL_UNSIGNED_BYTE
-     * @param srcPixelFormat GL_RGB | GL_RGBA
+     * @param pixelFormat 確保するピクセルのビット配置(RGB565、RGBA5551、RGB8、RGBA8、BGRA8）
      */
-    virtual void allocPixelMemory(const GLenum srcPixelType, const GLenum srcPixelFormat, const s32 miplevel);
+    virtual void allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel);
 
     /**
      * テクスチャをindex番のユニットに関連付ける
@@ -349,7 +350,6 @@ public:
  */
 typedef jc_sp<TextureImage> MTextureImage;
 
-
 /**
  * GLで利用するテクスチャテーブル
  */
@@ -359,7 +359,6 @@ typedef TextureTable<TextureImage> GLTextureTable;
  * managed
  */
 typedef jc_sp<GLTextureTable> MGLTextureTable;
-
 
 }
 }

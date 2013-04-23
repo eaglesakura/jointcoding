@@ -18,19 +18,6 @@ namespace gl {
 
 using namespace ndk;
 
-namespace {
-static u32 PIXEL_TYPES[] = {
-//
-        GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,
-//
-        };
-static u32 PIXEL_FORMATS[] = {
-//
-        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_BGRA_EXT,
-//
-        };
-}
-
 /**
  * Platformが実装しているデコーダーで画像をデコードする。
  * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
@@ -69,9 +56,6 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
 
     // デバイスの制御待ちチェック
 #define     device_wait(option) if(option && option->load_priority_down){ device->waitLockRequest(1, cancel_ptr); }
-
-    const GLenum TEXTURE_PIXEL_FORMAT = PIXEL_FORMATS[pixelFormat];
-    const GLenum TEXTURE_PIXEL_TYPE = PIXEL_TYPES[pixelFormat];
     const s32 ONCE_PIXEL_BYTES = Pixel::getPixelBytes(pixelFormat);
     {
         u8* raw_buffer = (u8*) env->GetDirectBufferAddress(jPixelBuffer);
@@ -130,7 +114,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
 
             // テクスチャ用メモリを確保する
             result->bind();
-            result->allocPixelMemory(TEXTURE_PIXEL_TYPE, TEXTURE_PIXEL_FORMAT, 0);
+            result->allocPixelMemory(pixelFormat, 0);
             if (ONCE_PIXEL_BYTES != 4) {
                 // glTexImage2D用にパッキングを行う
                 // この呼出を行わない場合、テクセル境界が4byteとなってしまう
@@ -185,7 +169,7 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 assert((pixel_y + LOAD_HEIGHT) <= origin_height);
 
                 result->bind();
-                result->copyPixelLine(raw_buffer, TEXTURE_PIXEL_TYPE, TEXTURE_PIXEL_FORMAT, 0, pixel_y, LOAD_HEIGHT);
+                result->copyPixelLine(raw_buffer, pixelFormat, 0, pixel_y, LOAD_HEIGHT);
                 // テクスチャロードはfinish待ちを行う
                 glFinish();
 
