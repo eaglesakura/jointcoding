@@ -60,6 +60,25 @@ inline s32 /* GLfixed */float2fixed(float f) {
     return (s32) (f * FIXED_ONE);
 }
 
+#if defined(DEBUG) && !defined(NO_GL_ASSERT)
+#define     assert_gl(...)    { assert(::jc::gl::GLState::printGLHasError(__FILE__, __LINE__) == jcfalse); }
+#else
+// release
+#define     assert_gl(...)    { }
+#endif
+
+
+/**
+ * 無効な属性インデックスを示す定数
+ */
+#define ATTRIBUTE_DISABLE_INDEX -1
+
+/**
+ * 無効な属性インデックスを示す
+ */
+#define UNIFORM_DISABLE_INDEX -1
+
+
 }
 }
 #endif /* JCGL_H_ */

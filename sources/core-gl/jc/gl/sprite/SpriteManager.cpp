@@ -57,7 +57,7 @@ void SpriteManager::initialize(MDevice device) {
         whiteTexture.reset(new TextureImage(1, 1, device));
         whiteTexture->bind();
         {
-            u16 rgb565 = 0xFFFF;
+            const u16 rgb565 = 0xFFFF;
             whiteTexture->copyPixelLine(&rgb565, PixelFormat_RGB565, 0, 0, 1);
         }
         whiteTexture->unbind();

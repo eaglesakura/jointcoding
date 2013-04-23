@@ -17,23 +17,6 @@
 namespace jc {
 namespace gl {
 
-#ifdef  DEBUG
-#define     assert_gl(...)    { assert(::jc::gl::GLState::printGLHasError(__FILE__, __LINE__) == jcfalse); }
-#else
-// release
-#define     assert_gl(...)    { }
-#endif
-
-/**
- * 無効な属性インデックスを示す定数
- */
-#define ATTRIBUTE_DISABLE_INDEX -1
-
-/**
- * 無効な属性インデックスを示す
- */
-#define UNIFORM_DISABLE_INDEX -1
-
 enum GLBlendType_e {
     /**
      * 一般的なαブレンドを行う
