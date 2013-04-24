@@ -40,6 +40,7 @@ u32 SceneGraph::getChildNum(const jcboolean recursion) {
  */
 void SceneGraph::pushBackChild(MSceneGraph child) {
     assert(child.get() != NULL);
+    assert(child.get() != this);
 
     // 既に自分自身が親だったら何もしない
     if (child->parent == this) {

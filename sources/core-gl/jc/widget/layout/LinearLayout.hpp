@@ -15,26 +15,21 @@ namespace view {
 /**
  * レイアウトの配置方向
  */
-enum LayoutDirection_e {
+enum LayoutOrientation_e {
     /**
      * 縦方向に配置する
      */
-    LayoutDirection_Vertical,
+    LayoutOrientation_Vertical,
 
     /**
      * 横方向に配置する
      */
-    LayoutDirection_Horizontal,
+    LayoutOrientation_Horizontal,
 };
 
 class LinearLayout: public View {
 
 protected:
-
-    /**
-     * 次のViewを表示するヘッダ位置
-     */
-    Vector2f nextHeader;
 
     /**
      * 最後に登録されたViewを取得する
@@ -47,47 +42,52 @@ protected:
         return downcast<View>(childs.back());
     }
 
+    virtual RectF getLastViewArea() const {
+        MView view = getLastView();
+        if (view) {
+            return view->getLocalLayoutArea();
+        } else {
+            return RectF();
+        }
+    }
+
     /**
      * レイアウトの構築方向
      */
-    LayoutDirection_e directin;
+    LayoutOrientation_e orientation;
 public:
     LinearLayout() {
-        directin = LayoutDirection_Vertical;
+        orientation = LayoutOrientation_Vertical;
     }
 
     virtual ~LinearLayout() {
     }
 
     /**
+     * レイアウトの配置方向を取得する
+     */
+    virtual void setOrientation(const LayoutOrientation_e orientation) {
+        this->orientation = orientation;
+    }
+
+    /**
      * 次のViewを登録する
      * 登録と同時にレイアウト位置を修正する
      */
-    virtual void addSubView(MView layout, const Vector2f &margin) {
-        layout->moveTo(nextHeader + margin);
+    virtual void addLayout(MView layout, const Vector2f &margin) {
+
+        // 最後に追加されたViewのローカル位置を取得する
+        const RectF lastArea = getLastViewArea();
+
+        if (orientation == LayoutOrientation_Horizontal) {
+            layout->moveTo(lastArea.right + margin.x, margin.y);
+        } else {
+            layout->moveTo(margin.x, lastArea.bottom + margin.y);
+        }
         addSubView(layout, isRegisteredWindow());
 
-        const Vector2f viewUseSize((layout->getLocalLayoutSize().x + margin.x), (layout->getLocalLayoutSize().y + margin.y));
-        if (directin == LayoutDirection_Horizontal) {
-            // X方向
-            nextHeader.x += viewUseSize.x;
-            localArea.right += viewUseSize.x;
-
-            // 縦は最大値に合わせる
-            if (viewUseSize.y > localArea.height()) {
-                localArea.bottom = localArea.top + viewUseSize.y;
-            }
-        } else {
-            // Y方向
-            nextHeader.y += viewUseSize.x;
-            localArea.right = jc::max(localArea.right, viewUseSize.x);
-
-            // 横は最大値に合わせる
-            if (viewUseSize.x > localArea.width()) {
-                localArea.right = localArea.left + viewUseSize.x;
-            }
-        }
-
+        // 自身の大きさを調整する
+        layoutDirect(getLocalLayoutAreaNest());
     }
 };
 

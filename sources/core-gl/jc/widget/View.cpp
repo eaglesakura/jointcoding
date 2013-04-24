@@ -497,14 +497,10 @@ void View::registerWindow() {
  * 子Viewを追加する
  */
 void View::addSubView(const jc_sp<View> subView, const jcboolean withRegisterWindow ) {
-    assert(isRegisteredWindow());
     pushBackChild(subView);
 
-    assert(subView->getParent() == (SceneGraph*)this);
-    assert(subView->getRootScene() != NULL);
-    assert(subView->getRootSceneTo<Window>() != NULL);
-
     if(withRegisterWindow) {
+        assert(isRegisteredWindow());
         subView->registerWindow();
     }
 }
@@ -667,6 +663,21 @@ jcboolean View::isAllFocusWeightZero(const jcboolean recursive) const {
 
     return jctrue;
 }
+
+/**
+ * 配置場所（ローカル位置）を取得する
+ */
+RectF View::getLocalLayoutAreaNest() const {
+
+    RectF globalArea = getGlobalLayoutAreaNest();
+
+    // グローバルとの差分チェック
+    Vector2f    offset = getGlobalOffset();
+    globalArea.offset(-offset.x, -offset.y);
+    return  globalArea;
+
+}
+
 
 /**
  * ネストされた小階層も含めた全体のレイアウトエリアを計算する

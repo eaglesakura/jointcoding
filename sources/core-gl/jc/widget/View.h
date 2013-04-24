@@ -442,6 +442,11 @@ public:
     }
 
     /**
+     * 配置場所（ローカル位置）を取得する
+     */
+    virtual RectF getLocalLayoutAreaNest() const;
+
+    /**
      * レイアウトサイズを取得する
      */
     virtual Vector2f getLocalLayoutSize() const {
@@ -600,6 +605,17 @@ public:
         RectF temp = local;
         temp.offset(selfGlobal.left, selfGlobal.top);
         return temp;
+    }
+
+    /**
+     * Windowから見て、自分のViewへのオフセット値を取得する
+     */
+    virtual Vector2f getGlobalOffset() const {
+        RectF parent;
+        if (getParent()) {
+            parent = getParentTo<View>()->getGlobalLayoutArea();
+        }
+        return parent.lt();
     }
 
     /**
