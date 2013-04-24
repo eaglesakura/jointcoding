@@ -10,12 +10,14 @@
 #include    "jc/math/Vec2.h"
 #include    "jc/math/Rect.h"
 #include    "jc/scene/SceneGraph.h"
+#include    "jc/collection/BitFlags.hpp"
+#include    "jc/math/Counter.h"
+
 #include    "jc/widget/event/Event.h"
 #include    "jc/widget/window/WindowContext.h"
-#include    "jc/math/Counter.h"
 #include    "jc/widget/anim/TransactionCounter.h"
 #include    "jc/widget/anim/WindowTimer.h"
-#include    "jc/collection/BitFlags.hpp"
+#include    "jc/widget/view/ViewListeners.h"
 
 //#include    "jc/ui/TouchPoint.h"
 
@@ -58,6 +60,12 @@ private:
     friend class WindowContext;
     friend class WindowManager;
     friend class WindowEventListener;
+
+    /**
+     * click listener
+     */
+    SOnClickListener onClickListener;
+
     /**
      * フォーカスを持つことが出来る場合true
      */
@@ -808,6 +816,14 @@ public:
          * すべてのViewのフォーカス値がゼロであることを確認する
          */
         virtual jcboolean isAllFocusWeightZero(const jcboolean recursive = jctrue) const;
+
+        /**
+         * クリック時のリスナを設定する
+         */
+        virtual void setOnClickListener(const SOnClickListener listener) {
+            this->onClickListener = listener;
+        }
+
     protected:
         // オーバーライドされる
 

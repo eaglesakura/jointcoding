@@ -269,6 +269,10 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
     if(clicked.get() == this) {
         // クリックメッセージを処理させる
         onClick();
+        // リスナがあるなら呼び出す
+        if(onClickListener) {
+            onClickListener->onClick(getSelfManagedObject());
+        }
 
         // タッチでフォーカス移動の許可を持っている
         if( isFocusMoveFromTouch() ) {

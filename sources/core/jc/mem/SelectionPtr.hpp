@@ -191,11 +191,11 @@ public:
     }
 
     operator bool() const {
-        return get() != NULL;
+        return exist();
     }
 
     bool operator!() const {
-        return get() == NULL;
+        return !exist();
     }
 };
 }
