@@ -4,8 +4,8 @@
  *  Created on: 2013/04/11
  */
 
-#ifndef VIEW_H_
-#define VIEW_H_
+#ifndef GLVIEW_VIEW_H_
+#define GLVIEW_VIEW_H_
 
 #include    "jc/math/Vec2.h"
 #include    "jc/math/Rect.h"
@@ -15,6 +15,8 @@
 #include    "jc/math/Counter.h"
 #include    "jc/widget/anim/TransactionCounter.h"
 #include    "jc/widget/anim/WindowTimer.h"
+#include    "jc/collection/BitFlags.hpp"
+
 //#include    "jc/ui/TouchPoint.h"
 
 namespace jc {
@@ -451,6 +453,12 @@ public:
     virtual void layoutFillParent(const RectF &parentLocal) {
         layoutFillParent(parentLocal.wh());
     }
+    /**
+     * 親と同じ領域になるようにエリアを設定する
+     */
+    virtual void layoutFillParent() {
+        layoutFillParent(getParentTo<View>()->getLocalLayoutSize());
+    }
 
     /**
      * ネストされた小階層も含めた全体のレイアウトエリアを計算する
@@ -537,7 +545,7 @@ public:
     virtual jc_sp<View> findTouchedView( const Vector2f &global) const {
         assert(isRegisteredWindow());
 
-        std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+        std::list<MSceneGraph>::const_reverse_iterator itr = childs.rbegin(), end = childs.rend();
 
         // 全チェックを行う
             while(itr != end) {
@@ -546,14 +554,14 @@ public:
 
                 // 子がViewであるならチェックする
                 if(check) {
-                    if(check->isTouchedView(global)) {
-                        // タッチ対象になったからそれを返す
-                        return check;
-                    }
                     // 子の、更に子をチェックする
-                    check = check->findTouchedView(global);
-                    if(check) {
+                    jc_sp<View> check_child = check->findTouchedView(global);
+                    if(check_child) {
                         // 孫以降に見つかったから、それを代理で返す
+                        return check_child;
+                    }
+
+                    if(check->isTouchedView(global)) {
                         return check;
                     }
                 }

@@ -4,8 +4,8 @@
  *  Created on: 2013/04/11
  */
 
-#ifndef WINDOWMANAGER_H_
-#define WINDOWMANAGER_H_
+#ifndef GLVIEW_WINDOWMANAGER_H_
+#define GLVIEW_WINDOWMANAGER_H_
 
 #include    "jc/widget/event/EventQueue.h"
 #include    "jc/widget/event/KeyEvent.h"

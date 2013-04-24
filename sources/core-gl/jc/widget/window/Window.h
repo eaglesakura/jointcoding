@@ -4,8 +4,8 @@
  *  Created on: 2013/04/11
  */
 
-#ifndef WINDOW_H_
-#define WINDOW_H_
+#ifndef GLVIEW_WINDOW_H_
+#define GLVIEW_WINDOW_H_
 
 #include    "jc/widget/View.h"
 

@@ -19,6 +19,7 @@ TextView::TextView() {
 
     // テキストはRead-Onlyのため、アクションは起こせない
     setFocusable(jcfalse);
+    setTouchable(jcfalse);
 }
 
 TextView::~TextView() {

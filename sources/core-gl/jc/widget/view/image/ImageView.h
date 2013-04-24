@@ -4,11 +4,10 @@
  *  Created on: 2013/04/24
  */
 
-#ifndef IMAGEVIEW_H_
-#define IMAGEVIEW_H_
+#ifndef GLVIEW_IMAGEVIEW_H_
+#define GLVIEW_IMAGEVIEW_H_
 
 #include    "jc/widget/View.h"
-#include    "jc/collection/BitFlags.hpp"
 #include    "jc/gl/texture/TextureImage.h"
 
 namespace jc {

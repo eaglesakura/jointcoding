@@ -4,8 +4,8 @@
  *  Created on: 2013/04/11
  */
 
-#ifndef WINDOWCONTEXT_H_
-#define WINDOWCONTEXT_H_
+#ifndef GLVIEW_WINDOWCONTEXT_H_
+#define GLVIEW_WINDOWCONTEXT_H_
 
 #include    "jointcoding.h"
 #include    "jc/gl/GL2D.h"

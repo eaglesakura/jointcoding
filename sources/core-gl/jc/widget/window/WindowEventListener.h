@@ -4,8 +4,8 @@
  *  Created on: 2013/04/12
  */
 
-#ifndef WINDOWTOUCHDETECTOR_H_
-#define WINDOWTOUCHDETECTOR_H_
+#ifndef GLVIEW_WINDOWTOUCHDETECTOR_H_
+#define GLVIEW_WINDOWTOUCHDETECTOR_H_
 
 #include    "jc/widget/window/WindowContext.h"
 

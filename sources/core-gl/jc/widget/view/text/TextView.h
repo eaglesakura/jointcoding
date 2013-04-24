@@ -4,8 +4,8 @@
  *  Created on: 2013/04/22
  */
 
-#ifndef TEXTVIEW_H_
-#define TEXTVIEW_H_
+#ifndef GLVIEW_TEXTVIEW_H_
+#define GLVIEW_TEXTVIEW_H_
 
 #include    "jc/widget/View.h"
 #include    "jc/gl/texture/FontTexture.h"

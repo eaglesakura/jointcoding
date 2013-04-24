@@ -12,7 +12,8 @@ namespace jc {
 namespace view {
 
 ImageView::ImageView() {
-
+    setTouchable(jcfalse);
+    setFocusable(jcfalse);
 }
 
 ImageView::~ImageView() {
