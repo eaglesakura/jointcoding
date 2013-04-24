@@ -181,40 +181,6 @@ protected:
     jc_sp<WindowContext> windowContext;
 
     /**
-     * Spriteレンダリングクラスを取得する
-     */
-    virtual MSpriteManager getSpriteManager() const {
-        assert(windowContext.get() != NULL);
-        return windowContext->getSpriteManager();
-    }
-
-    /**
-     * レンダリングデバイスを取得するう
-     */
-    virtual MDevice getDevice() const {
-        assert(windowContext.get() != NULL);
-        return windowContext->getDevice();
-    }
-
-    /**
-     * デバイスが取得できる状態なら取得する
-     */
-    virtual MDevice getDeviceOrNull() const {
-        if(windowContext) {
-            return windowContext->getDevice();
-        } else {
-            return MDevice();
-        }
-    }
-
-    /**
-     * Context管理クラスを取得する
-     */
-    virtual MGLState getState() const {
-        return getDevice()->getState();
-    }
-
-    /**
      * デバッグ用にレンダリングを行う
      */
     virtual void renderingArea();
@@ -480,6 +446,40 @@ public:
      * 現在のvalueは維持される。
      */
     virtual void setWeightCounter(const float leapTimeSec);
+
+    /**
+     * Spriteレンダリングクラスを取得する
+     */
+    virtual MSpriteManager getSpriteManager() const {
+        assert(windowContext.get() != NULL);
+        return windowContext->getSpriteManager();
+    }
+
+    /**
+     * レンダリングデバイスを取得するう
+     */
+    virtual MDevice getDevice() const {
+        assert(windowContext.get() != NULL);
+        return windowContext->getDevice();
+    }
+
+    /**
+     * デバイスが取得できる状態なら取得する
+     */
+    virtual MDevice getDeviceOrNull() const {
+        if(windowContext) {
+            return windowContext->getDevice();
+        } else {
+            return MDevice();
+        }
+    }
+
+    /**
+     * Context管理クラスを取得する
+     */
+    virtual MGLState getState() const {
+        return getDevice()->getState();
+    }
 
     /**
      * 更新作業を行う

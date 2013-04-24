@@ -15,17 +15,21 @@ public:
     }
 
     static const ::jc::charactor* CLASS_SIGNATURE;
-    static jstring getBootingId();
     static jboolean isNativeDebuggable();
+    static jint getColorRGBA(jint color_id);
     virtual void nativeInitialize();
     static void nativeInitialize_(jobject _this);
+    static jfloat getDimension(jint id);
     static void showToast(jstring message, jboolean longTime);
     static void gc();
     virtual jobject getAppContext_unsafe();
     static jobject getAppContext_unsafe_(jobject _this);
-    static jboolean isNativeLogOutput();
     static jboolean isUIThread();
     static void nativeGC();
+    static jstring getBootingId();
+    static jint getInteger(jint integer_id);
+    static jstring getString(jint id);
+    static jboolean isNativeLogOutput();
 
 
     static jc_sp<NativeContext> wrap(jobject obj);

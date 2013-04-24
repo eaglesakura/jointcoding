@@ -166,4 +166,50 @@ public class NativeContext {
         }
         return g_instance;
     }
+
+    public static Context getApplicationContext() {
+        return g_instance.getAppContext();
+    }
+
+    /**
+     * 整数リソースを取得する
+     * @param integer_id
+     * @return
+     */
+    @JCMethod
+    public static int getInteger(int integer_id) {
+        return getApplicationContext().getResources().getInteger(integer_id);
+    }
+
+    /**
+     * 色リソースを取得する
+     * @param color_id
+     * @return
+     */
+    @JCMethod
+    public static int getColorRGBA(int color_id) {
+        int argb = getApplicationContext().getResources().getColor(color_id);
+        return (argb << 8) | ((argb >> 24) & 0xFF);
+    }
+
+    /**
+     * dimenを取得する
+     * @param id
+     * @return
+     */
+    @JCMethod
+    public static float getDimension(int id) {
+        return getApplicationContext().getResources().getDimension(id);
+    }
+
+    /**
+     * 文字列を取得する
+     * @param id
+     * @return
+     */
+    @JCMethod
+    public static String getString(int id) {
+        return getApplicationContext().getString(id);
+    }
+
 }
