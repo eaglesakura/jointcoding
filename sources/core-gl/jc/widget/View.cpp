@@ -16,6 +16,7 @@ View::View() {
     this->enableRenderingPass = 0x1;
     this->down = this->down_inc = this->focus = jcfalse;
     this->enable = this->focusable = this->touchable = jctrue;
+    this->focusmove_fromtouch = jctrue;
     this->viewMode = ViewMode_Visible;
 
     // デフォルトのカウンターを整理
@@ -83,6 +84,13 @@ void View::setFocusable(const jcboolean set) {
         // フォーカスアウトをリクエストする
         requestFocus(jcfalse);
     }
+}
+
+/**
+ * タッチでフォーカス移動処理を行う場合はtrue
+ */
+void View::setFocusableFromTouch(const jcboolean set) {
+    this->focusmove_fromtouch = set;
 }
 
 /**
@@ -262,9 +270,13 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
         // クリックメッセージを処理させる
         onClick();
 
-        // 自分にフォーカス属性があるなら、フォーカス変更させる
-        if(isFocusable()) {
-            requestFocus(jctrue);
+        // タッチでフォーカス移動の許可を持っている
+        if( isFocusMoveFromTouch() ) {
+
+            // 自分にフォーカス属性があるなら、フォーカス変更させる
+            if(isFocusable()) {
+                requestFocus(jctrue);
+            }
         }
     } else {
 

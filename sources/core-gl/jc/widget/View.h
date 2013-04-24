@@ -74,6 +74,12 @@ private:
     jcboolean focus;
 
     /**
+     * タッチイベントでフォーカスを移動させる場合true
+     * default = true
+     */
+    jcboolean focusmove_fromtouch;
+
+    /**
      * ダウンを行なっている途中
      */
     jcboolean down;
@@ -345,6 +351,11 @@ public:
     virtual void setFocusable( const jcboolean set);
 
     /**
+     * タッチでフォーカス移動処理を行う場合はtrue
+     */
+    virtual void setFocusableFromTouch(const jcboolean set);
+
+    /**
      * フォーカス状態を変更する
      */
     virtual void requestFocus(const jcboolean has);
@@ -367,6 +378,14 @@ public:
      */
     virtual jcboolean isFocusable() const {
         return focusable && isVisible() && isEnable();
+    }
+
+    /**
+     * タッチイベントでフォーカスを移す場合はtrueを返す
+     * default = false
+     */
+    virtual jcboolean isFocusMoveFromTouch() const {
+        return focusmove_fromtouch;
     }
 
     /**

@@ -15,6 +15,7 @@ Button::Button() {
     // テキストはRead-Onlyのため、アクションは起こせない
     setFocusable(jctrue);
     setTouchable(jctrue);
+    setFocusableFromTouch(jcfalse);
 
 }
 
