@@ -58,6 +58,10 @@ protected:
 public:
     LinearLayout() {
         orientation = LayoutOrientation_Vertical;
+
+        setFocusable(jcfalse);
+        setTouchable(jcfalse);
+        setFocusableFromTouch(jcfalse);
     }
 
     virtual ~LinearLayout() {

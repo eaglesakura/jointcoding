@@ -286,8 +286,10 @@ void View::dispatchClickEvent(const jc_sp<View> clicked) {
         }
     } else {
 
-        // クリック対象にフォーカス属性があるなら、フォーカス変更させる
-        if(clicked->isFocusable()) {
+        // クリック対象にフォーカス属性がある
+        // クリック対象がフォーカス移動の権利を持つ
+        // なら、フォーカス変更させる
+        if(clicked->isFocusable() && clicked->isFocusMoveFromTouch()) {
             requestFocus(jcfalse);
         }
     }
@@ -672,12 +674,11 @@ RectF View::getLocalLayoutAreaNest() const {
     RectF globalArea = getGlobalLayoutAreaNest();
 
     // グローバルとの差分チェック
-    Vector2f    offset = getGlobalOffset();
+    Vector2f offset = getGlobalOffset();
     globalArea.offset(-offset.x, -offset.y);
-    return  globalArea;
+    return globalArea;
 
 }
-
 
 /**
  * ネストされた小階層も含めた全体のレイアウトエリアを計算する
