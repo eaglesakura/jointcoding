@@ -243,7 +243,9 @@ MView View::getChildViewAt(const s32 index) {
  * クリックされた
  */
 void View::onClick() {
-    jclogf("onClick(%x)", this);
+#ifdef DEBUG
+//    jclogf("onClick(%x)", this);
+#endif
 }
 
 /**
