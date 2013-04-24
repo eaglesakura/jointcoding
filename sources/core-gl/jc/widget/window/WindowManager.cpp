@@ -179,6 +179,9 @@ void WindowManager::loopBegin() {
  */
 void WindowManager::loopEnd(const jcboolean withPostFrontBuffer) {
     windowContext->onWindowLoopEnd();
+    if (withPostFrontBuffer) {
+        windowContext->getDevice()->postFrontBuffer();
+    }
 }
 
 /**

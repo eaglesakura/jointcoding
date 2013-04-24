@@ -33,6 +33,13 @@ enum ImageLayout_e {
     ImageLayout_Origin,
 };
 
+/**
+ * ImageViewの描画フラグ
+ */
+enum ImageViewFlag_e {
+
+};
+
 class ImageView: public View {
     /**
      * レンダリングを行う画像
@@ -46,7 +53,7 @@ public:
     /**
      * URIを指定して貼り付ける
      */
-    virtual void setImage(const Uri uri);
+    virtual void setImage(MDevice device, const Uri uri, const PixelFormat_e pixelFormat = PixelFormat_NativeRGBA, TextureLoadOption *option = NULL);
 
     /**
      * 画像を直接指定する
@@ -54,7 +61,31 @@ public:
     virtual void setImage(MTextureImage image) {
         this->image = image;
     }
+public:
+    /* layout */
+
+    /**
+     * レイアウトを更新する。
+     */
+    virtual void layout(const ImageLayout_e imageLayout);
+
+    /**
+     * レイアウトを更新する。
+     */
+    virtual void layout(const ImageLayout_e imageLayout, const Vector2f &parentLayoutSize);
+
+protected:
+    /* override */
+    /**
+     * 自身のレンダリングを行う
+     */
+    virtual void onSelfRendering();
 };
+
+/**
+ * managed
+ */
+typedef jc_sp<ImageView> MImageView;
 
 }
 }

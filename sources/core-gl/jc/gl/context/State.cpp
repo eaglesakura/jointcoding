@@ -77,6 +77,10 @@ GLState::GLState() {
     {
         caps.MAX_TEXTURE_UNITS = GPUCapacity::getMaxTextureUnits();
     }
+    // mask
+    {
+        maskContext.r = maskContext.g = maskContext.b = maskContext.a = jctrue;
+    }
 }
 
 GLState::~GLState() {
@@ -140,42 +144,66 @@ void GLState::syncContext() {
     {
         s32 colors[4] = { 0 };
         glGetIntegerv(GL_COLOR_CLEAR_VALUE, (GLint*) colors);
+        assert_gl();
         this->clearContext.clearColor.RGBAf(fixed2float(colors[0]), fixed2float(colors[1]), fixed2float(colors[2]), fixed2float(colors[3]));
     }
     // viewportを取得する
     {
         GLint xywh[4] = { 0 };
         glGetIntegerv(GL_VIEWPORT, xywh);
+        assert_gl();
         viewportContext.setXYWH(xywh[0], xywh[1], xywh[2], xywh[3]);
     }
     // blend情報を取得する
     {
         blendContext.enable = glIsEnabled(GL_BLEND);
+        assert_gl();
         blendContext.src = 0;
         blendContext.dst = 0;
     }
     // enable情報を取得する
     {
         enableContext.texture2d = glIsEnabled(GL_TEXTURE_2D);
+        assert_gl();
     }
     // depth
     {
         depthContext.enable = glIsEnabled(GL_DEPTH_TEST);
+        assert_gl();
         glGetIntegerv(GL_DEPTH_FUNC, (GLint*) &depthContext.func);
+        assert_gl();
     }
     // シザーテスト情報を取得する
     {
         scissorContext.enable = glIsEnabled(GL_SCISSOR_TEST);
+        assert_gl();
         glGetIntegerv(GL_SCISSOR_BOX, (GLint*) &scissorContext.box);
+        assert_gl();
     }
     // シェーダプログラム情報を取得する
     {
         glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*) &shaderProgramContext.usingProgram);
+        assert_gl();
     }
     // バッファを問い合わせる
     {
         glGetIntegerv(GL_ARRAY_BUFFER, (GLint*) &bindBufferContext.buffers[0]);
+        assert_gl();
         glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER, (GLint*) &bindBufferContext.buffers[1]);
+        assert_gl();
+    }
+    // マスクを問い合わせる
+    {
+        {
+            GLboolean colors[4];
+            glGetBooleanv(GL_COLOR_WRITEMASK, colors);
+            assert_gl();
+
+            maskContext.r = colors[0];
+            maskContext.g = colors[1];
+            maskContext.b = colors[2];
+            maskContext.a = colors[3];
+        }
     }
     // Attrに設定されている情報を取得する
     {
@@ -187,17 +215,23 @@ void GLState::syncContext() {
 
             {
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*) &attr->type);
+                assert_gl();
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, (GLint*) &temp);
+                assert_gl();
                 {
                     attr->normalized = temp;
                 }
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_SIZE, (GLint*) &attr->size);
+                assert_gl();
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_STRIDE, (GLint*) &attr->stride);
+                assert_gl();
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER, (GLint*) &attr->ptr);
+                assert_gl();
             }
 
             temp = 0;
             glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &temp);
+            assert_gl();
             vertexAttrContext.buffers[i].enable = (jcboolean) temp;
         }
     }

@@ -111,6 +111,17 @@ class GLState: public Object {
     } bindBufferContext;
 
     /**
+     * color, depth, stencilマスク
+     * デフォルトはtrue
+     */
+    struct {
+        jcboolean r;
+        jcboolean g;
+        jcboolean b;
+        jcboolean a;
+    } maskContext;
+
+    /**
      * glVertexAttributePointerに指定するデータ
      */
     struct VertexAttributePointerData {
@@ -657,28 +668,54 @@ public:
     }
 
     /**
+     * 色マスクを設定する
+     */
+    inline jcboolean colorMask(const GLboolean red, const GLboolean green, const GLboolean blue, const GLboolean alpha) {
+        if (maskContext.r != red || maskContext.g != green || maskContext.b != blue || maskContext.a != alpha) {
+            glColorMask(red, green, blue, alpha);
+            assert_gl();
+            maskContext.r = red;
+            maskContext.g = green;
+            maskContext.b = blue;
+            maskContext.a = alpha;
+            return jctrue;
+        }
+        return jcfalse;
+    }
+
+    /**
      * 現在のサーフェイスを指定済みの色でクリアする
      * タイルレンダリングをサポートしている場合、最適化したクリアを行う。
      */
     inline void clearSurface() {
+        // 戻り先コンテキスト
+        struct {
+            jcboolean scissor;
+            jcboolean mask_r;
+            jcboolean mask_g;
+            jcboolean mask_b;
+            jcboolean mask_a;
+        } back_context = {
+        //
+        // scissor
+                scissorContext.enable,
+                // mask
+                maskContext.r, maskContext.g, maskContext.b, maskContext.a, };
+        colorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         if (GPUCapacity::isSupport(GPUExtension_TileBasedDeferredRendering)) {
-            // シザーがONになっている場合、OFFに変更して全体クリアを行う
-            jcboolean enabled = scissorContext.enable;
-            if (enabled) {
-                enableScissor(jcfalse);
-            }
+            enableScissor(jcfalse);
 
             // バッファクリア
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            assert_gl();
 
-            if (enabled) {
-                enableScissor(jctrue);
-            }
+            enableScissor(back_context.scissor);
         } else {
             // バッファクリア
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            assert_gl();
         }
-        assert_gl();
+        colorMask(back_context.mask_r, back_context.mask_g, back_context.mask_b, back_context.mask_a);
     }
 
 public:

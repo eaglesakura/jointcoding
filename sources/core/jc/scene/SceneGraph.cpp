@@ -166,7 +166,6 @@ void SceneGraph::removeFromParent() {
  * 更新作業を行う
  */
 jcboolean SceneGraph::update() {
-
     std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
@@ -200,6 +199,9 @@ static bool compare_scenegraph(const MSceneGraph a, const MSceneGraph b) {
  * レンダリングを行う
  */
 void SceneGraph::rendering() {
+    if (isSelfRenderingPass()) {
+        onSelfRendering();
+    }
 
     // 子の処理を行う
     {
@@ -218,9 +220,6 @@ void SceneGraph::rendering() {
         }
     }
 
-    if (isSelfRenderingPass()) {
-        onSelfRendering();
-    }
 }
 
 }

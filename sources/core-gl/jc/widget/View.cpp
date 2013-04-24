@@ -13,7 +13,7 @@ namespace jc {
 namespace view {
 
 View::View() {
-    this->enableRenderingPass = 0x0;
+    this->enableRenderingPass = 0x1;
     this->down = this->down_inc = this->focus = jcfalse;
     this->enable = this->focusable = this->touchable = jctrue;
     this->viewMode = ViewMode_Visible;
@@ -570,8 +570,8 @@ void View::layout(const RectF &area) {
 /**
  * 親と同じ領域になるようにエリアを設定する
  */
-void View::layoutFillParent(const RectF &parentLocal) {
-    layout(createRectFromLTRB(0.0f, 0.0f, parentLocal.width(), parentLocal.height()));
+void View::layoutFillParent(const Vector2f &parentLocalSize) {
+    layout(createRectFromLTRB(0.0f, 0.0f, parentLocalSize.x, parentLocalSize.y));
 }
 
 /**

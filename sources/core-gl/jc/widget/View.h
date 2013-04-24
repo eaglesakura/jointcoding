@@ -436,7 +436,13 @@ public:
     /**
      * 親と同じ領域になるようにエリアを設定する
      */
-    virtual void layoutFillParent(const RectF &parentLocal);
+    virtual void layoutFillParent(const Vector2f &parentLocalSize);
+    /**
+     * 親と同じ領域になるようにエリアを設定する
+     */
+    virtual void layoutFillParent(const RectF &parentLocal) {
+        layoutFillParent(parentLocal.wh());
+    }
 
     /**
      * ネストされた小階層も含めた全体のレイアウトエリアを計算する
