@@ -8,6 +8,7 @@
 #define IMAGEVIEW_H_
 
 #include    "jc/widget/View.h"
+#include    "jc/collection/BitFlags.hpp"
 #include    "jc/gl/texture/TextureImage.h"
 
 namespace jc {
@@ -37,7 +38,16 @@ enum ImageLayout_e {
  * ImageViewの描画フラグ
  */
 enum ImageViewFlag_e {
+    /**
+     * 背景として扱う。
+     * 画像描画以降、アルファ値の描画をロックする
+     */
+    ImageViewFlag_Background,
 
+    /**
+     * 数管理用
+     */
+    ImageViewFlag_Num,
 };
 
 class ImageView: public View {
@@ -46,6 +56,10 @@ class ImageView: public View {
      */
     MTextureImage image;
 
+    /**
+     * 管理フラグ
+     */
+    BitFlags<ImageViewFlag_Num> imageViewFlags;
 public:
     ImageView();
     virtual ~ImageView();
@@ -60,6 +74,13 @@ public:
      */
     virtual void setImage(MTextureImage image) {
         this->image = image;
+    }
+
+    /**
+     * 描画フラグを設定する
+     */
+    virtual void setRenderingFlag(const ImageViewFlag_e flag, const jcboolean set) {
+        imageViewFlags.set(flag, set);
     }
 public:
     /* layout */

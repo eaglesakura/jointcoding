@@ -178,6 +178,14 @@ protected:
         assert(windowContext.get() != NULL);
         return windowContext->getDevice();
     }
+
+    /**
+     * Context管理クラスを取得する
+     */
+    virtual MGLState getState() const {
+        return getDevice()->getState();
+    }
+
     /**
      * デバッグ用にレンダリングを行う
      */

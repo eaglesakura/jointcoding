@@ -7,7 +7,7 @@
 #include    "jc/gl/GL.h"
 #include    "jc/gl/gpu/GPUCapacity.h"
 #include    "jc/system/StringUtil.h"
-#include    "jc/collection/OrderAccessList.h"
+#include    "jc/collection/BitFlags.hpp"
 #include    <vector>
 
 namespace jc {
@@ -64,7 +64,7 @@ static u32 maxUniformVectorsFs = 0;
 /**
  * 拡張設定
  */
-static u32 extension_flags[(GPUExtension_Num + 31) / 32] = { 0 };
+static BitFlags<GPUExtension_Num> extension_flags;
 
 /**
  * GPUファミリー名
@@ -72,8 +72,6 @@ static u32 extension_flags[(GPUExtension_Num + 31) / 32] = { 0 };
 static GPUFamily_e gpuFamily = GPUFamily_Unknown;
 
 }
-
-#define GPU_EXTENSION_ON(ext)       assert( (ext/32) < (sizeof(extension_flags) / sizeof(u32))); extension_flags[ext/32] |= (0x1 << (ext % 32))
 
 /**
  * 初期化を行う
@@ -107,7 +105,7 @@ void GPUCapacity::initialize() {
             jcboolean tile_rendering;
         } gpu_groups[] = {
         //
-                // for PowerVR
+        // for PowerVR
                 { "PowerVR", GPUFamily_PowerVR, jctrue },
                 // for Mali
                 { "Mali", GPUFamily_Mali, jctrue },
@@ -122,7 +120,7 @@ void GPUCapacity::initialize() {
                 gpuFamily = gpu_groups[i].family;
                 // タイルレンダリング
                 if (gpu_groups[i].tile_rendering) {
-                    GPU_EXTENSION_ON(GPUExtension_TileBasedDeferredRendering);
+                    extension_flags.enable(GPUExtension_TileBasedDeferredRendering);
                 }
 
                 jclogf("GPU = %s(%s) TBDR(%s)", gpu_groups[i].name, pRenderer, gpu_groups[i].tile_rendering ? "YES" : "NO");
@@ -177,7 +175,7 @@ void GPUCapacity::initialize() {
         for (int i = 0; i < (sizeof(EXTENSION_NAMES) / sizeof(charactor*)); ++i) {
             if (strstr(pExtensions, EXTENSION_NAMES[i])) {
                 // check index
-                GPU_EXTENSION_ON(i);
+                extension_flags.enable(i);
                 jclogf("supported extension(%s)", EXTENSION_NAMES[i]);
 
                 assert(GPUCapacity::isSupport((GPUExtension_e)i));
@@ -279,13 +277,7 @@ u32 GPUCapacity::getMaxUniformVectorsFs() {
  * GPU拡張機能をサポートするかを調べる
  */
 jcboolean GPUCapacity::isSupport(const GPUExtension_e extension) {
-// Extension領域内チェック
-    assert(extension >= 0 && extension < GPUExtension_Num);
-
-    const s32 extension_index = extension / 32;
-    const u32 flag = 0x1 << (extension % 32);
-
-    return (extension_flags[extension_index] & flag) == flag;
+    return extension_flags.isEnable(extension);
 }
 
 /**

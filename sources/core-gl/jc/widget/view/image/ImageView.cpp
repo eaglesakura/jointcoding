@@ -72,7 +72,6 @@ void ImageView::layout(const ImageLayout_e imageLayout, const Vector2f &parentLa
     }
 }
 
-
 /**
  * 自身のレンダリングを行う
  */
@@ -83,6 +82,11 @@ void ImageView::onSelfRendering() {
 
     const Color color = Color::fromRGBAf(1, 1, 1, getVisibleWeight());
     getSpriteManager()->renderingImage(image, getGlobalLayoutArea(), 0, color.rgba);
+
+    // 背景フラグが立っているなら、ロックを行う
+    if (imageViewFlags.isEnable(ImageViewFlag_Background)) {
+        getState()->colorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+    }
 }
 
 }
