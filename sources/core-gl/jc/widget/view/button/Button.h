@@ -90,12 +90,17 @@ public:
     /**
      * 親レイアウトの位置を元に設定する
      */
-    virtual void layout(const ButtonLayout_e layoutType);
+    virtual void layoutFromImage(const ButtonLayout_e layoutType);
 
     /**
      * 親レイアウトの位置を元に設定する
      */
-    virtual void layout(const ButtonLayout_e layoutType, const Vector2f &parentLayoutSize);
+    virtual void layoutFromImage(const ButtonLayout_e layoutType, const Vector2f &parentLayoutSize);
+
+    /**
+     * コンテンツと同サイズにレイアウトし直す。
+     */
+    virtual void layoutWrap( const float marginX, const float marginY );
 
 protected:
     /* override */

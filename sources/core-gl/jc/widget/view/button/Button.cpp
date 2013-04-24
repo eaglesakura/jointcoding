@@ -17,6 +17,7 @@ Button::Button() {
     setTouchable(jctrue);
     setFocusableFromTouch(jcfalse);
 
+    setTextGravity(LayoutGravity_Center);
 }
 
 Button::~Button() {
@@ -39,23 +40,40 @@ void Button::setImage(const ButtonImageType_e type, const MTextureImage texture)
     images[type] = texture;
 }
 
+/**
+ * コンテンツと同サイズにレイアウトし直す。
+ */
+void Button::layoutWrap(const float marginX, const float marginY) {
+    Vector2f reqSize = getFontAreaSize();
+    reqSize.x += (marginX * 2);
+    reqSize.y += (marginY * 2);
+
+    if (images[ButtonImageType_Normal]) {
+        MTextureImage image = images[ButtonImageType_Normal];
+        reqSize.x = jc::max<float>(reqSize.x, image->getWidth() + (marginX * 2));
+        reqSize.y = jc::max<float>(reqSize.y, image->getHeight() + (marginY * 2));
+    }
+
+    layoutDirect(createRectFromXYWH(localArea.left, localArea.top, reqSize.x, reqSize.y));
+}
+
 /* layout */
 /**
  * 親レイアウトの位置を元に設定する
  */
-void Button::layout(const ButtonLayout_e layoutType) {
+void Button::layoutFromImage(const ButtonLayout_e layoutType) {
     assert(isRegisteredWindow());
 
     View *parentView = getParentTo<View>();
     assert(parentView);
     const RectF parentLocalLayout = parentView->getLocalLayoutArea();
-    layout(layoutType, parentLocalLayout.wh());
+    layoutFromImage(layoutType, parentLocalLayout.wh());
 }
 
 /**
  * 親レイアウトの位置を元に設定する
  */
-void Button::layout(const ButtonLayout_e layoutType, const Vector2f &parentLayoutSize) {
+void Button::layoutFromImage(const ButtonLayout_e layoutType, const Vector2f &parentLayoutSize) {
     MTextureImage image = images[ButtonImageType_Normal];
 
     if (!image) {
@@ -122,4 +140,3 @@ void Button::onSelfRendering() {
 
 }
 }
-
