@@ -483,43 +483,50 @@ public:
     virtual jcboolean update();
 
     /**
-     * レイアウトを更新する。
+     * レイアウトを直接指定して更新する。
      */
-    virtual void layout(const RectF &area);
+    virtual void layoutDirect(const RectF &area);
+
+    /**
+     * レイアウトを直接指定して更新する。
+     */
+    virtual void layoutDirect(const Vector2f &size) {
+        layoutDirect(createRectFromLTRB<float>(0, 0, size.x, size.y));
+    }
 
     /**
      * レイアウトを補正する
      */
     virtual void layoutInset(const float x, const float y) {
-        layout(localArea.createInset(x, y));
+        layoutDirect(localArea.createInset(x, y));
     }
 
     /**
      * レイアウトを補正する
      */
     virtual void layoutOffset(const float left, const float top, const float right, const float bottom) {
-        layout(localArea.createOffset(left, top, right, bottom));
+        layoutDirect(localArea.createOffset(left, top, right, bottom));
     }
 
     /**
      * レイアウトを補正する
      */
     virtual void layoutOffset(const float x, const float y) {
-        layout(localArea.createOffset(x, y, x, y));
+        layoutDirect(localArea.createOffset(x, y, x, y));
     }
 
     /**
      * レイアウトを移動する
      */
     virtual void moveTo(const Vector2f &localPosition) {
-        layout(localArea.createMoveTo(localPosition.x, localPosition.y));
+        layoutDirect(localArea.createMoveTo(localPosition.x, localPosition.y));
     }
 
     /**
      * レイアウトを移動する
      */
     virtual void moveTo(const float left, const float top) {
-        layout(localArea.createMoveTo(left, top));
+        layoutDirect(localArea.createMoveTo(left, top));
     }
 
     /**

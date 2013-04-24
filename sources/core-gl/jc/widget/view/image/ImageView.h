@@ -87,12 +87,12 @@ public:
     /**
      * レイアウトを更新する。
      */
-    virtual void layout(const ImageLayout_e imageLayout);
+    virtual void layoutFromImage(const ImageLayout_e layoutType);
 
     /**
      * レイアウトを更新する。
      */
-    virtual void layout(const ImageLayout_e imageLayout, const Vector2f &parentLayoutSize);
+    virtual void layoutFromImage(const ImageLayout_e imageLayout, const Vector2f &parentLayoutSize);
 
 protected:
     /* override */

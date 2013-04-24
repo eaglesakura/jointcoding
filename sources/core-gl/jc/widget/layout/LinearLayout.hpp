@@ -65,12 +65,13 @@ public:
      */
     virtual void addSubView(MView layout, const Vector2f &margin) {
         layout->moveTo(nextHeader + margin);
+        addSubView(layout, isRegisteredWindow());
 
         const Vector2f viewUseSize((layout->getLocalLayoutSize().x + margin.x), (layout->getLocalLayoutSize().y + margin.y));
         if (directin == LayoutDirection_Horizontal) {
             // X方向
             nextHeader.x += viewUseSize.x;
-            localArea.right += SIZE;
+            localArea.right += viewUseSize.x;
 
             // 縦は最大値に合わせる
             if (viewUseSize.y > localArea.height()) {
@@ -78,7 +79,7 @@ public:
             }
         } else {
             // Y方向
-            nextHeader.y += SIZE;
+            nextHeader.y += viewUseSize.x;
             localArea.right = jc::max(localArea.right, viewUseSize.x);
 
             // 横は最大値に合わせる
@@ -89,6 +90,8 @@ public:
 
     }
 };
+
+typedef jc_sp<LinearLayout> MLinearLayout;
 
 }
 }

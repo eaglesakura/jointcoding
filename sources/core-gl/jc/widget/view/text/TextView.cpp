@@ -30,7 +30,7 @@ TextView::~TextView() {
  */
 void TextView::layoutWrap() {
     const Vector2f textSize = getFontAreaSize();
-    layout(createRectFromXYWH(localArea.left, localArea.top, textSize.x, textSize.y));
+    layoutDirect(createRectFromXYWH(localArea.left, localArea.top, textSize.x, textSize.y));
 }
 
 /**
@@ -67,6 +67,11 @@ void TextView::createTexture(MDevice device) {
     }
 
     textureCreated = jctrue;
+
+    // 領域が設定されてないなら再設定
+    if(localArea.empty()) {
+        layoutWrap();
+    }
 }
 
 /**

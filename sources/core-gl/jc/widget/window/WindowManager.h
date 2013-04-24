@@ -185,14 +185,14 @@ public:
      * ウィンドウ位置を描画する
      */
     virtual void setWindowArea(const RectF &area) const {
-        window->layout(area);
+        window->layoutDirect(area);
     }
 
     /**
      * ウィンドウ位置を描画する
      */
     virtual void setWindowArea(const RectI &area) const {
-        window->layout(createRectFromLTRB<float>(area.left, area.top, area.right, area.bottom));
+        window->layoutDirect(createRectFromLTRB<float>(area.left, area.top, area.right, area.bottom));
     }
 
     /**

@@ -592,7 +592,7 @@ jcboolean View::update() {
 /**
  * レイアウトを更新する。
  */
-void View::layout(const RectF &area) {
+void View::layoutDirect(const RectF &area) {
 
 // 違うエリアが設定されたらレイアウトを変更してメッセージを投げる
     if (area != localArea) {
@@ -623,7 +623,7 @@ void View::moveTo(const LayoutParams &params) {
     RectF area;
     temp.layout(&area, parentView->getLocalLayoutSize());
 
-    this->layout(area);
+    this->layoutDirect(area);
 }
 
 /**
@@ -641,7 +641,7 @@ void View::moveToGravity(const u32 gravity_flags, const Vector2f &margins) {
  * 親と同じ領域になるようにエリアを設定する
  */
 void View::layoutFillParent(const Vector2f &parentLocalSize) {
-    layout(createRectFromLTRB(0.0f, 0.0f, parentLocalSize.x, parentLocalSize.y));
+    layoutDirect(createRectFromLTRB(0.0f, 0.0f, parentLocalSize.x, parentLocalSize.y));
 }
 
 /**

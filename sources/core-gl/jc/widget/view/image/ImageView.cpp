@@ -29,22 +29,24 @@ void ImageView::setImage(MDevice device, const Uri uri, const PixelFormat_e pixe
     setImage(texture);
 }
 
+/* layout */
 /**
- * レイアウトを更新する。
+ * 親レイアウトの位置を元に設定する
  */
-void ImageView::layout(const ImageLayout_e imageLayout) {
+void ImageView::layoutFromImage(const ImageLayout_e layoutType) {
     assert(isRegisteredWindow());
 
     View *parentView = getParentTo<View>();
     assert(parentView);
     const RectF parentLocalLayout = parentView->getLocalLayoutArea();
-    layout(imageLayout, parentLocalLayout.wh());
+    layoutFromImage(layoutType, parentLocalLayout.wh());
 }
+
 
 /**
  * レイアウトを更新する。
  */
-void ImageView::layout(const ImageLayout_e imageLayout, const Vector2f &parentLayoutSize) {
+void ImageView::layoutFromImage(const ImageLayout_e imageLayout, const Vector2f &parentLayoutSize) {
     if (!image) {
         layoutFillParent(parentLayoutSize);
         return;
@@ -73,7 +75,7 @@ void ImageView::layout(const ImageLayout_e imageLayout, const Vector2f &parentLa
             break;
     }
 
-    View::layout(tempArea);
+    layoutDirect(tempArea);
 }
 
 /**
