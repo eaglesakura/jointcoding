@@ -210,6 +210,16 @@ struct RectT {
     }
 
     /**
+     * 矩形を動かす
+     */
+    void offset(const T off_left, const T off_top, const T off_right, const T off_bottom) {
+        left += off_left;
+        top += off_top;
+        right += off_right;
+        bottom += off_bottom;
+    }
+
+    /**
      * すべての値を四捨五入する
      */
     void round() {
@@ -278,6 +288,20 @@ struct RectT {
         result.top = (top + y);
         result.right = (right - x);
         result.bottom = (bottom - y);
+
+        return result;
+    }
+
+    /**
+     * 矩形を動かす
+     */
+    RectT<T> createOffset(const T off_left, const T off_top, const T off_right, const T off_bottom) const {
+        RectT<T> result;
+
+        result.left = (left + off_left);
+        result.top = (top + off_top);
+        result.right = (right + off_right);
+        result.bottom = (bottom + off_bottom);
 
         return result;
     }

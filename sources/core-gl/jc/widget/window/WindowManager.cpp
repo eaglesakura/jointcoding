@@ -136,8 +136,7 @@ void WindowManager::handleEvents() {
  * WindowへViewを追加する
  */
 void WindowManager::addView(const MView view) {
-    window->pushBackChild(view);
-    view->registerWindow();
+    window->addSubView(view);
 }
 
 /**

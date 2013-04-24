@@ -222,7 +222,7 @@ public:
 
         SceneGraph *result = parent;
         // 先祖を辿る
-        if(result->parent) {
+        while(result->parent) {
             result = result->parent;
         }
         return result;

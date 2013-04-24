@@ -494,6 +494,22 @@ void View::registerWindow() {
 }
 
 /**
+ * 子Viewを追加する
+ */
+void View::addSubView(const jc_sp<View> subView, const jcboolean withRegisterWindow ) {
+    assert(isRegisteredWindow());
+    pushBackChild(subView);
+
+    assert(subView->getParent() == (SceneGraph*)this);
+    assert(subView->getRootScene() != NULL);
+    assert(subView->getRootSceneTo<Window>() != NULL);
+
+    if(withRegisterWindow) {
+        subView->registerWindow();
+    }
+}
+
+/**
  * ウィンドウ位置を取得する
  */
 RectF View::getWindowArea() {
@@ -604,7 +620,21 @@ void View::moveTo(const LayoutParams &params) {
     View *parentView = getParentTo<View>();
     assert(parentView);
 
-    temp.layout(&localArea, parentView->getLocalLayoutSize());
+    RectF area;
+    temp.layout(&area, parentView->getLocalLayoutSize());
+
+    this->layout(area);
+}
+
+/**
+ * 親レイアウトの配置内で移動を行う
+ */
+void View::moveToGravity(const u32 gravity_flags, const Vector2f &margins) {
+    LayoutParams params;
+    params.gravity = gravity_flags;
+    params.margin_left = params.margin_right = margins.x;
+    params.margin_top = params.margin_bottom = margins.y;
+    moveTo(params);
 }
 
 /**

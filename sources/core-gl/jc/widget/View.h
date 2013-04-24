@@ -253,6 +253,11 @@ public:
     virtual void registerWindow();
 
     /**
+     * 子Viewを追加する
+     */
+    virtual void addSubView(const jc_sp<View> subView, const jcboolean withRegisterWindow = jctrue);
+
+    /**
      * ウィンドウ位置を取得する
      */
     virtual RectF getWindowArea( );
@@ -472,9 +477,28 @@ public:
     virtual void layout(const RectF &area);
 
     /**
+     * レイアウトを補正する
+     */
+    virtual void layoutInset(const float x, const float y) {
+        layout(localArea.createInset(x, y));
+    }
+
+    /**
+     * レイアウトを補正する
+     */
+    virtual void layoutOffset(const float left, const float top, const float right, const float bottom) {
+        layout(localArea.createOffset(left, top, right, bottom));
+    }
+
+    /**
      * 親のレイアウトエリア内で移動を行う
      */
     virtual void moveTo( const LayoutParams &params );
+
+    /**
+     * 親レイアウトの配置内で移動を行う
+     */
+    virtual void moveToGravity(const u32 gravity_flags, const Vector2f &margins);
 
     /**
      * 親と同じ領域になるようにエリアを設定する

@@ -50,16 +50,17 @@ void ImageView::layout(const ImageLayout_e imageLayout, const Vector2f &parentLa
         return;
     }
 
+    RectF tempArea;
     switch (imageLayout) {
         case ImageLayout_Fill: {
             layoutFillParent(parentLayoutSize);
+            return;
         }
-            break;
         case ImageLayout_AspectFit: {
             RenderingFitter fitter;
             fitter.setViewport(0.0f, 0.0f, parentLayoutSize.x, parentLayoutSize.y);
             fitter.setImageAspect(image->getWidth(), image->getHeight());
-            fitter.getDefaultRenderingArea(RenderingFitter::Fittype_Long, &localArea);
+            fitter.getDefaultRenderingArea(RenderingFitter::Fittype_Long, &tempArea);
         }
             break;
         case ImageLayout_Origin: {
@@ -67,10 +68,12 @@ void ImageView::layout(const ImageLayout_e imageLayout, const Vector2f &parentLa
             params.layout_width = image->getWidth();
             params.layout_height = image->getHeight();
             params.gravity = LayoutGravity_Center;
-            params.layout(&localArea, parentLayoutSize);
+            params.layout(&tempArea, parentLayoutSize);
         }
             break;
     }
+
+    View::layout(tempArea);
 }
 
 /**
