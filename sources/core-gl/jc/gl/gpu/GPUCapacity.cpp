@@ -66,7 +66,14 @@ static u32 maxUniformVectorsFs = 0;
  */
 static u32 extension_flags[(GPUExtension_Num + 31) / 32] = { 0 };
 
+/**
+ * GPUファミリー名
+ */
+static GPUFamily_e gpuFamily = GPUFamily_Unknown;
+
 }
+
+#define GPU_EXTENSION_ON(ext)       assert( (ext/32) < (sizeof(extension_flags) / sizeof(u32))); extension_flags[ext/32] |= (0x1 << (ext % 32))
 
 /**
  * 初期化を行う
@@ -78,11 +85,60 @@ void GPUCapacity::initialize() {
 
     initialized = jctrue;
 
-    renderer = (const charactor*) glGetString(GL_RENDERER);
+    {
+        // レンダラ名と系列機チェック
+        const charactor* pRenderer = (const charactor*) glGetString(GL_RENDERER);
+        renderer = pRenderer;
+
+        struct GPUFamilyGroup {
+            /**
+             * チェックするGPU名
+             */
+            const charactor* name;
+
+            /**
+             * 登録されるファミリー
+             */
+            GPUFamily_e family;
+
+            /**
+             * タイルレンダリングの有無
+             */
+            jcboolean tile_rendering;
+        } gpu_groups[] = {
+        //
+                // for PowerVR
+                { "PowerVR", GPUFamily_PowerVR, jctrue },
+                // for Mali
+                { "Mali", GPUFamily_Mali, jctrue },
+                // for Tegra
+                { "Tegra", GPUFamily_Tegra, jcfalse },
+                // for Adreno
+                { "Adreno", GPUFamily_Adreno, jcfalse }, };
+
+        for (s32 i = 0; i < (sizeof(gpu_groups) / sizeof(GPUFamilyGroup)); ++i) {
+            if (strstr(pRenderer, gpu_groups[i].name)) {
+                // GPUファミリー
+                gpuFamily = gpu_groups[i].family;
+                // タイルレンダリング
+                if (gpu_groups[i].tile_rendering) {
+                    GPU_EXTENSION_ON(GPUExtension_TileBasedDeferredRendering);
+                }
+
+                jclogf("GPU = %s(%s) TBDR(%s)", gpu_groups[i].name, pRenderer, gpu_groups[i].tile_rendering ? "YES" : "NO");
+                break;
+            }
+        }
+
+        if (gpuFamily == GPUFamily_Unknown) {
+            jclogf("GPU = Unknown(%s)", pRenderer);
+        }
+    }
+
     vendor = (const charactor*) glGetString(GL_VENDOR);
     version = (const charactor*) glGetString(GL_VERSION);
 
-    // エクステンション一覧を取得する
+// エクステンション一覧を取得する
     {
         const charactor *pExtensions = (const charactor*) glGetString(GL_EXTENSIONS);
         split(pExtensions, " ", &extensions);
@@ -115,18 +171,16 @@ void GPUCapacity::initialize() {
         EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), //
                 EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), //
                 EXTENSION_NAME(GL_OES_EGL_image_external), //
-                EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), //
                 };
 
         // 対応している拡張機能を調べる
         for (int i = 0; i < (sizeof(EXTENSION_NAMES) / sizeof(charactor*)); ++i) {
             if (strstr(pExtensions, EXTENSION_NAMES[i])) {
-                const s32 extension_index = i / 32;
                 // check index
-                assert( extension_index < (sizeof(extension_flags) / sizeof(u32)));
-                extension_flags[extension_index] |= (0x1 << (i % 32));
-
+                GPU_EXTENSION_ON(i);
                 jclogf("supported extension(%s)", EXTENSION_NAMES[i]);
+
+                assert(GPUCapacity::isSupport((GPUExtension_e)i));
             }
         }
     }
@@ -225,13 +279,20 @@ u32 GPUCapacity::getMaxUniformVectorsFs() {
  * GPU拡張機能をサポートするかを調べる
  */
 jcboolean GPUCapacity::isSupport(const GPUExtension_e extension) {
-    // Extension領域内チェック
+// Extension領域内チェック
     assert(extension >= 0 && extension < GPUExtension_Num);
 
     const s32 extension_index = extension / 32;
     const u32 flag = 0x1 << (extension % 32);
 
     return (extension_flags[extension_index] & flag) == flag;
+}
+
+/**
+ * GPU系列のチェックを行う
+ */
+GPUFamily_e GPUCapacity::getGPUFamily() {
+    return gpuFamily;
 }
 
 }

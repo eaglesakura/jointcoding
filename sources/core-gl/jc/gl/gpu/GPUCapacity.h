@@ -39,12 +39,50 @@ enum GPUExtension_e {
      */
     GPUExtension_OES_EGL_image_external,
 
-
+    /**
+     * タイルレンダリング対応
+     * PowerVR(iOS, GalaxyNexus, etc...)
+     */
+    GPUExtension_TileBasedDeferredRendering,
 
     /**
      * num flags
      */
     GPUExtension_Num,
+};
+
+/**
+ * サポートする代表的な系列機を列挙する
+ */
+enum GPUFamily_e {
+    /**
+     * Mali GPU
+     * GalaxyS2, GalaxyS3, Nexus10
+     */
+    GPUFamily_Mali,
+
+    /**
+     * PowerVR GPU
+     * iOS, GalaxyNexus
+     */
+    GPUFamily_PowerVR,
+
+    /**
+     * Adreno GPU
+     * XperiaGX
+     */
+    GPUFamily_Adreno,
+
+    /**
+     * Tegra GPU
+     * OptimusPad, GalaxyTab10.1, Nexus7
+     */
+    GPUFamily_Tegra,
+
+    /**
+     * not found...
+     */
+    GPUFamily_Unknown,
 };
 
 /**
@@ -103,6 +141,11 @@ public:
      * GPU拡張機能をサポートするかを調べる
      */
     static jcboolean isSupport(const GPUExtension_e extension);
+
+    /**
+     * GPU系列のチェックを行う
+     */
+    static GPUFamily_e getGPUFamily();
 };
 
 }

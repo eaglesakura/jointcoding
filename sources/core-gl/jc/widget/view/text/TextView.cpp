@@ -4,7 +4,7 @@
  *  Created on: 2013/04/22
  */
 
-#include    "jc/widget/view/TextView.h"
+#include    "jc/widget/view/text/TextView.h"
 #include    "jc/widget/layout/LayoutParams.h"
 
 namespace jc {
