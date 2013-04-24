@@ -13,6 +13,7 @@
 #include    "jc/collection/BitFlags.hpp"
 #include    "jc/math/Counter.h"
 
+#include    "jc/widget/layout/LayoutParams.h"
 #include    "jc/widget/event/Event.h"
 #include    "jc/widget/window/WindowContext.h"
 #include    "jc/widget/anim/TransactionCounter.h"
@@ -469,6 +470,11 @@ public:
      * レイアウトを更新する。
      */
     virtual void layout(const RectF &area);
+
+    /**
+     * 親のレイアウトエリア内で移動を行う
+     */
+    virtual void moveTo( const LayoutParams &params );
 
     /**
      * 親と同じ領域になるようにエリアを設定する

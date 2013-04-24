@@ -586,6 +586,28 @@ void View::layout(const RectF &area) {
 }
 
 /**
+ * 親のレイアウトエリア内で移動を行う
+ */
+void View::moveTo(const LayoutParams &params) {
+
+    LayoutParams temp = params;
+    if (temp.layout_width <= 0) {
+        temp.layout_width = localArea.width();
+    }
+    if (temp.layout_height <= 0) {
+        temp.layout_height = localArea.height();
+    }
+
+    assert(temp.layout_width > 0);
+    assert(temp.layout_height > 0);
+
+    View *parentView = getParentTo<View>();
+    assert(parentView);
+
+    temp.layout(&localArea, parentView->getLocalLayoutSize());
+}
+
+/**
  * 親と同じ領域になるようにエリアを設定する
  */
 void View::layoutFillParent(const Vector2f &parentLocalSize) {

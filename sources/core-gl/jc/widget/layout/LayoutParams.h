@@ -7,7 +7,9 @@
 #ifndef LAYOUTPARAMS_H_
 #define LAYOUTPARAMS_H_
 
-#include    "jc/widget/View.h"
+#include    "jointcoding.h"
+#include    "jc/math/Vec2.h"
+#include    "jc/math/Rect.h"
 
 namespace jc {
 namespace view {
