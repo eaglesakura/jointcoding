@@ -76,7 +76,7 @@ protected:
     /**
      * レンダリング用テクスチャを生成する
      */
-    virtual void createTexture();
+    virtual void createTexture(MDevice device);
 
 public:
     TextView();
@@ -84,9 +84,19 @@ public:
     virtual ~TextView();
 
     /**
+     * コンテンツと同サイズにレイアウトし直す。
+     */
+    virtual void layoutWrap();
+
+    /**
      * テキストを設定する
      */
     virtual void setText(const String &text);
+
+    /**
+     * テキストを設定する
+     */
+    virtual void setText(MDevice device, const String text);
 
     /**
      * テキストを取得する
@@ -99,6 +109,11 @@ public:
      * フォントの高さを設定する
      */
     virtual void setTextHeightPixel(const u32 height);
+
+    /**
+     * フォントの高さを設定する
+     */
+    virtual void setTextHeightPixel(MDevice device, const u32 height);
 
     /**
      * フォントの高さを取得する

@@ -25,15 +25,19 @@ TextView::TextView() {
 TextView::~TextView() {
 
 }
+/**
+ * コンテンツと同サイズにレイアウトし直す。
+ */
+void TextView::layoutWrap() {
+    const Vector2f textSize = getFontAreaSize();
+    layout(createRectFromXYWH(localArea.left, localArea.top, textSize.x, textSize.y));
+}
 
 /**
  * レンダリング用テクスチャを生成する
  */
-void TextView::createTexture() {
-    if (!isRegisteredWindow()) {
-        // 未登録なら何もしない
-        return;
-    }
+void TextView::createTexture(MDevice device) {
+    assert(device);
 
     if (textureCreated) {
         // テクスチャ生成済み
@@ -56,13 +60,9 @@ void TextView::createTexture() {
     std::vector<String>::const_iterator itr = lines.begin(), end = lines.end();
 
     while (itr != end) {
-
         // フォントを生成する
-        {
-            MFontTexture font = FontTexture::createInstance(*itr, getTextHeightPixel(), getDevice());
-            fontTextures.push_back(font);
-        }
-
+        MFontTexture font = FontTexture::createInstance(*itr, getTextHeightPixel(), device);
+        fontTextures.push_back(font);
         ++itr;
     }
 
@@ -73,6 +73,13 @@ void TextView::createTexture() {
  * テキストを設定する
  */
 void TextView::setText(const String &text) {
+    setText(getDeviceOrNull(), text);
+}
+
+/**
+ * テキストを設定する
+ */
+void TextView::setText(MDevice device, const String text) {
     if (this->text == text) {
         // 同一テキストなら何もしない
         return;
@@ -81,13 +88,22 @@ void TextView::setText(const String &text) {
     this->text = text;
 
     textureCreated = jcfalse;
-    createTexture();
+    if (device) {
+        createTexture(device);
+    }
 }
 
 /**
  * フォントの高さを設定する
  */
 void TextView::setTextHeightPixel(const u32 height) {
+    setTextHeightPixel(getDeviceOrNull(), height);
+}
+
+/**
+ * フォントの高さを設定する
+ */
+void TextView::setTextHeightPixel(MDevice device, const u32 height) {
     if (fontHeightPixel == height) {
         return;
     }
@@ -96,7 +112,10 @@ void TextView::setTextHeightPixel(const u32 height) {
 
     // テクスチャを再生成する
     textureCreated = jcfalse;
-    createTexture();
+
+    if (device) {
+        createTexture(device);
+    }
 }
 
 /**
@@ -104,7 +123,7 @@ void TextView::setTextHeightPixel(const u32 height) {
  */
 void TextView::onRegisteredWindow() {
     // レンダリング用テクスチャを生成する
-    createTexture();
+    createTexture(getDevice());
 }
 
 /**

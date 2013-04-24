@@ -197,6 +197,17 @@ protected:
     }
 
     /**
+     * デバイスが取得できる状態なら取得する
+     */
+    virtual MDevice getDeviceOrNull() const {
+        if(windowContext) {
+            return windowContext->getDevice();
+        } else {
+            return MDevice();
+        }
+    }
+
+    /**
      * Context管理クラスを取得する
      */
     virtual MGLState getState() const {
