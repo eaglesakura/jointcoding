@@ -657,6 +657,33 @@ public:
     }
 
     /**
+     * 現在のサーフェイスを指定済みの色でクリアする
+     * タイルレンダリングをサポートしている場合、最適化したクリアを行う。
+     */
+    inline void clearSurface() {
+        if (GPUCapacity::isSupport(GPUExtension_TileBasedDeferredRendering)) {
+            // シザーがONになっている場合、OFFに変更して全体クリアを行う
+            jcboolean enabled = scissorContext.enable;
+            if (enabled) {
+                enableScissor(jcfalse);
+            }
+
+            // バッファクリア
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+            if (enabled) {
+                enableScissor(jctrue);
+            }
+        } else {
+            // バッファクリア
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        }
+        assert_gl();
+    }
+
+public:
+    /* for debug */
+    /**
      * シェーダーに関するエラーを出力する。
      * エラーが発生していたらtrueを返す。
      */
