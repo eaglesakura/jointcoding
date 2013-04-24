@@ -85,7 +85,6 @@ struct RectT {
         right = x + w;
         bottom = y + h;
     }
-
     /**
      * 指定座標がTOPになるように移動させる
      */
@@ -139,6 +138,15 @@ struct RectT {
         this->right = right;
         this->left = right - _width;
     }
+
+    /**
+     * 特定のXY位置に移動する
+     */
+    void moveTo(const T newLeft, const T newTop) {
+        moveToLeft(newLeft);
+        moveToTop(newTop);
+    }
+
 
     /**
      * Left/Top/Right/Bottomで一致を確認する
@@ -277,6 +285,15 @@ struct RectT {
      */
     void scaling(const float scale) {
         scaling(scale, scale);
+    }
+
+    /**
+     * Left/Topの位置に移動したRectを生成する
+     */
+    RectT<T> createMoveTo(const T left, const T top) const {
+        RectT<T> result = (*this);
+        result.moveTo(left, top);
+        return result;
     }
 
     /**

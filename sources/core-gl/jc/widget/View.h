@@ -502,6 +502,27 @@ public:
     }
 
     /**
+     * レイアウトを補正する
+     */
+    virtual void layoutOffset(const float x, const float y) {
+        layout(localArea.createOffset(x, y, x, y));
+    }
+
+    /**
+     * レイアウトを移動する
+     */
+    virtual void moveTo(const Vector2f &localPosition) {
+        layout(localArea.createMoveTo(localPosition.x, localPosition.y));
+    }
+
+    /**
+     * レイアウトを移動する
+     */
+    virtual void moveTo(const float left, const float top) {
+        layout(localArea.createMoveTo(left, top));
+    }
+
+    /**
      * 親のレイアウトエリア内で移動を行う
      */
     virtual void moveTo( const LayoutParams &params );
