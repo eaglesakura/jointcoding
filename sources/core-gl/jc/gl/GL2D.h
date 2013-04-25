@@ -23,5 +23,8 @@
 #include    "jc/gl/sprite/Sprite.hpp"
 #include    "jc/gl/sprite/SpriteManager.h"
 
+// debug support
+#include    "jc/gl/ascii/DebugFont.h"
+
 
 #endif /* GL2D_H_ */
