@@ -27,7 +27,6 @@ enum JniArrayUnlock_e {
     JniArrayUnlock_Abort = JNI_ABORT,
 };
 
-
 /**
  * 配列管理用
  */
@@ -370,6 +369,76 @@ public:
 
     static jc_sp<JDoubleArray> global(jdoubleArray array) {
         return jc_sp<JDoubleArray>((JDoubleArray*) (new JDoubleArray(array))->addGlobalRef());
+    }
+};
+#undef PRIMITIVE_TYPE
+
+/**
+ * object配列
+ */
+#define PRIMITIVE_TYPE jobject
+class JObjectArray: public JniArray<jobjectArray, PRIMITIVE_TYPE> {
+    JObjectArray(jobjectArray array) :
+            JniArray<jobjectArray, PRIMITIVE_TYPE>(array) {
+    }
+
+public:
+    virtual ~JObjectArray() {
+
+    }
+    /**
+     * 配列の内容をdstへコピーする
+     */
+    virtual void get(s32 srcIndex, s32 length, PRIMITIVE_TYPE *dst) {
+        CALL_JNIENV();
+        for (s32 i = 0; i < length; ++i) {
+            dst[i] = env->GetObjectArrayElement(getArrayObject(), srcIndex + i);
+        }
+    }
+
+    /**
+     * 配列オブジェクトを取得する
+     */
+    virtual jobject get(const s32 index) {
+        CALL_JNIENV();
+        return env->GetObjectArrayElement(getArrayObject(), index);
+    }
+
+    /**
+     * srcの内容を配列にコピーする
+     */
+    virtual void set(s32 dstIndex, s32 length, PRIMITIVE_TYPE *src) {
+        CALL_JNIENV();
+        for( s32 i = 0; i < length; ++i ) {
+            env->SetObjectArrayElement(getArrayObject(), dstIndex + i, src[i]);
+        }
+    }
+
+    /**
+     * 編集を開始する
+     */
+    virtual PRIMITIVE_TYPE* lock() {
+        assert(false);
+
+        // 呼び出しは必ず失敗する
+        return NULL;
+    }
+
+    /**
+     * 編集を終了する
+     */
+    virtual void unlock(JniArrayUnlock_e type) {
+        assert(false);
+
+        // 呼び出しは必ず失敗する
+    }
+
+    static jc_sp<JObjectArray> wrap(jobjectArray array) {
+        return jc_sp<JObjectArray>(new JObjectArray(array));
+    }
+
+    static jc_sp<JObjectArray> global(jobjectArray array) {
+        return jc_sp<JObjectArray>((JObjectArray*) (new JObjectArray(array))->addGlobalRef());
     }
 };
 #undef PRIMITIVE_TYPE

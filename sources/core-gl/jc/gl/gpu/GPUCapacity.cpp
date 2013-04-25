@@ -140,35 +140,15 @@ void GPUCapacity::initialize() {
     {
         const charactor *pExtensions = (const charactor*) glGetString(GL_EXTENSIONS);
         split(pExtensions, " ", &extensions);
-#if 0
-        /**
-         * ETC1に対応している
-         */
-        GPUExtension_Texture_ETC1,
 
-        /**
-         * PVRTC対応
-         */
-        GPUExtension_Texture_PVRTC,
-
-        /**
-         * BGRAテクスチャ対応
-         */
-        GPUExtension_Texture_BGRA8888,
-
-        /**
-         * external画像
-         * for Android（support SurfaceTexture）
-         */
-        GPUExtension_OES_EGL_image_external,
-#endif
 #define EXTENSION_NAME(def) #def
         const charactor* EXTENSION_NAMES[] = {
         //
-        EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture),//
-        EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), //
-                EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), //
-                EXTENSION_NAME(GL_OES_EGL_image_external), //
+        EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture),// ETC1
+        EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), // PVRTC
+                EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), // BGRA
+                EXTENSION_NAME(GL_OES_EGL_image_external), // SurfaceTexture
+                EXTENSION_NAME(GL_OES_depth_texture), // 深度テクスチャ
                 };
 
         // 対応している拡張機能を調べる
@@ -181,6 +161,8 @@ void GPUCapacity::initialize() {
                 assert(GPUCapacity::isSupport((GPUExtension_e)i));
             }
         }
+#undef  EXTENSION_NAME
+
     }
 
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, (GLint*) &maxVertexAttrbs);

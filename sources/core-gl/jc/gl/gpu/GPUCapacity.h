@@ -40,10 +40,20 @@ enum GPUExtension_e {
     GPUExtension_OES_EGL_image_external,
 
     /**
+     * 深度テクスチャが利用できる
+     */
+    GPUExtension_Texture_Depth,
+
+    /**
      * タイルレンダリング対応
      * PowerVR(iOS, GalaxyNexus, etc...)
      */
     GPUExtension_TileBasedDeferredRendering,
+
+    /**
+     * half floatテクスチャが利用できる
+     */
+    GPUExtension_Texture_HalfFloat,
 
     /**
      * num flags
@@ -144,6 +154,7 @@ public:
 
     /**
      * GPU系列のチェックを行う
+     * 代表的な系列機以外はUnknownになる（エミュレーター等）
      */
     static GPUFamily_e getGPUFamily();
 };
