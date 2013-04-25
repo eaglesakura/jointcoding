@@ -400,6 +400,9 @@ public:
      * 配列オブジェクトを取得する
      */
     virtual jobject get(const s32 index) {
+        // 長さをチェックする
+        assert(index < length());
+
         CALL_JNIENV();
         return env->GetObjectArrayElement(getArrayObject(), index);
     }
