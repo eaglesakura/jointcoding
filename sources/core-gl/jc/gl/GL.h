@@ -20,11 +20,9 @@
 #include    "GLES2/gl2.h"
 #include    "GLES2/gl2ext.h"
 #endif // BUILD_Android
-
 #ifdef BUILD_iOS
 #include <OpenGLES/ES2/gl.h>
 #endif // BUILD_iOS
-
 #endif
 
 namespace jc {
@@ -67,7 +65,6 @@ inline s32 /* GLfixed */float2fixed(float f) {
 #define     assert_gl(...)    { }
 #endif
 
-
 /**
  * 無効な属性インデックスを示す定数
  */
@@ -77,7 +74,6 @@ inline s32 /* GLfixed */float2fixed(float f) {
  * 無効な属性インデックスを示す
  */
 #define UNIFORM_DISABLE_INDEX -1
-
 
 }
 }

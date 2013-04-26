@@ -98,32 +98,22 @@ void GPUCapacity::initialize() {
              * 登録されるファミリー
              */
             GPUFamily_e family;
-
-            /**
-             * タイルレンダリングの有無
-             */
-            jcboolean tile_rendering;
         } gpu_groups[] = {
         //
         // for PowerVR
-                { "PowerVR", GPUFamily_PowerVR, jctrue },
+                { "PowerVR", GPUFamily_PowerVR },
                 // for Mali
-                { "Mali", GPUFamily_Mali, jctrue },
+                { "Mali", GPUFamily_Mali },
                 // for Tegra
-                { "Tegra", GPUFamily_Tegra, jcfalse },
+                { "Tegra", GPUFamily_Tegra },
                 // for Adreno
-                { "Adreno", GPUFamily_Adreno, jcfalse }, };
+                { "Adreno", GPUFamily_Adreno }, };
 
         for (s32 i = 0; i < (sizeof(gpu_groups) / sizeof(GPUFamilyGroup)); ++i) {
             if (strstr(pRenderer, gpu_groups[i].name)) {
                 // GPUファミリー
                 gpuFamily = gpu_groups[i].family;
-                // タイルレンダリング
-                if (gpu_groups[i].tile_rendering) {
-                    extension_flags.enable(GPUExtension_TileBasedDeferredRendering);
-                }
-
-                jclogf("GPU = %s(%s) TBDR(%s)", gpu_groups[i].name, pRenderer, gpu_groups[i].tile_rendering ? "YES" : "NO");
+                jclogf("GPU = %s(%s)", gpu_groups[i].name, pRenderer);
                 break;
             }
         }
@@ -144,11 +134,13 @@ void GPUCapacity::initialize() {
 #define EXTENSION_NAME(def) #def
         const charactor* EXTENSION_NAMES[] = {
         //
-        EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture),// ETC1
-        EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), // PVRTC
-                EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), // BGRA
-                EXTENSION_NAME(GL_OES_EGL_image_external), // SurfaceTexture
+        EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture),// ETC1(Android)
+        EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), // PVRTC(PowerVR)
+                "GL_EXT_texture_compression_s3tc", // s3tc texture(Tegra)
+                EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), // BGRA(Android)
+                EXTENSION_NAME(GL_OES_EGL_image_external), // SurfaceTexture(Android)
                 EXTENSION_NAME(GL_OES_depth_texture), // 深度テクスチャ
+                EXTENSION_NAME(GL_EXT_discard_framebuffer), // フレームバッファの無効化
                 };
 
         // 対応している拡張機能を調べる

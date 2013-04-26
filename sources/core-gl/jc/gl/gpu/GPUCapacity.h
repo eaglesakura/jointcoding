@@ -20,32 +20,44 @@ namespace gl {
 enum GPUExtension_e {
     /**
      * ETC1に対応している
+     * GL_OES_compressed_ETC1_RGB8_texture
      */
     GPUExtension_Texture_ETC1,
 
     /**
      * PVRTC対応
+     * GL_IMG_texture_compression_pvrtc
      */
     GPUExtension_Texture_PVRTC,
 
     /**
+     * S3TC対応
+     * GL_EXT_texture_compression_s3tc
+     */
+    GPUExtension_Texture_S3TC,
+
+    /**
      * BGRAテクスチャ対応
+     * GL_EXT_texture_format_BGRA8888
      */
     GPUExtension_Texture_BGRA8888,
 
     /**
      * external画像
+     * GL_OES_EGL_image_external
      * for Android（support SurfaceTexture）
      */
     GPUExtension_OES_EGL_image_external,
 
     /**
      * 深度テクスチャが利用できる
+     * GL_OES_depth_texture
      */
     GPUExtension_Texture_Depth,
 
     /**
      * タイルレンダリング対応
+     * GL_EXT_discard_framebuffer
      * PowerVR(iOS, GalaxyNexus, etc...)
      */
     GPUExtension_TileBasedDeferredRendering,
