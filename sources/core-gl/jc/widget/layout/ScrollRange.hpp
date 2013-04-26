@@ -112,8 +112,8 @@ public:
     }
 
     /**
-     * 表示レンジを取得する
-     * 値は上端 0.0〜下端 1.0で取得する
+     * スクロールバーを表示する高さを設定する
+     * 表示領域はviewport上に投影される
      */
     void getVerticalRange(float *barBeginPos, float *barEndPos) const {
         float viewTop;
@@ -121,14 +121,26 @@ public:
         const float viewHeight = getViewHeight(&viewTop, &viewBottom);
         const float vpHeight = viewport.height();
 
+        if (viewHeight <= vpHeight) {
+            *barBeginPos = viewport.top;
+            *barEndPos = viewport.bottom;
+            return;
+        }
+
         // viewportに対するスクロールバーの割合を決定する
         const float barWeight = (vpHeight / viewHeight);
+        const float barHeight = vpHeight * barWeight;
+        const float barOver = vpHeight - barHeight;
 
-        // 現在のTOP位置の割合を見る
-        const float topWeight = (viewTop - viewport.top) / vpHeight;
+        // Viewのはみ出した量
+        const float viewOverPixel = (viewHeight - vpHeight);
+        const float nowOverPixel = (viewBottom - viewport.bottom);
 
-        const float barBegin = viewport.top + (vpHeight * topWeight);
-        const float barEnd = barBegin + (vpHeight * barWeight);
+        // Viewのはみ出した量の割合
+        const float nowOverWeight = nowOverPixel / viewOverPixel;
+
+        const float barEnd = viewport.bottom - (barOver * nowOverWeight);
+        const float barBegin = barEnd - barHeight;
 
         *barBeginPos = barBegin;
         *barEndPos = barEnd;
