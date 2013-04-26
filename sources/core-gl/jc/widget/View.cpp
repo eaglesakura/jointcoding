@@ -252,7 +252,7 @@ void View::onClick() {
  * ドラッグが行われた
  */
 void View::onDrag(const Vector2f &currentPos, const Vector2f &quantity, const Vector2f &beginPos) {
-    layoutDirect(localArea.createOffset(quantity.x, quantity.y));
+//    layoutDirect(localArea.createOffset(quantity.x, quantity.y));
 }
 
 /**
