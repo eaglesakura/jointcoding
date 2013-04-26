@@ -72,7 +72,7 @@ struct RectT {
     /**
      * 面積を持たない場合trueを返す
      */
-    jcboolean empty() {
+    jcboolean empty() const {
         return (left == right) || (top == bottom);
     }
 
@@ -328,6 +328,24 @@ struct RectT {
     RectT<T> createMoveToBottom(const T bottom) const {
         RectT<T> result = (*this);
         result.moveToBottom(bottom);
+        return result;
+    }
+
+    /**
+     * Bottomの位置に移動したRectを生成する
+     */
+    RectT<T> createMoveToLeft(const T left) const {
+        RectT<T> result = (*this);
+        result.moveToLeft(left);
+        return result;
+    }
+
+    /**
+     * Bottomの位置に移動したRectを生成する
+     */
+    RectT<T> createMoveToTop(const T top) const {
+        RectT<T> result = (*this);
+        result.moveToTop(top);
         return result;
     }
 

@@ -53,17 +53,62 @@ public:
     }
 
     /**
+     * スクロールエリアが有効であることを確認する
+     */
+    jcboolean valid() const {
+        return !viewport.empty() && !view.empty();
+    }
+    /**
      * 表示領域を設定する
      */
     void setViewport(const RectF &viewport) {
         this->viewport = viewport;
     }
 
+    RectF getViewport() const {
+        return viewport;
+    }
+
     /**
      * Viewの実際にある領域を設定する
      */
     void setViewArea(const RectF &view) {
-        this->view = viewport;
+        this->view = view;
+    }
+
+    RectF getViewArea() const {
+        return view;
+    }
+
+    /**
+     * 縦方向がレンジ外になったらtrueを返す
+     */
+    jcboolean isVerticalOverRange() const {
+        if (!valid()) {
+            return jcfalse;
+        }
+        return view.top < viewport.top || view.bottom > viewport.bottom;
+    }
+
+    /**
+     * 縦方向スクロールが有効ならtrue
+     */
+    jcboolean isVerticalScrollEnable() const {
+        return view.height() > viewport.height();
+    }
+
+    /**
+     * Viewの上端がViewportよりも下ならtrueを返す
+     */
+    jcboolean isTopOverRange() const {
+        return view.top > viewport.top;
+    }
+
+    /**
+     * Viewの下端がViewportよりも上ならtrueを返す
+     */
+    jcboolean isBottomOverRange() const {
+        return view.bottom < viewport.bottom;
     }
 
     /**
@@ -88,7 +133,6 @@ public:
         *barBeginPos = barBegin;
         *barEndPos = barEnd;
     }
-
 
     /**
      * 縦方向のスクロールバーを持つならtrueを返す
