@@ -7,6 +7,7 @@
 #include    "jc/widget/window/WindowEventListener.h"
 #include    "jc/widget/View.h"
 #include    "jc/widget/window/Window.h"
+#include    "jc/widget/event/DragEvent.h"
 
 namespace jc {
 namespace view {
@@ -22,7 +23,7 @@ WindowEventListener::WindowEventListener(MWindowContext windowContext) {
  * 最後にイベントハンドリングを行ってから何秒経過したかの値を取得する
  */
 double WindowEventListener::getElapsedLastEventHandleSec() const {
-    return  Timer::lapseTimeSec(lastHandleTime, windowContext->systemTime());
+    return Timer::lapseTimeSec(lastHandleTime, windowContext->systemTime());
 }
 
 /**
@@ -32,15 +33,6 @@ double WindowEventListener::getElapsedLastEventHandleSec() const {
  */
 void WindowEventListener::onClick(const TouchDetector* detector, const TouchPoint &point) {
 //    log_point("onClick", point);
-    resetLastEventHandleTime();
-}
-
-/*
- * ドラッグを終了させた。
- * onClick()とどちらかが呼び出される。
- */
-void WindowEventListener::onDragEnd(const TouchDetector *detector, const TouchPoint &point) {
-//    log_point("onDragEnd", point);
     resetLastEventHandleTime();
 }
 
@@ -66,6 +58,9 @@ void WindowEventListener::onTouchBegin(const TouchDetector* detector, const Touc
     if (!target) {
         return;
     }
+
+    // 現在位置=前の位置に上書きする
+    beforeDragPosition = point.getBeginPosition();
 
     // タッチイベントをブロードキャストする
     if (refreshTouch) {
@@ -124,6 +119,30 @@ void WindowEventListener::onSingleTouchEnd(const TouchDetector* detector, const 
 void WindowEventListener::onDrag(const TouchDetector* detector, const TouchPoint &point) {
     resetLastEventHandleTime();
 //    log_point("onDrag", point);
+    MView touchedView = windowContext->lockTouchTarget();
+
+    if (!touchedView) {
+        return;
+    }
+
+    windowContext->sendEvent(DragEventExtension::createEvent(point, beforeDragPosition, touchedView));
+
+}
+
+/*
+ * ドラッグを終了させた。
+ * onClick()とどちらかが呼び出される。
+ */
+void WindowEventListener::onDragEnd(const TouchDetector *detector, const TouchPoint &point) {
+//    log_point("onDragEnd", point);
+    MView touchedView = windowContext->lockTouchTarget();
+
+    if (!touchedView) {
+        return;
+    }
+
+    resetLastEventHandleTime();
+    windowContext->sendEvent(DragEventExtension::createDragEndEvent(point, beforeDragPosition, touchedView));
 }
 
 /**

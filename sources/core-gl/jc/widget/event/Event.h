@@ -37,11 +37,24 @@ enum EventType_e {
     EventType_Tick,
 };
 
+/**
+ * 各Viewにブロードキャストされるイベント
+ */
 enum BroadcastType_e {
     /**
      * クリックイベントが行われた
      */
     BroadcastType_Click = 0x00100000,
+
+    /**
+     * ドラッグが行われた
+     */
+    BroadcastType_Drag,
+
+    /**
+     * ドラッグが終了した
+     */
+    BroadcastType_DragEnd,
 
     /**
      * キーイベントが行われた

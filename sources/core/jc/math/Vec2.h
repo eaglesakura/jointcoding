@@ -59,6 +59,13 @@ struct _Vector2 {
     }
 
     /**
+     * 減算を行う
+     */
+    _Vector2<T> operator-(const _Vector2 &v) const {
+        return _Vector2<T>(x - v.x, y - v.y);
+    }
+
+    /**
      * スカラー演算を行う
      */
     _Vector2<T> operator*=(const T scalar) {

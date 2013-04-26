@@ -25,6 +25,11 @@ class WindowEventListener: public Object, public TouchListener, public KeyListen
      * 最後にイベントハンドリングを行った時刻
      */
     jctime lastHandleTime;
+
+    /**
+     * 前のフレームでのドラッグ位置
+     */
+    Vector2f beforeDragPosition;
 public:
     WindowEventListener(MWindowContext windowContext);
     virtual ~WindowEventListener() {
