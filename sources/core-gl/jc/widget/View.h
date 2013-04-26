@@ -547,6 +547,18 @@ public:
     virtual void moveToCenterY(const float y) {
         layoutDirect(localArea.createMoveToCenterY(y));
     }
+    /**
+     * View右が引数位置になるように設定する
+     */
+    virtual void moveToRight(const float right) {
+        layoutDirect(localArea.createMoveToRight(right));
+    }
+    /**
+     * View下が引数位置になるように設定する
+     */
+    virtual void moveToBottom(const float bottom) {
+        layoutDirect(localArea.createMoveToBottom(bottom));
+    }
 
     /**
      * 親のレイアウトエリア内で移動を行う

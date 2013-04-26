@@ -314,6 +314,24 @@ struct RectT {
     }
 
     /**
+     * Rightの位置に移動したRectを生成する
+     */
+    RectT<T> createMoveToRight(const T right) const {
+        RectT<T> result = (*this);
+        result.moveToRight(right);
+        return result;
+    }
+
+    /**
+     * Bottomの位置に移動したRectを生成する
+     */
+    RectT<T> createMoveToBottom(const T bottom) const {
+        RectT<T> result = (*this);
+        result.moveToBottom(bottom);
+        return result;
+    }
+
+    /**
      * 内側にnだけ移動させた四角形を作成する
      */
     RectT<T> createInset(const T x, const T y) const {
