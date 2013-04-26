@@ -129,6 +129,13 @@ public:
         return uniqueId;
     }
 
+    /**
+     * ユニークIDが引数と一致すればtrueを返す
+     */
+    virtual jcboolean uniqueIdIs(const scene_id id) const {
+        return id == getUniqueId();
+    }
+
     virtual u32 getChildrenNum() const {
         return childs.size();
     }

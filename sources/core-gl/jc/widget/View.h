@@ -535,6 +535,20 @@ public:
     }
 
     /**
+     * Y位置がセンタリングされるように移動する
+     */
+    virtual void moveToCenterX(const float x) {
+        layoutDirect(localArea.createMoveToCenterX(x));
+    }
+
+    /**
+     * Y位置がセンタリングされるように移動する
+     */
+    virtual void moveToCenterY(const float y) {
+        layoutDirect(localArea.createMoveToCenterY(y));
+    }
+
+    /**
      * 親のレイアウトエリア内で移動を行う
      */
     virtual void moveTo( const LayoutParams &params );

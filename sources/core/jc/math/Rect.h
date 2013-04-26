@@ -147,7 +147,6 @@ struct RectT {
         moveToTop(newTop);
     }
 
-
     /**
      * Left/Top/Right/Bottomで一致を確認する
      */
@@ -293,6 +292,24 @@ struct RectT {
     RectT<T> createMoveTo(const T left, const T top) const {
         RectT<T> result = (*this);
         result.moveTo(left, top);
+        return result;
+    }
+
+    /**
+     * X中心の位置に移動したRectを生成する
+     */
+    RectT<T> createMoveToCenterX(const T x) const {
+        RectT<T> result = (*this);
+        result.moveToCenterX(x);
+        return result;
+    }
+
+    /**
+     * Y中心の位置に移動したRectを生成する
+     */
+    RectT<T> createMoveToCenterY(const T y) const {
+        RectT<T> result = (*this);
+        result.moveToCenterY(y);
         return result;
     }
 
