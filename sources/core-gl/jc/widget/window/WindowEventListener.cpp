@@ -103,7 +103,9 @@ void WindowEventListener::onSingleTouchEnd(const TouchDetector* detector, const 
     if (touchedView->isIntersect(touchPos)) {
 //        jclogf("onClick(%x)", touchedView.get());
         // クリックイベントをブロードキャストする
-        window->broadcastEvent(Event::createEvent(BroadcastType_Click, touchedView));
+        if (type == TouchCompleteType_SingleClick) {
+            window->broadcastEvent(Event::createEvent(BroadcastType_Click, touchedView));
+        }
     } else {
         // クリック完了する前にViewから離された
 //        jclogf("onClick Out(%x)", touchedView.get());
@@ -126,7 +128,8 @@ void WindowEventListener::onDrag(const TouchDetector* detector, const TouchPoint
     }
 
     windowContext->sendEvent(DragEventExtension::createEvent(point, beforeDragPosition, touchedView));
-
+    // 現在位置を保存
+    beforeDragPosition = point.getCurrentPosition();
 }
 
 /*

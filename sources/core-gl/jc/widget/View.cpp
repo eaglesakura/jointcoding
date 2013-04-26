@@ -252,14 +252,14 @@ void View::onClick() {
  * ドラッグが行われた
  */
 void View::onDrag(const Vector2f &currentPos, const Vector2f &quantity, const Vector2f &beginPos) {
-    jclogf("onDrag(%f, %f)", currentPos.x, currentPos.y);
+    layoutDirect(localArea.createOffset(quantity.x, quantity.y));
 }
 
 /**
  * ドラッグ終了した
  */
 void View::onDragEnd(const Vector2f &currentPos, const Vector2f &beginPos) {
-    jclogf("onDragEnd(%f, %f)", currentPos.x, currentPos.y);
+    jclogf("onDragEnd (%f, %f) -> (%f, %f)", beginPos.x, beginPos.y, currentPos.x, currentPos.y);
 }
 
 /**
