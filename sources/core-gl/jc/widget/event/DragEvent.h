@@ -13,6 +13,7 @@
 
 namespace jc {
 namespace view {
+class View;
 
 /**
  * ドラッグが行われた
@@ -70,11 +71,19 @@ public:
     }
 
     /**
+     * タッチ対象のViewを取得する
+     */
+    virtual jc_sp<View> getView() const {
+        return view;
+    }
+
+    /**
      * ドラッグ中イベントを作成する
      */
     static MEvent createEvent(const TouchPoint &point, const Vector2f beforePosition, const jc_sp<View> view) {
         jc_sp<DragEventExtension> extension(new DragEventExtension(point, beforePosition, view));
         MEvent result(new Event(BroadcastType_Drag, extension));
+        result->setBroadcast(jctrue);
         return result;
     }
 
@@ -84,10 +93,10 @@ public:
     static MEvent createDragEndEvent(const TouchPoint &point, const Vector2f beforePosition, const jc_sp<View> view) {
         jc_sp<DragEventExtension> extension(new DragEventExtension(point, beforePosition, view));
         MEvent result(new Event(BroadcastType_DragEnd, extension));
+        result->setBroadcast(jctrue);
         return result;
     }
-};
-}
+};}
 }
 
 #endif /* DRAGEVENT_H_ */

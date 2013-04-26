@@ -249,6 +249,20 @@ void View::onClick() {
 }
 
 /**
+ * ドラッグが行われた
+ */
+void View::onDrag(const Vector2f &currentPos, const Vector2f &quantity, const Vector2f &beginPos) {
+    jclogf("onDrag(%f, %f)", currentPos.x, currentPos.y);
+}
+
+/**
+ * ドラッグ終了した
+ */
+void View::onDragEnd(const Vector2f &currentPos, const Vector2f &beginPos) {
+    jclogf("onDragEnd(%f, %f)", currentPos.x, currentPos.y);
+}
+
+/**
  * フォーカス変更が行われた
  */
 void View::onFocusChanged(const jcboolean has) {
@@ -393,6 +407,35 @@ void View::dispatchRecuestFocus(const jcboolean has) {
 }
 
 /**
+ * ドラッグイベントをハンドリングする
+ * @param drag ドラッグ中のView
+ * @param currentPos 現在の指の位置
+ * @param quantity 前回のイベントからの移動量
+ * @param beginPos ドラッグ開始時の指の位置
+ */
+void View::dispatchDragEvent(const jc_sp<View> drag, const Vector2f &currentPos, const Vector2f quantity, const Vector2f beginPos) {
+    if(drag.get() != this) {
+        return;
+    }
+
+    onDrag(currentPos, quantity, beginPos);
+}
+
+/**
+ * ドラッグイベント終了をハンドリングする
+ * @param drag ドラッグ中のView
+ * @param currentPos 現在の指の位置
+ * @param beginPos ドラッグ開始時の指の位置
+ */
+void View::dispatchDragEndEvent(const jc_sp<View> drag, const Vector2f &currentPos, const Vector2f beginPos) {
+    if(drag.get() != this) {
+        return;
+    }
+
+    onDragEnd(currentPos, beginPos);
+}
+
+/**
  * 送信されたイベントを処理する
  */
 void View::dispatchEvent(MEvent event) {
@@ -405,12 +448,24 @@ void View::dispatchEvent(MEvent event) {
         case BroadcastType_Click:
             dispatchClickEvent(event->getExtension<View>());
             break;
+        case BroadcastType_Drag:
+        case BroadcastType_DragEnd: {
+            jc_sp<DragEventExtension> ext = event->getExtension<DragEventExtension>();
+            assert(ext);
+
+            if(EVENT_TYPE == BroadcastType_Drag ) {
+                dispatchDragEvent(ext->getView(), ext->getCurrentPosition(), ext->getQuantity(), ext->getBeginPosition());
+            } else {
+                dispatchDragEndEvent(ext->getView(), ext->getCurrentPosition(), ext->getBeginPosition());
+            }
+            break;
+        }
         case BroadcastType_Key:
-            dispatchKeyEvent(event->getExtension<KeyData>());
-            break;
+        dispatchKeyEvent(event->getExtension<KeyData>());
+        break;
         default:
-            onEvent(event);
-            break;
+        onEvent(event);
+        break;
     }
 }
 

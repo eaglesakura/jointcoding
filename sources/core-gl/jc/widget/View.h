@@ -15,6 +15,7 @@
 
 #include    "jc/widget/layout/LayoutParams.h"
 #include    "jc/widget/event/Event.h"
+#include    "jc/widget/event/DragEvent.h"
 #include    "jc/widget/window/WindowContext.h"
 #include    "jc/widget/anim/TransactionCounter.h"
 #include    "jc/widget/anim/WindowTimer.h"
@@ -994,6 +995,16 @@ public:
          */
         virtual void onKeyUp(const MKeyData keyData) {
         }
+
+        /**
+         * ドラッグが行われた
+         */
+        virtual void onDrag(const Vector2f &currentPos, const Vector2f &quantity, const Vector2f &beginPos);
+
+        /**
+         * ドラッグ終了した
+         */
+        virtual void onDragEnd(const Vector2f &currentPos, const Vector2f &beginPos);
     protected:
         // 基本制御系
 
@@ -1001,6 +1012,23 @@ public:
          * どれかのViewがクリックされたらハンドリングを行う
          */
         virtual void dispatchClickEvent(const jc_sp<View> clicked);
+
+        /**
+         * ドラッグイベントをハンドリングする
+         * @param drag ドラッグ中のView
+         * @param currentPos 現在の指の位置
+         * @param quantity 前回のイベントからの移動量
+         * @param beginPos ドラッグ開始時の指の位置
+         */
+        virtual void dispatchDragEvent(const jc_sp<View> drag, const Vector2f &currentPos, const Vector2f quantity, const Vector2f beginPos);
+
+        /**
+         * ドラッグイベント終了をハンドリングする
+         * @param drag ドラッグ中のView
+         * @param currentPos 現在の指の位置
+         * @param beginPos ドラッグ開始時の指の位置
+         */
+        virtual void dispatchDragEndEvent(const jc_sp<View> drag, const Vector2f &currentPos, const Vector2f beginPos);
 
         /**
          * どれかのキーが押された
