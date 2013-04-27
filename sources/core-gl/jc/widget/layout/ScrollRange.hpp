@@ -112,6 +112,20 @@ public:
     }
 
     /**
+     * View位置が下端に達していたらtrueを返す
+     */
+    jcboolean isBottomLine() const {
+        return getViewBottom() <= viewport.bottom;
+    }
+
+    /**
+     * View位置が上端に達していたらtrueを返す
+     */
+    jcboolean isTopLine() const {
+        return getViewTop() >= viewport.top;
+    }
+
+    /**
      * スクロールバーを表示する高さを設定する
      * 表示領域はviewport上に投影される
      */
