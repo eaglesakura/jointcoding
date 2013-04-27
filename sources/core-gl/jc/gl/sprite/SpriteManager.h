@@ -330,6 +330,16 @@ public:
     }
 
     /**
+     * レンダリングエリアのpushと同時にクリアを行う
+     */
+    virtual void pushRenderArea(const jcboolean withClear) {
+        device->getState()->pushScissor();
+        if(withClear) {
+            clearRenderArea();
+        }
+    }
+
+    /**
      * レンダリングエリアを１段階取り出す
      */
     virtual void popRenderArea() {

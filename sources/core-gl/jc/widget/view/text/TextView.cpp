@@ -69,7 +69,7 @@ void TextView::createTexture(MDevice device) {
     textureCreated = jctrue;
 
     // 領域が設定されてないなら再設定
-    if(localArea.empty()) {
+    if (localArea.empty()) {
         layoutWrap();
     }
 }
@@ -202,20 +202,22 @@ void TextView::onSelfRendering() {
     const float AREA_WIDTH = textArea.width();
     // 全テクスチャの描画
     std::list<MFontTexture>::const_iterator itr = fontTextures.begin(), end = fontTextures.end();
+
+    const Color color = getTextColorWithVisible();
     while (itr != end) {
         MFontTexture font = *itr;
 
         if (multilineGravity & TextMultilineGravity_Left) {
             // 左寄せ描画
-            spriteManager->renderingImage(font, textArea.left, y, getTextColor());
+            spriteManager->renderingImage(font, textArea.left, y, color);
         } else if (multilineGravity & TextMultilineGravity_Center) {
             // 中央寄せ描画
             const float offset_x = (AREA_WIDTH - font->getWidth()) / 2;
-            spriteManager->renderingImage(font, textArea.left + offset_x, y, getTextColor());
+            spriteManager->renderingImage(font, textArea.left + offset_x, y, color);
         } else {
             // 左寄せ描画
             const float offset_x = (AREA_WIDTH - font->getWidth());
-            spriteManager->renderingImage(font, textArea.left + offset_x, y, getTextColor());
+            spriteManager->renderingImage(font, textArea.left + offset_x, y, color);
         }
 
         // 次のY位置に移動

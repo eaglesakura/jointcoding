@@ -137,6 +137,13 @@ public:
     }
 
     /**
+     * 可視判定を含めたレンダリング色を取得する
+     */
+    virtual Color getTextColorWithVisible() const {
+        return Color::fromRGBAf(fontColor.rf(), fontColor.gf(), fontColor.bf(), fontColor.af() * getVisibleWeight());
+    }
+
+    /**
      * 改行ごとのマージン値を設定する
      */
     virtual void setLineMargin(const s32 margin) {

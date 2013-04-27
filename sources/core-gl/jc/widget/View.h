@@ -179,6 +179,12 @@ protected:
     TransactionCounter visibleCounter;
 
     /**
+     * 可視遷移カウンターに親を引き継ぐ場合はtrue
+     * デフォルト＝true
+     */
+    jcboolean visibleMultParent;
+
+    /**
      * Viewの配置
      */
     RectF localArea;

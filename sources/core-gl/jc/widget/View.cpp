@@ -17,6 +17,7 @@ View::View() {
     this->down = this->down_inc = this->focus = jcfalse;
     this->enable = this->focusable = this->touchable = jctrue;
     this->focusmove_fromtouch = jctrue;
+    this->visibleMultParent = jctrue;
     this->viewMode = ViewMode_Visible;
 
     // デフォルトのカウンターを整理
@@ -630,7 +631,14 @@ void View::setWeightCounter(const float leapTimeSec) {
  * 可視状態描画用のカウントを取得sルウ
  */
 float View::getVisibleWeight() const {
-    return visibleCounter.getValue();
+    float parentVisible = 1.0f;
+    if (visibleMultParent && getParent()) {
+        View *parent = getParentTo<View>();
+        if (parent) {
+            parentVisible = parent->getVisibleWeight();
+        }
+    }
+    return parentVisible * visibleCounter.getValue();
 }
 
 /**
