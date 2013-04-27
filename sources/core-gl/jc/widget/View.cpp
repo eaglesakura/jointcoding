@@ -328,7 +328,36 @@ void View::dispatchKeyEvent(const MKeyData keyData) {
 
     if (isClickableKey(keyData)) {
         dispatchDownEvent(keyData->isPressing());
+    } else {
+        // keyUp
+        if (!keyData->isPressing()) {
+            scene_id moveTarget = 0;
+            if (getNextFocusSceneId(keyData->getKeyCode(), &moveTarget)) {
+                dispatchFocusMove(keyData, moveTarget);
+            }
+        }
     }
+}
+
+/**
+ * フォーカス移動の制御を行う
+ */
+void View::dispatchFocusMove(const MKeyData keyData, const scene_id target_view) {
+    MView view = windowContext->findViewById(target_view);
+    if (!view) {
+        // 対象のViewが見つからなかった
+        return;
+    }
+
+    // 対象がフォーカスを持てなかったら何もしない
+    if (!view->isFocusable()) {
+        return;
+    }
+
+    // 自身のフォーカスを外す
+    this->requestFocus(jcfalse);
+    // 対象のフォーカスを入れる
+    view->requestFocus(jctrue);
 }
 
 /**

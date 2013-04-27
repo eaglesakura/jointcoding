@@ -985,7 +985,7 @@ public:
          * 対応したキーのscene_idを取得する
          * 取得できなかったらfalseを、取得できたらtrueを返す
          */
-        virtual jcboolean getNexutFocusSceneId(const s32 keyCode, scene_id *result) const {
+        virtual jcboolean getNextFocusSceneId(const s32 keyCode, scene_id *result) const {
             KeyFocusMap::const_iterator itr = keyFocusMoveMap.find(keyCode);
             if(itr == keyFocusMoveMap.end()) {
                 // 取得に失敗したからfalseを返して終了
@@ -1100,6 +1100,11 @@ public:
          * ダウン状態の更新を行う
          */
         virtual void dispatchDownEvent(const jcboolean down);
+
+        /**
+         * フォーカス移動の制御を行う
+         */
+        virtual void dispatchFocusMove(const MKeyData keyData, const scene_id target_view);
 
         /**
          * このViewにフォーカスが当たるようにリクエストされた
