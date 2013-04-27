@@ -224,6 +224,11 @@ enum EGLException_e {
     EGLException_SurfaceCreateFailed,
 
     /**
+     * メモリ不足
+     */
+    EGLException_OutOfMemory,
+
+    /**
      * コンテキストのアタッチに失敗
      */
     EGLException_ContextAttachFailed,

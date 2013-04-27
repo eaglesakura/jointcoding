@@ -115,8 +115,15 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 
 // カレントに設定できなければ例外を投げる
         if( !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ) {
-//            printEGLError(__FILE__, __LINE__);
-//            throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
+            EGLint erorr = eglGetError();
+            printEGLError(__FILE__, __LINE__, error);
+            if(error == EGL_BAD_ALLOC) {
+                // メモリ不足
+                throw create_exception(EGLException, EGLException_OutOfMemory);
+            } else {
+                // その他のアタッチエラー
+                throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
+            }
         }
         assert_egl();
 
