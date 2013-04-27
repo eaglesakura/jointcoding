@@ -31,9 +31,10 @@ public:
 
     /**
      * 定期コールイベントのハンドリングを行う
-     * elapsed_sec 前回呼び出しからの経過秒
+     * @param id 識別ID
+     * @param elapsed_sec 前回呼び出しからの経過秒
      */
-    virtual void handleTickEvent(const double elapsed_sec) {
+    virtual void handleTickEvent(const s32 id, const double elapsed_sec) {
     }
 };
 
@@ -78,36 +79,15 @@ class WindowManager: public Object {
      */
     SWindowEventHandler eventHandler;
 
-#if 0
-    struct TickCall {
-        /**
-         * 定期呼び出しを行う間隔
-         * 負の値の場合、定期コールを行わない
-         */
-        double tickCallTime;
-
-        /**
-         * 最後に定期コールを行った時刻
-         * tickCallTimeが負の値の場合、定期コールを行わない
-         */
-        jctime lastTickTime;
-
-        /**
-         * 呼び出しID
-         */
-        u32 id;
-    };
+    /**
+     * コールバックタイマー
+     */
+    typedef typename std::map<s32, WindowTimer> TimerMap;
 
     /**
-     * 呼び出しを行うコールバックタイム一覧
+     * 呼び出しリスト
      */
-    std::list<TickCall> ticks;
-#endif
-
-    /**
-     * 呼び出しタイマー
-     */
-    WindowTimer tick;
+    TimerMap ticks;
 protected:
     /**
      * タッチイベントを処理する
@@ -129,6 +109,10 @@ protected:
      */
     virtual void dispatchEvent(MEvent event);
 
+    /**
+     * タイマーイベントをチェックする
+     */
+    virtual void handleTimerEvents();
 public:
     WindowManager();
     virtual ~WindowManager();
@@ -263,9 +247,15 @@ public:
     /**
      * 定期コールイベントを発行させる。
      * 負の値を設定した場合、コールを行わない。
+     * @param id コールバック時に指定されるID
      * @param callback_sec 何秒間隔で呼び出すかのチェック
      */
-    virtual void setTickCallbackTime( const double callback_sec);
+    virtual void setTickCallbackTime(const s32 id, const double callback_sec);
+
+    /**
+     * 定期コールイベントを終了させる
+     */
+    virtual void removeTickCallTime(const s32 id);
 
     /**
      * ユーザーイベント（キーハンドリング、タップイベント）からの経過時刻を取得する

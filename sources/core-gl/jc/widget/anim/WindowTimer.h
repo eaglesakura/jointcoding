@@ -38,6 +38,12 @@ public:
         timeMilliSeconds = 1;
     }
 
+    WindowTimer(MWindowContext windowContext, const double timerSec) {
+        this->windowContext = windowContext;
+        timeMilliSeconds = (s32) (timerSec * 1000);
+        reset();
+    }
+
     ~WindowTimer() {
     }
 

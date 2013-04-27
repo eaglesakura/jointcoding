@@ -20,7 +20,6 @@ WindowManager::WindowManager() {
 
     touchDetector.reset(new TouchDetector(windowEventListener));
     keyDetector.reset(new KeyDetector(windowEventListener));
-    tick.initialize(windowContext, -1);
 
     // 可変フレームレート範囲を設定
     windowContext->loopController.setFrameRateRange(30, 60);
@@ -113,6 +112,28 @@ void WindowManager::dispatchEvent(MEvent event) {
 }
 
 /**
+ * タイマーイベントをチェックする
+ */
+void WindowManager::handleTimerEvents() {
+    if (!eventHandler) {
+        // イベント発行先が無いなら何もしない
+        return;
+    }
+
+    TimerMap::iterator itr = ticks.begin(), end = ticks.end();
+
+    while (itr != end) {
+        if (itr->second.over()) {
+            eventHandler->handleTickEvent(itr->first, itr->second.elapseSec());
+            // タイマーリセット
+            itr->second.reset();
+        }
+
+        ++itr;
+    }
+}
+
+/**
  * キューに溜まっているイベントの処理を行う
  */
 void WindowManager::handleEvents() {
@@ -125,11 +146,7 @@ void WindowManager::handleEvents() {
     }
 
     // 定期コールイベントを処理する
-    if (eventHandler && tick.over()) {
-        // 指定秒を超えていたら、コールバックを行う
-        eventHandler->handleTickEvent(tick.elapseSec());
-        tick.reset();
-    }
+    handleTimerEvents();
 }
 
 /**
@@ -188,8 +205,24 @@ void WindowManager::loopEnd(const jcboolean withPostFrontBuffer) {
  * 負の値を設定した場合、コールを行わない。
  * @param callback_sec 何秒間隔で呼び出すかのチェック
  */
-void WindowManager::setTickCallbackTime(const double callback_sec) {
-    tick.setTimerSec(callback_sec);
+void WindowManager::setTickCallbackTime(const s32 id, const double callback_sec) {
+    TimerMap::iterator itr = ticks.find(id);
+    if (itr == ticks.end()) {
+        WindowTimer timer(windowContext, callback_sec);
+        ticks.insert(TimerMap::value_type(id, timer));
+    } else {
+        itr->second.setTimerSec(callback_sec);
+    }
+}
+
+/**
+ * 定期コールイベントを終了させる
+ */
+void WindowManager::removeTickCallTime(const s32 id) {
+    TimerMap::iterator itr = ticks.find(id);
+    if (itr != ticks.end()) {
+        ticks.erase(itr);
+    }
 }
 
 }

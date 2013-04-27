@@ -118,8 +118,15 @@ private:
      * Window登録された時に初期化するための簡易コールバックリスト
      */
     std::list<MRegisteredInitializer> windowRegisteredInitializer;
-
 protected:
+    typedef typename std::map<s32, scene_id> KeyFocusMap;
+
+    /**
+     * キー操作でViewのフォーカス移動を行うためのマッピング
+     * キーコード::UniqueIDのマッピングを行う。
+     * デフォルトは設定されていない
+     */
+    KeyFocusMap keyFocusMoveMap;
 
     /**
      * Window登録時のイニシャライザを追加する
@@ -950,6 +957,44 @@ public:
          */
         virtual void setOnClickListener(const SOnClickListener listener) {
             this->onClickListener = listener;
+        }
+
+        /**
+         * キーを押した時のフォーカス移動を設定する
+         * 複数のキーコードに対し、同じViewを割り当てることができる
+         */
+        virtual void addNextFocusKey(const s32 keyCode, const scene_id scene) {
+            keyFocusMoveMap.insert( KeyFocusMap::value_type(keyCode, scene) );
+        }
+
+        /**
+         * キーコードを指定してフォーカス移動を無効化する
+         */
+        virtual void removeNextFocusFromKeyCode(const s32 keyCode) {
+            keyFocusMoveMap.erase( KeyFocusMap::key_type(keyCode) );
+        }
+
+        /**
+         * すべてのマッピングを無効化する
+         */
+        virtual void clearNextFocusFromKeyCode(const s32 keyCode) {
+            keyFocusMoveMap.clear();
+        }
+
+        /**
+         * 対応したキーのscene_idを取得する
+         * 取得できなかったらfalseを、取得できたらtrueを返す
+         */
+        virtual jcboolean getNexutFocusSceneId(const s32 keyCode, scene_id *result) const {
+            KeyFocusMap::const_iterator itr = keyFocusMoveMap.find(keyCode);
+            if(itr == keyFocusMoveMap.end()) {
+                // 取得に失敗したからfalseを返して終了
+                return jcfalse;
+            }
+
+            // 取得に成功したから書き戻す
+            *result = itr->second;
+            return jctrue;
         }
 
     protected:
