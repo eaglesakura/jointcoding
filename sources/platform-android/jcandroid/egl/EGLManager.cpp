@@ -256,6 +256,9 @@ EGLConfig EGLManager::chooseConfig(const EGLDisplay display, const PixelFormat_e
         green_bits = 8;
         blue_bits = 8;
         alpha_bits = 8;
+    } else {
+        // pixelformat error
+        assert(false);
     }
 
     // 深度バッファ
@@ -291,7 +294,11 @@ EGLConfig EGLManager::chooseConfig(const EGLDisplay display, const PixelFormat_e
     const EGLint MAX_CONFIG = 32;
     EGLConfig configs[MAX_CONFIG] = { NULL };
     EGLint numConfig;
+
     eglChooseConfig((void*) display, (const int*) &specs[0], (void**) configs, MAX_CONFIG, &numConfig);
+
+    // コンフィグが正常に取得できなければならない
+    assert(numConfig > 0);
 
     // 最も適切なスペックを選択する
     for (int i = 0; i < numConfig; ++i) {

@@ -863,6 +863,30 @@ public:
         }
 
         /**
+         * 特定クラスのインスタンスを探して返す
+         */
+        template<typename ViewClass>
+        jc_sp<ViewClass> findViewByClass() const {
+            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            while(itr != end) {
+                jc_sp<View> view = downcast<View>(*itr);
+                jc_sp<ViewClass> classView = downcast<ViewClass>(*itr);
+                if(classView) {
+                    return classView;
+                } else if(view) {
+                    // 子も探索する
+                    classView = view->findViewByClass<ViewClass>();
+                    if(classView) {
+                        // 孫以降がヒットした
+                        return classView;
+                    }
+                }
+                ++itr;
+            }
+            return jc_sp<ViewClass>();
+        }
+
+        /**
          * 有効なViewを探して返す
          */
         virtual jc_sp<View> findEnableViewById(const scene_id id) const {
