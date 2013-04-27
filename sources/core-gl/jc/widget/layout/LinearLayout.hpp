@@ -45,7 +45,12 @@ protected:
     virtual RectF getLastViewArea() const {
         MView view = getLastView();
         if (view) {
-            return view->getLocalLayoutArea();
+            RectF last = view->getLocalLayoutArea();
+            if (last.empty()) {
+                last = view->getLocalLayoutAreaNest();
+                view->layoutDirect(last);
+            }
+            return last;
         } else {
             return RectF();
         }

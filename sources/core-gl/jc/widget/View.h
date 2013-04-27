@@ -965,10 +965,49 @@ public:
         }
 
         /**
+         * 有効になるレンダリングパスを設定する
+         * 0〜31までのパスをビットフラグを用いて設定している。
+         * default = 0x0
+         * @param nest 子にもチェインして設定する場合はtrue
+         */
+        virtual void addRenderingPass(const s32 set, const jcboolean nest) {
+            this->enableRenderingPass |= (0x1 << set);
+
+            if(nest) {
+                std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+                while(itr != end) {
+                    jc_sp<View> view = downcast<View>(*itr);
+                    if(view) {
+                        view->addRenderingPass(set, nest);
+                    }
+                    ++itr;
+                }
+            }
+        }
+
+        /**
          * レンダリングパスを無効にする
          */
         virtual void resetRenderingPass() {
             this->enableRenderingPass = 0;
+        }
+
+        /**
+         * レンダリングパスを無効にする
+         */
+        virtual void resetRenderingPass(const jcboolean nest) {
+            this->enableRenderingPass = 0;
+
+            if(nest) {
+                std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+                while(itr != end) {
+                    jc_sp<View> view = downcast<View>(*itr);
+                    if(view) {
+                        view->resetRenderingPass(nest);
+                    }
+                    ++itr;
+                }
+            }
         }
 
         /**

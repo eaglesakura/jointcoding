@@ -64,6 +64,12 @@ public:
     void setViewport(const RectF &viewport) {
         this->viewport = viewport;
     }
+    /**
+     * 表示領域を設定する
+     */
+    void setViewport(const Vector2f &size) {
+        this->viewport.setXYWH(0, 0, size.x, size.y);
+    }
 
     RectF getViewport() const {
         return viewport;
