@@ -13,6 +13,7 @@
 #include    "jc/gl/gpu/GPUCapacity.h"
 #include    "jc/math/Rect.h"
 #include    "jc/graphics/Color.h"
+#include    <list>
 
 namespace jc {
 namespace gl {
@@ -215,7 +216,7 @@ class GLState: public Object {
         GLint dst;
     } blendContext;
 
-    struct {
+    struct ScissorContext {
         /**
          * シザーテスト
          * GL_SCISSOR_TEST
@@ -426,6 +427,33 @@ public:
             return jctrue;
         }
         return jcfalse;
+    }
+
+private:
+    std::list<ScissorContext> scissor_stack;
+public:
+    /**
+     * 現在のシザーパラメータを保存する
+     */
+    inline void pushScissor() {
+        scissor_stack.push_front(scissorContext);
+    }
+
+    /**
+     * 一つ前に保存したシザーパラメータに戻す
+     */
+    inline void popScissor() {
+        assert(!scissor_stack.empty());
+
+        // 一番上のパラメータを取り出す
+        ScissorContext back_scissor = scissor_stack.front();
+        scissor_stack.erase(scissor_stack.begin());
+
+        {
+            // 状態を再設定する
+            enableScissor(back_scissor.enable);
+            scissor(back_scissor.box.left, back_scissor.box.top, back_scissor.box.width(), back_scissor.box.height());
+        }
     }
 
     /**

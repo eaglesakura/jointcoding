@@ -323,6 +323,20 @@ public:
     }
 
     /**
+     * レンダリングエリアを１段階保存する
+     */
+    virtual void pushRenderArea() {
+        device->getState()->pushScissor();
+    }
+
+    /**
+     * レンダリングエリアを１段階取り出す
+     */
+    virtual void popRenderArea() {
+        device->getState()->popScissor();
+    }
+
+    /**
      * 明示的な解放を行う
      */
     virtual void dispose();
