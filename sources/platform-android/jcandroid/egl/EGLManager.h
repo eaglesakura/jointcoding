@@ -14,6 +14,7 @@ namespace ndk {
 using namespace jc;
 using namespace jc::gl;
 
+
 /**
  * EGLの初期化・終了処理を受け持つ。
  */

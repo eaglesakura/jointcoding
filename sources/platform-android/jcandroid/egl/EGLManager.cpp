@@ -18,6 +18,13 @@ namespace ndk {
 
 namespace {
 
+#if defined(DEBUG) && !defined(NO_EGL_ASSERT)
+#define     assert_egl(...)    { assert(printEGLError(__FILE__, __LINE__) == jcfalse); }
+#else
+// release
+#define     assert_egl(...)    { }
+#endif
+
 /**
  * エラーを出力する
  * GL_NOERROR以外だったらjctrueを返す
@@ -54,10 +61,6 @@ jcboolean printEGLError(const charactor* file, const s32 line, GLenum error) {
  */
 jcboolean printEGLError(const charactor* file, const s32 line) {
     return printEGLError(file, line, eglGetError());
-}
-
-inline void syncCommands() {
-    glFinish();
 }
 
 }
@@ -100,9 +103,7 @@ EGLStatus_e EGLManager::getStatus() const {
  * 指定したコンテキストとサーフェイスをカレントスレッドに割り当てる。
  */
 void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProtocol> surface) {
-    syncCommands();
-
-    if( context.get() && surface.get() ) {
+    if( context && surface ) {
         EGLContextManager *contextManager = dynamic_cast<EGLContextManager*>(context.get());
         EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(surface.get());
 
@@ -114,16 +115,17 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 
 // カレントに設定できなければ例外を投げる
         if( !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ) {
-            printEGLError(__FILE__, __LINE__);
-            throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
+//            printEGLError(__FILE__, __LINE__);
+//            throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
         }
+        assert_egl();
 
-#ifdef  EGL_TRIPLEBUFFER_MODE
-        {
-            // トリプルバッファ対応させる
-            eglSwapInterval(display, 2);
-        }
-#endif
+//#ifdef  EGL_TRIPLEBUFFER_MODE
+//        {
+//            // トリプルバッファ対応させる
+//            eglSwapInterval(display, 2);
+//        }
+//#endif
 
     } else {
         EGLDisplay eglDisplay = display;
@@ -157,6 +159,7 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
                 }
             }
         }
+        assert_egl();
     }
 
 }
@@ -175,8 +178,6 @@ jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
         return jcfalse;
     }
     jcboolean result = eglSwapBuffers(display, targetSurface);
-
-    syncCommands();
 
     if (!result || printEGLError(__FILE__, __LINE__)) {
         jclogf("Bad Surface(%x)", targetSurface);
@@ -316,6 +317,7 @@ EGLConfig EGLManager::chooseConfig(const EGLDisplay display, const PixelFormat_e
             jclogf("match config = index[%d]", i);
             return cf;
         }
+        assert_egl();
     }
 
     return NULL;
