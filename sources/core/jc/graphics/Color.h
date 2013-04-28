@@ -290,6 +290,20 @@ union Color {
     inline Color multAlpha(const float a) const {
         return Color::fromRGBAi(tag.r, tag.g, tag.b, (u8) ((af() * a) * 255));
     }
+
+    /**
+     * 白を生成する
+     */
+    static Color white() {
+        return fromRGBAi(0xFFFFFFFF);
+    }
+
+    /**
+     * 黒を生成する
+     */
+    static Color black() {
+        return fromRGBAi(0x000000FF);
+    }
 };
 
 }
