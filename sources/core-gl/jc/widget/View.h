@@ -316,6 +316,13 @@ public:
     }
 
     /**
+     * 可視情報を親から引き継ぐ場合はtrue
+     */
+    virtual void setVisibleWithParent( const jcboolean set) {
+        visibleMultParent = set;
+    }
+
+    /**
      * 視覚状態を設定する
      */
     virtual void setVisiblyWeight(const float set) {
