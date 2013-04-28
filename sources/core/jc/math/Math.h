@@ -6,6 +6,7 @@
  */
 
 #include <math.h>
+#include <stdlib.h>
 #include    "jc/system/Macro.h"
 
 #ifndef JCMATH_H_
@@ -57,6 +58,15 @@ inline const s32 round(const float value) {
  */
 inline const s64 round(const double value) {
     return (s64) (value + 0.5);
+}
+
+/**
+ * 適当な乱数を生成する
+ */
+inline s32 rand32() {
+    const s32 loword = ((rand() / 310) >> 3) & 0xFFFF;
+    const s32 hiword = ((rand() / 310) >> 3) & 0xFFFF;
+    return hiword << 16 | loword;
 }
 
 /**
