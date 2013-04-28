@@ -129,6 +129,12 @@ public class MethodConverter extends ConverterBase {
 
                         }
                     }
+
+                    try {
+                        argNames[i] = argNames[i].replace("[]", "_array");
+                    } catch (Exception e) {
+
+                    }
                 }
             } else {
                 paramTypes = new CtClass[0];
