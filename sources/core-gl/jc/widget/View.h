@@ -297,10 +297,9 @@ public:
 
     /**
      * 表示状態の場合trueを返す
+     * 親を辿って可視状態である場合trueを返す
      */
-    virtual jcboolean isVisible() const {
-        return viewMode == ViewMode_Visible;
-    }
+    virtual jcboolean isVisible() const;
 
     /**
      * 非表示の場合trueを返す

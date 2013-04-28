@@ -735,6 +735,25 @@ void View::layoutFillParent(const Vector2f &parentLocalSize) {
 }
 
 /**
+ * 親を辿って可視状態である場合trueを返す
+ */
+jcboolean View::isVisible() const {
+    // 自身が不可視だったらfalseを返して終了
+    if (viewMode != ViewMode_Visible) {
+        return jcfalse;
+    }
+
+    View *parent = getParentTo<View>();
+    // 親がいるなら、親の決定に従う
+    if (parent) {
+        return parent->isVisible();
+    }
+
+    // 親がいないから、自身はtrueである
+    return jctrue;
+}
+
+/**
  * すべてのViewのフォーカス値がゼロであることを確認する
  */
 jcboolean View::isAllFocusWeightZero(const jcboolean recursive) const {
