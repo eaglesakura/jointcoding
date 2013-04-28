@@ -854,7 +854,8 @@ void View::renderingArea() {
  * 自分自身のレンダリングを行う
  */
 void View::onSelfRendering() {
-#ifdef  DEBUG
+// デバッグ用に自身のエリアを描画する場合はtrue
+#ifdef  RENDERING_VIEWAREA
     renderingArea();
 #endif
 }
