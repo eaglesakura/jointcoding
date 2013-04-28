@@ -1065,6 +1065,13 @@ public:
             return jctrue;
         }
 
+        /**
+         * 可視状態レンダリング用の色を取得する
+         */
+        virtual Color getVisibleColor(const Color baseColor = Color::fromRGBAi(255, 255, 255, 255)) const {
+            return baseColor.multAlpha(getVisibleWeight());
+        }
+
     protected:
         // オーバーライドされる
 

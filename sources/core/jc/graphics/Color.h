@@ -283,6 +283,13 @@ union Color {
         result.tag.a = targetMove(now.tag.a, target.tag.a, offset);
         return result;
     }
+
+    /**
+     * α値を乗算する
+     */
+    inline Color multAlpha(const float a) const {
+        return Color::fromRGBAi(tag.r, tag.g, tag.b, (u8) ((af() * a) * 255));
+    }
 };
 
 }
