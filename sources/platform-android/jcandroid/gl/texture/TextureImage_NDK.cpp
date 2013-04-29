@@ -130,6 +130,8 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
                 // この呼出を行わない場合、テクセル境界が4byteとなってしまう
                 // 例えば2byte RGB565テクスチャの転送で4byte境界にされてしまい、テクスチャがうまいこと読み込めなくなってしまう
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            } else {
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
             }
 
             // テクスチャalloc時間を記録する

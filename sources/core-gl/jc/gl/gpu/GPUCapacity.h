@@ -173,7 +173,7 @@ public:
     /**
      * 実行されているGPUが同一系統のGPUである場合、trueを返す
      */
-    static jboolean isFamily(const GPUFamily_e family) {
+    static jcboolean isFamily(const GPUFamily_e family) {
         return getGPUFamily() == family;
     }
 };
