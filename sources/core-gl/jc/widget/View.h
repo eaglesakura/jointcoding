@@ -283,7 +283,7 @@ public:
      * Windowを一時的に取得する。
      * メンバとして持つと循環参照が行われる恐れがあるため、シーングラフ内では行わないこと。
      */
-    virtual jc_sp<Window> lockWindow() {
+    virtual jc_sp<Window> lockWindow() const {
         assert(windowContext.get() != NULL);
         return windowContext->lockWindow();
     }
