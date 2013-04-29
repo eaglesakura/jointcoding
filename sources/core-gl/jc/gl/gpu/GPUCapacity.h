@@ -169,6 +169,13 @@ public:
      * 代表的な系列機以外はUnknownになる（エミュレーター等）
      */
     static GPUFamily_e getGPUFamily();
+
+    /**
+     * 実行されているGPUが同一系統のGPUである場合、trueを返す
+     */
+    static jboolean isFamily(const GPUFamily_e family) {
+        return getGPUFamily() == family;
+    }
 };
 
 }
