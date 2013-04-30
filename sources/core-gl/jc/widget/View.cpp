@@ -321,6 +321,14 @@ void View::dispatchKeyEvent(const MKeyData keyData) {
         return;
     }
 
+    jclogf("keyCheck(%d)", keyData->getKeyCode());
+    if (keyData->isKeeping()) {
+        jclogf("isKeeping(%d)", keyData->getKeyCode());
+        // キー押しっぱなしはこの時点でチェックしない
+        onKeyKeeping(keyData);
+        return;
+    }
+
     if (keyData->isPressing()) {
         onKeyDown(keyData);
     } else {

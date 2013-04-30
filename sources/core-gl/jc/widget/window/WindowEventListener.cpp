@@ -207,8 +207,13 @@ void WindowEventListener::onKeyLongDown(KeyDetector *detector, const MKeyData ke
 void WindowEventListener::onKeyKeeping(KeyDetector *detector, const MKeyData keyData) {
     jclogf("onKeyKeeping(%d) time(%d ms)", keyData->getKeyCode(), keyData->getPressTimeMS());
     resetLastEventHandleTime();
-}
 
+    MWindow window = windowContext->lockWindow();
+    assert(window.get() != NULL);
+
+    // ブロードキャストする
+    window->broadcastEvent(Event::createEvent(BroadcastType_Key, keyData));
+}
 
 /**
  * キーを離した

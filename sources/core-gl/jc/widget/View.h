@@ -1134,6 +1134,12 @@ public:
         }
 
         /**
+         * キーが押しっぱなしになった
+         */
+        virtual void onKeyKeeping(const MKeyData keyData) {
+        }
+
+        /**
          * キーが離された
          */
         virtual void onKeyUp(const MKeyData keyData) {

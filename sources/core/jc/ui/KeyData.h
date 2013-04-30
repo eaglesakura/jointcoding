@@ -73,6 +73,19 @@ public:
     }
 
     /**
+     * キーを押しっぱなしにしている場合はtrue
+     */
+    virtual jcboolean isKeeping() const {
+        if(!isPressing()) {
+            // 押されていなければKEEPもされてない
+            return jcfalse;
+        }
+
+        // 押し始めた時間がチェック時間よりも先なら、経過している
+        return beginTime < checkedTime;
+    }
+
+    /**
      * 押下された秒数を取得する
      */
     virtual s32 getPressTimeMS() const {
