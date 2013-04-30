@@ -23,6 +23,11 @@ public:
     virtual void onKeyDown(KeyDetector *detector, const MKeyData keyData) = 0;
 
     /**
+     * キー押しっぱなしの状態が継続された。
+     */
+    virtual void onKeyKeeping(KeyDetector *detector, const MKeyData keyData) = 0;
+
+    /**
      * キーを長押した
      */
     virtual void onKeyLongDown(KeyDetector *detector, const MKeyData keyData) = 0;
@@ -48,6 +53,12 @@ class KeyDetector: public Object {
      * リスナ
      */
     SKeyListener listener;
+
+    /**
+     * キーの押しっぱなしメッセージ処理間隔
+     * デフォルトは0.25秒
+     */
+    s32 keyKeepingMessageTime;
 public:
     KeyDetector(SKeyListener listener);
 
@@ -59,9 +70,30 @@ public:
     virtual MKeyData getKeyData(const s32 keyCode);
 
     /**
+     * キー押しっぱなしの処理間隔を設定する
+     * デフォルトは0.25秒
+     */
+    virtual void setKeyKeepingMessageTimeMS(const s32 timeMS) {
+        keyKeepingMessageTime = timeMS;
+    }
+
+    /**
+     * キー押しっぱなしの処理間隔を設定する
+     * デフォルトは0.25秒
+     */
+    virtual void setKeyKeepingMessageTimeSec(const double sec) {
+        setKeyKeepingMessageTimeMS((s32) (sec * 1000));
+    }
+
+    /**
      * キーイベントの解析を行う
      */
     virtual void onKeyEvent(KeyEventProtocol *event);
+
+    /**
+     * キーのアップデートを行う
+     */
+    virtual void onHandleEvent();
 };
 
 /**

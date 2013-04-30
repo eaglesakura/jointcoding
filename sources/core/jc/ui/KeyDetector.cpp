@@ -10,6 +10,8 @@ namespace jc {
 
 KeyDetector::KeyDetector(SKeyListener listener) {
     this->listener = listener;
+    this->keyKeepingMessageTime = 0;
+    setKeyKeepingMessageTimeSec(0.25);
 }
 
 KeyDetector::~KeyDetector() {
@@ -56,6 +58,28 @@ void KeyDetector::onKeyEvent(KeyEventProtocol *event) {
     } else if (EVENT_TYPE == KeyEventProtocol::EVENT_TYPE_UP) {
         if (key->onKeyUp()) {
             listener->onKeyUp(this, key);
+        }
+    }
+}
+
+/**
+ * キーのアップデートを行う
+ */
+void KeyDetector::onHandleEvent() {
+
+    {
+        std::map<s32, MKeyData>::iterator itr = keyDatas.begin(), end = keyDatas.end();
+        while (itr != end) {
+
+            MKeyData keyData = itr->second;
+            assert(keyData);
+
+            // キー押しっぱなしメッセージを飛ばす
+            if (keyData->isKeyPressing(keyKeepingMessageTime)) {
+                listener->onKeyKeeping(this, keyData);
+            }
+
+            ++itr;
         }
     }
 }

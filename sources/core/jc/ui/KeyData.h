@@ -42,6 +42,11 @@ class KeyData: public Object {
     jctime endTime;
 
     /**
+     * 押しっぱなしチェックを行った時間
+     */
+    jctime checkedTime;
+
+    /**
      * キーコード
      */
     s32 keyCode;
@@ -140,7 +145,7 @@ private:
      */
     jcboolean onKeyDown() {
         if (state != KeyState_Down) {
-            beginTime = Timer::currentTime();
+            checkedTime = beginTime = Timer::currentTime();
             state = KeyState_Down;
             return jctrue;
         }
@@ -152,11 +157,29 @@ private:
      */
     jcboolean onKeyUp() {
         if (state != KeyState_Up) {
-            endTime = Timer::currentTime();
+            checkedTime = endTime = Timer::currentTime();
             state = KeyState_Up;
             return jctrue;
         }
         return jcfalse;
+    }
+
+    /**
+     * キーの押しっぱなしチェックを行う
+     * checkTimeMSよりも時間経過していたらtrueを返してチェックタイムをリセットする
+     */
+    jcboolean isKeyPressing(const s32 checkTimeMS) {
+        if (!isPressing()) {
+            // 押されていなければ何もしない
+            return jcfalse;
+        }
+
+        if (Timer::lapseTimeMs(checkedTime) >= checkTimeMS) {
+            checkedTime = Timer::currentTime();
+            return jctrue;
+        } else {
+            return jcfalse;
+        }
     }
 };
 

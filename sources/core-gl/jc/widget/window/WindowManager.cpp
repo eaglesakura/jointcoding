@@ -145,6 +145,11 @@ void WindowManager::handleEvents() {
         dispatchEvent(event);
     }
 
+    // 押しっぱなしチェックを行う
+    {
+        keyDetector->onHandleEvent();
+    }
+
     // 定期コールイベントを処理する
     handleTimerEvents();
 }

@@ -202,6 +202,15 @@ void WindowEventListener::onKeyLongDown(KeyDetector *detector, const MKeyData ke
 }
 
 /**
+ * キー押しっぱなしの状態が継続された。
+ */
+void WindowEventListener::onKeyKeeping(KeyDetector *detector, const MKeyData keyData) {
+    jclogf("onKeyKeeping(%d) time(%d ms)", keyData->getKeyCode(), keyData->getPressTimeMS());
+    resetLastEventHandleTime();
+}
+
+
+/**
  * キーを離した
  */
 void WindowEventListener::onKeyUp(KeyDetector *detector, const MKeyData keyData) {

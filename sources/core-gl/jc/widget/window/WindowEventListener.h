@@ -109,6 +109,11 @@ public:
     virtual void onKeyLongDown(KeyDetector *detector, const MKeyData keyData);
 
     /**
+     * キー押しっぱなしの状態が継続された。
+     */
+    virtual void onKeyKeeping(KeyDetector *detector, const MKeyData keyData);
+
+    /**
      * キーを離した
      */
     virtual void onKeyUp(KeyDetector *detector, const MKeyData keyData);
