@@ -137,6 +137,10 @@ void WindowManager::handleTimerEvents() {
  * キューに溜まっているイベントの処理を行う
  */
 void WindowManager::handleEvents() {
+
+    // 処理前のフォーカスを得ておく
+    MView beforeFocus = window->findFocusedView();
+
 // 処理したイベント数
     while (!events->empty()) {
         // 直近のイベントを取り出す
@@ -152,6 +156,15 @@ void WindowManager::handleEvents() {
 
     // 定期コールイベントを処理する
     handleTimerEvents();
+
+    // 処理後のフォーカスを得る
+    MView afterFocus = window->findFocusedView();
+
+    if (beforeFocus != afterFocus) {
+        if (eventHandler->handleWindowFocusMoved(beforeFocus, afterFocus)) {
+            this->handleEvents();
+        }
+    }
 }
 
 /**

@@ -42,7 +42,11 @@ public class NativeIOUtil {
     @JCMethod
     public static InputStream openFromExternalStrage(String path, Context appContext) throws IOException {
         try {
-            return new FileInputStream(new File(Environment.getExternalStorageDirectory(), path));
+            File file = new File(Environment.getExternalStorageDirectory(), path);
+            if (!file.isFile()) {
+                return null;
+            }
+            return new FileInputStream(file);
         } catch (Exception e) {
             return null;
         }
@@ -59,7 +63,11 @@ public class NativeIOUtil {
     public static InputStream openFromLocalStrage(String path, Context appContext) throws IOException {
         File directory = appContext.getFilesDir().getParentFile();
         try {
-            return new FileInputStream(new File(directory, path));
+            File file = new File(directory, path);
+            if (!file.isFile()) {
+                return null;
+            }
+            return new FileInputStream(file);
         } catch (Exception e) {
             return null;
         }

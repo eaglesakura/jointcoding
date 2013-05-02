@@ -121,6 +121,10 @@ public:
      * View位置が下端に達していたらtrueを返す
      */
     jcboolean isBottomLine() const {
+        if (!isVerticalScrollEnable()) {
+            return jctrue;
+        }
+
         return getViewBottom() <= viewport.bottom;
     }
 
@@ -128,6 +132,10 @@ public:
      * View位置が上端に達していたらtrueを返す
      */
     jcboolean isTopLine() const {
+        if (!isVerticalScrollEnable()) {
+            return jctrue;
+        }
+
         return getViewTop() >= viewport.top;
     }
 

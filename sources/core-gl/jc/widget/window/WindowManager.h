@@ -27,7 +27,9 @@ public:
      * イベントハンドルをインターセプトする。
      * trueを返した場合、ハンドリングに成功したとみなしてWindowManagerはそのeventのハンドリングを行わない。
      */
-    virtual jcboolean handleEvent(MEvent event) = 0;
+    virtual jcboolean handleEvent(MEvent event) {
+        return jcfalse;
+    }
 
     /**
      * 定期コールイベントのハンドリングを行う
@@ -35,6 +37,15 @@ public:
      * @param elapsed_sec 前回呼び出しからの経過秒
      */
     virtual void handleTickEvent(const s32 id, const double elapsed_sec) {
+    }
+
+
+    /**
+     * イベントハンドリングの結果、ウィンドウフォーカスが移動されたらコールバックされる
+     * trueを返した場合、再度イベントハンドリングを行う
+     */
+    virtual jcboolean handleWindowFocusMoved(MView before, MView after) {
+        return  jcfalse;
     }
 };
 

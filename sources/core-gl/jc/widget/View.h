@@ -1039,6 +1039,13 @@ public:
          * 複数のキーコードに対し、同じViewを割り当てることができる
          */
         virtual void addNextFocusKey(const s32 keyCode, const scene_id scene) {
+            // 古いキーは削除する
+            {
+                KeyFocusMap::iterator itr = keyFocusMoveMap.find(keyCode);
+                if(itr != keyFocusMoveMap.end()) {
+                    keyFocusMoveMap.erase(itr);
+                }
+            }
             keyFocusMoveMap.insert( KeyFocusMap::value_type(keyCode, scene) );
         }
 
