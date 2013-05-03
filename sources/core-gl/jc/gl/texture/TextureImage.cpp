@@ -21,7 +21,11 @@ static u32 PIXEL_TYPES[] = {
         };
 static u32 PIXEL_FORMATS[] = {
 //
+#ifdef BUILD_Android
         GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_BGRA_EXT,
+#else
+        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_RGBA,
+#endif
 //
         };
 }
@@ -297,6 +301,10 @@ MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFo
  * PMKファイルのデコードを行う。
  */
 MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoadOption *option) {
+#ifndef GL_ETC1_RGB8_OES
+    // not support ETC1
+    return MTextureImage();
+#else
     MInputStream is = Platform::getFileSystem()->openInputStream(uri);
     if (!is) {
         jcalertf("file not found(%s)", uri.getUri().c_str());
@@ -339,6 +347,7 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoa
         result->alloced = jctrue;
         return result;
     }
+#endif
 }
 
 }

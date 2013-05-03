@@ -58,7 +58,9 @@
  * NDK_DEBUG=1の場合、NDEBUGフラグが立たないためDEBUGを立てる。
  */
 #ifndef NDEBUG
-#define DEBUG
+#ifndef DEBUG
+    #define DEBUG
+#endif
 #endif
 
 #else

@@ -49,16 +49,6 @@ enum EGLStatus_e {
      * 別なスレッドにアタッチされている
      */
     EGLStatus_Busy,
-
-    /**
-     * EGLの初期化が終わっているが、描画できない状態にある場合
-     */
-    EGLStatus_Suspend,
-
-    /**
-     * コンテキストのバインドに失敗した。
-     */
-    EGLStatus_ContextBindFailed,
 };
 
 /**

@@ -246,6 +246,16 @@ class GLState: public Object {
         s32 MAX_TEXTURE_UNITS;
     } caps;
 
+    /**
+     * フレームバッファ用コンテキスト
+     */
+    struct {
+        /**
+         * 現在Contextにバインドされているフレームバッファ
+         */
+        GLuint frameBuffer;
+    } frameBufferContext;
+
 public:
     GLState();
     virtual ~GLState();
@@ -744,6 +754,25 @@ public:
             assert_gl();
         }
         colorMask(back_context.mask_r, back_context.mask_g, back_context.mask_b, back_context.mask_a);
+    }
+
+    /**
+     * フレームバッファへの関連付けを行う
+     */
+    inline jcboolean bindFrameBuffer(const GLenum target, const GLuint frameBuffer) {
+        assert(target == GL_FRAMEBUFFER);
+
+        // 別なバインドが行われていたらバインドし直す
+        if (frameBufferContext.frameBuffer != frameBuffer) {
+            frameBufferContext.frameBuffer = frameBuffer;
+            glBindFramebuffer(target, frameBuffer);
+            assert_gl();
+
+            return jctrue;
+        }
+
+        // 同じオブジェクトがバインド済みのため何もしない
+        return jcfalse;
     }
 
 public:

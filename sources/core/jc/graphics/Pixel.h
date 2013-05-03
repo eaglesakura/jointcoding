@@ -141,6 +141,9 @@ public:
                 }
             }
                 break;
+            default:
+                assert(false); // not support!!
+                break;
         }
     }
 
@@ -206,6 +209,10 @@ public:
             case PixelFormat_RGBA8888: {
                 memcpy(dst, src_rgba8888, pixels * pixel_size);
             }
+                break;
+                
+            default:
+                assert(false); // not support!!
                 break;
         }
 
@@ -283,6 +290,9 @@ public:
                     --pixels;
                 }
             }
+                break;
+            default:
+                assert(false); // not support!!
                 break;
         }
     }

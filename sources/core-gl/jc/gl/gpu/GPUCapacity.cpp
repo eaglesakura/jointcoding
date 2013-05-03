@@ -180,11 +180,16 @@ void GPUCapacity::initialize() {
 
 // エクステンション一覧を出力する
         {
-            std::vector<String>::const_iterator itr = extensions.begin(), end = extensions.end();
+            std::vector<String>::iterator itr = extensions.begin(), end = extensions.end();
 
             while (itr != end) {
-                jclogf("GL_EXTENSIONS = %s", (*itr).c_str());
-                ++itr;
+                if ((*itr).length()) {
+                    jclogf("GL_EXTENSIONS = %s", (*itr).c_str());
+                    ++itr;
+                }else {
+                    itr = extensions.erase(itr);
+                    end = extensions.end();
+                }
             }
         }
 

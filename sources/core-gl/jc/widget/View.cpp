@@ -281,7 +281,7 @@ void View::onDownChanged(const jcboolean down_now) {
  * Viewのクリック処理が行われた
  */
 void View::dispatchClickEvent(const jc_sp<View> clicked) {
-    const jcboolean before_focus = hasFocus();
+//    const jcboolean before_focus = hasFocus();
 
     if(clicked.get() == this) {
         // クリックメッセージを処理させる

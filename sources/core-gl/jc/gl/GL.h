@@ -21,7 +21,8 @@
 #include    "GLES2/gl2ext.h"
 #endif // BUILD_Android
 #ifdef BUILD_iOS
-#include <OpenGLES/ES2/gl.h>
+#import     <OpenGLES/ES2/gl.h>
+#import     <OpenGLES/ES2/glext.h>
 #endif // BUILD_iOS
 #endif
 

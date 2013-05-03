@@ -307,7 +307,7 @@ public:
      * resultのポインタをそのまま帰す。
      */
     virtual void convertViewportRect(const RectI &displayRect, s32 *result_x, s32 *result_y, s32 *result_width, s32 *result_height) const {
-        const s32 display_width = surface->getWidth();
+//        const s32 display_width = surface->getWidth();
         const u32 display_height = surface->getHeight();
 
         const u32 viewport_x = displayRect.left;

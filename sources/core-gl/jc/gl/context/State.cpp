@@ -81,6 +81,10 @@ GLState::GLState() {
     {
         maskContext.r = maskContext.g = maskContext.b = maskContext.a = jctrue;
     }
+    // frameBuffer
+    {
+        frameBufferContext.frameBuffer = 0;
+    }
 }
 
 GLState::~GLState() {
@@ -190,6 +194,8 @@ void GLState::syncContext() {
         glGetIntegerv(GL_ARRAY_BUFFER, (GLint*) &bindBufferContext.buffers[0]);
         assert_gl();
         glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER, (GLint*) &bindBufferContext.buffers[1]);
+        assert_gl();
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*) &frameBufferContext.frameBuffer);
         assert_gl();
     }
     // マスクを問い合わせる
