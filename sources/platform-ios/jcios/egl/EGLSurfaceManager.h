@@ -73,7 +73,7 @@ namespace ios {
         /**
          * レンダリングサーフェイスの大きさを変更する
          */
-        virtual void onResized(const Vector2f newSize);
+        virtual void onResized();
         
         
         /**
@@ -89,7 +89,7 @@ namespace ios {
         /**
          * インスタンスを作成する
          */
-        static jc_sp<EGLSurfaceManager> createInstance( const Vector2f surfaceSize, jc_sp<EGLContextManager> eglContext );
+        static jc_sp<EGLSurfaceManager> createInstance(jc_sp<EGLContextManager> eglContext);
     };
 }
 

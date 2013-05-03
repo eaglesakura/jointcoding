@@ -22,9 +22,39 @@ namespace ios {
     /**
      * レンダリングサーフェイスの大きさを変更する
      */
-    void EGLSurfaceManager::onResized(const Vector2f newSize) {
-        width = newSize.x;
-        height = newSize.y;
+    void EGLSurfaceManager::onResized() {
+        {
+            glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, (GLint*)&width);
+            glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, (GLint*)&height);
+            assert_gl();
+            
+            assert(width > 0);
+            assert(height > 0);
+            
+            jclogf("new surface size(%d x %d)", width, height);
+        }
+        {
+            // レンダリング領域確保
+            glBindRenderbuffer(GL_RENDERBUFFER, buffers.depth_stencil);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, width, height);
+            assert_gl();
+            
+            // バッファの幅と高さを検証する
+            GLint   depth_stencil_width = 0;
+            GLint   depth_stencil_height = 0;
+            
+            // レンダリングバッファの解像度を取得する
+            glGetRenderbufferParameteriv(GL_RENDERBUFFER,  GL_RENDERBUFFER_WIDTH, &depth_stencil_width);
+            glGetRenderbufferParameteriv(GL_RENDERBUFFER,  GL_RENDERBUFFER_HEIGHT, &depth_stencil_height);
+            assert_gl();
+            
+            jclogf("Depth&Stencil Buffer Size(%d x %d)", depth_stencil_width, depth_stencil_height);
+            assert(depth_stencil_width == width);
+            assert(depth_stencil_height == height);
+        }
+        
+        // フレームバッファが正常であることを検証する
+        assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
     }
     
     
@@ -33,12 +63,14 @@ namespace ios {
      */
     void EGLSurfaceManager::bind() {
         state->bindFrameBuffer(GL_FRAMEBUFFER, buffers.frame);
+        state->bindRenderBuffer(GL_RENDERBUFFER, buffers.color);
     }
     
     /**
      * EGLから関連付けを解除する
      */
     void EGLSurfaceManager::unbind() {
+        state->bindRenderBuffer(GL_RENDERBUFFER, 0);
         state->bindFrameBuffer(GL_FRAMEBUFFER, 0);
     }
     
@@ -85,7 +117,7 @@ namespace ios {
     /**
      * インスタンスを作成する
      */
-    jc_sp<EGLSurfaceManager> EGLSurfaceManager::createInstance( const Vector2f surfaceSize, jc_sp<EGLContextManager> eglContext ) {
+    jc_sp<EGLSurfaceManager> EGLSurfaceManager::createInstance(jc_sp<EGLContextManager> eglContext) {
         jc_sp<EGLSurfaceManager> result(new EGLSurfaceManager());
         MGLState state = eglContext->getState();
         result->state = state;

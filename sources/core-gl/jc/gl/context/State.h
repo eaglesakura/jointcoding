@@ -254,6 +254,11 @@ class GLState: public Object {
          * 現在Contextにバインドされているフレームバッファ
          */
         GLuint frameBuffer;
+        
+        /**
+         * 現在Contextにバインドされているレンダリングバッファ
+         */
+        GLuint renderBuffer;
     } frameBufferContext;
 
 public:
@@ -772,6 +777,21 @@ public:
         }
 
         // 同じオブジェクトがバインド済みのため何もしない
+        return jcfalse;
+    }
+    
+    /**
+     * レンダリングバッファへの関連付けを行う
+     */
+    inline jcboolean bindRenderBuffer(const GLenum target, const GLuint renderBuffer) {
+        assert(target == GL_RENDERBUFFER);
+        
+        if(frameBufferContext.renderBuffer != renderBuffer) {
+            frameBufferContext.renderBuffer = renderBuffer;
+            glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+            assert_gl();
+            return jctrue;
+        }
         return jcfalse;
     }
 

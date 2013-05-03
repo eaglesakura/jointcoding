@@ -39,18 +39,32 @@ namespace ios {
      * 握っている資源を明示的に開放する
      */
     void EGLContextManager::dispose() {
-        state.reset();
-        vram.reset();
-        
-        if(opContext) {
-            opContext = nil;
+        if(!opContext) {
+            // 既に解放済み
+            return;
         }
+        
+        bind();
+        {
+            // VRAMの残りを全て解放する
+            {
+                vram->gc();
+            }
+            vram.reset();
+            state.reset();
+        }
+        unbind();
+        
+        // コンテキストを解放する
+        opContext = nil;
     }
     
     /**
      * EGLをアプリが専有する
      */
     void EGLContextManager::bind() {
+        assert(opContext);
+        
         if(!binded) {
             binded = [EAGLContext setCurrentContext:opContext];
             assert(binded);
@@ -67,5 +81,4 @@ namespace ios {
             binded = jcfalse;
         }
     }
-    
 }

@@ -2,6 +2,7 @@
 #define com_eaglesakura_ios_sample_EGLContextManager_h
 
 #import "jointcoding-ios.h"
+#import <OpenGLES/EAGL.h>
 
 namespace ios {
     using namespace jc;
@@ -11,8 +12,6 @@ namespace ios {
      * EGLContextProtocolのiOS向け実装
      */
     class EGLContextManager : public EGLContextProtocol {
-        // EGLContext for iOS
-        EAGLContext *opContext;
 
         // state cache
         MGLState state;
@@ -51,7 +50,10 @@ namespace ios {
          * EGLの占有を解除する
          */
         virtual void unbind();
-
+    public: /* objective-c */
+        
+        // EGLContext for iOS
+        EAGLContext *opContext;
     };
 }
 

@@ -6,11 +6,16 @@
 
 #include "EGLManager.h"
 #import "EGLContextManager.h"
-#improt "EGLSurfaceManager.h"
+#import "EGLSurfaceManager.h"
+#import <OpenGLES/EAGLDrawable.h>
+
+using namespace ios;
+using namespace jc;
+using namespace jc::gl;
 
 namespace ios {
-    EGLManager::EGLManager(jc_weak_id uiView) {
-        this->uiView = uiView;
+    EGLManager::EGLManager() {
+        this->uiView = nil;
     }
     
     EGLManager::~EGLManager() {
@@ -39,11 +44,31 @@ namespace ios {
     void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProtocol> surface) {
         if(context && surface) {
             // コンテキストを現在のスレッドへバインドする
+            jc_sp<ios::EGLContextManager>    eglContext = jc::downcast<ios::EGLContextManager>(context);
+            jc_sp<ios::EGLSurfaceManager>    eglSurface = downcast<ios::EGLSurfaceManager>(surface);
             
+            assert(eglContext);
+            assert(eglSurface);
             
+            eglContext->bind();
+            eglSurface->bind();
+            
+            // 最後にバインドしたコンテキストを覚えておく
+            this->eglContext = eglContext;
+            
+            // 現在のスレッドを登録する
+            threadId.reset(new ThreadID());
         } else {
             // contextとsurface両方がNULLでなければならない。
             assert(!context && !surface);
+            
+            if(eglContext) {
+                // バインドを解除する
+                eglContext->unbind();
+                eglContext.reset();
+                
+                threadId.reset();
+            }
         }
     }
     
@@ -53,16 +78,25 @@ namespace ios {
      * このメソッドは完了するまでブロックされることを保証しない（デバイス依存、基本的にブロッキングになるように調整している）
      */
     jcboolean EGLManager::postFrontBuffer(jc_sp<EGLSurfaceProtocol> displaySurface) {
-        assert(false);
-        return jcfalse;
+        // コンテキストがバインド済みでなければならない
+        assert(eglContext);
+        assert(displaySurface);
+        
+        // ディスプレイにバインドしなおす
+        jc_sp<EGLSurfaceManager> eglSurface = downcast<EGLSurfaceManager>(displaySurface);
+        assert(eglSurface);
+        eglSurface->bind();
+        
+        // EAGLContextの機能で転送する
+        [eglContext->opContext presentRenderbuffer:GL_RENDERBUFFER];
+        assert_gl();
+        return jctrue;
     }
     
     /**
      * 握っているEGL資源を明示的に開放する。
      */
     void EGLManager::dispose() {
-        if(uiView) {
-            uiView.object = nil;
-        }
+        uiView = nil;
     }
 }

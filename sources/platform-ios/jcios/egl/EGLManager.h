@@ -2,7 +2,7 @@
 #define com_eaglesakura_ios_sample_EGLManager_h
 
 #import "jointcoding-ios.h"
-
+#import "EGLContextManager.h"
 
 namespace ios {
     using namespace jc;
@@ -13,17 +13,16 @@ namespace ios {
      */
     class EGLManager : public EGLProtocol {
         /**
-         * iOS版のView
-         */
-        jc_weak_id   uiView;
-        
-        /**
          * アタッチされているスレッドID
          */
         MThreadID threadId;
-
+        
+        /**
+         * 最後にバインドしたコンテキスト
+         */
+        jc_sp<EGLContextManager>    eglContext;
     public:
-        EGLManager(jc_weak_id uiView);
+        EGLManager();
         virtual ~EGLManager();
         
         /**
@@ -47,6 +46,12 @@ namespace ios {
          * 握っているEGL資源を明示的に開放する。
          */
         virtual void dispose();
+        
+    public: /* objective-c */
+        /**
+         * iOS版のView
+         */
+        __weak id uiView;
     };
 }
 
