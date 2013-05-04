@@ -14,6 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="true"
+        android:name="com.eaglesakura.jc.framework.app.JointApplication"
          >
         <activity
             android:name="com.eaglesakura.jc.benchmark.MainActivity"

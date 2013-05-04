@@ -7,6 +7,10 @@ import com.eaglesakura.jc.android.app.AndroidUtil;
 
 public class MainActivity extends Activity {
 
+    static {
+        System.loadLibrary("jcapp");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
