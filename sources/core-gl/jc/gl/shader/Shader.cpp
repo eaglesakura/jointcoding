@@ -15,9 +15,9 @@ namespace jc {
 namespace gl {
 
 Shader::Shader(const SharedResource &shaderResource) {
-    jclogf("vram2vram = %x", shaderResource.get());
+    jclogf("vram2vram = 0x%x", shaderResource.get());
     this->shader = shaderResource;
-    jclogf("vram2vram finish = %x", shaderResource.get());
+    jclogf("vram2vram finish = 0x%x", shaderResource.get());
 }
 
 Shader::~Shader() {
