@@ -35,7 +35,7 @@ namespace ios {
         }
         {
             // レンダリング領域確保
-            glBindRenderbuffer(GL_RENDERBUFFER, buffers.depth_stencil);
+            state->bindRenderbuffer(GL_RENDERBUFFER, buffers.depth_stencil);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, width, height);
             assert_gl();
             
@@ -52,6 +52,11 @@ namespace ios {
             assert(depth_stencil_width == width);
             assert(depth_stencil_height == height);
         }
+        state->bindRenderbuffer(GL_RENDERBUFFER, buffers.color);
+        
+        // viewportはデフォルトでリサイズ後に直しておく
+        state->viewport(0, 0, width, height);
+//        state->clearColorf(0, 1, 1, 1);
         
         // フレームバッファが正常であることを検証する
         assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
@@ -62,16 +67,16 @@ namespace ios {
      * EGLに関連付ける
      */
     void EGLSurfaceManager::bind() {
-        state->bindFrameBuffer(GL_FRAMEBUFFER, buffers.frame);
-        state->bindRenderBuffer(GL_RENDERBUFFER, buffers.color);
+        state->bindFramebuffer(GL_FRAMEBUFFER, buffers.frame);
+        state->bindRenderbuffer(GL_RENDERBUFFER, buffers.color);
     }
     
     /**
      * EGLから関連付けを解除する
      */
     void EGLSurfaceManager::unbind() {
-        state->bindRenderBuffer(GL_RENDERBUFFER, 0);
-        state->bindFrameBuffer(GL_FRAMEBUFFER, 0);
+        state->bindRenderbuffer(GL_RENDERBUFFER, 0);
+        state->bindFramebuffer(GL_FRAMEBUFFER, 0);
     }
     
     
@@ -88,9 +93,9 @@ namespace ios {
         // 既存の関連付けを解除
         bind();
         {
-            glBindRenderbuffer(GL_RENDERBUFFER, 0);
+            state->bindRenderbuffer(GL_RENDERBUFFER, 0);
             assert_gl();
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            state->bindFramebuffer(GL_FRAMEBUFFER, 0);
             assert_gl();
         }
         unbind();
@@ -142,17 +147,17 @@ namespace ios {
             
             // 描画用に関連付ける
             {
-                state->bindFrameBuffer(GL_FRAMEBUFFER, result->buffers.frame);
+                state->bindFramebuffer(GL_FRAMEBUFFER, result->buffers.frame);
                 // FrameBuffer <--> Color RenderBufferの関連付け
                 {
-                    glBindRenderbuffer(GL_RENDERBUFFER, result->buffers.color);
+                    state->bindRenderbuffer(GL_RENDERBUFFER, result->buffers.color);
                     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, result->buffers.color);
                 }
                 assert_gl();
                 
                 // FrameBuffer <--> Depth & Stencil RenderBufferの関連付け
                 {
-                    glBindRenderbuffer(GL_RENDERBUFFER, result->buffers.depth_stencil);
+                    state->bindRenderbuffer(GL_RENDERBUFFER, result->buffers.depth_stencil);
                     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, result->buffers.depth_stencil);
                     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, result->buffers.depth_stencil);
                 }

@@ -18,6 +18,8 @@ using namespace ios;
  * FrameBufferのリサイズを行う
  */
 -(void) resizeSurface;
+
+-(void) testRender:(id) _temp;
 @end
 
 @implementation JCOpenGLES20View
@@ -61,8 +63,17 @@ using namespace ios;
     
     @synchronized(self) {
         // GL initialize
-        [self initializeGL];
+        if(![self isInitializedGL]) {
+            [self initializeGL];
+        }
+        
+        // resized
+        [self resizeSurface];
     }
+    
+    
+    [self testRender:nil];
+//    [self performSelectorInBackground:@selector(testRender:) withObject:nil];
 }
 
 - (void) dealloc {
@@ -79,45 +90,85 @@ using namespace ios;
     eglSurface = EGLSurfaceManager::createInstance(eglContext);
     eglManager.reset( new EGLManager());
     
-    // サーフェイスのリサイズを行う
-    [self resizeSurface];
-
-//    eglManager->current(eglContext, eglSurface);
-//    {
-//        jc::gl::MGLState state = eglContext->getState();
-//        state->clearColorf(0, 1, 1, 1);
-//        state->clearSurface();
-//        assert_gl();
-//        
-//        eglManager->postFrontBuffer(eglSurface);
-//    }
-//    eglManager->current(EGL_NULL_CONTEXT, EGL_NULL_SURFACE);
+    _device.reset( new Device() );
+    _device->setEGL(eglManager);
+    _device->setContext(eglContext);
+    _device->setSurface(eglSurface);
 }
 
 -(void) resizeSurface {
     assert(eglSurface);
+
+    try {
+        DeviceLock  lock(_device, jctrue);
+        {
+            // ViewとEAGLContextをバインドする
+            {
+                const BOOL completed = [eglContext->opContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)self.layer];
+                assert_gl();
+                assert(completed);
+            }
+            // リサイズ通知を出して、残りのバッファを更新させる
+            eglSurface->onResized();
+            
+            // コンテキストを同期する
+            eglContext->getState()->syncContext();
+        }
+    }catch( EGLException &e) {
+        jcloge(e);
+        assert(false);
+    }
     
-    eglContext->bind();
-    eglSurface->bind();
-    {   
-        const float scaleFactor = [self contentScaleFactor];
-        const int rendering_buffer_width = (int)(self.bounds.size.width * scaleFactor);
-        const int rendering_buffer_height = (int)(self.bounds.size.height * scaleFactor);
-        jclogf("Rendering Request Size(%d x %d) x%.1f", rendering_buffer_width, rendering_buffer_height, scaleFactor);
-    }
-    {
-        const BOOL completed = [eglContext->opContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)self.layer];
-        assert_gl();
-        assert(completed);
-    }
-    // リサイズ通知を出して、残りのバッファを更新させる
-    eglSurface->onResized();
 }
 
+/**
+ * GL初期化済みであればYESを返す
+ */
+- (BOOL) isInitializedGL {
+    @synchronized(self) {
+        return _device ? YES : NO;
+    }
+}
+
+
 - (void) disposeGL {
-    eglSurface.reset();
-    eglManager.reset();
-    eglContext.reset();
+    
+    @synchronized(self) {
+        if(!_device) {
+            return;
+        }
+        
+        jclog("dispose GL");
+        _device->addFlags(DeviceFlag_RequestDestroy);
+        
+        _device.reset();
+        eglSurface.reset();
+        eglManager.reset();
+        eglContext.reset();
+   
+    }
+}
+
+- (void) testRender:(id)_temp {
+    Thread::sleep(10);
+    jc::gl::MGLState state = eglContext->getState();
+//    while(true)
+    try {
+        DeviceLock lock(_device, jctrue);
+        {
+            MSpriteManager spriteManager = SpriteManager::createInstance(_device);
+
+//            state->clearColorf(0, (float)(rand() & 0xFF) / 255.0f, 1, 1);
+            state->clearColorf(0.0f, 1.0f, 1.0f, 1.0f);
+            state->clear();
+            
+            spriteManager->renderingRect(0, 0, 512, 512, 0xFF0000FF);
+            
+            eglManager->postFrontBuffer(eglSurface);
+        }
+    }catch(EGLException &e) {
+        jcloge(e);
+    }
 }
 
 /*

@@ -176,17 +176,6 @@ class GLState: public Object {
         } buffers[MAX_VERTEX_ATTRIBUTE];
     } vertexAttrContext;
 
-    /**
-     * glEnable()関連のステート
-     */
-    struct {
-        /**
-         * テクスチャ
-         * GL_TEXTURE_2D
-         */
-        jcboolean texture2d;
-    } enableContext;
-
     struct {
         /**
          * DepthFunc
@@ -285,13 +274,13 @@ public:
      */
     inline jcboolean clearColorf(const GLclampf r, const GLclampf g, const GLclampf b, const GLclampf a) {
         Color temp = Color::fromRGBAf(r, g, b, a);
-        if (temp != clearContext.clearColor) {
-            // 色が違うからコマンド呼び出し
-            glClearColor(r, g, b, a);
-
+        if (temp.rgba != clearContext.clearColor.rgba) {
             // 最後に呼び出した色を保存
             clearContext.clearColor = temp;
-
+            
+            // 色が違うからコマンド呼び出し
+            glClearColor(r, g, b, a);
+            assert_gl();
             return jctrue;
         }
         return jcfalse;
@@ -764,7 +753,7 @@ public:
     /**
      * フレームバッファへの関連付けを行う
      */
-    inline jcboolean bindFrameBuffer(const GLenum target, const GLuint frameBuffer) {
+    inline jcboolean bindFramebuffer(const GLenum target, const GLuint frameBuffer) {
         assert(target == GL_FRAMEBUFFER);
 
         // 別なバインドが行われていたらバインドし直す
@@ -783,13 +772,14 @@ public:
     /**
      * レンダリングバッファへの関連付けを行う
      */
-    inline jcboolean bindRenderBuffer(const GLenum target, const GLuint renderBuffer) {
+    inline jcboolean bindRenderbuffer(const GLenum target, const GLuint renderBuffer) {
         assert(target == GL_RENDERBUFFER);
         
         if(frameBufferContext.renderBuffer != renderBuffer) {
             frameBufferContext.renderBuffer = renderBuffer;
-            glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+            glBindRenderbuffer(target, renderBuffer);
             assert_gl();
+            
             return jctrue;
         }
         return jcfalse;

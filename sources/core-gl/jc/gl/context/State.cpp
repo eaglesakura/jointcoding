@@ -37,10 +37,6 @@ GLState::GLState() {
         blendContext.src = GL_ONE;
         blendContext.dst = GL_ZERO;
     }
-    // enable
-    {
-        enableContext.texture2d = jcfalse;
-    }
     // depth
     {
         depthContext.enable = jcfalse;
@@ -84,6 +80,7 @@ GLState::GLState() {
     // frameBuffer
     {
         frameBufferContext.frameBuffer = 0;
+        frameBufferContext.renderBuffer = 0;
     }
 }
 
@@ -165,11 +162,6 @@ void GLState::syncContext() {
         blendContext.src = 0;
         blendContext.dst = 0;
     }
-    // enable情報を取得する
-    {
-        enableContext.texture2d = glIsEnabled(GL_TEXTURE_2D);
-        assert_gl();
-    }
     // depth
     {
         depthContext.enable = glIsEnabled(GL_DEPTH_TEST);
@@ -191,11 +183,13 @@ void GLState::syncContext() {
     }
     // バッファを問い合わせる
     {
-        glGetIntegerv(GL_ARRAY_BUFFER, (GLint*) &bindBufferContext.buffers[0]);
+        glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &bindBufferContext.buffers[0]);
         assert_gl();
-        glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER, (GLint*) &bindBufferContext.buffers[1]);
+        glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, (GLint*) &bindBufferContext.buffers[1]);
         assert_gl();
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*) &frameBufferContext.frameBuffer);
+        assert_gl();
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, (GLint*)&frameBufferContext.renderBuffer);
         assert_gl();
     }
     // マスクを問い合わせる
@@ -231,7 +225,7 @@ void GLState::syncContext() {
                 assert_gl();
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_STRIDE, (GLint*) &attr->stride);
                 assert_gl();
-                glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER, (GLint*) &attr->ptr);
+                glGetVertexAttribPointerv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER, (GLvoid**)&attr->ptr);
                 assert_gl();
             }
 
@@ -258,17 +252,11 @@ void GLState::print(const charactor* file, const s32 line) const {
     {
         jclogf("glViewport LTRB(%d, %d, %d, %d)", viewportContext.left, viewportContext.top, viewportContext.right, viewportContext.bottom);
     }
-    // enable情報を取得する
-    {
-        jclog("---- glEnable");
-        jclogf("glEnable %s = %s", "GL_TEXTURE_2D", enableContext.texture2d ? "Enable" : "Disable");
-        jclog("---- glEnable Complete");
-    }
     // depth
     {
         jclog("---- glDepth");
         jclogf("glEnable %s = %s", "GL_DEPTH_TEST", depthContext.enable ? "Enable" : "Disable");
-        jclogf("glDepthFunc(%d)", depthContext.func);
+        jclogf("glDepthFunc(%x)", depthContext.func);
         jclog("---- glDepth Complete");
     }
     // シェーダプログラム情報を取得する
@@ -286,7 +274,7 @@ void GLState::print(const charactor* file, const s32 line) const {
         for (u32 i = 0; i < maxAttr; ++i) {
             // ショートカット用
             const VertexAttributePointerData *attr = &vertexAttrContext.buffers[i].pointerData;
-            jclogf("glVertexAttribPointer(index = %d, size = %d, type = %d, normalized = %s, stride = %d, ptr = 0x%X ) = %s",
+            jclogf("glVertexAttribPointer(index = %d, size = %d, type = 0x%x, normalized = %s, stride = %d, ptr = 0x%X ) = %s",
             //
             // インデックス
                     i,

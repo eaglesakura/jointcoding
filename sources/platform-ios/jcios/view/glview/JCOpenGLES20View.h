@@ -20,4 +20,9 @@
  */
 @property (readonly) jc::gl::MDevice    device;
 
+/**
+ * GL初期化済みであればYESを返す
+ */
+- (BOOL) isInitializedGL;
+
 @end

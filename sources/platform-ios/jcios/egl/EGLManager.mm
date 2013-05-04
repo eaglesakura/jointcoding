@@ -53,6 +53,8 @@ namespace ios {
             eglContext->bind();
             eglSurface->bind();
             
+            assert_gl();
+            
             // 最後にバインドしたコンテキストを覚えておく
             this->eglContext = eglContext;
             

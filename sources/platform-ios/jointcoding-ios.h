@@ -5,10 +5,7 @@
 
 // for GL
 #include "jc/gl/GL.h"
-#include "jc/gl/gpu/Device.h"
-#include "jc/egl/EGL.h"
-#include "jc/egl/EGLContext.h"
-#include "jc/egl/EGLSurface.h"
+#include "jc/gl/GL2D.h"
 
 // mem
 #include "jcios/mem/ObjectivePointer.hpp"
