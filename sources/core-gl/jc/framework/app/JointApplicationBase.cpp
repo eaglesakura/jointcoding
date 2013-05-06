@@ -35,7 +35,8 @@ void JointApplicationBase::dispatchDestroy() {
 
     flags.destroyed = jctrue;
     try {
-        MutexLock lock(device->getGPUMutex());
+        DeviceLock  lock(device, jctrue);
+
         if (!flags.initialized) {
             // 初期化前であれば何もしない
             return;
@@ -47,6 +48,8 @@ void JointApplicationBase::dispatchDestroy() {
         }
 
         windowManager.reset();
+
+        getVRAM()->gc();
     } catch (Exception &e) {
         jcloge(e);
     }
