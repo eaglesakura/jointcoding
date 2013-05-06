@@ -152,6 +152,9 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
                     throw new IllegalStateException("appContext == null");
                 }
 
+                // 初期化を行わせる
+                onNativeInitialize();
+
                 // メインループを開始する
                 startMainLoop();
             }
@@ -288,6 +291,15 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
     @JCMethod(
               nativeMethod = true)
     protected native void onNativeMainLoop();
+
+    /**
+     * サーフェイスサイズが変更になった
+     * @param newWidth
+     * @param newHeight
+     */
+    @JCMethod(
+              nativeMethod = true)
+    protected native void onNativeInitialize();
 
     /**
      * サーフェイスサイズが変更になった

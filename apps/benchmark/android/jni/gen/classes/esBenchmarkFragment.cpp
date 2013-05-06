@@ -10,10 +10,10 @@ const ::jc::s32 BenchmarkFragment::KEY_MAINCONTEXT = 0;
 
 static jclass class_BenchmarkFragment = NULL;
 
-#define methods_BenchmarkFragment_LENGTH 9
+#define methods_BenchmarkFragment_LENGTH 10
 
 #if methods_BenchmarkFragment_LENGTH
-static jmethodID methods_BenchmarkFragment[9];
+static jmethodID methods_BenchmarkFragment[10];
 #endif
 
 static void initialize_BenchmarkFragment() {
@@ -37,9 +37,10 @@ static void initialize_BenchmarkFragment() {
         methods_BenchmarkFragment[3] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "onNativeSurfaceResized", "(II)V", false);
         methods_BenchmarkFragment[4] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "onNativeMainLoop", "()V", false);
         methods_BenchmarkFragment[5] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "createNativeContext", "(Lcom/eaglesakura/jc/android/view/GLNativeTextureView;)V", false);
-        methods_BenchmarkFragment[6] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "onNativeResume", "()V", false);
-        methods_BenchmarkFragment[7] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "getNativePointer", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", false);
-        methods_BenchmarkFragment[8] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "getSurface", "()Lcom/eaglesakura/jc/android/view/GLNativeTextureView;", false);
+        methods_BenchmarkFragment[6] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "onNativeInitialize", "()V", false);
+        methods_BenchmarkFragment[7] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "onNativeResume", "()V", false);
+        methods_BenchmarkFragment[8] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "getNativePointer", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", false);
+        methods_BenchmarkFragment[9] = ::ndk::JniWrapper::loadMethod(class_BenchmarkFragment, "getSurface", "()Lcom/eaglesakura/jc/android/view/GLNativeTextureView;", false);
 
     }
 }
@@ -324,9 +325,62 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_c
 #endif
 
 
-void BenchmarkFragment::onNativeResume() {
+void BenchmarkFragment::onNativeInitialize() {
     CALL_JNIENV();
     env->CallVoidMethod(this->getObject(), methods_BenchmarkFragment[6]);
+}
+#if 0
+#include "jointcoding-android.h"
+#include "esBenchmarkFragment.h"
+
+extern "C" {
+// prototype
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_onNativeInitialize(JNIEnv *env, jobject _this);
+}
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_onNativeInitialize(JNIEnv *env, jobject _this) {
+    // call env reset
+    initJniEnv(env);
+    
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_onNativeInitialize");
+    
+    return;
+}
+#endif
+
+
+void BenchmarkFragment::onNativeInitialize_(jobject _this) {
+    CALL_JNIENV();
+    initialize_BenchmarkFragment();
+    env->CallVoidMethod(_this, methods_BenchmarkFragment[6]);
+}
+#if 0
+#include "jointcoding-android.h"
+#include "esBenchmarkFragment.h"
+
+extern "C" {
+// prototype
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_onNativeInitialize(JNIEnv *env, jobject _this);
+}
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_onNativeInitialize(JNIEnv *env, jobject _this) {
+    // call env reset
+    initJniEnv(env);
+    
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_onNativeInitialize");
+    
+    return;
+}
+#endif
+
+
+void BenchmarkFragment::onNativeResume() {
+    CALL_JNIENV();
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkFragment[7]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -353,7 +407,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_o
 void BenchmarkFragment::onNativeResume_(jobject _this) {
     CALL_JNIENV();
     initialize_BenchmarkFragment();
-    env->CallVoidMethod(_this, methods_BenchmarkFragment[6]);
+    env->CallVoidMethod(_this, methods_BenchmarkFragment[7]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -379,24 +433,24 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_o
 
 jobject BenchmarkFragment::getNativePointer_unsafe(jint key) {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_BenchmarkFragment[7], key);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_BenchmarkFragment[8], key);
 }
 
 jobject BenchmarkFragment::getNativePointer_unsafe_(jobject _this, jint key) {
     CALL_JNIENV();
     initialize_BenchmarkFragment();
-    return (jobject) env->CallObjectMethod(_this, methods_BenchmarkFragment[7], key);
+    return (jobject) env->CallObjectMethod(_this, methods_BenchmarkFragment[8], key);
 }
 
 jobject BenchmarkFragment::getSurface_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_BenchmarkFragment[8]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_BenchmarkFragment[9]);
 }
 
 jobject BenchmarkFragment::getSurface_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_BenchmarkFragment();
-    return (jobject) env->CallObjectMethod(_this, methods_BenchmarkFragment[8]);
+    return (jobject) env->CallObjectMethod(_this, methods_BenchmarkFragment[9]);
 }
 
 jc_sp<BenchmarkFragment> BenchmarkFragment::wrap(jobject obj) {

@@ -10,10 +10,10 @@ const ::jc::s32 NativeApplicationFragment::KEY_MAINCONTEXT = 0;
 
 static jclass class_NativeApplicationFragment = NULL;
 
-#define methods_NativeApplicationFragment_LENGTH 8
+#define methods_NativeApplicationFragment_LENGTH 9
 
 #if methods_NativeApplicationFragment_LENGTH
-static jmethodID methods_NativeApplicationFragment[8];
+static jmethodID methods_NativeApplicationFragment[9];
 #endif
 
 static void initialize_NativeApplicationFragment() {
@@ -36,9 +36,10 @@ static void initialize_NativeApplicationFragment() {
         methods_NativeApplicationFragment[2] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "setNativePointer", "(ILcom/eaglesakura/jc/android/resource/jni/Pointer;)V", false);
         methods_NativeApplicationFragment[3] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "onNativeSurfaceResized", "(II)V", false);
         methods_NativeApplicationFragment[4] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "onNativeMainLoop", "()V", false);
-        methods_NativeApplicationFragment[5] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "onNativeResume", "()V", false);
-        methods_NativeApplicationFragment[6] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "getNativePointer", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", false);
-        methods_NativeApplicationFragment[7] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "getSurface", "()Lcom/eaglesakura/jc/android/view/GLNativeTextureView;", false);
+        methods_NativeApplicationFragment[5] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "onNativeInitialize", "()V", false);
+        methods_NativeApplicationFragment[6] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "onNativeResume", "()V", false);
+        methods_NativeApplicationFragment[7] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "getNativePointer", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", false);
+        methods_NativeApplicationFragment[8] = ::ndk::JniWrapper::loadMethod(class_NativeApplicationFragment, "getSurface", "()Lcom/eaglesakura/jc/android/view/GLNativeTextureView;", false);
 
     }
 }
@@ -270,9 +271,62 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFr
 #endif
 
 
-void NativeApplicationFragment::onNativeResume() {
+void NativeApplicationFragment::onNativeInitialize() {
     CALL_JNIENV();
     env->CallVoidMethod(this->getObject(), methods_NativeApplicationFragment[5]);
+}
+#if 0
+#include "jointcoding-android.h"
+#include "ndkNativeApplicationFragment.h"
+
+extern "C" {
+// prototype
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFragment_onNativeInitialize(JNIEnv *env, jobject _this);
+}
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFragment_onNativeInitialize(JNIEnv *env, jobject _this) {
+    // call env reset
+    initJniEnv(env);
+    
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_NativeApplicationFragment_onNativeInitialize");
+    
+    return;
+}
+#endif
+
+
+void NativeApplicationFragment::onNativeInitialize_(jobject _this) {
+    CALL_JNIENV();
+    initialize_NativeApplicationFragment();
+    env->CallVoidMethod(_this, methods_NativeApplicationFragment[5]);
+}
+#if 0
+#include "jointcoding-android.h"
+#include "ndkNativeApplicationFragment.h"
+
+extern "C" {
+// prototype
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFragment_onNativeInitialize(JNIEnv *env, jobject _this);
+}
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFragment_onNativeInitialize(JNIEnv *env, jobject _this) {
+    // call env reset
+    initJniEnv(env);
+    
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_NativeApplicationFragment_onNativeInitialize");
+    
+    return;
+}
+#endif
+
+
+void NativeApplicationFragment::onNativeResume() {
+    CALL_JNIENV();
+    env->CallVoidMethod(this->getObject(), methods_NativeApplicationFragment[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -299,7 +353,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFr
 void NativeApplicationFragment::onNativeResume_(jobject _this) {
     CALL_JNIENV();
     initialize_NativeApplicationFragment();
-    env->CallVoidMethod(_this, methods_NativeApplicationFragment[5]);
+    env->CallVoidMethod(_this, methods_NativeApplicationFragment[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -325,24 +379,24 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFr
 
 jobject NativeApplicationFragment::getNativePointer_unsafe(jint key) {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeApplicationFragment[6], key);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeApplicationFragment[7], key);
 }
 
 jobject NativeApplicationFragment::getNativePointer_unsafe_(jobject _this, jint key) {
     CALL_JNIENV();
     initialize_NativeApplicationFragment();
-    return (jobject) env->CallObjectMethod(_this, methods_NativeApplicationFragment[6], key);
+    return (jobject) env->CallObjectMethod(_this, methods_NativeApplicationFragment[7], key);
 }
 
 jobject NativeApplicationFragment::getSurface_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeApplicationFragment[7]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeApplicationFragment[8]);
 }
 
 jobject NativeApplicationFragment::getSurface_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_NativeApplicationFragment();
-    return (jobject) env->CallObjectMethod(_this, methods_NativeApplicationFragment[7]);
+    return (jobject) env->CallObjectMethod(_this, methods_NativeApplicationFragment[8]);
 }
 
 jc_sp<NativeApplicationFragment> NativeApplicationFragment::wrap(jobject obj) {

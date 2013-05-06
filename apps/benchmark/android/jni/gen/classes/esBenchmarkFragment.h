@@ -27,6 +27,8 @@ public:
     static void onNativeMainLoop_(jobject _this);
     virtual void createNativeContext(jobject glnativetextureview_0);
     static void createNativeContext_(jobject _this, jobject glnativetextureview_0);
+    virtual void onNativeInitialize();
+    static void onNativeInitialize_(jobject _this);
     virtual void onNativeResume();
     static void onNativeResume_(jobject _this);
     virtual jobject getNativePointer_unsafe(jint key);

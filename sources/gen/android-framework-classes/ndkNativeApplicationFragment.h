@@ -25,6 +25,8 @@ public:
     static void onNativeSurfaceResized_(jobject _this, jint int_0, jint int_1);
     virtual void onNativeMainLoop();
     static void onNativeMainLoop_(jobject _this);
+    virtual void onNativeInitialize();
+    static void onNativeInitialize_(jobject _this);
     virtual void onNativeResume();
     static void onNativeResume_(jobject _this);
     virtual jobject getNativePointer_unsafe(jint key);

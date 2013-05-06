@@ -61,6 +61,10 @@ public:
      */
     virtual void dispose();
 
+    /**
+     * サーフェイスサイズをチェックする
+     */
+    virtual void    onSurfaceResized();
 };
 
 }

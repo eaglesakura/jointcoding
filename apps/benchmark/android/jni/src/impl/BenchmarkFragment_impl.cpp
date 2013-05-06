@@ -7,7 +7,8 @@
 #include "jointcoding-android.h"
 #include "esBenchmarkFragment.h"
 
-using namespace jc;
+#include    "benchmark.hpp"
+
 using namespace ndk;
 
 extern "C" {
@@ -17,7 +18,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_c
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_createNativeContext");
 
-    ndk::setJointContextPointer_Object(_this, Jointable::KEY_MAINCONTEXT, new Object());
+    ndk::setJointContextPointer_Object(_this, Jointable::KEY_MAINCONTEXT, (Object*) (new es::BenchmarkApplication()));
 }
 
 }

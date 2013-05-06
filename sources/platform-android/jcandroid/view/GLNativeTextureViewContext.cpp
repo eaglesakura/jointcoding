@@ -66,29 +66,32 @@ void GLNativeTextureViewContext::onGLInitialize(jobject surfaceTexture) {
  * サーフェイス状態が変更になった
  */
 void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, const s32 width, const s32 height) {
+
+    {
+        EGLManager *manager = dynamic_cast<EGLManager*>(device->getEGL().get());
+        assert(manager);
+        manager->stashEGLCurrents();
+    }
+
     if (width == this->width && height == this->height) {
         // surfaceサイズが変わらない
         jclogf("surface size not changed =(%d, %d)", width, height);
         return;
     }
-// デバイスに廃棄フラグを追加してからロックを行わせる
-    if (device) {
-        device->addFlags(DeviceFlag_RequestDestroy);
-    }
-    MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
 
-// 廃棄フラグを消して、レンダリング可能な状態に戻す
-    getDevice()->removeFlags(DeviceFlag_RequestDestroy);
+// デバイスに廃棄フラグを追加してからロックを行わせる
+    MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
 
 // 縦横サイズを再設定
     this->width = width;
     this->height = height;
 
-// 古いWindowが残っていたら、Windowを廃棄する
+// 古いWindowが残っていたら、サーフェイスサイズ変更はNative実装に任せる
     if (device->getSurface()) {
-        MEGLSurfaceProtocol surface = device->getSurface();
-        surface->dispose();
-        device->setSurface(EGL_NULL_SURFACE);
+        jc_sp<EGLSurfaceManager> surfaceManager = downcast<EGLSurfaceManager>(device->getSurface());
+        assert(surfaceManager);
+        surfaceManager->onSurfaceResized();
+        return;
     }
 
 // EGLSurfaceの再構築を行う
@@ -106,12 +109,6 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
         this->device->setSurface(MEGLSurfaceProtocol(new EGLSurfaceManager(display, eglSurface)));
     }
 
-    {
-        EGLManager *manager = dynamic_cast<EGLManager*>(device->getEGL().get());
-        if (manager) {
-            manager->stashEGLCurrents();
-        }
-    }
 }
 
 /**
@@ -147,7 +144,6 @@ void GLNativeTextureViewContext::dispose() {
     }
 
     MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
-
     if (device) {
         device->dispose();
         device.reset();

@@ -151,6 +151,9 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
             backToDefault = true;
         }
 #endif
+
+//        eglDisplay = EGL_NO_DISPLAY;
+
         // コンテキストとサーフェイスが揃っていないから、設定できない
         if( !eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext) ) {
             if(backToDefault) {
