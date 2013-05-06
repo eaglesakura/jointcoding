@@ -9,6 +9,7 @@
 #include    "jc/gl/texture/PKMHeader.h"
 #include    "jc/gl/texture/TextureImage.h"
 #include    "jc/gl/gpu/DeviceLock.hpp"
+#include    "jc/platform/Timer.h"
 
 namespace jc {
 namespace gl {
@@ -27,9 +28,8 @@ static u32 PIXEL_FORMATS[] = {
         GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_RGBA,
 #endif
 //
-        };
+    };
 }
-
 
 TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     this->alloced = jcfalse;
@@ -111,7 +111,7 @@ void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelForma
     }
 
     // 部分転送を行う
-    glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_width, lineNum, PIXEL_FORMATS[pixelFormat],PIXEL_TYPES[pixelFormat], src);
+    glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, lineHeader, size.img_width, lineNum, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], src);
     assert_gl();
 }
 
@@ -293,8 +293,185 @@ MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFo
         return decodePMK(device, uri, option);
     } else {
         jclogf("platform texture(%s)", uri.getUri().c_str());
-        return decodeFromPlatformDecoder(device, uri, pixelFormat, option);
+        MPixelBuffer buffer = TextureImage::decodePixelsFromPlatformDecoder(device, uri, option);
+        if (buffer) {
+            return decode(device, buffer, pixelFormat, option);
+        }
+        return MTextureImage();
     }
+}
+
+/**
+ * ピクセルバッファからデコードを行う
+ * pixelBufferはpixelFormatのフォーマットへ変換を行った上で転送を行う
+ */ //
+jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffer, const PixelFormat_e pixelFormat, TextureLoadOption *option) {
+    jc_sp<TextureImage> result;
+
+    // ピクセルコンバートを行う
+    pixelBuffer->convert(pixelFormat);
+
+    // キャンセルチェックポインタを作成
+    jcboolean cancel_flag = jcfalse;
+    jcboolean *cancel_ptr = option ? &option->load_cancel : &cancel_flag;
+
+    // デバイスの制御待ちチェック
+#define     device_wait(option) if(option && option->load_priority_down){ device->waitLockRequest(1, cancel_ptr); }
+
+    // bytes/pixをチェックする
+    const s32 ONCE_PIXEL_BYTES = Pixel::getPixelBytes(pixelFormat);
+    {
+        const u32 origin_width = pixelBuffer->getWidth();
+        const u32 origin_height = pixelBuffer->getHeight();
+
+        const u32 texture_width = TextureImage::toTextureSize(option, origin_width);
+        const u32 texture_height = TextureImage::toTextureSize(option, origin_height);
+
+        // テクスチャを生成する
+        try {
+            jctime lock_time = Timer::currentTime();
+
+            // ロック優先度が低いなら、他のデバイスの制御待ちを行う
+            device_wait(option);
+
+            // lock
+            DeviceLock lock(device, jctrue);
+
+            // デバイスロック時間の記録
+            if (option) {
+                option->result.devicelocked_time_ms = Timer::lapseTimeMs(lock_time);
+            }
+            lock_time = Timer::currentTime();
+
+            // テクスチャを作成する
+            result.reset(new TextureImage(texture_width, texture_width, device));
+
+            result->size.img_width = origin_width;
+            result->size.img_height = origin_height;
+            result->size.tex_width = texture_width;
+            result->size.tex_height = texture_height;
+
+            // mipmapを生成する場合は正方形に整列する
+            if (option && option->gen_mipmap) {
+                result->size.tex_width = jc::max(texture_width, texture_height);
+                result->size.tex_height = result->size.tex_width;
+            }
+
+            // テクスチャ用メモリを確保する
+            result->bind();
+            result->allocPixelMemory(pixelFormat, 0);
+            if (ONCE_PIXEL_BYTES != 4) {
+                // glTexImage2D用にパッキングを行う
+                // この呼出を行わない場合、テクセル境界が4byteとなってしまう
+                // 例えば2byte RGB565テクスチャの転送で4byte境界にされてしまい、テクスチャがうまいこと読み込めなくなってしまう
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            } else {
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+            }
+
+            // テクスチャalloc時間を記録する
+            if (option) {
+                option->result.alloc_time_ms = Timer::lapseTimeMs(lock_time);
+                option->result.teximage_time_ms = 0;
+            }
+
+            // テクスチャロードを開始する
+            glFlush();
+        } catch (Exception &e) {
+            jcloge(e);
+        }
+
+        // 分割読み込み数を設定する
+        s32 pixel_y = 0;
+        s32 LOAD_HEIGHT = origin_height;
+
+        // １回ごとに読み込むピクセル数を設定する
+        if (option && option->slice_loading_pixel > 0) {
+            LOAD_HEIGHT = jc::max<s32>(option->slice_loading_pixel / origin_width, 32);
+        }
+
+        // 読込先Y位置が画像高さよりも小さければロード続行する
+        while (pixel_y < origin_height && !(*cancel_ptr)) {
+            try {
+                jctime lock_time = Timer::currentTime();
+
+                // ロック優先度が低いなら、他のデバイスの制御待ちを行う
+                device_wait(option);
+
+                // lock
+                DeviceLock lock(device, jctrue);
+
+                if (option) {
+                    option->result.devicelocked_time_ms += Timer::lapseTimeMs(lock_time);
+                }
+
+                lock_time = Timer::currentTime();
+
+                // 読み込むライン数を修正する
+                LOAD_HEIGHT = jc::min<s32>(LOAD_HEIGHT, origin_height - pixel_y);
+                assert(LOAD_HEIGHT > 0);
+                assert((pixel_y + LOAD_HEIGHT) <= origin_height);
+
+                result->bind();
+                result->copyPixelLine(pixelBuffer->getPixelHeader(), pixelFormat, 0, pixel_y, LOAD_HEIGHT);
+                // テクスチャロードはfinish待ちを行う
+                glFlush();
+
+                if (option) {
+                    option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
+                }
+            } catch (EGLException &e) {
+                jcloge(e);
+                throw;
+            }
+
+            // 画像ヘッダを移動する
+            pixelBuffer->nextLine(LOAD_HEIGHT);
+            pixel_y += LOAD_HEIGHT;
+
+            if (option && option->slice_sleep_time_ms > 0 && pixel_y < origin_height) {
+                Thread::sleep(option->slice_sleep_time_ms);
+            }
+        }
+
+        // 必要であればmipmapを生成する
+        if (option && option->gen_mipmap && result->isPowerOfTwoTexture()) {
+            try {
+                jctime lock_time = Timer::currentTime();
+
+                // ロック優先度が低いなら、他のデバイスの制御待ちを行う
+                device_wait(option);
+
+                // lock
+                DeviceLock lock(device, jctrue);
+
+                if (option) {
+                    option->result.devicelocked_time_ms += Timer::lapseTimeMs(lock_time);
+                }
+
+                jclog("gen mipmap");
+                result->bind();
+                result->genMipmaps();
+                result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+                result->setMagFilter(GL_LINEAR);
+
+                // テクスチャロードはfinish待ちを行う
+                glFlush();
+                if (option) {
+                    option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
+                }
+            } catch (Exception &e) {
+                jcloge(e);
+                throw;
+            }
+
+        }
+    }
+
+    return result;
+
+#undef  device_wait
+    return result;
 }
 
 /**
