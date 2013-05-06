@@ -3,9 +3,11 @@ package com.eaglesakura.jc.framework.app;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.eaglesakura.jc.android.app.AndroidUtil;
 import com.eaglesakura.jc.android.resource.jni.Jointable;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
 import com.eaglesakura.jc.android.view.GLNativeTextureView;
@@ -33,7 +35,21 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
      */
     GLNativeTextureView surface = null;
 
+    /**
+     * アプリのメインコンテキスト
+     * Native側で管理する
+     */
     Pointer appContext = null;
+
+    /**
+     * タッチ制御をNativeに伝えるクラス
+     */
+    private View.OnTouchListener surfaceTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return true;
+        }
+    };
 
     public NativeApplicationFragment() {
     }
@@ -42,6 +58,7 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         surface = new GLNativeTextureView(getActivity());
         surface.initialize(0xFFFFFFFF, this);
+        surface.setOnTouchListener(surfaceTouchListener);
         return surface;
     }
 
@@ -95,6 +112,7 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
     public void onEGLSurfaceSizeChanged(GLNativeTextureView view, int width, int height) {
         synchronized (lock) {
             if (validNative()) {
+                AndroidUtil.log(String.format("Surface Size Changed(%d x %d)", width, height));
                 onNativeSurfaceResized(width, height);
             }
         }
@@ -103,6 +121,7 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
     @Override
     public void onEGLSurfaceDestroyBegin(GLNativeTextureView view) {
         synchronized (lock) {
+            AndroidUtil.log("Destroy Surface");
             if (validNative()) {
                 onNativeDestroy();
             }

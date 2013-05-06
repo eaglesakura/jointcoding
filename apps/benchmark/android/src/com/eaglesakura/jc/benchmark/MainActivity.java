@@ -1,9 +1,12 @@
 package com.eaglesakura.jc.benchmark;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.eaglesakura.jc.android.app.AndroidUtil;
+import com.eaglesakura.jc.benchmark.app.BenchmarkFragment;
 
 public class MainActivity extends Activity {
 
@@ -16,6 +19,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            {
+                Fragment fragment = new BenchmarkFragment();
+                transaction.add(R.id.rendering_area, fragment, fragment.getClass().getSimpleName());
+            }
+            transaction.commit();
+        }
         AndroidUtil.log("activity created");
     }
 

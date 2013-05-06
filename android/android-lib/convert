@@ -12,6 +12,8 @@ OUTPUT_PATH=../../sources/
 echo "android classes --------------"
 java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin/classes/com/eaglesakura/jc/android/" --output "${OUTPUT_PATH}/gen/android-classes" --library "${ANDROID_HOME}/platforms/${ANDROID_VERSION}/android.jar" "./bin/classes"  | grep "export"
 
+java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin/classes/com/eaglesakura/jc/framework/" --output "${OUTPUT_PATH}/gen/android-framework-classes" --library "${ANDROID_HOME}/platforms/${ANDROID_VERSION}/android.jar" "./bin/classes"  | grep "export"
+
 java -jar "${JOINTCODING_HOME}/bin/jcj2c.jar" --source "./bin/classes/com/google/" --output "${OUTPUT_PATH}/gen/android-gclasses" --library "${ANDROID_HOME}/platforms/${ANDROID_VERSION}/android.jar" "./bin/classes"  | grep "export"
 
 #
