@@ -6,6 +6,8 @@
 #include "jointcoding-android.h"
 #include "android-framework-classes/ndkNativeApplicationFragment.h"
 
+#include    "jc/thread/Thread.h"
+
 extern "C" {
 
 // main
@@ -36,6 +38,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFr
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFragment_onNativeMainLoop(JNIEnv *env, jobject _this) {
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_NativeApplicationFragment_onNativeMainLoop");
+    jc::Thread::sleep(8);
 }
 
 }
