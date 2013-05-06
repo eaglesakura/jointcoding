@@ -112,14 +112,10 @@ MTextureImage TextureImage::decodeFromPlatformDecoder(MDevice device, const Uri 
             result->size.tex_width = texture_width;
             result->size.tex_height = texture_height;
 
-            // PowerVR系GPUのみ、正方形チェックを行う
-//            if (GPUCapacity::getGPUFamily() == GPUFamily_PowerVR)
-            {
-                // mipmapを生成する場合は正方形に整列する
-                if (option && option->gen_mipmap) {
-                    result->size.tex_height = result->size.tex_width;
-                    result->size.tex_width = jc::max(texture_width, texture_height);
-                }
+            // mipmapを生成する場合は正方形に整列する
+            if (option && option->gen_mipmap) {
+                result->size.tex_width = jc::max(texture_width, texture_height);
+                result->size.tex_height = result->size.tex_width;
             }
 
             // テクスチャ用メモリを確保する
