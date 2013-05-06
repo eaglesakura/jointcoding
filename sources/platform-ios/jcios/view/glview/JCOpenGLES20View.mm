@@ -10,11 +10,6 @@ using namespace ios;
 -(void) initializeGL;
 
 /**
- * GL ES 2.0の解放処理を行う
- */
--(void) disposeGL;
-
-/**
  * FrameBufferのリサイズを行う
  */
 -(void) resizeSurface;
@@ -25,6 +20,7 @@ using namespace ios;
 @implementation JCOpenGLES20View
 
 @synthesize device = _device;
+@synthesize delegate = _delegate;
 
 
 + (Class) layerClass{
@@ -61,6 +57,10 @@ using namespace ios;
 - (void) layoutSubviews {
     [super layoutSubviews];
     
+    // 開始通知
+    if(_device) {
+        [_delegate shouldSurfaceResize:self];
+    }
     @synchronized(self) {
         // GL initialize
         if(![self isInitializedGL]) {
@@ -70,9 +70,10 @@ using namespace ios;
         // resized
         [self resizeSurface];
     }
+    // 完了通知
+    [_delegate didSurfaceResized:self];
     
-    
-    [self testRender:nil];
+//    [self testRender:nil];
 //    [self performSelectorInBackground:@selector(testRender:) withObject:nil];
 }
 
@@ -94,6 +95,10 @@ using namespace ios;
     _device->setEGL(eglManager);
     _device->setContext(eglContext);
     _device->setSurface(eglSurface);
+    
+    
+    // 完了通知
+    [_delegate didInitializeComplete:self];
 }
 
 -(void) resizeSurface {

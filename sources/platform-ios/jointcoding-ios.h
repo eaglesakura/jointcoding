@@ -10,5 +10,8 @@
 // mem
 #include "jcios/mem/ObjectivePointer.hpp"
 
+using namespace jc;
+using namespace jc::gl;
+//using namespace jc::view;
 
 #endif
