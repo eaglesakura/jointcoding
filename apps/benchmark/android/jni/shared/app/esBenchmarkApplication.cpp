@@ -15,14 +15,17 @@ BenchmarkApplication::~BenchmarkApplication() {
     jclogf("delete 0x%x", this);
 }
 
-
-
 /**
  * アプリ初期化を行わせる
  * メソッド呼び出し時点でデバイスロック済み。
  */
 void BenchmarkApplication::onAppInitialize() {
     jclogf("onAppInitialize 0x%x", this);
+
+    texture = TextureImage::decode(device, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
+
+    getState()->blendEnable(jctrue);
+    getState()->blendFunc(GLBlendType_Alpha);
 }
 
 /**
@@ -55,6 +58,8 @@ void BenchmarkApplication::onAppMainRendering() {
     {
         MSpriteManager spriteManager = getSpriteManager();
         spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
+
+        spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
     }
 
     device->postFrontBuffer();
@@ -75,7 +80,6 @@ void BenchmarkApplication::onAppPause() {
 void BenchmarkApplication::onAppResume() {
     jclogf("onAppResume 0x%x", this);
 }
-
 
 /**
  * アプリのメモリ解放を行う

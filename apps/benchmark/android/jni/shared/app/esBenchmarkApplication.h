@@ -12,6 +12,8 @@
 namespace es {
 
 class   BenchmarkApplication : public JointApplicationBase {
+    MTextureImage   texture;
+
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();
