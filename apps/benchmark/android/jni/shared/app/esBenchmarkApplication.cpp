@@ -9,7 +9,6 @@
 namespace es {
 
 BenchmarkApplication::BenchmarkApplication() {
-
 }
 
 BenchmarkApplication::~BenchmarkApplication() {

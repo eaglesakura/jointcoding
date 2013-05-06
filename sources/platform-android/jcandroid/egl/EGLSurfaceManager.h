@@ -52,7 +52,7 @@ public:
     /**
      * ネイティブのサーフェイスを取得する
      */
-    virtual EGLSurface  getSurface( ) const {
+    virtual EGLSurface getSurface() const {
         return surface;
     }
 
@@ -64,7 +64,12 @@ public:
     /**
      * サーフェイスサイズをチェックする
      */
-    virtual void    onSurfaceResized();
+    virtual void onSurfaceResized();
+
+    virtual void setSurfaceSize(const s32 width, const s32 height) {
+        this->width = width;
+        this->height = height;
+    }
 };
 
 }

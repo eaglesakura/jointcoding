@@ -38,7 +38,7 @@ void EGLSurfaceManager::onSurfaceResized() {
     eglQuerySurface(display, surface, EGL_WIDTH, &width);
     eglQuerySurface(display, surface, EGL_HEIGHT, &height);
 
-    jclogf("TextureView Surface Size = %d x %d", width, height);
+    jclogf("TextureView Surface Size from query = %d x %d", width, height);
 }
 
 }

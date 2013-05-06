@@ -35,7 +35,7 @@ void JointApplicationBase::dispatchDestroy() {
 
     flags.destroyed = jctrue;
     try {
-        DeviceLock lock(device, jctrue);
+        MutexLock lock(device->getGPUMutex());
         if (!flags.initialized) {
             // 初期化前であれば何もしない
             return;
@@ -47,12 +47,6 @@ void JointApplicationBase::dispatchDestroy() {
         }
 
         windowManager.reset();
-
-        // VRAMのプールを解放する
-        {
-            VRAM vram = getVRAM();
-            vram->gc();
-        }
     } catch (Exception &e) {
         jcloge(e);
     }

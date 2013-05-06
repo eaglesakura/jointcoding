@@ -24,11 +24,7 @@ EGLContextManager::~EGLContextManager() {
  * 資源の開放を行う
  */
 void EGLContextManager::dispose() {
-    if (vram) {
-        // 強制開放
-        vram->dispose();
-        vram.reset();
-    }
+    vram.reset();
 
     if (context) {
         jclogf("destroy context = %x", context);

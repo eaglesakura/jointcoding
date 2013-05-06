@@ -90,11 +90,13 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
     if (device->getSurface()) {
         jc_sp<EGLSurfaceManager> surfaceManager = downcast<EGLSurfaceManager>(device->getSurface());
         assert(surfaceManager);
+        jclogf("onSurfaceSize Changed(%d x %d)", width, height);
         surfaceManager->onSurfaceResized();
+        surfaceManager->setSurfaceSize(width, height);
         return;
     }
 
-// EGLSurfaceの再構築を行う
+// EGLSurfaceの構築を行う
     {
         EGLSurface eglSurface = NULL;
         eglSurface = (EGLSurface) EGLSupport::eglCreateWindowSurfaceSupport((jint) display, (jint) config, surfaceTexture);

@@ -344,7 +344,7 @@ EGLConfig EGLManager::chooseConfig(const EGLDisplay display, const PixelFormat_e
  * eglGetDisplay(EGL_DEFAULT_DISPLAY)を呼び出す
  */
 EGLDisplay EGLManager::getDefaultDisplay() {
-    return eglGetDisplay(EGL_DEFAULT_DISPLAY );
+    return eglGetDisplay(EGL_DEFAULT_DISPLAY);
 }
 
 }
