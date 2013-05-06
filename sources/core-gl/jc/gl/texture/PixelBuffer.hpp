@@ -11,9 +11,12 @@ namespace jc {
 namespace gl {
 
 /**
+ * 単純なピクセル配列を定義したクラス
  *
+ * 基本的には継承し、Nativeクラスを保持する=Pixel変換を最小限にするように実装する
  */
 class PixelBuffer: public Object {
+protected:
     /**
      * 格納されているフォーマット
      */
@@ -44,17 +47,15 @@ class PixelBuffer: public Object {
      */
     s32 height;
 public:
-    PixelBuffer( const PixelFormat_e pixelFormat, const jc_sa<u8> pixelBuffer, const s32 width, const s32 height ) {
-        assert(pixelBuffer);
+    PixelBuffer( const PixelFormat_e pixelFormat, const s32 width, const s32 height ) {
         assert(width > 0);
         assert(height > 0);
 
         this->pixelFormat = pixelFormat;
-        this->pixels = pixelBuffer;
         this->width = width;
         this->height = height;
         bytesParPixel = Pixel::getPixelBytes(pixelFormat);
-        header= pixelBuffer.get();
+        header = NULL;
     }
 
     virtual ~PixelBuffer() {
@@ -103,9 +104,6 @@ public:
             return;
         }
 
-        // 読み込み前でなければならない
-        assert(header == pixels.get());
-
         bytesParPixel = Pixel::getPixelBytes(newFormat);
         jc_sa<u8> newBuffer = Pixel::createPixelBuffer(newFormat, width * height);
 
@@ -139,6 +137,11 @@ public:
         header = newBuffer.get();
     }
 };
+
+/**
+ * managed
+ */
+typedef jc_sp<PixelBuffer> MPixelBuffer;
 
 }
 }

@@ -12,6 +12,7 @@
 #include    "jc/gl/GL.h"
 #include    "jc/gl/gpu/Device.h"
 #include    "jc/graphics/TextureTable.hpp"
+#include    "jc/gl/texture/PixelBuffer.hpp"
 
 namespace jc {
 namespace gl {
@@ -55,6 +56,9 @@ struct TextureLoadOption {
      */
     s32 slice_sleep_time_ms;
 
+    /**
+     * 読み込み結果の戻り値を保存する
+     */
     struct {
         /**
          * RAW画像読み込み時間
@@ -334,6 +338,12 @@ public:
     static jc_sp<TextureImage> decode( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat = PixelFormat_RGBA8888, TextureLoadOption *option = NULL);
 
     /**
+     * ピクセルバッファからデコードを行う
+     * pixelBufferはpixelFormatのフォーマットへ変換を行った上で転送を行う
+     */
+    static jc_sp<TextureImage> decode(MDevice device, MPixelBuffer pixelBuffer, const PixelFormat_e pixelFormat = PixelFormat_RGBA8888, TextureLoadOption *option = NULL);
+
+    /**
      * PMKファイルのデコードを行う。
      */
     static jc_sp<TextureImage> decodePMK(MDevice device, const Uri &uri, TextureLoadOption *option = NULL);
@@ -343,6 +353,13 @@ public:
      * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
      */
     static jc_sp<TextureImage> decodeFromPlatformDecoder( MDevice device, const Uri &uri, const PixelFormat_e pixelFormat, TextureLoadOption *option = NULL);
+
+protected:
+    /**
+     * プラットフォームデコーダを利用してデコードを行う
+     * iOS / AndroidであればJpeg / PNG / Bitmapが共通でデコードできる
+     */
+    static MPixelBuffer decodePixelsFromPlatformDecoder(MDevice device, const Uri &uri, TextureLoadOption *option = NULL);
 };
 
 /**
