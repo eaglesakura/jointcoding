@@ -213,7 +213,7 @@ public:
     /**
      * フラグが設定されている場合、trueを返す。
      */
-    virtual jcboolean hasFlags(const u32 check_flags) {
+    virtual jcboolean hasFlags(const u32 check_flags) const {
         return has_flag_all(flags, check_flags);
     }
     /**
@@ -268,6 +268,18 @@ public:
      */
     virtual VRAM getVRAM() {
         return context->getVRAM();
+    }
+
+    /**
+     * デバイスがレンダリング可能な状態であればtrueを返す
+     */
+    virtual jcboolean valid() const {
+        // 必要な状態を持っていなければfalse
+        if (!egl || !surface || !context || hasFlags(DeviceFlag_RequestDestroy)) {
+            return jcfalse;
+        }
+
+        return jctrue;
     }
 
     /**

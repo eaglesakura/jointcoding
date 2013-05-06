@@ -8,6 +8,7 @@
 #include    "jcandroid/io/JavaJointInputStream.h"
 #include    "jc/system/Exception.h"
 
+
 namespace ndk {
 
 NDKFileSystem::NDKFileSystem(jc_sp< NativeContext > context) {

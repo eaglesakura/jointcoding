@@ -67,12 +67,6 @@ void GLNativeTextureViewContext::onGLInitialize(jobject surfaceTexture) {
  */
 void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, const s32 width, const s32 height) {
 
-    {
-        EGLManager *manager = dynamic_cast<EGLManager*>(device->getEGL().get());
-        assert(manager);
-        manager->stashEGLCurrents();
-    }
-
     if (width == this->width && height == this->height) {
         // surfaceサイズが変わらない
         jclogf("surface size not changed =(%d, %d)", width, height);
@@ -81,6 +75,12 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
 
 // デバイスに廃棄フラグを追加してからロックを行わせる
     MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
+
+    {
+        EGLManager *manager = dynamic_cast<EGLManager*>(device->getEGL().get());
+        assert(manager);
+        manager->stashEGLCurrents();
+    }
 
 // 縦横サイズを再設定
     this->width = width;
@@ -115,23 +115,6 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
  * サーフェイスを休止する
  */
 void GLNativeTextureViewContext::onGLSuspend() {
-    // デバイスに廃棄フラグを追加してからロックを行わせる
-    if (device) {
-        device->addFlags(DeviceFlag_RequestDestroy);
-    }
-
-    // MEMO
-    // おそらく、TextureViewはSuspend時にSurfaceを保持していても問題ない
-#if 0
-    MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
-    MEGLSurfaceProtocol eglSurface = device->getSurface();
-    if (eglSurface) {
-        eglSurface->dispose();
-
-        // デバイスにセットされているサーフェイスをリセットする
-        device->setSurface(EGL_NULL_SURFACE);
-    }
-#endif
 }
 
 /**

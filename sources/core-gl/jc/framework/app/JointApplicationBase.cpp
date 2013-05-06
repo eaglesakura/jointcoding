@@ -120,6 +120,11 @@ void JointApplicationBase::dispatchMainLoop() {
         return;
     }
 
+    if(!device->valid()) {
+        // デバイスの準備が整っていない
+        return;
+    }
+
     // デバイスの待ち合わせを行う
     {
         device->waitLockRequest(1, &flags.destroyed);
