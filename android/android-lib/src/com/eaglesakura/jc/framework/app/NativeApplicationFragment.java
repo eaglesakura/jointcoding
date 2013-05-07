@@ -7,12 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.eaglesakura.jc.android.app.AndroidUtil;
-import com.eaglesakura.jc.android.resource.jni.Jointable;
-import com.eaglesakura.jc.android.resource.jni.Pointer;
-import com.eaglesakura.jc.android.view.GLNativeTextureView;
-import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
-import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
+import com.eaglesakura.jc.android.egl.SurfaceColorSpec;
+import com.eaglesakura.jc.android.egl.view.EGLTextureView;
 
 /**
  * TextureView1枚でアプリ管理を行うFragmentを構築する
@@ -20,10 +16,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  * 
  * 現状では主にゲーム用途として考える。
  */
-@JCClass(
-         cppNamespace = "ndk")
-public abstract class NativeApplicationFragment extends Fragment implements Jointable,
-        GLNativeTextureView.GLES2Callback {
+public abstract class NativeApplicationFragment extends Fragment {
 
     /**
      * 排他制御のためのロックオブジェクト
@@ -33,48 +26,12 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
     /**
      * レンダリングサーフェイス
      */
-    GLNativeTextureView surface = null;
+    EGLTextureView surface = null;
 
     /**
-     * アプリのメインコンテキスト
-     * Native側で管理する
+     * レンダラークラス
      */
-    Pointer appContext = null;
-
-    /**
-     * フラグメント自体のステートを管理する
-     */
-    protected enum State {
-        /**
-         * 初期化中
-         */
-        Null,
-
-        /**
-         * 休止中
-         */
-        Paused,
-
-        /**
-         * 復旧済み
-         */
-        Running,
-
-        /**
-         * サーフェイスのリサイズ中
-         */
-        SurfaceResizing,
-
-        /**
-         * 廃棄済み
-         */
-        Destroyed,
-    }
-
-    /**
-     * 初期化前
-     */
-    protected State state = State.Null;
+    JointApplicationRenderer renderer = null;
 
     /**
      * タッチ制御をNativeに伝えるクラス
@@ -90,9 +47,18 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        renderer = createRenderer();
+        if (renderer == null) {
+            throw new RuntimeException("Renderer null");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        surface = new GLNativeTextureView(getActivity());
-        surface.initialize(0xFFFFFFFF, this);
+        surface = new EGLTextureView(getActivity());
+        surface.initialize(SurfaceColorSpec.RGBA8, true, true, renderer);
         surface.setOnTouchListener(surfaceTouchListener);
         return surface;
     }
@@ -103,13 +69,7 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
     @Override
     public void onResume() {
         super.onResume();
-
-        synchronized (lock) {
-            if (validNative()) {
-                onNativeResume();
-            }
-        }
-        state = State.Running;
+        renderer.onAppResume();
     }
 
     /**
@@ -117,12 +77,7 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
      */
     @Override
     public void onPause() {
-        state = State.Paused;
-        synchronized (lock) {
-            if (validNative()) {
-                onNativePause();
-            }
-        }
+        renderer.onAppPause();
         super.onPause();
     }
 
@@ -131,249 +86,21 @@ public abstract class NativeApplicationFragment extends Fragment implements Join
      */
     @Override
     public void onDestroy() {
-        state = State.Destroyed;
-        synchronized (lock) {
-            if (surface != null) {
-                surface.destroy();
-                surface = null;
-            }
-        }
-
+        renderer.onAppDestroy();
         super.onDestroy();
-    }
-
-    @Override
-    public void onEGLInitializeCompleted(GLNativeTextureView view) {
-        synchronized (lock) {
-            if (!validNative()) {
-                createNativeContext(view);
-                // 初期化されていなければエラーである
-                if (appContext == null) {
-                    throw new IllegalStateException("appContext == null");
-                }
-
-                // 初期化を行わせる
-                onNativeInitialize();
-
-                // メインループを開始する
-                startMainLoop();
-            }
-        }
-    }
-
-    @Override
-    public void onEGLSurfaceSizeChanged(GLNativeTextureView view, int width, int height) {
-        state = State.SurfaceResizing;
-        synchronized (lock) {
-            if (validNative()) {
-                AndroidUtil.log(String.format("Surface Size Changed(%d x %d)", width, height));
-                onNativeSurfaceResized(width, height);
-            }
-        }
-        state = State.Running;
-    }
-
-    @Override
-    public void onEGLSurfaceDestroyBegin(GLNativeTextureView view) {
-        synchronized (lock) {
-            AndroidUtil.log("Destroy Surface");
-            if (validNative()) {
-                onNativeDestroy();
-            }
-        }
-    }
-
-    @Override
-    public void onEGLSurfaceDestroyCompleted(GLNativeTextureView view) {
-        synchronized (lock) {
-            if (validNative()) {
-                appContext.dispose();
-                appContext = null;
-            }
-        }
-    }
-
-    /**
-     * フラグメント管理ステートを取得する
-     * @return
-     */
-    public State getState() {
-        return state;
-    }
-
-    /**
-     * ネイティブコンテキストを取り出す
-     */
-    @Override
-    @JCMethod
-    public Pointer getNativePointer(int key) {
-        if (key == Jointable.KEY_MAINCONTEXT) {
-            return appContext;
-        }
-
-        return null;
-    }
-
-    /**
-     * ネイティブコンテキストを設定する
-     */
-    @Override
-    @JCMethod
-    public void setNativePointer(int key, Pointer ptr) {
-        if (key == Jointable.KEY_MAINCONTEXT) {
-            appContext = ptr;
-        }
     }
 
     /**
      * レンダリングサーフェイスを取得する
      * @return
      */
-    @JCMethod
-    public GLNativeTextureView getSurface() {
+    public EGLTextureView getSurface() {
         return surface;
     }
 
     /**
-     * Nativeのクラスが有効である場合true
+     * レンダラーを作成する
      * @return
      */
-    protected boolean validNative() {
-        return appContext != null;
-    }
-
-    /**
-     * GL側の操作が可能であればtrue
-     * @return
-     */
-    protected boolean validGLOperation() {
-        if (state != State.Running) {
-            // Running状態でない場合は何も出来ない
-            return false;
-        }
-
-        // 状態が有効でない場合はfalse
-        if (!valid()) {
-            return false;
-        }
-
-        // その他の状況は問題ない
-        return true;
-    }
-
-    /**
-     * Fragmentが有効であればtrueを返す
-     * @return
-     */
-    public boolean valid() {
-        if (getActivity() == null) {
-            return false;
-        }
-
-        if (!validNative()) {
-            return false;
-        }
-
-        if (isDetached()) {
-            return false;
-        }
-
-        if (!isAdded()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * ネイティブ側のメインループ処理を行う
-     */
-    @JCMethod(
-              nativeMethod = true)
-    protected native void onNativeMainLoop();
-
-    /**
-     * サーフェイスサイズが変更になった
-     * @param newWidth
-     * @param newHeight
-     */
-    @JCMethod(
-              nativeMethod = true)
-    protected native void onNativeInitialize();
-
-    /**
-     * サーフェイスサイズが変更になった
-     * @param newWidth
-     * @param newHeight
-     */
-    @JCMethod(
-              nativeMethod = true)
-    protected native void onNativeSurfaceResized(int newWidth, int newHeight);
-
-    /**
-     * Fragment休止を行う
-     */
-    @JCMethod(
-              nativeMethod = true)
-    protected native void onNativePause();
-
-    /**
-     * Fragment復帰を行う
-     */
-    @JCMethod(
-              nativeMethod = true)
-    protected native void onNativeResume();
-
-    /**
-     * Fragment廃棄を行う
-     */
-    @JCMethod(
-              nativeMethod = true)
-    protected native void onNativeDestroy();
-
-    /**
-     * Native Contextを作成する。
-     */
-    protected abstract void createNativeContext(GLNativeTextureView surface);
-
-    /**
-     * メインループ実行クラスを作成する
-     * @return
-     */
-    protected Runnable newMainLoopRunner() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                // 状態が有効ならメインループを実行する
-                while (true) {
-                    boolean sleep = false;
-                    synchronized (lock) {
-                        if (validGLOperation()) {
-                            // 操作可能な状態であればメインループ処理を行う
-                            onNativeMainLoop();
-                        } else if (state == State.Destroyed) {
-                            AndroidUtil.log("abort Activity");
-                            return;
-                        } else {
-                            sleep = true;
-                        }
-                    }
-
-                    // 休眠命令があるなら適当な時間休眠する
-                    if (sleep) {
-                        // その他の状況であれば休止する
-                        AndroidUtil.sleep(10);
-                    }
-                }
-            }
-        };
-    }
-
-    /**
-     * メインループを開始する
-     */
-    protected void startMainLoop() {
-        Runnable runner = newMainLoopRunner();
-        (new Thread(runner)).start();
-    }
+    protected abstract JointApplicationRenderer createRenderer();
 }

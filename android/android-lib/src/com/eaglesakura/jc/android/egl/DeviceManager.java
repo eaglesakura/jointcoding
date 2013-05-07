@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.view.TextureView;
 
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
+import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
 /**
  * OpenGL ESデバイスを抽象化したクラス
@@ -92,12 +93,11 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
      * サーフェイスの廃棄が行われたら呼び出される
      * あくまでウィンドウサーフェイスの廃棄のみが目的であり、Contextを解放したい場合は別途 {@link #dispose()} を呼び出す必要がある
      */
-    private void onSurfaceDestroyed() {
+    void onSurfaceDestroyed() {
         synchronized (lock) {
             if (eglSurface != null) {
                 listener.onEGLSurfaceDestroyBegin(this);
                 eglSurface.dispose();
-                listener.onEGLSurfaceDestroyCompleted(this);
             }
         }
     }
@@ -107,6 +107,9 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
      */
     public void dispose() {
         synchronized (lock) {
+            listener.onEGLSurfaceDestroyBegin(this);
+            listener.onEGLDestroyBegin(this);
+
             if (eglSurface != null) {
                 eglSurface.dispose();
                 eglSurface = null;
@@ -138,7 +141,7 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
      */
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        onSurfaceDestroyed();
+        dispose();
 
         // auto release SurfaceTexture
         return true;
@@ -160,14 +163,17 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
         // not impl
     }
 
+    @JCMethod
     public EGLWrapper getEGLWrapper() {
         return egl;
     }
 
+    @JCMethod
     public EGLContextWrapper getEGLContextWrapper() {
         return eglContext;
     }
 
+    @JCMethod
     public EGLSurfaceWrapper getEGLSurfaceWrapper() {
         return eglSurface;
     }
@@ -193,15 +199,15 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
         void onEGLSurfaceSizeChanged(DeviceManager device, int width, int height);
 
         /**
-         * EGLをサスペンドした。
+         * EGLをサスペンド開始する
          * @param view
          */
         void onEGLSurfaceDestroyBegin(DeviceManager device);
 
         /**
-         * EGLサスペンドが完了した
-         * @param view
+         * EGL解放を開始する
+         * @param device
          */
-        void onEGLSurfaceDestroyCompleted(DeviceManager device);
+        void onEGLDestroyBegin(DeviceManager device);
     }
 }

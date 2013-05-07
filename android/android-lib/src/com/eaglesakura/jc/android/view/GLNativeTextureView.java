@@ -5,7 +5,6 @@ import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
 import android.view.TextureView;
 
-import com.eaglesakura.jc.android.egl.DeviceManager;
 import com.eaglesakura.jc.android.resource.jni.Jointable;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -28,11 +27,6 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 public class GLNativeTextureView extends TextureView implements TextureView.SurfaceTextureListener, Jointable {
 
     static final String TAG = GLNativeTextureView.class.getSimpleName();
-
-    /**
-     * デバイス管理クラス
-     */
-    DeviceManager deviceManager = null;
 
     /**
      * デバイスポインタ
