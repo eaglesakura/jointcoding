@@ -37,17 +37,25 @@ class Object;
  */
 template<typename T>
 jc_sp<T> downcast( const jc_sp<jc::Object> obj ) {
-    return ::boost::dynamic_pointer_cast<T>(obj);
-}
-    
-    /**
-     * スマートポインタのダウンキャストを行う
-     */
-    template<typename T, typename T2>
-    jc_sp<T> downcast( const jc_sp<T2> obj ) {
+    try {
         return ::boost::dynamic_pointer_cast<T>(obj);
+    } catch(std::bad_cast &e) {
+        return jc_sp<T>();
     }
-    
+}
+
+/**
+ * スマートポインタのダウンキャストを行う
+ */
+template<typename T, typename T2>
+jc_sp<T> downcast( const jc_sp<T2> obj ) {
+    try {
+        return ::boost::dynamic_pointer_cast<T>(obj);
+    } catch(std::bad_cast &e) {
+        return jc_sp<T>();
+    }
+}
+
 /**
  * スマートポインタのダウンキャストを行う
  */
