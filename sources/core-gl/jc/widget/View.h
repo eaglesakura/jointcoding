@@ -1216,6 +1216,13 @@ public:
          * 循環参照に注意すること。
          */
         virtual jc_sp<View> getSelfManagedObject();
+
+    public: /* エミュレート */
+
+        /**
+         * ボタンが押されたときと同じアクションを行わせる
+         */
+        virtual void emulateButtonDown();
     };
 
     /**

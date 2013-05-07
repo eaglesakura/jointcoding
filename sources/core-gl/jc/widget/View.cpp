@@ -868,5 +868,15 @@ void View::onSelfRendering() {
 #endif
 }
 
+/**
+ * ボタンが押されたときと同じアクションを行わせる
+ */
+void View::emulateButtonDown() {
+    if(!isDown()) {
+        dispatchDownEvent(jctrue);
+        dispatchDownEvent(jcfalse);
+    }
+}
+
 }
 }
