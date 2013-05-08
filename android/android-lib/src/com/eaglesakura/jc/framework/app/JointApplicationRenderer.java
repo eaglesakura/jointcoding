@@ -17,6 +17,8 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
          cppNamespace = "ndk")
 public abstract class JointApplicationRenderer implements Jointable, DeviceManager.SurfaceListener {
 
+    boolean renderAborted = false;
+
     /**
      * GPU管理クラス
      */
@@ -66,11 +68,6 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
          * 廃棄済み
          */
         Destroyed,
-
-        /**
-         * レンダリングループも抜けた
-         */
-        RenderingFinished,
     }
 
     /**
@@ -163,7 +160,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
         state = State.Destroyed;
         // レンダリングの終了待ちを行う
         int sleep = 0;
-        while (state != State.RenderingFinished) {
+        while (!renderAborted) {
             AndroidUtil.sleep(1);
             if (++sleep > 1000) {
                 break;
@@ -342,7 +339,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
                 }
 
                 AndroidUtil.log("abort Rendering");
-                state = State.RenderingFinished;
+                renderAborted = true;
             }
         };
     }
