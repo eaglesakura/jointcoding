@@ -4,6 +4,8 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.view.TextureView;
 
+import com.eaglesakura.jc.android.resource.jni.Jointable;
+import com.eaglesakura.jc.android.resource.jni.Pointer;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -15,7 +17,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class DeviceManager implements TextureView.SurfaceTextureListener {
+public class DeviceManager implements TextureView.SurfaceTextureListener, Jointable {
     final Object lock = new Object();
 
     /**
@@ -43,29 +45,45 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
      */
     EGLConfigChooser configChooser;
 
+    /**
+     * リスナー
+     * 常に!=nullである必要がある
+     */
     SurfaceListener listener;
 
-    public DeviceManager(EGLConfigChooser configChooser) {
-        this.configChooser = configChooser;
-    }
-
     /**
-     * リスナー登録を行う
-     * @param listener
+     * NDK側のレンダリングデバイス
      */
-    public void setListener(SurfaceListener listener) {
+    Pointer ndkDevice;
+
+    public DeviceManager(EGLConfigChooser configChooser, SurfaceListener listener) {
+        this.configChooser = configChooser;
         this.listener = listener;
     }
 
+    /**
+     * サーフェイスの生成が完了したら呼び出される
+     */
     private void onCreateSurface() {
         synchronized (lock) {
             // EGL初期化を行う
-            if (egl != null) {
+            if (egl == null) {
                 egl = new EGLWrapper();
                 egl.initialize(configChooser);
 
                 eglContext = egl.createContext();
                 eglSurface = egl.createSurface(native_window);
+
+                // NDK側のデバイスを生成する
+                egl.current(eglContext, eglSurface);
+                {
+                    createNative();
+                }
+                egl.current(null, null);
+
+                if (ndkDevice == null) {
+                    throw new RuntimeException("Native Device not initialized");
+                }
 
                 listener.onEGLInitializeCompleted(this);
             }
@@ -80,12 +98,10 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
      */
     private void onResizedSurface(int width, int height) {
         synchronized (lock) {
-            if (eglSurface != null) {
-                eglSurface.onSurfaceResized();
-                eglSurface.setSurfaceSize(width, height);
+            eglSurface.onSurfaceResized();
+            eglSurface.setSurfaceSize(width, height);
 
-                listener.onEGLSurfaceSizeChanged(this, width, height);
-            }
+            listener.onEGLSurfaceSizeChanged(this, width, height);
         }
     }
 
@@ -107,9 +123,13 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
      */
     public void dispose() {
         synchronized (lock) {
+            // リスナを呼び出す
             listener.onEGLSurfaceDestroyBegin(this);
             listener.onEGLDestroyBegin(this);
 
+            // ネイティブ側の廃棄フラグを追加する
+            // この状態で既にデバイスロックは行えなくなる
+            preDestroyNative();
             if (eglSurface != null) {
                 eglSurface.dispose();
                 eglSurface = null;
@@ -124,6 +144,10 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
                 egl.dispose();
                 egl = null;
             }
+
+            if (ndkDevice != null) {
+                ndkDevice.dispose();
+            }
         }
     }
 
@@ -134,6 +158,7 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         this.native_window = surface;
         onCreateSurface();
+        onResizedSurface(width, height);
     }
 
     /**
@@ -177,6 +202,32 @@ public class DeviceManager implements TextureView.SurfaceTextureListener {
     public EGLSurfaceWrapper getEGLSurfaceWrapper() {
         return eglSurface;
     }
+
+    @Override
+    @JCMethod
+    public Pointer getNativePointer(int key) {
+        return ndkDevice;
+    }
+
+    @Override
+    @JCMethod
+    public void setNativePointer(int key, Pointer ptr) {
+        ndkDevice = ptr;
+    }
+
+    /**
+     * ネイティブ側のDeviceクラスを生成する
+     */
+    @JCMethod(
+              nativeMethod = true)
+    native void createNative();
+
+    /**
+     * 解放の前処理を行う
+     */
+    @JCMethod(
+              nativeMethod = true)
+    native void preDestroyNative();
 
     /**
      * ウィンドウサーフェイスのライフサイクル処理に合わせたコールバックを行う

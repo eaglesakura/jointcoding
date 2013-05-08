@@ -3,7 +3,7 @@
  *
  *  Created on: 2013/05/06
  */
-
+#if 0
 #include "jointcoding-android.h"
 #include "esBenchmarkFragment.h"
 
@@ -22,3 +22,4 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkFragment_c
 }
 
 }
+#endif

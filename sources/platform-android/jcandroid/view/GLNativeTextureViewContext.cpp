@@ -5,7 +5,7 @@
  */
 
 #include    "jcandroid/view/GLNativeTextureViewContext.h"
-#include    "jcandroid/egl/EGLDeviceUtil.h"
+#include    "jcandroid/egl/ndk/EGLDeviceUtil.h"
 #include    "android-gclasses/EGLSupport.h"
 #include    "jc/gl/gpu/DeviceLock.hpp"
 

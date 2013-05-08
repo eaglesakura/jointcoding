@@ -6,64 +6,17 @@
  */
 
 #include    "jc/system/Exception.h"
-#include    "jcandroid/egl/EGLImpl.h"
+#include    "jcandroid/egl/ndk/EGLImpl.h"
 #include    <vector>
 #include    "android-classes/ndkNativeContext.h"
 #include    "android-gclasses/EGLSupport.h"
+
+#include    "jcandroid/egl/EGLError.hpp"
 
 using namespace jc;
 using namespace jc::gl;
 
 namespace ndk {
-
-namespace {
-
-#if defined(DEBUG) && !defined(NO_EGL_ASSERT)
-#define     assert_egl(...)    { assert(printEGLError(__FILE__, __LINE__) == jcfalse); }
-#else
-// release
-#define     assert_egl(...)    { }
-#endif
-
-/**
- * エラーを出力する
- * GL_NOERROR以外だったらjctrueを返す
- */
-jcboolean printEGLError(const charactor* file, const s32 line, GLenum error) {
-    if (error == EGL_SUCCESS) {
-        return jcfalse;
-    }
-#define LOG_EGL( error_enum )    case error_enum: ::jc::__logDebugF(error_enum != EGL_SUCCESS ? LogType_Alert : LogType_Debug, ::jc::__getFileName(file), "L %d | %s", line, #error_enum); return error != EGL_SUCCESS ? jctrue : jcfalse;
-    switch (error) {
-        LOG_EGL(EGL_NOT_INITIALIZED);
-        LOG_EGL(EGL_BAD_ACCESS);
-        LOG_EGL(EGL_BAD_ALLOC);
-        LOG_EGL(EGL_BAD_ATTRIBUTE);
-        LOG_EGL(EGL_BAD_CONFIG);
-        LOG_EGL(EGL_BAD_CONTEXT);
-        LOG_EGL(EGL_BAD_CURRENT_SURFACE);
-        LOG_EGL(EGL_BAD_DISPLAY);
-        LOG_EGL(EGL_BAD_MATCH);
-        LOG_EGL(EGL_BAD_NATIVE_PIXMAP);
-        LOG_EGL(EGL_BAD_NATIVE_WINDOW);
-        LOG_EGL(EGL_BAD_PARAMETER);
-        LOG_EGL(EGL_BAD_SURFACE);
-        LOG_EGL(EGL_CONTEXT_LOST);
-    }
-
-    jclogf("EGL unknown error = 0x%x", error);
-    return jctrue;
-#undef LOG_EGL
-}
-
-/**
- * GLのエラー出力を行う
- */
-jcboolean printEGLError(const charactor* file, const s32 line) {
-    return printEGLError(file, line, eglGetError());
-}
-
-}
 
 EGLManager::EGLManager() {
     display = getDefaultDisplay();
@@ -72,9 +25,7 @@ EGLManager::EGLManager() {
         jclogf("egl display = %x", display);
         EGLint major, minor;
         eglInitialize(display, &major, &minor);
-        if (printEGLError(__FILE__, __LINE__)) {
-            throw create_exception(RuntimeException, "eglInitialize Error");
-        }
+        assert_egl();
         jclogf("EGL Version = %d.%d", major, minor);
     }
 }
@@ -120,7 +71,7 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 // カレントに設定できなければ例外を投げる
         if( !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ) {
             EGLint error = eglGetError();
-            printEGLError(__FILE__, __LINE__, error);
+            EGLError::printEGLError(__FILE__, __LINE__, error);
             if(error == EGL_BAD_ALLOC) {
                 // メモリ不足
                 throw create_exception_t(EGLException, EGLException_OutOfMemory);
@@ -163,12 +114,12 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
             if(backToDefault) {
                 // zeroにも戻せない
                 if(!eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
-                    printEGLError(__FILE__, __LINE__);
+                    EGLError::printEGLError(__FILE__, __LINE__);
                     throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
                 }
             } else {
                 if(!eglMakeCurrent(EGL_NO_DISPLAY, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
-                    printEGLError(__FILE__, __LINE__);
+                    EGLError::printEGLError(__FILE__, __LINE__);
                     EGLSupport::unlockEGLMakeCurrent((jint)eglDisplay, (jint)EGL_NO_SURFACE, (jint)EGL_NO_SURFACE, (jint)EGL_NO_CONTEXT);
                 }
             }
@@ -193,7 +144,7 @@ jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
     }
     jcboolean result = eglSwapBuffers(display, targetSurface);
 
-    if (!result || printEGLError(__FILE__, __LINE__)) {
+    if (!result || EGLError::printEGLError(__FILE__, __LINE__)) {
         jclogf("Bad Surface(%x)", targetSurface);
     }
     return result;
@@ -216,7 +167,7 @@ void EGLManager::stashEGLCurrents() {
 void EGLManager::dispose() {
     if (display) {
         eglTerminate(display);
-        printEGLError(__FILE__, __LINE__);
+        EGLError::printEGLError(__FILE__, __LINE__);
     }
     display = NULL;
 }

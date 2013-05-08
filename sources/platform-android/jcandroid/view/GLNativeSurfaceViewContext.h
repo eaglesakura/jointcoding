@@ -9,7 +9,7 @@
 
 #include    "jointcoding-android.h"
 #include    "android-classes/ndkGLNativeSurfaceView.h"
-#include    "jcandroid/egl/EGLImpl.h"
+#include    "jcandroid/egl/ndk/EGLImpl.h"
 #include    "jc/gl/gpu/Device.h"
 
 namespace ndk {

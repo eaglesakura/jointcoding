@@ -15,32 +15,6 @@ namespace jc {
 namespace gl {
 
 /**
- * OpenGL内で利用するピクセルフォーマットを定義する。
- */
-struct GLPixelFormat {
-    /**
-     * 色情報
-     */
-    PixelFormat_e color;
-
-    /**
-     * 深度バッファのビット数
-     */
-    s16 depthBit;
-
-    /**
-     * ステンシルバッファのビット数
-     */
-    s16 stencil;
-
-    GLPixelFormat() {
-        color = PixelFormat_RGB565;
-        depthBit = 16;
-        stencil = 0;
-    }
-};
-
-/**
  * レンダリング対象のサーフェイスを管理するためのプロトコル
  */
 class EGLSurfaceProtocol {

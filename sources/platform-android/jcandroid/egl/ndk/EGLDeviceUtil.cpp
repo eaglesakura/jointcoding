@@ -4,8 +4,8 @@
  *  Created on: 2012/09/11
  */
 
-#include    "jcandroid/egl/EGLDeviceUtil.h"
-#include    "jcandroid/egl/EGLImpl.h"
+#include    "jcandroid/egl/ndk/EGLDeviceUtil.h"
+#include    "jcandroid/egl/ndk/EGLImpl.h"
 
 namespace ndk {
 

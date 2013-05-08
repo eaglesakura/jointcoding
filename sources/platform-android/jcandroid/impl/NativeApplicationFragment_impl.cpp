@@ -3,6 +3,7 @@
  *
  *  Created on: 2013/05/04
  */
+#if 0
 #include "jointcoding-android.h"
 #include "android-framework-classes/ndkNativeApplicationFragment.h"
 
@@ -55,3 +56,4 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_NativeApplicationFr
 }
 
 }
+#endif

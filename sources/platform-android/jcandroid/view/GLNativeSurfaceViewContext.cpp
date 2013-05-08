@@ -5,8 +5,8 @@
  */
 #include    "jcandroid/view/GLNativeSurfaceViewContext.h"
 #include    <vector>
-#include    "jcandroid/egl/EGLImpl.h"
-#include    "jcandroid/egl/EGLDeviceUtil.h"
+#include    "jcandroid/egl/ndk/EGLImpl.h"
+#include    "jcandroid/egl/ndk/EGLDeviceUtil.h"
 
 namespace ndk {
 

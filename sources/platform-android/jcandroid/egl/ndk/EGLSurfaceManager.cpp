@@ -5,7 +5,7 @@
 
  */
 
-#include    "jcandroid/egl/EGLImpl.h"
+#include    "jcandroid/egl/ndk/EGLImpl.h"
 
 namespace ndk {
 

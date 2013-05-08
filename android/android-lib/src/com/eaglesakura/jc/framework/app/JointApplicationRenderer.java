@@ -20,7 +20,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     /**
      * GPU管理クラス
      */
-    DeviceManager deviceManager;
+    DeviceManager deviceManager = null;
 
     /**
      * 排他制御のためのロックオブジェクト
@@ -88,6 +88,9 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     public void onEGLInitializeCompleted(DeviceManager device) {
         synchronized (lock) {
             if (!validNative()) {
+                // 初期化完了したデバイスを保持する
+                this.deviceManager = device;
+
                 createNativeContext(device);
                 // 初期化されていなければエラーである
                 if (appContext == null) {
@@ -130,6 +133,9 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
                 appContext.dispose();
                 appContext = null;
             }
+
+            // デバイスを保持する意味はなくなった
+            this.deviceManager = null;
         }
     }
 
@@ -137,24 +143,24 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      * アプリの休止を行う
      */
     public void onAppPause() {
-        synchronized (lock) {
-            if (validNative()) {
-                onNativeResume();
-            }
-        }
-        state = State.Running;
-    }
-
-    /**
-     * アプリのレジュームを行う
-     */
-    public void onAppResume() {
         state = State.Paused;
         synchronized (lock) {
             if (validNative()) {
                 onNativePause();
             }
         }
+    }
+
+    /**
+     * アプリのレジュームを行う
+     */
+    public void onAppResume() {
+        synchronized (lock) {
+            if (validNative()) {
+                onNativeResume();
+            }
+        }
+        state = State.Running;
     }
 
     /**
@@ -228,6 +234,15 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
         if (key == Jointable.KEY_MAINCONTEXT) {
             appContext = ptr;
         }
+    }
+
+    /**
+     * デバイス管理クラスを取得する
+     * @return
+     */
+    @JCMethod
+    public DeviceManager getDeviceManager() {
+        return deviceManager;
     }
 
     /**
@@ -319,6 +334,9 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      */
     protected void startMainLoop() {
         Runnable runner = newMainLoopRunner();
-        (new Thread(runner)).start();
+
+        Thread thread = new Thread(runner);
+        thread.setName("jc-render");
+        thread.start();
     }
 }

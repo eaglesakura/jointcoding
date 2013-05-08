@@ -35,7 +35,7 @@ void JointApplicationBase::dispatchDestroy() {
 
     flags.destroyed = jctrue;
     try {
-        DeviceLock  lock(device, jctrue);
+        DeviceLock lock(device, jctrue);
 
         if (!flags.initialized) {
             // 初期化前であれば何もしない
@@ -86,6 +86,7 @@ void JointApplicationBase::dispatchPause() {
 
         onAppResume();
     } catch (Exception &e) {
+
         jcloge(e);
     }
 }
@@ -117,7 +118,7 @@ void JointApplicationBase::dispatchMainLoop() {
         return;
     }
 
-    if(!device->valid()) {
+    if (!device->valid()) {
         // デバイスの準備が整っていない
         return;
     }
@@ -128,6 +129,12 @@ void JointApplicationBase::dispatchMainLoop() {
         if (flags.destroyed) {
             return;
         }
+    }
+
+    // 再度レンダリングチェックを行う
+    if (!device->valid()) {
+        // デバイスの準備が整っていない
+        return;
     }
 
     // 実処理を行う
@@ -160,7 +167,7 @@ void JointApplicationBase::dispatchMainLoop() {
                 onAppMainRendering();
             }
         }
-    } catch (Exception &e) {
+    } catch (EGLException &e) {
         jcloge(e);
     }
 }

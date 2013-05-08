@@ -23,8 +23,14 @@ public class EGLSurfaceWrapper {
      */
     EGLWrapper egl = null;
 
+    /**
+     * 幅
+     */
     int width = 0;
 
+    /**
+     * 高さ
+     */
     int height = 0;
 
     EGLSurfaceWrapper(EGLWrapper egl, EGLSurface surface) {
@@ -86,4 +92,5 @@ public class EGLSurfaceWrapper {
         egl.eglDestroySurface(this.egl.getDisplay(), eglSurface);
         eglSurface = null;
     }
+
 }

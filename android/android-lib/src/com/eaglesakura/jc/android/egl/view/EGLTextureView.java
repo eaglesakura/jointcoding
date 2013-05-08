@@ -46,8 +46,7 @@ public class EGLTextureView extends TextureView {
             chooser.setDepthEnable(hasDepth);
             chooser.setStencilEnable(hasStencil);
 
-            deviceManager = new DeviceManager(chooser);
-            deviceManager.setListener(listener);
+            deviceManager = new DeviceManager(chooser, listener);
 
             // サーフェイスリスナを更新する
             setSurfaceTextureListener(deviceManager);

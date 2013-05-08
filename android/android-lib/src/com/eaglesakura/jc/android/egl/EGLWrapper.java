@@ -250,7 +250,7 @@ public class EGLWrapper {
         synchronized (lock) {
             EGLSurface targetSurface = surface.getSurface();
             EGLSurface currentSurface = egl.eglGetCurrentSurface(EGL_DRAW);
-            if (currentSurface != targetSurface) {
+            if (!currentSurface.equals(targetSurface)) {
                 AndroidUtil.log("postFrontBuffer(targetSurface != currentSurface)");
                 return false;
             }

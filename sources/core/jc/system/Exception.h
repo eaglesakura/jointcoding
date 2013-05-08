@@ -237,6 +237,11 @@ enum EGLException_e {
      * コンテキストのデタッチに失敗
      */
     EGLException_ContextDetachFailed,
+
+    /**
+     * デバイスに廃棄フラグが立っている
+     */
+    EGLException_DeviceHasDestroyFlag,
 };
 
 /**

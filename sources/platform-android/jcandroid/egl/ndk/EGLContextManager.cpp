@@ -3,7 +3,7 @@
  *
  *  Created on: 2012/07/21
  */
-#include    "jcandroid/egl/EGLContextManager.h"
+#include    "jcandroid/egl/ndk/EGLContextManager.h"
 #include    "EGL/egl.h"
 
 namespace ndk {
