@@ -143,7 +143,6 @@ public class DeviceManager implements TextureView.SurfaceTextureListener, Surfac
     void onSurfaceDestroyed() {
         synchronized (lock) {
             if (eglSurface != null) {
-                listener.onEGLSurfaceDestroyBegin(this);
                 eglSurface.dispose();
             }
         }
@@ -155,7 +154,6 @@ public class DeviceManager implements TextureView.SurfaceTextureListener, Surfac
     public void dispose() {
         synchronized (lock) {
             // リスナを呼び出す
-            listener.onEGLSurfaceDestroyBegin(this);
             listener.onEGLDestroyBegin(this);
 
             // ネイティブ側の廃棄フラグを追加する
@@ -299,12 +297,6 @@ public class DeviceManager implements TextureView.SurfaceTextureListener, Surfac
          * @param height
          */
         void onEGLSurfaceSizeChanged(DeviceManager device, int width, int height);
-
-        /**
-         * EGLをサスペンド開始する
-         * @param view
-         */
-        void onEGLSurfaceDestroyBegin(DeviceManager device);
 
         /**
          * EGL解放を開始する

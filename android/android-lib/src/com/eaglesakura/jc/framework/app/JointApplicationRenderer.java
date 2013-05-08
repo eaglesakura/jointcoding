@@ -112,10 +112,6 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     }
 
     @Override
-    public void onEGLSurfaceDestroyBegin(DeviceManager device) {
-    }
-
-    @Override
     public void onEGLSurfaceSizeChanged(DeviceManager device, int width, int height) {
         state = State.SurfaceResizing;
         synchronized (lock) {
