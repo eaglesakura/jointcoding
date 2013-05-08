@@ -41,6 +41,15 @@ public class EGLSurfaceWrapper {
     }
 
     /**
+     * サーフェイスの回復を図る
+     * @param eglSurface
+     */
+    void restore(EGLSurface eglSurface) {
+        this.eglSurface = eglSurface;
+        onSurfaceResized();
+    }
+
+    /**
      * サーフェイスを取得する
      * @return
      */
@@ -93,4 +102,11 @@ public class EGLSurfaceWrapper {
         eglSurface = null;
     }
 
+    /**
+     * 有効な場合true
+     * @return
+     */
+    public boolean valid() {
+        return eglSurface != null;
+    }
 }

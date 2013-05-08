@@ -139,6 +139,17 @@ public class EGLWrapper {
     }
 
     /**
+     * レンダリングサーフェイスを復旧する
+     * @param surface
+     * @param native_window
+     */
+    public void restoreSurface(EGLSurfaceWrapper surface, Object native_window) {
+        EGLSurfaceWrapper newSurface = createSurface(native_window);
+        // サーフェイスをコピーする
+        surface.restore(newSurface.getSurface());
+    }
+
+    /**
      * コンフィグ情報を取得する
      * @return
      */

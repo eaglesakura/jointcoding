@@ -48,6 +48,11 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
         Paused,
 
         /**
+         * 再開作業中
+         */
+        Resuming,
+
+        /**
          * 復旧済み
          */
         Running,
@@ -152,12 +157,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      * アプリのレジュームを行う
      */
     public void onAppResume() {
-        synchronized (lock) {
-            if (validNative()) {
-                onNativeResume();
-            }
-        }
-        state = State.Running;
+        state = State.Resuming;
     }
 
     /**
@@ -190,6 +190,12 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     protected boolean validGLOperation() {
         if (state != State.Running) {
             // Running状態でない場合は何も出来ない
+            return false;
+        }
+
+        // デバイスの正常チェック
+        if (deviceManager != null && !deviceManager.valid()) {
+            // デバイスが不正な状態にある
             return false;
         }
 
@@ -321,6 +327,13 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
                                     // その他は同期待ちだから短めのsleepをかける
                                     sleepTimeMS = 1;
                                     break;
+                            }
+
+                            // レジュームリクエストが送られているので、レジューム処理を行わせる
+                            if (state == State.Resuming && deviceManager.valid()) {
+                                onNativeResume();
+                                sleepTimeMS = 0;
+                                state = State.Running;
                             }
                         }
                     }

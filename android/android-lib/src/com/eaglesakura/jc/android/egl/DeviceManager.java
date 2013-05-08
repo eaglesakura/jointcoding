@@ -62,13 +62,40 @@ public class DeviceManager implements TextureView.SurfaceTextureListener, Surfac
         this.listener = listener;
     }
 
+    @JCMethod
+    public EGLWrapper getEGLWrapper() {
+        return egl;
+    }
+
+    @JCMethod
+    public EGLContextWrapper getEGLContextWrapper() {
+        return eglContext;
+    }
+
+    @JCMethod
+    public EGLSurfaceWrapper getEGLSurfaceWrapper() {
+        return eglSurface;
+    }
+
+    /**
+     * デバイスが正常な状態の場合trueを返す
+     * @return
+     */
+    public boolean valid() {
+        if (eglSurface != null && eglSurface.valid()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * サーフェイスの生成が完了したら呼び出される
      */
     private void onCreateSurface() {
         synchronized (lock) {
-            // EGL初期化を行う
             if (egl == null) {
+                // EGL初期化を行う
                 egl = new EGLWrapper();
                 egl.initialize(configChooser);
 
@@ -87,6 +114,9 @@ public class DeviceManager implements TextureView.SurfaceTextureListener, Surfac
                 }
 
                 listener.onEGLInitializeCompleted(this);
+            } else {
+                // サーフェイスの回復を図る
+                egl.restoreSurface(eglSurface, native_window);
             }
         }
     }
@@ -222,21 +252,6 @@ public class DeviceManager implements TextureView.SurfaceTextureListener, Surfac
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         onSurfaceDestroyed();
-    }
-
-    @JCMethod
-    public EGLWrapper getEGLWrapper() {
-        return egl;
-    }
-
-    @JCMethod
-    public EGLContextWrapper getEGLContextWrapper() {
-        return eglContext;
-    }
-
-    @JCMethod
-    public EGLSurfaceWrapper getEGLSurfaceWrapper() {
-        return eglSurface;
     }
 
     @Override
