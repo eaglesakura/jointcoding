@@ -138,7 +138,7 @@ public:
             return jcfalse;
         }
 
-        if (vec[0] != x || vec[1] != y || vec[3] != z || vec[4] != w) {
+        if (vec[0] != x || vec[1] != y || vec[2] != z || vec[3] != w) {
             glUniform4f(location, x, y, z, w);
             assert_gl();
             vec[0] = x;

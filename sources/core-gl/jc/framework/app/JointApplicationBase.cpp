@@ -150,9 +150,13 @@ void JointApplicationBase::dispatchMainLoop() {
         // サーフェイスサイズチェックを行う
         if (checkedSurfaceSize != surfaceSize) {
             checkedSurfaceSize = surfaceSize;
+            jclogf("Resized Surface(%dx%d)", surfaceSize.x, surfaceSize.y);
 
             // ビューポート更新
             getState()->viewport(0, 0, surfaceSize.x, surfaceSize.y);
+
+            // スプライトマネージャーアスペクト比更新
+            getSpriteManager()->setSurfaceAspect(surfaceSize.x, surfaceSize.y);
 
             // アプリに処理を任せる
             onAppSurfaceResized(surfaceSize.x, surfaceSize.y);

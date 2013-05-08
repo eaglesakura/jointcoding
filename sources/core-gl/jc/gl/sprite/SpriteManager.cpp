@@ -100,6 +100,7 @@ void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
  */
 void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_height) {
     shader->bind();
+    assert(uniform.aspect.valid());
     uniform.aspect.upload((float) surface_width / (float) surface_height);
 }
 
