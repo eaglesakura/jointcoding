@@ -9,6 +9,8 @@ import javax.microedition.khronos.egl.EGLDisplay;
 
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 
+import com.eaglesakura.jc.android.app.AndroidUtil;
+
 public class DefaultEGLConfigChooser implements EGLConfigChooser {
 
     /**
@@ -86,9 +88,13 @@ public class DefaultEGLConfigChooser implements EGLConfigChooser {
             // RGBが指定サイズジャスト、ADSが指定サイズ以上あれば合格とする
             if (config_r == r_bits && config_g == g_bits && config_b == b_bits && config_a >= a_bits
                     && config_d >= d_bits && config_s >= s_bits) {
+
+                AndroidUtil.log(String.format("Config Spec RGB(%d%d%d)A(%d)D(%d)S(%d)", config_r, config_g, config_b,
+                        config_a, config_d, config_s));
                 return checkConfig;
             }
         }
+        AndroidUtil.log("Config Spec Default");
 
         // 先頭のコンフィグを返す
         return configs[0];
@@ -112,6 +118,11 @@ public class DefaultEGLConfigChooser implements EGLConfigChooser {
             // set ES 2.0
             result.add(EGL10.EGL_RENDERABLE_TYPE);
             result.add(4); /* EGL_OPENGL_ES2_BIT */
+        }
+        // window
+        {
+            result.add(EGL10.EGL_SURFACE_TYPE);
+            result.add(EGL10.EGL_WINDOW_BIT);
         }
 
         result.add(EGL10.EGL_RED_SIZE);

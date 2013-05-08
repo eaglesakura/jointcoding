@@ -58,7 +58,7 @@ public abstract class NativeApplicationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         surface = new EGLTextureView(getActivity());
-        surface.initialize(SurfaceColorSpec.RGBA8, true, true, renderer);
+        surface.initialize(SurfaceColorSpec.RGB8, false, false, renderer);
         surface.setOnTouchListener(surfaceTouchListener);
         return surface;
     }

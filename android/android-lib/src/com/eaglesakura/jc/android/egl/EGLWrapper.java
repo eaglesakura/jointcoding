@@ -76,7 +76,6 @@ public class EGLWrapper {
             }
 
             egl = (EGL10) EGLContext.getEGL();
-
             // ディスプレイ作成
             {
                 eglDisplay = egl.eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -90,7 +89,8 @@ public class EGLWrapper {
             }
             // コンフィグ取得
             {
-                eglConfig = chooser.chooseConfig(egl, eglDisplay);
+                stashContext();
+                eglConfig = chooser.chooseConfig(egl, systemDisplay != EGL_NO_DISPLAY ? systemDisplay : eglDisplay);
                 if (eglConfig == null) {
                     throw new RuntimeException("chooseConfig");
                 }
@@ -127,7 +127,10 @@ public class EGLWrapper {
         }
 
         // レンダリング用サーフェイスを再度生成
-        EGLSurface eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig, native_window, null);
+        EGLSurface eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig, native_window, new int[] {
+            // attributes
+                EGL_NONE
+            });
         if (eglSurface == EGL10.EGL_NO_SURFACE) {
             throw new RuntimeException("eglCreateWindowSurface");
         }
@@ -186,11 +189,34 @@ public class EGLWrapper {
      * システムコンテキストを保存する
      */
     private void stashContext() {
-        // システムのデフォルトオブジェクトを取り出す
-        systemDisplay = egl.eglGetCurrentDisplay();
-        systemReadSurface = egl.eglGetCurrentSurface(EGL_READ);
-        systemDrawSurface = egl.eglGetCurrentSurface(EGL_DRAW);
-        systemContext = egl.eglGetCurrentContext();
+        try {
+            // システムのデフォルトオブジェクトを取り出す
+            systemDisplay = egl.eglGetCurrentDisplay();
+            systemReadSurface = egl.eglGetCurrentSurface(EGL_READ);
+            systemDrawSurface = egl.eglGetCurrentSurface(EGL_DRAW);
+            systemContext = egl.eglGetCurrentContext();
+
+            if (systemDisplay == null) {
+                systemDisplay = EGL_NO_DISPLAY;
+            }
+
+            if (systemReadSurface == null) {
+                systemReadSurface = EGL_NO_SURFACE;
+            }
+
+            if (systemDrawSurface == null) {
+                systemDrawSurface = EGL_NO_SURFACE;
+            }
+
+            if (systemContext == null) {
+                systemContext = EGL_NO_CONTEXT;
+            }
+        } catch (Exception e) {
+            systemDisplay = EGL_NO_DISPLAY;
+            systemReadSurface = EGL_NO_SURFACE;
+            systemDrawSurface = EGL_NO_SURFACE;
+            systemContext = EGL_NO_CONTEXT;
+        }
     }
 
     /**
@@ -201,6 +227,7 @@ public class EGLWrapper {
     @JCMethod
     public boolean current(EGLContextWrapper context, EGLSurfaceWrapper surface) {
         synchronized (lock) {
+            boolean result = false;
             if (context != null && surface != null) {
                 if (NativeContext.isUIThread()) {
                     stashContext();
@@ -208,12 +235,8 @@ public class EGLWrapper {
 
                 EGLContext eglContext = context.getContext();
                 EGLSurface eglSurface = surface.getSurface();
-                if (!egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext)) {
-                    // make current失敗
-                    return false;
-                } else {
-                    return true;
-                }
+
+                result = egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
             } else if (context == null && surface == null) {
                 EGLContext eglContext = EGL_NO_CONTEXT;
                 EGLSurface eglReadSurface = EGL_NO_SURFACE;
@@ -227,16 +250,10 @@ public class EGLWrapper {
                     eglDrawSurface = systemDrawSurface;
                     eglContext = systemContext;
                 }
-
-                if (!egl.eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext)) {
-                    // make current失敗
-                    return false;
-                } else {
-                    return true;
-                }
+                result = egl.eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext);
             }
 
-            return false;
+            return result;
         }
     }
 
@@ -248,13 +265,14 @@ public class EGLWrapper {
     @JCMethod
     public boolean postFrontBuffer(EGLSurfaceWrapper surface) {
         synchronized (lock) {
-            EGLSurface targetSurface = surface.getSurface();
-            EGLSurface currentSurface = egl.eglGetCurrentSurface(EGL_DRAW);
+            final EGLSurface targetSurface = surface.getSurface();
+            final EGLSurface currentSurface = egl.eglGetCurrentSurface(EGL_DRAW);
             if (!currentSurface.equals(targetSurface)) {
                 AndroidUtil.log("postFrontBuffer(targetSurface != currentSurface)");
                 return false;
             }
-            return egl.eglSwapBuffers(eglDisplay, targetSurface);
+            boolean result = egl.eglSwapBuffers(eglDisplay, targetSurface);
+            return result;
         }
     }
 }
