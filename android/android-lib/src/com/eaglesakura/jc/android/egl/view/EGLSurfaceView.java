@@ -1,29 +1,36 @@
 package com.eaglesakura.jc.android.egl.view;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.util.AttributeSet;
-import android.view.TextureView;
+import android.view.SurfaceView;
 import android.view.View;
 
 import com.eaglesakura.jc.android.egl.DefaultEGLConfigChooser;
 import com.eaglesakura.jc.android.egl.DeviceManager;
 import com.eaglesakura.jc.android.egl.SurfaceColorSpec;
 
-public class EGLTextureView extends TextureView implements RenderingSurface {
+public class EGLSurfaceView extends SurfaceView implements RenderingSurface {
 
+    /**
+     * ロックオブジェクト
+     */
     final Object lock = new Object();
 
+    /**
+     * 
+     */
     DeviceManager deviceManager = null;
 
-    public EGLTextureView(Context context) {
+    public EGLSurfaceView(Context context) {
         super(context);
     }
 
-    public EGLTextureView(Context context, AttributeSet attrs) {
+    public EGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public EGLTextureView(Context context, AttributeSet attrs, int defStyle) {
+    public EGLSurfaceView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -68,7 +75,12 @@ public class EGLTextureView extends TextureView implements RenderingSurface {
             deviceManager = new DeviceManager(chooser, listener);
 
             // サーフェイスリスナを更新する
-            setSurfaceTextureListener(deviceManager);
+            if (colorSpec.getAlphaSize() > 0) {
+                getHolder().setFormat(PixelFormat.RGBA_8888);
+            } else {
+                getHolder().setFormat(PixelFormat.RGB_888);
+            }
+            getHolder().addCallback(deviceManager);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.eaglesakura.jc.android.egl;
 
 import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
+import android.view.SurfaceHolder;
 import android.view.TextureView;
 
 import com.eaglesakura.jc.android.resource.jni.Jointable;
@@ -17,7 +18,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public class DeviceManager implements TextureView.SurfaceTextureListener, Jointable {
+public class DeviceManager implements TextureView.SurfaceTextureListener, SurfaceHolder.Callback, Jointable {
     final Object lock = new Object();
 
     /**
@@ -165,17 +166,6 @@ public class DeviceManager implements TextureView.SurfaceTextureListener, Jointa
      * for TextureView.
      */
     @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        dispose();
-
-        // auto release SurfaceTexture
-        return true;
-    }
-
-    /**
-     * for TextureView.
-     */
-    @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         onResizedSurface(width, height);
     }
@@ -184,8 +174,54 @@ public class DeviceManager implements TextureView.SurfaceTextureListener, Jointa
      * for TextureView.
      */
     @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        // auto release SurfaceTexture
+        return true;
+    }
+
+    /**
+     * for TextureView.
+     */
+    @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         // not impl
+    }
+
+    /**
+     * サーフェイスが生成/再生成された
+     * 
+     * for SurfaceView
+     * @param holder
+     */
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        this.native_window = holder;
+        onCreateSurface();
+    }
+
+    /**
+     * サーフェイスサイズが更新された
+     * 
+     * for SurfaceView
+     * @param holder
+     * @param format
+     * @param width
+     * @param height
+     */
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        onResizedSurface(width, height);
+    }
+
+    /**
+     * サーフェイスが廃棄された
+     * 
+     * for SurfaceView
+     * @param holder
+     */
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        onSurfaceDestroyed();
     }
 
     @JCMethod

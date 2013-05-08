@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eaglesakura.jc.android.egl.SurfaceColorSpec;
-import com.eaglesakura.jc.android.egl.view.EGLTextureView;
+import com.eaglesakura.jc.android.egl.view.EGLSurfaceView;
+import com.eaglesakura.jc.android.egl.view.RenderingSurface;
 
 /**
  * TextureView1枚でアプリ管理を行うFragmentを構築する
@@ -26,7 +27,7 @@ public abstract class NativeApplicationFragment extends Fragment {
     /**
      * レンダリングサーフェイス
      */
-    View surface = null;
+    RenderingSurface surface = null;
 
     /**
      * レンダラークラス
@@ -58,8 +59,10 @@ public abstract class NativeApplicationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         surface = createRenderingView();
-        surface.setOnTouchListener(surfaceTouchListener);
-        return surface;
+
+        View view = surface.getView();
+        view.setOnTouchListener(surfaceTouchListener);
+        return view;
     }
 
     /**
@@ -77,6 +80,12 @@ public abstract class NativeApplicationFragment extends Fragment {
     @Override
     public void onPause() {
         renderer.onAppPause();
+
+        // 明示的に廃棄を行う
+        if (getActivity().isFinishing() || isDetached()) {
+            surface.dispose();
+        }
+
         super.onPause();
     }
 
@@ -100,8 +109,9 @@ public abstract class NativeApplicationFragment extends Fragment {
      * 基本的にはTextureViewを生成する
      * @return
      */
-    protected View createRenderingView() {
-        EGLTextureView result = new EGLTextureView(getActivity());
+    protected RenderingSurface createRenderingView() {
+        //        EGLTextureView result = new EGLTextureView(getActivity());
+        EGLSurfaceView result = new EGLSurfaceView(getActivity());
         result.initialize(SurfaceColorSpec.RGBA8, true, true, renderer);
         return result;
     }

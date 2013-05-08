@@ -133,9 +133,6 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
                 appContext.dispose();
                 appContext = null;
             }
-
-            // デバイスを保持する意味はなくなった
-            this.deviceManager = null;
         }
     }
 
@@ -169,8 +166,12 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     public void onAppDestroy() {
         state = State.Destroyed;
         // レンダリングの終了待ちを行う
+        int sleep = 0;
         while (state != State.RenderingFinished) {
             AndroidUtil.sleep(1);
+            if (++sleep > 1000) {
+                break;
+            }
         }
     }
 
