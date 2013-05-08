@@ -229,6 +229,11 @@ enum EGLException_e {
     EGLException_OutOfMemory,
 
     /**
+     * フロントバッファへの転送に失敗した
+     */
+    EGLException_PostFrontBuffer,
+
+    /**
      * コンテキストのアタッチに失敗
      */
     EGLException_ContextAttachFailed,

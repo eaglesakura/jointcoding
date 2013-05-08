@@ -64,14 +64,22 @@ void SdkEGLWrapper::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceP
     }
 
     completed = eglWrapper->current(jEGLContext, jEGLSurface);
-
     if(!completed) {
-        // FIXME eglMakeCurrentに失敗した
+        // eglMakeCurrentに失敗した
+        EGLint error = eglGetError();
+        EGLError::printEGLError(__FILE__, __LINE__, error);
+        if(error == EGL_BAD_ALLOC) {
+            throw create_exception_t(EGLException, EGLException_OutOfMemory);
+        } else {
+            throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
+        }
+
+        threadId.reset();
     } else {
         if(jEGLContext) {
             // 現在のスレッドIDを指定する
             threadId.reset(new ThreadID());
-        }else {
+        } else {
             // カレント情報を解除する
             threadId.reset();
         }
@@ -89,7 +97,19 @@ jcboolean SdkEGLWrapper::postFrontBuffer(jc_sp<EGLSurfaceProtocol> displaySurfac
     jc_sp<SdkEGLSurfaceWrapper> surfaceWrapper = downcast<SdkEGLSurfaceWrapper>(displaySurface);
     assert(surfaceWrapper);
 
-    return eglWrapper->postFrontBuffer(surfaceWrapper->eglSurface->getObject());
+    const jcboolean complete = eglWrapper->postFrontBuffer(surfaceWrapper->eglSurface->getObject());
+    if(!complete) {
+        // eglSwapBuffersに失敗した
+        EGLint error = eglGetError();
+        EGLError::printEGLError(__FILE__, __LINE__, error);
+        if(error == EGL_BAD_ALLOC) {
+            throw create_exception_t(EGLException, EGLException_OutOfMemory);
+        } else {
+            throw create_exception_t(EGLException, EGLException_PostFrontBuffer);
+        }
+    }
+
+    return complete;
 }
 
 /**
