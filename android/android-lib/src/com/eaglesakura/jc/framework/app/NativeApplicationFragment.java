@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eaglesakura.jc.android.egl.SurfaceColorSpec;
-import com.eaglesakura.jc.android.egl.view.EGLSurfaceView;
+import com.eaglesakura.jc.android.egl.view.EGLTextureView;
 import com.eaglesakura.jc.android.egl.view.RenderingSurface;
 
 /**
@@ -110,8 +110,8 @@ public abstract class NativeApplicationFragment extends Fragment {
      * @return
      */
     protected RenderingSurface createRenderingView() {
-        //        EGLTextureView result = new EGLTextureView(getActivity());
-        EGLSurfaceView result = new EGLSurfaceView(getActivity());
+        EGLTextureView result = new EGLTextureView(getActivity());
+        //        EGLSurfaceView result = new EGLSurfaceView(getActivity());
         result.initialize(SurfaceColorSpec.RGBA8, true, true, renderer);
         return result;
     }
