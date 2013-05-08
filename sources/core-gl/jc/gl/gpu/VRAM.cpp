@@ -6,6 +6,7 @@
 
 #include    "jc/gl/GL.h"
 #include    "jc/gl/gpu/VRAM.h"
+#include    "jc/gl/context/State.h"
 
 //     #define PRINT_VRAM
 
@@ -90,22 +91,27 @@ struct VramFunction {
      * 解放関数
      */
     vram_delete_function delete_func;
+
+    /**
+     * ログに出力する名称
+     */
+    const charactor *type_name;
 };
 
 static VramFunction function_tbl[VRAM_e_num] = {
 #if 1
         // VRAM_Texture
-        { 16, (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, },
+        { 16, (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, "Texture", },
         // VRAM_Indices
-        { 4, (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, },
+        { 4, (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, "IndexBuffer", },
         // VRAM_VertexBufferObject
-        { 4, (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, },
+        { 4, (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, "VertexBuffer", },
         // VRAM_VertexShader
-        { 1, (vram_alloc_function) alloc_vshader, (vram_delete_function) delete_vshader, },
+        { 1, (vram_alloc_function) alloc_vshader, (vram_delete_function) delete_vshader, "VertexShader", },
         // VRAM_FragmentShader
-        { 1, (vram_alloc_function) alloc_fshader, (vram_delete_function) delete_fshader, },
+        { 1, (vram_alloc_function) alloc_fshader, (vram_delete_function) delete_fshader, "FragmentShader", },
         // VRAM_ShaderProgram
-        { 1, (vram_alloc_function) alloc_shader_program, delete_shader_program, },
+        { 1, (vram_alloc_function) alloc_shader_program, delete_shader_program, "ShaderProgram", },
 #endif
 // end
         };
@@ -237,13 +243,15 @@ void _VRAM::gc(const u32 gc_flags) {
     for (s32 i = 0; i < VRAM_e_num; ++i) {
         if (has_flag(gc_flags, (0x1 << i))) {
             if (!dealloc_pool[i].empty()) {
-                jclogf("delete start(type %d : %d objects)", i, dealloc_pool[i].size());
+                jclogf("delete start(type %s : %d objects)", function_tbl[i].type_name, dealloc_pool[i].size());
 
                 gc_objects += dealloc_pool[i].size();
 
                 // 解放ビットフラグを含んでいたら、解放を行う
                 function_tbl[i].delete_func((s32) dealloc_pool[i].size(), (u32*) &(dealloc_pool[i][0]));
 
+                // GLエラーチェック
+                assert_gl();
                 // プール解放
                 dealloc_pool[i].clear();
                 jclogf("delete finish(type %d)", i);
