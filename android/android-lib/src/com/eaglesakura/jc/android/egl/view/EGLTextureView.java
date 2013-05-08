@@ -41,8 +41,6 @@ public class EGLTextureView extends TextureView {
                 throw new RuntimeException("EGLTextureView is initialized");
             }
 
-            setLayerType(LAYER_TYPE_HARDWARE, null);
-
             DefaultEGLConfigChooser chooser = new DefaultEGLConfigChooser();
             chooser.setColorSpec(colorSpec);
             chooser.setDepthEnable(hasDepth);

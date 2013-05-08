@@ -102,7 +102,7 @@ public abstract class NativeApplicationFragment extends Fragment {
      */
     protected View createRenderingView() {
         EGLTextureView result = new EGLTextureView(getActivity());
-        result.initialize(SurfaceColorSpec.RGB8, true, true, renderer);
+        result.initialize(SurfaceColorSpec.RGBA8, true, true, renderer);
         return result;
     }
 }

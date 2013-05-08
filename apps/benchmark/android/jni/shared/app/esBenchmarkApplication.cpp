@@ -51,7 +51,7 @@ void BenchmarkApplication::onAppMainUpdate() {
 void BenchmarkApplication::onAppMainRendering() {
     MGLState state = getState();
     {
-        state->clearColorf(0, 1, 1, 1);
+        state->clearColorf(0, 1, 1, 0.5f);
         state->clearSurface();
     }
 

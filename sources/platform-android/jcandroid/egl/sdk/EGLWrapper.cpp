@@ -83,7 +83,7 @@ void SdkEGLWrapper::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceP
 #ifdef  EGL_TRIPLEBUFFER_MODE
         {
             // トリプルバッファ対応させる
-            eglSwapInterval(eglGetCurrentDisplay(), 3);
+            eglSwapInterval(eglGetCurrentDisplay(), 2);
         }
 #endif
 

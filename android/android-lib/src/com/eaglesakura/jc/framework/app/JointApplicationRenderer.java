@@ -306,20 +306,28 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
             public void run() {
                 // 状態が有効ならメインループを実行する
                 while (state != State.Destroyed) {
-                    boolean sleep = false;
+                    int sleepTimeMS = 0;
                     synchronized (lock) {
                         if (validGLOperation()) {
                             // 操作可能な状態であればメインループ処理を行う
                             onNativeMainLoop();
                         } else {
-                            sleep = true;
+                            switch (state) {
+                                case Paused:
+                                    // 休止中なら長めにSleepして構わない
+                                    sleepTimeMS = 10;
+                                default:
+                                    // その他は同期待ちだから短めのsleepをかける
+                                    sleepTimeMS = 1;
+                                    break;
+                            }
                         }
                     }
 
                     // 休眠命令があるなら適当な時間休眠する
-                    if (sleep) {
+                    if (sleepTimeMS > 0) {
                         // その他の状況であれば休止する
-                        AndroidUtil.sleep(10);
+                        AndroidUtil.sleep(sleepTimeMS);
                     }
                 }
 
