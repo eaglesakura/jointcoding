@@ -26,7 +26,7 @@ public abstract class NativeApplicationFragment extends Fragment {
     /**
      * レンダリングサーフェイス
      */
-    EGLTextureView surface = null;
+    View surface = null;
 
     /**
      * レンダラークラス
@@ -57,8 +57,7 @@ public abstract class NativeApplicationFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        surface = new EGLTextureView(getActivity());
-        surface.initialize(SurfaceColorSpec.RGB8, false, false, renderer);
+        surface = createRenderingView();
         surface.setOnTouchListener(surfaceTouchListener);
         return surface;
     }
@@ -91,16 +90,19 @@ public abstract class NativeApplicationFragment extends Fragment {
     }
 
     /**
-     * レンダリングサーフェイスを取得する
-     * @return
-     */
-    public EGLTextureView getSurface() {
-        return surface;
-    }
-
-    /**
      * レンダラーを作成する
      * @return
      */
     protected abstract JointApplicationRenderer createRenderer();
+
+    /**
+     * レンダリング用のViewを生成する
+     * 基本的にはTextureViewを生成する
+     * @return
+     */
+    protected View createRenderingView() {
+        EGLTextureView result = new EGLTextureView(getActivity());
+        result.initialize(SurfaceColorSpec.RGB8, true, true, renderer);
+        return result;
+    }
 }

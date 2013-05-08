@@ -311,7 +311,6 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
                         if (validGLOperation()) {
                             // 操作可能な状態であればメインループ処理を行う
                             onNativeMainLoop();
-                            sleep = true;
                         } else {
                             sleep = true;
                         }

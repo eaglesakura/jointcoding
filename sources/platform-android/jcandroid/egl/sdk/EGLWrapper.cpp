@@ -79,11 +79,19 @@ void SdkEGLWrapper::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceP
         if(jEGLContext) {
             // 現在のスレッドIDを指定する
             threadId.reset(new ThreadID());
-        } else {
-            // カレント情報を解除する
-            threadId.reset();
+
+#ifdef  EGL_TRIPLEBUFFER_MODE
+        {
+            // トリプルバッファ対応させる
+            eglSwapInterval(eglGetCurrentDisplay(), 3);
         }
+#endif
+
+    } else {
+        // カレント情報を解除する
+        threadId.reset();
     }
+}
 }
 
 /**
