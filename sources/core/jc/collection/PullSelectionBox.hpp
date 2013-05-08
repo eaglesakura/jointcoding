@@ -51,7 +51,16 @@ public:
 
         for (s32 i = 0; i < value_num; ++i) {
             // ランダムな数字をキーにしてレンジを格納する
-            temp.insert(std::map<s32, s32>::value_type(jc::rand32(), rangeStart + i));
+            s32 temp_key = 0;
+            do {
+                // キーをランダムで生成する
+                temp_key = jc::rand32();
+
+                // キーが一致したら再度キーを生成する
+            } while (temp.find(temp_key) != temp.end());
+
+            // キーを利用して登録する
+            temp.insert(std::map<s32, s32>::value_type(temp_key, rangeStart + i));
         }
 
         assert(temp.size() == value_num);
@@ -68,27 +77,6 @@ public:
                 ++itr;
             }
         }
-
-#if 0
-        s32 checks = 0;
-        while (temp.size() < value_num) {
-            const s32 random_value = makeRandomValue();
-            // まだ乱数が登録されて無ければ、登録を行う
-            if (temp.find(random_value) == temp.end()) {
-                temp.insert(std::map<s32, s32>::value_type(random_value, random_value));
-
-                // ランダムで前・後ろから追加する
-                if (jc::rand32() % 2) {
-                    randomBox.push_back(random_value);
-                } else {
-                    randomBox.push_front(random_value);
-                }
-            }
-
-            // 無限ループチェック
-            assert(++checks < 1000000);
-        }
-#endif
     }
 
     /**
