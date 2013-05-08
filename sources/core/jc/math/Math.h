@@ -64,8 +64,8 @@ inline const s64 round(const double value) {
  * 適当な乱数を生成する
  */
 inline s32 rand32() {
-    const s32 loword = ((rand() / 310) >> 3) & 0xFFFF;
-    const s32 hiword = ((rand() / 310) >> 3) & 0xFFFF;
+    const s32 loword = (rand() >> 4) & 0xFFFF;
+    const s32 hiword = (rand() >> 4) & 0xFFFF;
     return hiword << 16 | loword;
 }
 
