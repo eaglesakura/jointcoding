@@ -297,6 +297,48 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     protected abstract void createNativeContext(DeviceManager deviceManager);
 
     /**
+     * メインスレッドの処理を行う
+     */
+    protected void onMainThread() {
+        // 状態が有効ならメインループを実行する
+        while (state != State.Destroyed) {
+            int sleepTimeMS = 0;
+            synchronized (lock) {
+                if (validGLOperation()) {
+                    // 操作可能な状態であればメインループ処理を行う
+                    onNativeMainLoop();
+                } else {
+                    switch (state) {
+                        case Paused:
+                            // 休止中なら長めにSleepして構わない
+                            sleepTimeMS = 10;
+                        default:
+                            // その他は同期待ちだから短めのsleepをかける
+                            sleepTimeMS = 1;
+                            break;
+                    }
+
+                    // レジュームリクエストが送られているので、レジューム処理を行わせる
+                    if (state == State.Resuming && deviceManager.valid()) {
+                        onNativeResume();
+                        sleepTimeMS = 0;
+                        state = State.Running;
+                    }
+                }
+            }
+
+            // 休眠命令があるなら適当な時間休眠する
+            if (sleepTimeMS > 0) {
+                // その他の状況であれば休止する
+                AndroidUtil.sleep(sleepTimeMS);
+            }
+        }
+
+        AndroidUtil.log("abort Rendering");
+        renderAborted = true;
+    }
+
+    /**
      * メインループ実行クラスを作成する
      * @return
      */
@@ -304,42 +346,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
         return new Runnable() {
             @Override
             public void run() {
-                // 状態が有効ならメインループを実行する
-                while (state != State.Destroyed) {
-                    int sleepTimeMS = 0;
-                    synchronized (lock) {
-                        if (validGLOperation()) {
-                            // 操作可能な状態であればメインループ処理を行う
-                            onNativeMainLoop();
-                        } else {
-                            switch (state) {
-                                case Paused:
-                                    // 休止中なら長めにSleepして構わない
-                                    sleepTimeMS = 10;
-                                default:
-                                    // その他は同期待ちだから短めのsleepをかける
-                                    sleepTimeMS = 1;
-                                    break;
-                            }
-
-                            // レジュームリクエストが送られているので、レジューム処理を行わせる
-                            if (state == State.Resuming && deviceManager.valid()) {
-                                onNativeResume();
-                                sleepTimeMS = 0;
-                                state = State.Running;
-                            }
-                        }
-                    }
-
-                    // 休眠命令があるなら適当な時間休眠する
-                    if (sleepTimeMS > 0) {
-                        // その他の状況であれば休止する
-                        AndroidUtil.sleep(sleepTimeMS);
-                    }
-                }
-
-                AndroidUtil.log("abort Rendering");
-                renderAborted = true;
+                onMainThread();
             }
         };
     }

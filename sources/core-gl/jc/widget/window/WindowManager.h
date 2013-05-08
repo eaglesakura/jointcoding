@@ -39,13 +39,12 @@ public:
     virtual void handleTickEvent(const s32 id, const double elapsed_sec) {
     }
 
-
     /**
      * イベントハンドリングの結果、ウィンドウフォーカスが移動されたらコールバックされる
      * trueを返した場合、再度イベントハンドリングを行う
      */
     virtual jcboolean handleWindowFocusMoved(MView before, MView after) {
-        return  jcfalse;
+        return jcfalse;
     }
 };
 
@@ -287,6 +286,13 @@ public:
      */
     virtual const jctime& systemTime() const {
         return windowContext->systemTime();
+    }
+
+    /**
+     * キー押しっぱなし反応時間を設定する
+     */
+    virtual void setKeyKeepingMessageTimeSec(const double sec) {
+        keyDetector->setKeyKeepingMessageTimeSec(sec);
     }
 };
 
