@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.eaglesakura.jc.android.egl.DefaultEGLConfigChooser;
 import com.eaglesakura.jc.android.egl.DeviceManager;
+import com.eaglesakura.jc.android.egl.WindowDeviceManager;
 import com.eaglesakura.jc.android.egl.SurfaceColorSpec;
 
 public class EGLSurfaceView extends SurfaceView implements RenderingSurface {
@@ -20,7 +21,7 @@ public class EGLSurfaceView extends SurfaceView implements RenderingSurface {
     /**
      * 
      */
-    DeviceManager deviceManager = null;
+    WindowDeviceManager deviceManager = null;
 
     public EGLSurfaceView(Context context) {
         super(context);
@@ -61,7 +62,7 @@ public class EGLSurfaceView extends SurfaceView implements RenderingSurface {
      * @param listener
      */
     public void initialize(SurfaceColorSpec colorSpec, boolean hasDepth, boolean hasStencil,
-            DeviceManager.SurfaceListener listener) {
+            WindowDeviceManager.SurfaceListener listener) {
         synchronized (lock) {
             if (deviceManager != null) {
                 throw new RuntimeException("EGLTextureView is initialized");
@@ -72,7 +73,7 @@ public class EGLSurfaceView extends SurfaceView implements RenderingSurface {
             chooser.setDepthEnable(hasDepth);
             chooser.setStencilEnable(hasStencil);
 
-            deviceManager = new DeviceManager(chooser, listener);
+            deviceManager = new WindowDeviceManager(chooser, listener);
 
             // サーフェイスリスナを更新する
             if (colorSpec.getAlphaSize() > 0) {

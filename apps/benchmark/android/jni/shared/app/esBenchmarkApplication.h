@@ -11,20 +11,23 @@
 
 namespace es {
 
-class   BenchmarkApplication : public JointApplicationBase {
-    MTextureImage   texture;
+class BenchmarkApplication: public JointApplicationBase {
+    MTextureImage texture;
 
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();
 
-public: /* アプリライフサイクル */
+public:
+    /* アプリライフサイクル */
 
     /**
      * アプリ初期化を行わせる
      * メソッド呼び出し時点でデバイスロック済み。
      */
     virtual void onAppInitialize();
+
+    virtual void loadTexture(MDevice subDevice);
 
     /**
      * アプリのサーフェイスリサイズを行わせる

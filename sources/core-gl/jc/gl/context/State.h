@@ -243,7 +243,7 @@ class GLState: public Object {
          * 現在Contextにバインドされているフレームバッファ
          */
         GLuint frameBuffer;
-        
+
         /**
          * 現在Contextにバインドされているレンダリングバッファ
          */
@@ -277,7 +277,7 @@ public:
         if (temp.rgba != clearContext.clearColor.rgba) {
             // 最後に呼び出した色を保存
             clearContext.clearColor = temp;
-            
+
             // 色が違うからコマンド呼び出し
             glClearColor(r, g, b, a);
             assert_gl();
@@ -566,15 +566,22 @@ public:
     }
 
     /**
+     * 指定したテクスチャがバインド済みのユニットを取得する
+     */
+    inline s32 getBindedTextureUnit(const GLenum target, const GLuint texture) const {
+        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
+            if (textureContext.textures[i] == texture && textureContext.targets[i] == target) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * 指定したテクスチャがバインド済みになっているかを調べる
      */
     inline jcboolean isBindedTexture(const GLenum target, const GLuint texture) const {
-        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
-            if (textureContext.textures[i] == texture && textureContext.targets[i] == target) {
-                return jctrue;
-            }
-        }
-        return jcfalse;
+        return getBindedTextureUnit(target, texture) >= 0;
     }
 
     /**
@@ -768,18 +775,18 @@ public:
         // 同じオブジェクトがバインド済みのため何もしない
         return jcfalse;
     }
-    
+
     /**
      * レンダリングバッファへの関連付けを行う
      */
     inline jcboolean bindRenderbuffer(const GLenum target, const GLuint renderBuffer) {
         assert(target == GL_RENDERBUFFER);
-        
-        if(frameBufferContext.renderBuffer != renderBuffer) {
+
+        if (frameBufferContext.renderBuffer != renderBuffer) {
             frameBufferContext.renderBuffer = renderBuffer;
             glBindRenderbuffer(target, renderBuffer);
             assert_gl();
-            
+
             return jctrue;
         }
         return jcfalse;

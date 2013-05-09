@@ -10,10 +10,10 @@ const ::jc::s32 BenchmarkRenderer::KEY_MAINCONTEXT = 0;
 
 static jclass class_BenchmarkRenderer = NULL;
 
-#define methods_BenchmarkRenderer_LENGTH 9
+#define methods_BenchmarkRenderer_LENGTH 11
 
 #if methods_BenchmarkRenderer_LENGTH
-static jmethodID methods_BenchmarkRenderer[9];
+static jmethodID methods_BenchmarkRenderer[11];
 #endif
 
 static void initialize_BenchmarkRenderer() {
@@ -31,15 +31,17 @@ static void initialize_BenchmarkRenderer() {
 
     // load methods
     {
-        methods_BenchmarkRenderer[0] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeMainLoop", "()V", false);
-        methods_BenchmarkRenderer[1] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeDestroy", "()V", false);
-        methods_BenchmarkRenderer[2] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "createNativeContext", "(Lcom/eaglesakura/jc/android/egl/DeviceManager;)V", false);
-        methods_BenchmarkRenderer[3] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeInitialize", "()V", false);
-        methods_BenchmarkRenderer[4] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeResume", "()V", false);
-        methods_BenchmarkRenderer[5] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativePause", "()V", false);
-        methods_BenchmarkRenderer[6] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "getNativePointer", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", false);
-        methods_BenchmarkRenderer[7] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "setNativePointer", "(ILcom/eaglesakura/jc/android/resource/jni/Pointer;)V", false);
-        methods_BenchmarkRenderer[8] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeSurfaceResized", "(II)V", false);
+        methods_BenchmarkRenderer[0] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "loadTexture", "(Lcom/eaglesakura/jc/android/egl/DeviceManager;)V", false);
+        methods_BenchmarkRenderer[1] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeMainLoop", "()V", false);
+        methods_BenchmarkRenderer[2] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeDestroy", "()V", false);
+        methods_BenchmarkRenderer[3] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "createNativeContext", "(Lcom/eaglesakura/jc/android/egl/DeviceManager;)V", false);
+        methods_BenchmarkRenderer[4] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeInitialize", "()V", false);
+        methods_BenchmarkRenderer[5] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeResume", "()V", false);
+        methods_BenchmarkRenderer[6] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativePause", "()V", false);
+        methods_BenchmarkRenderer[7] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "getNativePointer", "(I)Lcom/eaglesakura/jc/android/resource/jni/Pointer;", false);
+        methods_BenchmarkRenderer[8] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "getDeviceManager", "()Lcom/eaglesakura/jc/android/egl/DeviceManager;", false);
+        methods_BenchmarkRenderer[9] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "setNativePointer", "(ILcom/eaglesakura/jc/android/resource/jni/Pointer;)V", false);
+        methods_BenchmarkRenderer[10] = ::ndk::JniWrapper::loadMethod(class_BenchmarkRenderer, "onNativeSurfaceResized", "(II)V", false);
 
     }
 }
@@ -48,9 +50,62 @@ BenchmarkRenderer::BenchmarkRenderer(jobject obj): ::ndk::JniWrapper(obj){
     initialize_BenchmarkRenderer();
 }
 
+void BenchmarkRenderer::loadTexture(jobject devicemanager_0) {
+    CALL_JNIENV();
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[0], devicemanager_0);
+}
+#if 0
+#include "jointcoding-android.h"
+#include "esBenchmarkRenderer.h"
+
+extern "C" {
+// prototype
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_loadTexture(JNIEnv *env, jobject _this, jobject devicemanager_0);
+}
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_loadTexture(JNIEnv *env, jobject _this, jobject devicemanager_0) {
+    // call env reset
+    initJniEnv(env);
+    
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_loadTexture");
+    
+    return;
+}
+#endif
+
+
+void BenchmarkRenderer::loadTexture_(jobject _this, jobject devicemanager_0) {
+    CALL_JNIENV();
+    initialize_BenchmarkRenderer();
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[0], devicemanager_0);
+}
+#if 0
+#include "jointcoding-android.h"
+#include "esBenchmarkRenderer.h"
+
+extern "C" {
+// prototype
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_loadTexture(JNIEnv *env, jobject _this, jobject devicemanager_0);
+}
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_loadTexture(JNIEnv *env, jobject _this, jobject devicemanager_0) {
+    // call env reset
+    initJniEnv(env);
+    
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_loadTexture");
+    
+    return;
+}
+#endif
+
+
 void BenchmarkRenderer::onNativeMainLoop() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[0]);
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[1]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -77,7 +132,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 void BenchmarkRenderer::onNativeMainLoop_(jobject _this) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    env->CallVoidMethod(_this, methods_BenchmarkRenderer[0]);
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[1]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -103,7 +158,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 
 void BenchmarkRenderer::onNativeDestroy() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[1]);
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[2]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -130,7 +185,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 void BenchmarkRenderer::onNativeDestroy_(jobject _this) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    env->CallVoidMethod(_this, methods_BenchmarkRenderer[1]);
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[2]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -156,7 +211,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 
 void BenchmarkRenderer::createNativeContext(jobject devicemanager_0) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[2], devicemanager_0);
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[3], devicemanager_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -183,7 +238,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_c
 void BenchmarkRenderer::createNativeContext_(jobject _this, jobject devicemanager_0) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    env->CallVoidMethod(_this, methods_BenchmarkRenderer[2], devicemanager_0);
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[3], devicemanager_0);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -209,7 +264,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_c
 
 void BenchmarkRenderer::onNativeInitialize() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[3]);
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[4]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -236,7 +291,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 void BenchmarkRenderer::onNativeInitialize_(jobject _this) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    env->CallVoidMethod(_this, methods_BenchmarkRenderer[3]);
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[4]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -262,7 +317,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 
 void BenchmarkRenderer::onNativeResume() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[4]);
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[5]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -289,7 +344,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 void BenchmarkRenderer::onNativeResume_(jobject _this) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    env->CallVoidMethod(_this, methods_BenchmarkRenderer[4]);
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[5]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -315,7 +370,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 
 void BenchmarkRenderer::onNativePause() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[5]);
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -342,7 +397,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 void BenchmarkRenderer::onNativePause_(jobject _this) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    env->CallVoidMethod(_this, methods_BenchmarkRenderer[5]);
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -368,29 +423,40 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 
 jobject BenchmarkRenderer::getNativePointer_unsafe(jint key) {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_BenchmarkRenderer[6], key);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_BenchmarkRenderer[7], key);
 }
 
 jobject BenchmarkRenderer::getNativePointer_unsafe_(jobject _this, jint key) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    return (jobject) env->CallObjectMethod(_this, methods_BenchmarkRenderer[6], key);
+    return (jobject) env->CallObjectMethod(_this, methods_BenchmarkRenderer[7], key);
+}
+
+jobject BenchmarkRenderer::getDeviceManager_unsafe() {
+    CALL_JNIENV();
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_BenchmarkRenderer[8]);
+}
+
+jobject BenchmarkRenderer::getDeviceManager_unsafe_(jobject _this) {
+    CALL_JNIENV();
+    initialize_BenchmarkRenderer();
+    return (jobject) env->CallObjectMethod(_this, methods_BenchmarkRenderer[8]);
 }
 
 void BenchmarkRenderer::setNativePointer(jint key, jobject ptr) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[7], key, ptr);
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[9], key, ptr);
 }
 
 void BenchmarkRenderer::setNativePointer_(jobject _this, jint key, jobject ptr) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    env->CallVoidMethod(_this, methods_BenchmarkRenderer[7], key, ptr);
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[9], key, ptr);
 }
 
 void BenchmarkRenderer::onNativeSurfaceResized(jint int_0, jint int_1) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[8], int_0, int_1);
+    env->CallVoidMethod(this->getObject(), methods_BenchmarkRenderer[10], int_0, int_1);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -417,7 +483,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_o
 void BenchmarkRenderer::onNativeSurfaceResized_(jobject _this, jint int_0, jint int_1) {
     CALL_JNIENV();
     initialize_BenchmarkRenderer();
-    env->CallVoidMethod(_this, methods_BenchmarkRenderer[8], int_0, int_1);
+    env->CallVoidMethod(_this, methods_BenchmarkRenderer[10], int_0, int_1);
 }
 #if 0
 #include "jointcoding-android.h"
