@@ -142,7 +142,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
         state = State.Pausing;
 
         while (state != State.Paused) {
-            AndroidUtil.sleep(1);
+            AndroidUtil.sleep(0, 100);
         }
     }
 
@@ -170,7 +170,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
 
         state = State.Destroyed;
         while (state != State.Aborted) {
-            AndroidUtil.sleep(1);
+            AndroidUtil.sleep(0, 100);
         }
 
         // コンテキストを廃棄する

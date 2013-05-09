@@ -17,7 +17,7 @@ import com.eaglesakura.jc.android.egl.view.RenderingSurface;
  * 
  * 現状では主にゲーム用途として考える。
  */
-public abstract class NativeApplicationFragment extends Fragment {
+public class NativeApplicationFragment extends Fragment {
 
     /**
      * 排他制御のためのロックオブジェクト
@@ -33,6 +33,8 @@ public abstract class NativeApplicationFragment extends Fragment {
      * レンダラークラス
      */
     JointApplicationRenderer renderer = null;
+
+    static final String ARG_RENDERING_CLASS = "ARG_RENDERING_CLASS";
 
     /**
      * タッチ制御をNativeに伝えるクラス
@@ -83,8 +85,7 @@ public abstract class NativeApplicationFragment extends Fragment {
 
         // 明示的に廃棄を行う
         if (getActivity().isFinishing() || isDetached()) {
-            renderer.onAppDestroy();
-            surface.dispose();
+            destroyAppContexts();
         }
 
         super.onPause();
@@ -96,13 +97,39 @@ public abstract class NativeApplicationFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        destroyAppContexts();
+    }
+
+    /**
+     * アプリ資源の廃棄を行わせる
+     */
+    protected void destroyAppContexts() {
+        if (renderer != null) {
+            renderer.onAppDestroy();
+            renderer = null;
+        }
+
+        if (surface != null) {
+            surface.dispose();
+            surface = null;
+        }
     }
 
     /**
      * レンダラーを作成する
      * @return
      */
-    protected abstract JointApplicationRenderer createRenderer();
+    protected JointApplicationRenderer createRenderer() {
+        try {
+            // bundleからclassを取り出す
+            @SuppressWarnings("unchecked")
+            Class<? extends JointApplicationRenderer> renderingClass = (Class<? extends JointApplicationRenderer>) getArguments()
+                    .getSerializable(ARG_RENDERING_CLASS);
+            return renderingClass.newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("createRenderer newInstance() failed");
+        }
+    }
 
     /**
      * レンダリング用のViewを生成する
@@ -113,6 +140,20 @@ public abstract class NativeApplicationFragment extends Fragment {
         //        EGLTextureView result = new EGLTextureView(getActivity());
         EGLSurfaceView result = new EGLSurfaceView(getActivity());
         result.initialize(SurfaceColorSpec.RGBA8, true, true, renderer);
+        return result;
+    }
+
+    /**
+     * 
+     * @param renderingClass
+     * @return
+     */
+    public static NativeApplicationFragment createInstance(Class<? extends JointApplicationRenderer> renderingClass) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_RENDERING_CLASS, renderingClass);
+
+        NativeApplicationFragment result = new NativeApplicationFragment();
+        result.setArguments(args);
         return result;
     }
 }
