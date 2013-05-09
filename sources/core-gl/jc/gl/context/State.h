@@ -539,15 +539,22 @@ public:
     }
 
     /**
+     * 指定したテクスチャがバインド済みのユニットを取得する
+     */
+    inline s32 getBindedTextureUnit(const GLenum target, const GLuint texture) const {
+        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
+            if (textureContext.textures[i] == texture && textureContext.targets[i] == target) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * 指定したテクスチャがバインド済みになっているかを調べる
      */
     inline jcboolean isBindedTexture(const GLenum target, const GLuint texture) const {
-        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
-            if (textureContext.textures[i] == texture && textureContext.targets[i] == target) {
-                return jctrue;
-            }
-        }
-        return jcfalse;
+        return getBindedTextureUnit(target, texture) >= 0;
     }
 
     /**

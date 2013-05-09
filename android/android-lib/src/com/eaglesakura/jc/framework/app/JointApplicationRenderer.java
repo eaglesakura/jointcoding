@@ -2,6 +2,7 @@ package com.eaglesakura.jc.framework.app;
 
 import com.eaglesakura.jc.android.app.AndroidUtil;
 import com.eaglesakura.jc.android.egl.DeviceManager;
+import com.eaglesakura.jc.android.egl.WindowDeviceManager;
 import com.eaglesakura.jc.android.resource.jni.Jointable;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -15,7 +16,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public abstract class JointApplicationRenderer implements Jointable, DeviceManager.SurfaceListener {
+public abstract class JointApplicationRenderer implements Jointable, WindowDeviceManager.SurfaceListener {
     /**
      * GPU管理クラス
      */
@@ -94,7 +95,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     }
 
     @Override
-    public void onEGLInitializeCompleted(DeviceManager device) {
+    public void onEGLInitializeCompleted(WindowDeviceManager device) {
         synchronized (lock) {
             if (!validNative()) {
                 // 初期化完了したデバイスを保持する
@@ -116,7 +117,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     }
 
     @Override
-    public void onEGLSurfaceSizeChanged(DeviceManager device, int width, int height) {
+    public void onEGLSurfaceSizeChanged(WindowDeviceManager device, int width, int height) {
         state = State.SurfaceResizing;
         synchronized (lock) {
             if (validNative()) {
@@ -131,7 +132,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      * EGLの廃棄に伴い、コンテキストも廃棄を行う
      */
     @Override
-    public void onEGLDestroyBegin(DeviceManager device) {
+    public void onEGLDestroyBegin(WindowDeviceManager device) {
         waitNativeDestroyed();
     }
 
@@ -186,6 +187,18 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      */
     protected boolean validNative() {
         return appContext != null;
+    }
+
+    /**
+     * 解放済みであったらtrue
+     * @return
+     */
+    protected boolean isDestroyed() {
+        if (state == State.Destroyed || state == State.Aborted) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -265,9 +278,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
     final native void onNativeMainLoop();
 
     /**
-     * サーフェイスサイズが変更になった
-     * @param newWidth
-     * @param newHeight
+     * ネイティブ側の初期化を行わせる
      */
     @JCMethod(
               nativeMethod = true)
@@ -384,6 +395,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
         };
         thread.setName("jc-render");
         thread.start();
+
     }
 
     /**

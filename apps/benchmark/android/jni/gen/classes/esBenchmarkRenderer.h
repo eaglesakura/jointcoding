@@ -15,6 +15,8 @@ public:
     }
 
     static const ::jc::charactor* CLASS_SIGNATURE;
+    virtual void loadTexture(jobject devicemanager_0);
+    static void loadTexture_(jobject _this, jobject devicemanager_0);
     virtual void onNativeMainLoop();
     static void onNativeMainLoop_(jobject _this);
     virtual void onNativeDestroy();
@@ -29,6 +31,8 @@ public:
     static void onNativePause_(jobject _this);
     virtual jobject getNativePointer_unsafe(jint key);
     static jobject getNativePointer_unsafe_(jobject _this, jint key);
+    virtual jobject getDeviceManager_unsafe();
+    static jobject getDeviceManager_unsafe_(jobject _this);
     virtual void setNativePointer(jint key, jobject ptr);
     static void setNativePointer_(jobject _this, jint key, jobject ptr);
     virtual void onNativeSurfaceResized(jint int_0, jint int_1);

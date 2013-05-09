@@ -475,6 +475,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
         }
     }
 
+    glFinish();
     return result;
 
 #undef  device_wait

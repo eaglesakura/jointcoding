@@ -99,6 +99,18 @@ public class EGLWrapper {
     }
 
     /**
+     * スレイブ扱いのサブEGLを生成する
+     * @return
+     */
+    public EGLWrapper createSlaveEGL() {
+        EGLWrapper result = new EGLWrapper();
+        result.egl = this.egl;
+        result.eglConfig = this.eglConfig;
+        result.eglDisplay = egl.eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        return result;
+    }
+
+    /**
      * レンダリングコンテキストを生成する
      * @return
      */
@@ -109,6 +121,26 @@ public class EGLWrapper {
                         0x3098 /* EGL_CONTEXT_CLIENT_VERSION */, 2, EGL_NONE
                 });
 
+        if (eglContext == EGL10.EGL_NO_CONTEXT) {
+            throw new RuntimeException("eglCreateContext");
+        }
+
+        return new EGLContextWrapper(this, eglContext);
+    }
+
+    /**
+     * 共有コンテキストを生成する
+     * @param primary
+     * @return
+     */
+    public EGLContextWrapper createSharedContext(EGLContextWrapper primary) {
+        EGLContext eglContext = egl.eglCreateContext(eglDisplay, eglConfig, primary.eglContext,
+        // attributes
+                new int[] {
+                        0x3098 /* EGL_CONTEXT_CLIENT_VERSION */, 2,
+
+                        EGL_NONE
+                });
         if (eglContext == EGL10.EGL_NO_CONTEXT) {
             throw new RuntimeException("eglCreateContext");
         }
@@ -131,6 +163,24 @@ public class EGLWrapper {
             // attributes
                 EGL_NONE
             });
+        if (eglSurface == EGL10.EGL_NO_SURFACE) {
+            throw new RuntimeException("eglCreateWindowSurface");
+        }
+
+        return new EGLSurfaceWrapper(this, eglSurface);
+    }
+
+    /**
+     * native windowではないサーフェイスを生成する
+     * @return
+     */
+    public EGLSurfaceWrapper createPBufferSurface(int surfaceWidth, int surfaceHeight) {
+        EGLSurface eglSurface = egl.eglCreatePbufferSurface(eglDisplay, eglConfig, new int[] {
+                //
+                EGL_WIDTH, surfaceWidth, EGL_HEIGHT, surfaceHeight,
+                //
+                EGL_NONE,
+        });
         if (eglSurface == EGL10.EGL_NO_SURFACE) {
             throw new RuntimeException("eglCreateWindowSurface");
         }

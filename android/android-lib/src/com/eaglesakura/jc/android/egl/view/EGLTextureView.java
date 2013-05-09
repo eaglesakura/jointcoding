@@ -7,13 +7,14 @@ import android.view.View;
 
 import com.eaglesakura.jc.android.egl.DefaultEGLConfigChooser;
 import com.eaglesakura.jc.android.egl.DeviceManager;
+import com.eaglesakura.jc.android.egl.WindowDeviceManager;
 import com.eaglesakura.jc.android.egl.SurfaceColorSpec;
 
 public class EGLTextureView extends TextureView implements RenderingSurface {
 
     final Object lock = new Object();
 
-    DeviceManager deviceManager = null;
+    WindowDeviceManager deviceManager = null;
 
     public EGLTextureView(Context context) {
         super(context);
@@ -54,7 +55,7 @@ public class EGLTextureView extends TextureView implements RenderingSurface {
      * @param listener
      */
     public void initialize(SurfaceColorSpec colorSpec, boolean hasDepth, boolean hasStencil,
-            DeviceManager.SurfaceListener listener) {
+            WindowDeviceManager.SurfaceListener listener) {
         synchronized (lock) {
             if (deviceManager != null) {
                 throw new RuntimeException("EGLTextureView is initialized");
@@ -65,7 +66,7 @@ public class EGLTextureView extends TextureView implements RenderingSurface {
             chooser.setDepthEnable(hasDepth);
             chooser.setStencilEnable(hasStencil);
 
-            deviceManager = new DeviceManager(chooser, listener);
+            deviceManager = new WindowDeviceManager(chooser, listener);
 
             // サーフェイスリスナを更新する
             setSurfaceTextureListener(deviceManager);
