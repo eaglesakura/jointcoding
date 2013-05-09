@@ -22,6 +22,18 @@ public class AndroidUtil {
         }
     }
 
+    /**
+     * ナノ秒単位でスリープする
+     * @param millisec
+     * @param nanosec
+     */
+    public static void sleep(long millisec, int nanosec) {
+        try {
+            Thread.sleep(millisec, nanosec);
+        } catch (Exception e) {
+        }
+    }
+
     @JCMethod(
               nativeMethod = true)
     static native void _log(String message);

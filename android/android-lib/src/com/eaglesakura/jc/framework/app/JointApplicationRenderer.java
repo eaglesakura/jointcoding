@@ -16,9 +16,6 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 @JCClass(
          cppNamespace = "ndk")
 public abstract class JointApplicationRenderer implements Jointable, DeviceManager.SurfaceListener {
-
-    boolean renderAborted = false;
-
     /**
      * GPU管理クラス
      */
@@ -45,6 +42,11 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
         Null,
 
         /**
+         * 休止リクエスト中
+         */
+        Pausing,
+
+        /**
          * 休止中
          */
         Paused,
@@ -68,6 +70,11 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
          * 廃棄済み
          */
         Destroyed,
+
+        /**
+         * アプリを終了させた状態
+         */
+        Aborted,
     }
 
     /**
@@ -125,24 +132,17 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      */
     @Override
     public void onEGLDestroyBegin(DeviceManager device) {
-        synchronized (lock) {
-            if (validNative()) {
-                onNativeDestroy();
-                appContext.dispose();
-                appContext = null;
-            }
-        }
+        waitNativeDestroyed();
     }
 
     /**
      * アプリの休止を行う
      */
     public void onAppPause() {
-        state = State.Paused;
-        synchronized (lock) {
-            if (validNative()) {
-                onNativePause();
-            }
+        state = State.Pausing;
+
+        while (state != State.Paused) {
+            AndroidUtil.sleep(1);
         }
     }
 
@@ -157,14 +157,26 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      * アプリの廃棄を行う
      */
     public void onAppDestroy() {
+        waitNativeDestroyed();
+    }
+
+    /**
+     * Native Appの廃棄を行う
+     */
+    final synchronized void waitNativeDestroyed() {
+        if (state == State.Aborted || state == State.Destroyed) {
+            return;
+        }
+
         state = State.Destroyed;
-        // レンダリングの終了待ちを行う
-        int sleep = 0;
-        while (!renderAborted) {
+        while (state != State.Aborted) {
             AndroidUtil.sleep(1);
-            if (++sleep > 1000) {
-                break;
-            }
+        }
+
+        // コンテキストを廃棄する
+        if (appContext != null) {
+            appContext.dispose();
+            appContext = null;
         }
     }
 
@@ -241,7 +253,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      * @return
      */
     @JCMethod
-    public DeviceManager getDeviceManager() {
+    public final DeviceManager getDeviceManager() {
         return deviceManager;
     }
 
@@ -250,7 +262,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      */
     @JCMethod(
               nativeMethod = true)
-    protected native void onNativeMainLoop();
+    final native void onNativeMainLoop();
 
     /**
      * サーフェイスサイズが変更になった
@@ -259,7 +271,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      */
     @JCMethod(
               nativeMethod = true)
-    protected native void onNativeInitialize();
+    final native void onNativeInitialize();
 
     /**
      * サーフェイスサイズが変更になった
@@ -268,33 +280,46 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
      */
     @JCMethod(
               nativeMethod = true)
-    protected native void onNativeSurfaceResized(int newWidth, int newHeight);
+    final native void onNativeSurfaceResized(int newWidth, int newHeight);
 
     /**
      * Fragment休止を行う
      */
     @JCMethod(
               nativeMethod = true)
-    protected native void onNativePause();
+    final native void onNativePause();
 
     /**
      * Fragment復帰を行う
      */
     @JCMethod(
               nativeMethod = true)
-    protected native void onNativeResume();
+    final native void onNativeResume();
 
     /**
      * Fragment廃棄を行う
      */
     @JCMethod(
               nativeMethod = true)
-    protected native void onNativeDestroy();
+    final native void onNativeDestroy();
 
     /**
-     * Native Contextを作成する。
+     * レンダリングサーフェイスの色情報をチェックする
+     * @return
      */
-    protected abstract void createNativeContext(DeviceManager deviceManager);
+    final native int getSurfaceColorSpecRequest();
+
+    /**
+     * 深度バッファをリクエストしているかをチェックする
+     * @return
+     */
+    final native boolean isSurfaceDepthRequest();
+
+    /**
+     * ステンシルバッファをリクエストしているかをチェックする
+     * @return
+     */
+    final native boolean isSurfaceStencilRequest();
 
     /**
      * メインスレッドの処理を行う
@@ -303,6 +328,7 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
         // 状態が有効ならメインループを実行する
         while (state != State.Destroyed) {
             int sleepTimeMS = 0;
+
             synchronized (lock) {
                 if (validGLOperation()) {
                     // 操作可能な状態であればメインループ処理を行う
@@ -318,11 +344,15 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
                             break;
                     }
 
-                    // レジュームリクエストが送られているので、レジューム処理を行わせる
                     if (state == State.Resuming && deviceManager.valid()) {
+                        // レジュームリクエストが送られているので、レジューム処理を行わせる
                         onNativeResume();
                         sleepTimeMS = 0;
                         state = State.Running;
+                    } else if (state == State.Pausing) {
+                        // 休止リクエストが送られているので、休止処理を行う
+                        onNativePause();
+                        state = State.Paused;
                     }
                 }
             }
@@ -334,31 +364,31 @@ public abstract class JointApplicationRenderer implements Jointable, DeviceManag
             }
         }
 
+        // 廃棄を行う
+        synchronized (lock) {
+            onNativeDestroy();
+        }
         AndroidUtil.log("abort Rendering");
-        renderAborted = true;
-    }
-
-    /**
-     * メインループ実行クラスを作成する
-     * @return
-     */
-    protected Runnable newMainLoopRunner() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                onMainThread();
-            }
-        };
+        state = State.Aborted;
     }
 
     /**
      * メインループを開始する
      */
     protected void startMainLoop() {
-        Runnable runner = newMainLoopRunner();
-
-        Thread thread = new Thread(runner);
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                onMainThread();
+            }
+        };
         thread.setName("jc-render");
         thread.start();
     }
+
+    /**
+     * Native Contextを作成する。
+     */
+    protected abstract void createNativeContext(DeviceManager deviceManager);
+
 }
