@@ -31,37 +31,39 @@
 
 namespace jc {
 
+#if 0
 class Object;
 /**
  * スマートポインタのダウンキャストを行う
  */
 template<typename T>
 jc_sp<T> downcast( const jc_sp<jc::Object> obj ) {
+    if(!obj) {
+        return jc_sp<T>();
+    }
+
     try {
         return ::boost::dynamic_pointer_cast<T>(obj);
     } catch(std::bad_cast &e) {
         return jc_sp<T>();
     }
 }
+#endif
 
 /**
  * スマートポインタのダウンキャストを行う
  */
 template<typename T, typename T2>
 jc_sp<T> downcast( const jc_sp<T2> obj ) {
+    if(!obj) {
+        return jc_sp<T>();
+    }
+
     try {
         return ::boost::dynamic_pointer_cast<T>(obj);
     } catch(std::bad_cast &e) {
         return jc_sp<T>();
     }
-}
-
-/**
- * スマートポインタのダウンキャストを行う
- */
-template<typename T>
-jc_sp<T> downcast_weak( const jc_wp<jc::Object> obj ) {
-    return ::boost::dynamic_pointer_cast<T>(obj);
 }
 
 }

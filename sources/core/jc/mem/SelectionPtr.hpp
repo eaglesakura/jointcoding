@@ -170,7 +170,7 @@ public:
         } else if (shared) {
             result.shared = jc::downcast<DC>(shared);
         } else {
-            result.weak = jc::downcast_weak<DC>(weak);
+            result.weak = jc::downcast<DC>(weak.lock());
         }
 
         return result;
