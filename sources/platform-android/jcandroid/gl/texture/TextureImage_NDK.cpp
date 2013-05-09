@@ -19,6 +19,10 @@ namespace jc {
 namespace gl {
 
 class NDKPixelBuffer: public PixelBuffer {
+
+    /**
+     * NativeのBufferクラス
+     */
     jc_sp<JObject> byteBuffer;
 public:
     NDKPixelBuffer(jobject jByteBuffer, const s32 width, const s32 height) : PixelBuffer(PixelFormat_NativeRGBA, width, height) {

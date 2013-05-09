@@ -99,7 +99,8 @@ public:
     /**
      * ピクセルフォーマットを別フォーマットに変更する
      */
-    void convert(const PixelFormat_e newFormat) {
+    virtual void convert(const PixelFormat_e newFormat) {
+        // 同一フォーマットの場合は何もしない
         if(pixelFormat == newFormat) {
             return;
         }
@@ -127,6 +128,7 @@ public:
             break;
             default:
             // その他のフォーマットは相互変換出来ない
+            jclogf("not support format(%d)", newFormat);
             assert(false);
             break;
         }

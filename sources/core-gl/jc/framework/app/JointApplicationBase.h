@@ -8,6 +8,7 @@
 #define JOINTAPPLICATIONBASE_H_
 
 #include    "jointcoding.h"
+#include    "jc/collection/BitFlags.hpp"
 #include    "jc/widget/window/WindowManager.h"
 #include    "jc/gl/GL2D.h"
 
@@ -15,6 +16,59 @@ namespace jc {
 namespace gl {
 
 using namespace jc::view;
+
+/**
+ * サーフェイススペックの拡張機能
+ */
+enum SurfaceSupecExtension_e {
+    /**
+     * レンダリングにSurfaceViewを利用する。
+     * デフォルトではTextureViewが利用される。
+     * for Android.
+     */
+    SurfaceSupecExtension_AndroidSurfaceView,
+
+    /**
+     * num flags...
+     */
+    SurfaceSupecExtension_Num,
+};
+
+/**
+ * レンダリングサーフェイスの初期化内容をリクエストする
+ */
+struct SurfaceSpecs {
+    /**
+     * サーフェイスのピクセルフォーマット
+     * 非対応の場合はRGBA8が選択される
+     */
+    PixelFormat_e surfaceFormat;
+
+    /**
+     * 深度バッファを生成する場合はtrue
+     */
+    jcboolean hasDepth;
+
+    /**
+     * ステンシルバッファを生成する場合はtrue
+     */
+    jcboolean hasStencil;
+
+    /**
+     * 拡張機能の有無設定
+     */
+    BitFlags<SurfaceSupecExtension_Num> extensions;
+
+    SurfaceSpecs() {
+        // サーフェイスはRGB888
+        surfaceFormat = PixelFormat_RGB888;
+
+        // 深度とステンシルはデフォルトON
+        // 但し、両者はパッキングされて１バッファにまとめられる可能性がある(iOS)
+        // その場合は強制的に両方同時生成される
+        hasDepth = hasStencil = jctrue;
+    }
+};
 
 /**
  * マルチプラットフォーム共通アプリのベースクラス
@@ -57,6 +111,17 @@ public:
     JointApplicationBase();
 
     virtual ~JointApplicationBase() {
+    }
+
+public:
+    /* 初期化情報 */
+
+    /**
+     * サーフェイスの初期化に必要なスペックのリクエストを受け取る。
+     * 可能な限りリクエストに沿ったサーフェイスを作成する。
+     */
+    virtual SurfaceSpecs getRenderingSurfaceSpecs() const {
+        return SurfaceSpecs();
     }
 
 public:
