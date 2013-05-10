@@ -59,6 +59,7 @@ enum GPUExtension_e {
      * タイルレンダリング対応
      * GL_EXT_discard_framebuffer
      * PowerVR(iOS, GalaxyNexus, etc...)
+     * Mali(Nexus 10, Galaxy S2, etc...)
      */
     GPUExtension_TileBasedDeferredRendering,
 

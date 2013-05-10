@@ -15,6 +15,8 @@
 #include    "boost/smart_ptr/shared_array.hpp"
 #include    "boost/smart_ptr/intrusive_ptr.hpp"
 
+#include    "jc/system/Log.h"
+
 /**
  * 共有ポインタ
  */
@@ -61,7 +63,8 @@ jc_sp<T> downcast( const jc_sp<T2> obj ) {
 
     try {
         return ::boost::dynamic_pointer_cast<T>(obj);
-    } catch(std::bad_cast &e) {
+    } catch(...) {
+        jcalertf("catch downcast error(%0xx)", obj.get());
         return jc_sp<T>();
     }
 }

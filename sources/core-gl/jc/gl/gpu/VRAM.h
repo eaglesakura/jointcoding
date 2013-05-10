@@ -163,6 +163,9 @@ enum VRAM_GC_e {
  * SmartPtrに比べて、VRAM資源管理用に最適化を行う。
  * VRAMはEGLContextと一蓮托生で、EGLが生存中は必ず生存を行わせる。
  * vram_idを握っているオブジェクトは必ずVRAMの生存期間に注意すること。
+ *
+ * TODO VRAMで保持するデータは複数コンテキストで共有されることを想定して書きなおす
+ * 各変数を別クラス化して、shareできるようにすれば問題ない
  */
 class _VRAM {
 
