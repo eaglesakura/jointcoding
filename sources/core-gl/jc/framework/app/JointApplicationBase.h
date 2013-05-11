@@ -22,11 +22,11 @@ using namespace jc::view;
  */
 enum SurfaceSupecExtension_e {
     /**
-     * レンダリングにSurfaceViewを利用する。
-     * デフォルトではTextureViewが利用される。
+     * レンダリングにTextureViewを利用する。
+     * デフォルトではSurfaceViewが利用される。
      * for Android.
      */
-    SurfaceSupecExtension_AndroidSurfaceView,
+    SurfaceSupecExtension_AndroidTextureView,
 
     /**
      * num flags...
@@ -61,6 +61,7 @@ struct SurfaceSpecs {
 
     SurfaceSpecs() {
         // サーフェイスはRGB888
+        // アルファを要求した場合、レンダリング処理の負荷が増える場合がある
         surfaceFormat = PixelFormat_RGB888;
 
         // 深度とステンシルはデフォルトON

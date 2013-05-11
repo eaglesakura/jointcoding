@@ -400,12 +400,26 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     }
 
     /**
+     * アプリコンテキストポインタを取得する
+     * @return
+     */
+    protected Pointer retainAppContextPointer() {
+        synchronized (lock) {
+            Pointer result = appContext;
+            if (result != null) {
+                result.retain();
+            }
+            return result;
+        }
+    }
+
+    /**
      * 操作スレッドを生成する
      * @param slave スレイブデバイス（ロード用デバイス）を生成する場合はtrue、それ以外はレンダリングデバイスを利用する
      * @param threadName
      * @return
      */
-    protected EGLThread newThread(boolean slave, String threadName, Runnable task) {
+    protected EGLThread newThread(boolean slave, String threadName, EGLThread.Task task) {
         DeviceManager device;
         if (slave) {
             device = windowDevice.createSlaveDevice();
@@ -413,7 +427,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
             device = windowDevice;
         }
 
-        EGLThread thread = new EGLThread(this, device, task);
+        EGLThread thread = new EGLThread(this, device, retainAppContextPointer(), task);
         thread.setName(threadName);
         return thread;
     }
