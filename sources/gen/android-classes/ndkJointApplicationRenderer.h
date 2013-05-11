@@ -21,12 +21,16 @@ public:
     static void setNativePointer_(jobject _this, jint key, jobject ptr);
     virtual void onNativeDestroy();
     static void onNativeDestroy_(jobject _this);
+    virtual jboolean queryParams(jint int_0, jint int_1, jintArray int_array_2);
+    static jboolean queryParams_(jobject _this, jint int_0, jint int_1, jintArray int_array_2);
     virtual void onNativeInitialize();
     static void onNativeInitialize_(jobject _this);
     virtual void onNativeResume();
     static void onNativeResume_(jobject _this);
     virtual void onNativePause();
     static void onNativePause_(jobject _this);
+    virtual jboolean postParams(jint int_0, jint int_1, jintArray int_array_2);
+    static jboolean postParams_(jobject _this, jint int_0, jint int_1, jintArray int_array_2);
     virtual jobject getNativePointer_unsafe(jint key);
     static jobject getNativePointer_unsafe_(jobject _this, jint key);
     virtual jobject getDeviceManager_unsafe();
