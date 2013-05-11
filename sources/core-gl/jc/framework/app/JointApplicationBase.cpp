@@ -11,6 +11,42 @@ namespace gl {
 
 JointApplicationBase::JointApplicationBase() {
     flags.initialized = flags.destroyed = jcfalse;
+    appState = JointApplicationProtocol::State_Initializing;
+}
+
+/**
+ * ステータスの問い合わせを行う
+ */
+jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 *result) const {
+    assert(key);
+    assert(result);
+
+    if (key->main_key == JointApplicationProtocol::QueryKey_ApplicationState) {
+        *result = getRunningState();
+        return jctrue;
+    }
+
+    jclogf("drop query main(%d) sub(%d)", key->main_key, key->sub_key);
+    return jcfalse;
+}
+
+/**
+ * ステータスの書き込みを行う
+ */
+jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const s32 *params) {
+    assert(key);
+    assert(params);
+
+    if (key->main_key == JointApplicationProtocol::PostKey_SurfaceSize) {
+        MutexLock lock(query_mutex);
+
+        surfaceSize.x = params[0];
+        surfaceSize.y = params[1];
+        return jctrue;
+    }
+
+    jclogf("drop post main(%d) sub(%d)", key->main_key, key->sub_key);
+    return jcfalse;
 }
 
 /**
@@ -60,7 +96,7 @@ void JointApplicationBase::dispatchDestroy() {
  * 初期化処理を行う
  */
 void JointApplicationBase::dispatchInitialize() {
-    // ウィンドウ生成
+// ウィンドウ生成
     {
         windowManager.reset(new WindowManager());
         // 30fps〜60fpsで扱う
@@ -123,7 +159,7 @@ void JointApplicationBase::dispatchMainLoop() {
         return;
     }
 
-    // デバイスの待ち合わせを行う
+// デバイスの待ち合わせを行う
     {
         device->waitLockRequest(1, &flags.destroyed);
         if (flags.destroyed) {
@@ -131,13 +167,13 @@ void JointApplicationBase::dispatchMainLoop() {
         }
     }
 
-    // 再度レンダリングチェックを行う
+// 再度レンダリングチェックを行う
     if (!device->valid()) {
         // デバイスの準備が整っていない
         return;
     }
 
-    // 実処理を行う
+// 実処理を行う
     try {
         DeviceLock lock(device, jctrue);
 
@@ -149,6 +185,9 @@ void JointApplicationBase::dispatchMainLoop() {
 
         // サーフェイスサイズチェックを行う
         if (checkedSurfaceSize != surfaceSize) {
+            // 書込み中の可能性があるため、ロックする
+            MutexLock lock(query_mutex);
+
             checkedSurfaceSize = surfaceSize;
             jclogf("Resized Surface(%dx%d)", surfaceSize.x, surfaceSize.y);
 

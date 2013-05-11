@@ -32,6 +32,44 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 }
 
 // main
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jintArray params) {
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams");
+
+    jc_sp<JIntArray> array = JIntArray::wrap(params);
+
+    jint *pParams = array->lock();
+    ApplicationQueryKey query(main_key, sub_key);
+
+    // クエリを行う
+    jcboolean result = joint_context(_this, JointApplicationBase)->queryParams(&query, pParams);
+
+    // クエリ結果を反映させる
+    array->unlock(JniArrayUnlock_Commit);
+
+    return result;
+}
+
+// main
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jintArray params) {
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams");
+
+    jc_sp<JIntArray> array = JIntArray::wrap(params);
+
+    const jint *pParams = array->lock();
+    ApplicationQueryKey query(main_key, sub_key);
+
+    // 書き込みを行う
+    jcboolean result = joint_context(_this, JointApplicationBase)->postParams(&query, pParams);
+
+    array->unlock(JniArrayUnlock_Abort);
+
+    return result;
+
+}
+
+// main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeResume(JNIEnv *env, jobject _this) {
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeResume");

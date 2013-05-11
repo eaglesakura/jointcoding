@@ -11,6 +11,7 @@
 #include    "jc/collection/BitFlags.hpp"
 #include    "jc/widget/window/WindowManager.h"
 #include    "jc/gl/GL2D.h"
+#include    "protocol/jcJointApplicationProtocol.h"
 
 namespace jc {
 namespace gl {
@@ -72,19 +73,38 @@ struct SurfaceSpecs {
 };
 
 /**
+ * 状態の問い合わせを行うキー情報
+ */
+struct ApplicationQueryKey {
+    /**
+     * 主キー
+     */
+    s32 main_key;
+
+    /**
+     * サブキー
+     * 負荷状態を持たせたい場合に利用する
+     */
+    s32 sub_key;
+
+    ApplicationQueryKey() {
+        main_key = sub_key = 0;
+    }
+
+    ApplicationQueryKey(s32 main_key, s32 sub_key) {
+        this->main_key = main_key;
+        this->sub_key = sub_key;
+    }
+};
+
+/**
  * マルチプラットフォーム共通アプリのベースクラス
  */
 class JointApplicationBase: public Object, public WindowEventHandler {
-protected:
     /**
-     * レンダリングデバイス
+     * アプリのステート
      */
-    MDevice device;
-
-    /**
-     * ウィンドウクラス
-     */
-    MWindowManager windowManager;
+    s32 appState;
 
     struct {
         /**
@@ -98,6 +118,22 @@ protected:
         jcboolean destroyed;
     } flags;
 
+protected:
+    /**
+     * レンダリングデバイス
+     */
+    MDevice device;
+
+    /**
+     * 問い合わせ・書き込み操作のためのミューテックス
+     */
+    Mutex query_mutex;
+
+    /**
+     * ウィンドウクラス
+     */
+    MWindowManager windowManager;
+
     /**
      * 最後にメインループを追加した時のサーフェイスサイズ
      */
@@ -107,7 +143,6 @@ protected:
      * メッセージで送られた実際のサーフェイスサイズ
      */
     Vector2i surfaceSize;
-
 public:
     JointApplicationBase();
 
@@ -127,6 +162,51 @@ public:
 
 public:
     /* アクセサ */
+
+    /**
+     * ステータスの問い合わせを行う
+     */
+    virtual jcboolean queryParams(const ApplicationQueryKey *key, s32 *result) const;
+
+    /**
+     * ステータスの書き込みを行う
+     */
+    virtual jcboolean postParams(const ApplicationQueryKey *key, const s32 *params);
+
+    /**
+     * 現在の実行状態を取得する
+     */
+    virtual s32 getRunningState() const {
+        return appState;
+    }
+
+    /**
+     * 初期化中の場合はtrue
+     */
+    virtual jcboolean isStateInitializing() const {
+        return (!flags.initialized) || appState == JointApplicationProtocol::State_Initializing;
+    }
+
+    /**
+     * ループ実行中の場合はtrue
+     */
+    virtual jcboolean isStateRunning() const {
+        return appState == JointApplicationProtocol::State_Running;
+    }
+
+    /**
+     * 休止中の場合はtrue
+     */
+    virtual jcboolean isStatePaused() const {
+        return appState == JointApplicationProtocol::State_Paused;
+    }
+
+    /**
+     * 廃棄済みの場合はtrue
+     */
+    virtual jcboolean isStateDestroyed() const {
+        return appState == JointApplicationProtocol::State_Destroyed;
+    }
 
     /**
      * レンダリングデバイスを取得する

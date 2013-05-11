@@ -6,6 +6,7 @@ import com.eaglesakura.jc.egl.WindowDeviceManager;
 import com.eaglesakura.jc.framework.app.thread.EGLThread;
 import com.eaglesakura.jc.jni.Pointer;
 import com.eaglesakura.jc.util.AndroidUtil;
+import com.eaglesakura.jcprotocol.framework.JointApplicationProtocol;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -119,14 +120,12 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
 
     @Override
     public void onEGLSurfaceSizeChanged(WindowDeviceManager device, int width, int height) {
-        state = State.SurfaceResizing;
-        synchronized (lock) {
-            if (validNative()) {
-                AndroidUtil.log(String.format("Surface Size Changed(%d x %d)", width, height));
-                onNativeSurfaceResized(width, height);
-            }
+        if (validNative()) {
+            // 新しいサーフェイス値の書き込みを行う
+            postParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
+                    width, height
+            });
         }
-        state = State.Running;
     }
 
     /**
@@ -270,6 +269,28 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     public final DeviceManager getDeviceManager() {
         return windowDevice;
     }
+
+    /**
+     * パラメータの問い合わせを行う
+     * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
+     * @param sub_key サブキー。デフォルトでは使用しない
+     * @param result 戻り値の書き込み先。書き込みのために十分な長さが必要
+     * @return
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public final native boolean queryParams(int main_key, int sub_key, int[] result);
+
+    /**
+     * パラメータのpushを行う
+     * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
+     * @param sub_key サブキー。デフォルトでは使用しない
+     * @param params 書き込み値を格納する。POSTが要求する十分な長さが必要
+     * @return
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public final native boolean postParams(int main_key, int sub_key, int[] params);
 
     /**
      * ネイティブ側のメインループ処理を行う
