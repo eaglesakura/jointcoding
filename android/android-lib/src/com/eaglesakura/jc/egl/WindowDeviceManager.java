@@ -177,6 +177,19 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
     }
 
     /**
+     * ロード用のスレイブデバイスを生成する
+     * @return
+     */
+    public DeviceManager createSlaveDevice() {
+        EGLWrapper slaveEGL = egl.createSlaveEGL();
+        EGLSurfaceWrapper surface = slaveEGL.createPBufferSurface(1, 1);
+        EGLContextWrapper context = slaveEGL.createSharedContext(eglContext);
+
+        return new DeviceManager(slaveEGL, context, surface);
+
+    }
+
+    /**
      * ウィンドウサーフェイスのライフサイクル処理に合わせたコールバックを行う
      */
     public interface SurfaceListener {

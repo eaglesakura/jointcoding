@@ -3,6 +3,7 @@ package com.eaglesakura.jc.framework.app;
 import com.eaglesakura.jc.Jointable;
 import com.eaglesakura.jc.egl.DeviceManager;
 import com.eaglesakura.jc.egl.WindowDeviceManager;
+import com.eaglesakura.jc.framework.app.thread.EGLThread;
 import com.eaglesakura.jc.jni.Pointer;
 import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -20,7 +21,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     /**
      * GPU管理クラス
      */
-    DeviceManager deviceManager = null;
+    WindowDeviceManager windowDevice = null;
 
     /**
      * 排他制御のためのロックオブジェクト
@@ -99,7 +100,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
         synchronized (lock) {
             if (!validNative()) {
                 // 初期化完了したデバイスを保持する
-                this.deviceManager = device;
+                this.windowDevice = device;
 
                 createNativeContext(device);
                 // 初期化されていなければエラーである
@@ -212,7 +213,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
         }
 
         // デバイスの正常チェック
-        if (deviceManager != null && !deviceManager.valid()) {
+        if (windowDevice != null && !windowDevice.valid()) {
             // デバイスが不正な状態にある
             return false;
         }
@@ -267,7 +268,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
      */
     @JCMethod
     public final DeviceManager getDeviceManager() {
-        return deviceManager;
+        return windowDevice;
     }
 
     /**
@@ -355,7 +356,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
                             break;
                     }
 
-                    if (state == State.Resuming && deviceManager.valid()) {
+                    if (state == State.Resuming && windowDevice.valid()) {
                         // レジュームリクエストが送られているので、レジューム処理を行わせる
                         onNativeResume();
                         sleepTimeMS = 0;
@@ -396,6 +397,25 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
         thread.setName("jc-render");
         thread.start();
 
+    }
+
+    /**
+     * 操作スレッドを生成する
+     * @param slave スレイブデバイス（ロード用デバイス）を生成する場合はtrue、それ以外はレンダリングデバイスを利用する
+     * @param threadName
+     * @return
+     */
+    protected EGLThread newThread(boolean slave, String threadName, Runnable task) {
+        DeviceManager device;
+        if (slave) {
+            device = windowDevice.createSlaveDevice();
+        } else {
+            device = windowDevice;
+        }
+
+        EGLThread thread = new EGLThread(this, device, task);
+        thread.setName(threadName);
+        return thread;
     }
 
     /**
