@@ -6,7 +6,6 @@ import android.view.TextureView;
 import android.view.View;
 
 import com.eaglesakura.jc.egl.DefaultEGLConfigChooser;
-import com.eaglesakura.jc.egl.DeviceManager;
 import com.eaglesakura.jc.egl.SurfaceColorSpec;
 import com.eaglesakura.jc.egl.WindowDeviceManager;
 
@@ -29,7 +28,7 @@ public class EGLTextureView extends TextureView implements RenderingSurface {
     }
 
     @Override
-    public DeviceManager getDevice() {
+    public WindowDeviceManager getDevice() {
         return deviceManager;
     }
 

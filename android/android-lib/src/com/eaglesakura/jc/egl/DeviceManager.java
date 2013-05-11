@@ -1,9 +1,12 @@
 package com.eaglesakura.jc.egl;
 
-import com.eaglesakura.jc.resource.jni.Jointable;
-import com.eaglesakura.jc.resource.jni.Pointer;
+import com.eaglesakura.jc.Jointable;
+import com.eaglesakura.jc.jni.Pointer;
+import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
+@JCClass(
+         cppNamespace = "ndk")
 public class DeviceManager implements Jointable {
 
     protected final Object lock = new Object();

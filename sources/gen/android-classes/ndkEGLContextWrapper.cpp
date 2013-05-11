@@ -5,7 +5,7 @@
 
 namespace ndk {
 
-const ::jc::charactor* EGLContextWrapper::CLASS_SIGNATURE = "com/eaglesakura/jc/android/egl/EGLContextWrapper";
+const ::jc::charactor* EGLContextWrapper::CLASS_SIGNATURE = "com/eaglesakura/jc/egl/EGLContextWrapper";
 
 static jclass class_EGLContextWrapper = NULL;
 

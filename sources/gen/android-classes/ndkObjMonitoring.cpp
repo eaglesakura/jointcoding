@@ -5,14 +5,14 @@
 
 namespace ndk {
 
-const ::jc::charactor* ObjMonitoring::CLASS_SIGNATURE = "com/eaglesakura/jc/android/resource/jni/ObjMonitoring";
+const ::jc::charactor* ObjMonitoring::CLASS_SIGNATURE = "com/eaglesakura/jc/jni/ObjMonitoring";
 
 static jclass class_ObjMonitoring = NULL;
 
-#define methods_ObjMonitoring_LENGTH 2
+#define methods_ObjMonitoring_LENGTH 3
 
 #if methods_ObjMonitoring_LENGTH
-static jmethodID methods_ObjMonitoring[2];
+static jmethodID methods_ObjMonitoring[3];
 #endif
 
 static void initialize_ObjMonitoring() {
@@ -30,8 +30,9 @@ static void initialize_ObjMonitoring() {
 
     // load methods
     {
-        methods_ObjMonitoring[0] = ::ndk::JniWrapper::loadMethod(class_ObjMonitoring, "createInstance", "(Ljava/lang/Object;)Lcom/eaglesakura/jc/android/resource/jni/ObjMonitoring;", true);
+        methods_ObjMonitoring[0] = ::ndk::JniWrapper::loadMethod(class_ObjMonitoring, "createInstance", "(Ljava/lang/Object;)Lcom/eaglesakura/jc/jni/ObjMonitoring;", true);
         methods_ObjMonitoring[1] = ::ndk::JniWrapper::loadMethod(class_ObjMonitoring, "exist", "()Z", false);
+        methods_ObjMonitoring[2] = ::ndk::JniWrapper::loadMethod(class_ObjMonitoring, "get", "()Ljava/lang/Object;", false);
 
     }
 }
@@ -55,6 +56,17 @@ jboolean ObjMonitoring::exist_(jobject _this) {
     CALL_JNIENV();
     initialize_ObjMonitoring();
     return (jboolean) env->CallBooleanMethod(_this, methods_ObjMonitoring[1]);
+}
+
+jobject ObjMonitoring::get_unsafe() {
+    CALL_JNIENV();
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_ObjMonitoring[2]);
+}
+
+jobject ObjMonitoring::get_unsafe_(jobject _this) {
+    CALL_JNIENV();
+    initialize_ObjMonitoring();
+    return (jobject) env->CallObjectMethod(_this, methods_ObjMonitoring[2]);
 }
 
 jc_sp<ObjMonitoring> ObjMonitoring::wrap(jobject obj) {

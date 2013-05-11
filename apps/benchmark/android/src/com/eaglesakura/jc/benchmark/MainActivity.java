@@ -5,9 +5,9 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 
-import com.eaglesakura.jc.android.app.AndroidUtil;
 import com.eaglesakura.jc.benchmark.app.BenchmarkRenderer;
-import com.eaglesakura.jc.framework.app.NativeApplicationFragment;
+import com.eaglesakura.jc.framework.context.JointApplicationFragment;
+import com.eaglesakura.jc.util.AndroidUtil;
 
 public class MainActivity extends Activity {
 
@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             {
-                Fragment fragment = NativeApplicationFragment.createInstance(BenchmarkRenderer.class);
+                Fragment fragment = JointApplicationFragment.createInstance(BenchmarkRenderer.class);
                 transaction.add(R.id.rendering_area, fragment, fragment.getClass().getSimpleName());
             }
             transaction.commit();

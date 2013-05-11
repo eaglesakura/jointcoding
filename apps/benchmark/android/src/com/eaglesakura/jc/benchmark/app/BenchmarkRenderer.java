@@ -1,11 +1,11 @@
 package com.eaglesakura.jc.benchmark.app;
 
-import com.eaglesakura.jc.android.app.AndroidUtil;
-import com.eaglesakura.jc.android.egl.DeviceManager;
-import com.eaglesakura.jc.android.egl.EGLContextWrapper;
-import com.eaglesakura.jc.android.egl.EGLSurfaceWrapper;
-import com.eaglesakura.jc.android.egl.EGLWrapper;
+import com.eaglesakura.jc.egl.DeviceManager;
+import com.eaglesakura.jc.egl.EGLContextWrapper;
+import com.eaglesakura.jc.egl.EGLSurfaceWrapper;
+import com.eaglesakura.jc.egl.EGLWrapper;
 import com.eaglesakura.jc.framework.app.JointApplicationRenderer;
+import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 

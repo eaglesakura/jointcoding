@@ -1,4 +1,4 @@
-package com.eaglesakura.jc.util;
+package com.eaglesakura.jc.jni.io;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,7 @@ import java.io.InputStream;
 import android.content.Context;
 import android.os.Environment;
 
+import com.eaglesakura.jc.jni.context.NativeContext;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -50,6 +51,18 @@ public class NativeIOUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * ローカルパスを実際のパスに変換する
+     * @param path
+     * @return
+     */
+    @JCMethod
+    public static String localStoragePath2NativePath(String path) {
+        File directory = NativeContext.getApplicationContext().getFilesDir().getParentFile();
+        File file = new File(directory, path);
+        return file.getAbsolutePath();
     }
 
     /**

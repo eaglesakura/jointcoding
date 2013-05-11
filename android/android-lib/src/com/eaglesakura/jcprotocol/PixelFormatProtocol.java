@@ -1,4 +1,4 @@
-package com.eaglesakura.jc.protocol;
+package com.eaglesakura.jcprotocol;
 
 import android.graphics.PixelFormat;
 

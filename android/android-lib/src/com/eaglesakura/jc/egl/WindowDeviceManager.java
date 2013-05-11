@@ -5,16 +5,12 @@ import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
 
-import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
-
 /**
  * OpenGL ESデバイスを抽象化したクラス
  * 
  * TextureViewの動作に対応する
  * SurfaceView動作にも対応できるように組んでいるが、現状実装は行わない方針
  */
-@JCClass(
-         cppNamespace = "ndk")
 public class WindowDeviceManager extends DeviceManager implements TextureView.SurfaceTextureListener,
         SurfaceHolder.Callback {
     /**

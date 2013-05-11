@@ -109,19 +109,18 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 
 //        eglDisplay = EGL_NO_DISPLAY;
 
-        // コンテキストとサーフェイスが揃っていないから、設定できない
+// コンテキストとサーフェイスが揃っていないから、設定できない
         if( !eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext) ) {
             if(backToDefault) {
                 // zeroにも戻せない
                 if(!eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
                     EGLError::printEGLError(__FILE__, __LINE__);
-                    throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
+                    throw create_exception_t(EGLException, EGLException_ContextDetachFailed);
                 }
             } else {
                 if(!eglMakeCurrent(EGL_NO_DISPLAY, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ) {
                     EGLError::printEGLError(__FILE__, __LINE__);
-                    EGLSupport::unlockEGLMakeCurrent((jint)eglDisplay, (jint)EGL_NO_SURFACE, (jint)EGL_NO_SURFACE, (jint)EGL_NO_CONTEXT);
-                }
+                    throw create_exception_t(EGLException, EGLException_ContextDetachFailed);}
             }
         }
         assert_egl();
@@ -299,7 +298,7 @@ EGLConfig EGLManager::chooseConfig(const EGLDisplay display, const PixelFormat_e
  * eglGetDisplay(EGL_DEFAULT_DISPLAY)を呼び出す
  */
 EGLDisplay EGLManager::getDefaultDisplay() {
-    return eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    return eglGetDisplay(EGL_DEFAULT_DISPLAY );
 }
 
 }

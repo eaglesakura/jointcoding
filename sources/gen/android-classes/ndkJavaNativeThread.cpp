@@ -5,7 +5,7 @@
 
 namespace ndk {
 
-const ::jc::charactor* JavaNativeThread::CLASS_SIGNATURE = "com/eaglesakura/jc/android/app/util/JavaNativeThread";
+const ::jc::charactor* JavaNativeThread::CLASS_SIGNATURE = "com/eaglesakura/jc/jni/thread/JavaNativeThread";
 
 static jclass class_JavaNativeThread = NULL;
 
@@ -31,7 +31,7 @@ static void initialize_JavaNativeThread() {
     // load methods
     {
         methods_JavaNativeThread[0] = ::ndk::JniWrapper::loadMethod(class_JavaNativeThread, "threadJoin", "()V", false);
-        methods_JavaNativeThread[1] = ::ndk::JniWrapper::loadMethod(class_JavaNativeThread, "createInstance", "(I)Lcom/eaglesakura/jc/android/app/util/JavaNativeThread;", true);
+        methods_JavaNativeThread[1] = ::ndk::JniWrapper::loadMethod(class_JavaNativeThread, "createInstance", "(I)Lcom/eaglesakura/jc/jni/thread/JavaNativeThread;", true);
         methods_JavaNativeThread[2] = ::ndk::JniWrapper::loadMethod(class_JavaNativeThread, "setThreadName", "(Ljava/lang/String;)V", false);
         methods_JavaNativeThread[3] = ::ndk::JniWrapper::loadMethod(class_JavaNativeThread, "run", "()V", false);
         methods_JavaNativeThread[4] = ::ndk::JniWrapper::loadMethod(class_JavaNativeThread, "onBackground", "(I)V", true);
@@ -94,16 +94,16 @@ void JavaNativeThread::onBackground(jint int_0) {
 
 extern "C" {
 // prototype
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_util_JavaNativeThread_onBackground(JNIEnv *env, jobject _this, jint int_0);
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_thread_JavaNativeThread_onBackground(JNIEnv *env, jobject _this, jint int_0);
 }
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_util_JavaNativeThread_onBackground(JNIEnv *env, jobject _this, jint int_0) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_thread_JavaNativeThread_onBackground(JNIEnv *env, jobject _this, jint int_0) {
     // call env reset
     initJniEnv(env);
     
     // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_app_util_JavaNativeThread_onBackground");
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_jni_thread_JavaNativeThread_onBackground");
     
     return;
 }

@@ -17,7 +17,7 @@ using namespace ndk;
 extern "C" {
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_egl_DeviceManager_createNative(JNIEnv *env, jobject _this) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_createNative(JNIEnv *env, jobject _this) {
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_egl_DeviceManager_createNative");
 
     // SDK側のコンテキストを取り出す
@@ -43,7 +43,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_egl_DeviceManager_createN
 }
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_egl_DeviceManager_preDestroyNative(JNIEnv *env, jobject _this) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_preDestroyNative(JNIEnv *env, jobject _this) {
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_egl_DeviceManager_preDestroyNative");
 

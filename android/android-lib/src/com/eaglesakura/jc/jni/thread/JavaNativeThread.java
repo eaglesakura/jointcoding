@@ -1,4 +1,4 @@
-package com.eaglesakura.jc.util;
+package com.eaglesakura.jc.jni.thread;
 
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -6,8 +6,6 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 /**
  * NDK側から生成し、コールバックする。
  * boost::threadの実装ではjniの呼び出しが行えない場合があるため、Javaから呼びつける方式を取る。
- * 
- *
  */
 @JCClass(
          cppNamespace = "ndk")

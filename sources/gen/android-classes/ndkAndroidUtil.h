@@ -15,8 +15,8 @@ public:
     }
 
     static const ::jc::charactor* CLASS_SIGNATURE;
-    static void _log(jstring string_0);
     static jobject getSurface_unsafe(jobject holder);
+    static void _log(jstring string_0);
 
 
     static jc_sp<AndroidUtil> wrap(jobject obj);

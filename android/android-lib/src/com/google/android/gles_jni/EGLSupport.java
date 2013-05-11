@@ -8,11 +8,9 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import android.graphics.SurfaceTexture;
 import android.util.Log;
 
-import com.eaglesakura.jc.resource.jni.Pointer;
-import com.eaglesakura.jc.thread.UIHandler;
+import com.eaglesakura.jc.jni.Pointer;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -31,7 +29,7 @@ public class EGLSupport {
      * @param config
      * @return
      */
-    static Object newSupportClass(String eglClassName, int state) {
+    private static Object newSupportClass(String eglClassName, int state) {
         eglClassName = eglClassName.replaceAll("\\.", "/");
         return newSupportClassNative(eglClassName, state);
     }
@@ -64,9 +62,9 @@ public class EGLSupport {
      * @return
      */
     @JCMethod
-    public static int eglCreateWindowSurfaceSupport(int display, int config, SurfaceTexture surfaceTexture) {
-        if (surfaceTexture == null) {
-            Log.e(TAG, "SurfaceTexture is null !!");
+    public static int eglCreateWindowSurfaceSupport(int display, int config, Object native_window) {
+        if (native_window == null) {
+            Log.e(TAG, "native_window is null !!");
         }
         EGL10 egl = (EGL10) EGLContext.getEGL();
 
@@ -75,7 +73,7 @@ public class EGLSupport {
 
         Log.d(TAG, String.format(Locale.getDefault(), "eglDisplay(%s), eglConfig(%s)", "" + eglDisplay, "" + eglConfig));
 
-        EGLSurface surface = egl.eglCreateWindowSurface(eglDisplay, eglConfig, surfaceTexture, null);
+        EGLSurface surface = egl.eglCreateWindowSurface(eglDisplay, eglConfig, native_window, null);
         if (surface == EGL10.EGL_NO_SURFACE) {
             Log.e(TAG, "EGL_NO_SURFACE...");
             return Pointer.NULL;
@@ -84,37 +82,4 @@ public class EGLSupport {
         // surfaceからmEGLSurfaceを取り出す
         return getIntFieldNative(surface.getClass(), surface, "mEGLSurface");
     }
-
-    /**
-     * UIスレッドで強制的にmake currentを外してもらう
-     * @param display
-     * @param draw_surface
-     * @param read_surface
-     * @param context
-     */
-    @JCMethod
-    public static void unlockEGLMakeCurrent(final int display, final int draw_surface, final int read_surface,
-            final int context) {
-        if (!UIHandler.isUIThread()) {
-            UIHandler.postUI(new Runnable() {
-                @Override
-                public void run() {
-                    unlockEGLMakeCurrent(display, draw_surface, read_surface, context);
-                }
-            });
-        }
-
-        unlockEGLMakeCurrentNative(display, draw_surface, read_surface, context);
-    }
-
-    /**
-     * eglMakeCurrentするだけ。
-     * @param display
-     * @param draw_surface
-     * @param read_surface
-     * @param context
-     */
-    @JCMethod(
-              nativeMethod = true)
-    static native void unlockEGLMakeCurrentNative(int display, int draw_surface, int read_surface, int context);
 }

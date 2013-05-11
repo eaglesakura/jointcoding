@@ -5,7 +5,7 @@
  */
 
 #include "jointcoding-android.h"
-#include "android-framework-classes/ndkJointApplicationRenderer.h"
+#include "android-classes/ndkJointApplicationRenderer.h"
 
 #include    "jc/framework/app/JointApplicationBase.h"
 #include    "jcandroid/egl/sdk/SdkDeviceManagerContext.hpp"

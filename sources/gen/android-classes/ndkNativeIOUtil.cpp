@@ -5,14 +5,14 @@
 
 namespace ndk {
 
-const ::jc::charactor* NativeIOUtil::CLASS_SIGNATURE = "com/eaglesakura/jc/android/app/util/NativeIOUtil";
+const ::jc::charactor* NativeIOUtil::CLASS_SIGNATURE = "com/eaglesakura/jc/jni/io/NativeIOUtil";
 
 static jclass class_NativeIOUtil = NULL;
 
-#define methods_NativeIOUtil_LENGTH 3
+#define methods_NativeIOUtil_LENGTH 4
 
 #if methods_NativeIOUtil_LENGTH
-static jmethodID methods_NativeIOUtil[3];
+static jmethodID methods_NativeIOUtil[4];
 #endif
 
 static void initialize_NativeIOUtil() {
@@ -32,7 +32,8 @@ static void initialize_NativeIOUtil() {
     {
         methods_NativeIOUtil[0] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "openFromAssets", "(Ljava/lang/String;Landroid/content/Context;)Ljava/io/InputStream;", true);
         methods_NativeIOUtil[1] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "openFromLocalStrage", "(Ljava/lang/String;Landroid/content/Context;)Ljava/io/InputStream;", true);
-        methods_NativeIOUtil[2] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "openFromExternalStrage", "(Ljava/lang/String;Landroid/content/Context;)Ljava/io/InputStream;", true);
+        methods_NativeIOUtil[2] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "localStoragePath2NativePath", "(Ljava/lang/String;)Ljava/lang/String;", true);
+        methods_NativeIOUtil[3] = ::ndk::JniWrapper::loadMethod(class_NativeIOUtil, "openFromExternalStrage", "(Ljava/lang/String;Landroid/content/Context;)Ljava/io/InputStream;", true);
 
     }
 }
@@ -53,10 +54,16 @@ jobject NativeIOUtil::openFromLocalStrage_unsafe(jstring path, jobject appContex
     return (jobject) env->CallStaticObjectMethod(class_NativeIOUtil, methods_NativeIOUtil[1], path, appContext);
 }
 
+jstring NativeIOUtil::localStoragePath2NativePath(jstring path) {
+    CALL_JNIENV();
+    initialize_NativeIOUtil();
+    return (jstring) env->CallStaticObjectMethod(class_NativeIOUtil, methods_NativeIOUtil[2], path);
+}
+
 jobject NativeIOUtil::openFromExternalStrage_unsafe(jstring path, jobject appContext) {
     CALL_JNIENV();
     initialize_NativeIOUtil();
-    return (jobject) env->CallStaticObjectMethod(class_NativeIOUtil, methods_NativeIOUtil[2], path, appContext);
+    return (jobject) env->CallStaticObjectMethod(class_NativeIOUtil, methods_NativeIOUtil[3], path, appContext);
 }
 
 jc_sp<NativeIOUtil> NativeIOUtil::wrap(jobject obj) {

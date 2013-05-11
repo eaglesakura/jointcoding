@@ -12,7 +12,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
-import com.eaglesakura.jc.util.ImageDecoder;
+import com.eaglesakura.jc.jni.image.ImageDecoder;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 

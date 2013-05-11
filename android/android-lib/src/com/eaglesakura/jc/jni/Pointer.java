@@ -1,4 +1,4 @@
-package com.eaglesakura.jc.resource.jni;
+package com.eaglesakura.jc.jni;
 
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;

@@ -55,16 +55,5 @@ JNIEXPORT jint JNICALL Java_com_google_android_gles_1jni_EGLSupport_getIntFieldN
     return env->GetIntField(obj, field);
 }
 
-// main
-JNIEXPORT void JNICALL Java_com_google_android_gles_jni_EGLSupport_unlockEGLMakeCurrentNative(JNIEnv *env, jobject _this, jint display, jint draw_surface, jint read_surface, jint context) {
-    // call env reset
-    initJniEnv(env);
-
-    eglReleaseThread();
-    eglMakeCurrent((EGLDisplay) display, (EGLSurface) draw_surface, (EGLSurface) read_surface, (EGLContext) context);
-
-    return;
-}
-
 }
 
