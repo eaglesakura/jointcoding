@@ -66,7 +66,8 @@ void BenchmarkApplication::onAppMainUpdate() {
 void BenchmarkApplication::onAppMainRendering() {
     MGLState state = getState();
     {
-        state->clearColorf(0, 0, (float)(rand() % 0xFF) / 255.0f, 0);
+//        state->clearColorf(0, 0, (float)(rand() % 0xFF) / 255.0f, 0);
+        state->clearColorf(0, 1, 1, 1);
         state->clearSurface();
     }
 

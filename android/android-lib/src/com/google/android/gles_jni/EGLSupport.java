@@ -11,8 +11,8 @@ import javax.microedition.khronos.egl.EGLSurface;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
 
-import com.eaglesakura.jc.android.resource.jni.Pointer;
-import com.eaglesakura.jc.android.thread.UIHandler;
+import com.eaglesakura.jc.resource.jni.Pointer;
+import com.eaglesakura.jc.thread.UIHandler;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
