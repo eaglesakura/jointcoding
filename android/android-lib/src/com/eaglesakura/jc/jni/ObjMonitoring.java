@@ -1,4 +1,4 @@
-package com.eaglesakura.jc.resource.jni;
+package com.eaglesakura.jc.jni;
 
 import java.lang.ref.WeakReference;
 
@@ -33,19 +33,24 @@ public class ObjMonitoring {
      */
     @JCMethod
     public boolean exist() {
-        if (target == null) {
-            return false;
-        }
+        synchronized (this) {
+            if (target == null) {
+                return false;
+            }
 
-        return target.get() != null;
+            return target.get() != null;
+        }
     }
 
     /**
      * 監視対象のオブジェクトを取得する。
      * @return
      */
+    @JCMethod
     public Object get() {
-        return target != null ? target.get() : null;
+        synchronized (this) {
+            return target != null ? target.get() : null;
+        }
     }
 
     /**

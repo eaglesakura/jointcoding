@@ -5,7 +5,7 @@
 
 namespace ndk {
 
-const ::jc::charactor* ImageDecoder::CLASS_SIGNATURE = "com/eaglesakura/jc/android/app/util/ImageDecoder";
+const ::jc::charactor* ImageDecoder::CLASS_SIGNATURE = "com/eaglesakura/jc/jni/image/ImageDecoder";
 
 static jclass class_ImageDecoder = NULL;
 
@@ -32,9 +32,9 @@ static void initialize_ImageDecoder() {
     {
         methods_ImageDecoder[0] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "getPixels", "()Ljava/nio/Buffer;", false);
         methods_ImageDecoder[1] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "getHeight", "()I", false);
-        methods_ImageDecoder[2] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "decodeFromStream", "(Ljava/io/InputStream;)Lcom/eaglesakura/jc/android/app/util/ImageDecoder;", true);
+        methods_ImageDecoder[2] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "decodeFromStream", "(Ljava/io/InputStream;)Lcom/eaglesakura/jc/jni/image/ImageDecoder;", true);
         methods_ImageDecoder[3] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "getWidth", "()I", false);
-        methods_ImageDecoder[4] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "decodeFromBitmap", "(Landroid/graphics/Bitmap;Z)Lcom/eaglesakura/jc/android/app/util/ImageDecoder;", true);
+        methods_ImageDecoder[4] = ::ndk::JniWrapper::loadMethod(class_ImageDecoder, "decodeFromBitmap", "(Landroid/graphics/Bitmap;Z)Lcom/eaglesakura/jc/jni/image/ImageDecoder;", true);
 
     }
 }

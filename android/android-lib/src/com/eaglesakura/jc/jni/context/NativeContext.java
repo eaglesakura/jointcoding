@@ -1,4 +1,4 @@
-package com.eaglesakura.jc;
+package com.eaglesakura.jc.jni.context;
 
 import java.util.UUID;
 
@@ -25,6 +25,9 @@ public class NativeContext {
      */
     Context appContext = null;
 
+    /**
+     * ディスプレイ情報
+     */
     DisplayMetrics displayMetrics = null;
 
     /**
@@ -155,18 +158,29 @@ public class NativeContext {
     }
 
     /**
+     * 初期化を行う
+     * @param appContext
+     */
+    public static synchronized void initialize(Context appContext) {
+        if (g_instance == null) {
+            g_instance = new NativeContext(appContext);
+            g_instance.nativeInitialize();
+        }
+    }
+
+    /**
      * 
      * @param context
      * @return
      */
-    public static synchronized NativeContext getInstance(Context context) {
-        if (g_instance == null) {
-            g_instance = new NativeContext(context.getApplicationContext());
-            g_instance.nativeInitialize();
-        }
+    public static synchronized NativeContext getInstance() {
         return g_instance;
     }
 
+    /**
+     * アプリコンテキストを取得する
+     * @return
+     */
     public static Context getApplicationContext() {
         return g_instance.getAppContext();
     }

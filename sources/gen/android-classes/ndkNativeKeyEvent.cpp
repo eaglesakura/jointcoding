@@ -5,7 +5,7 @@
 
 namespace ndk {
 
-const ::jc::charactor* NativeKeyEvent::CLASS_SIGNATURE = "com/eaglesakura/jc/android/ui/NativeKeyEvent";
+const ::jc::charactor* NativeKeyEvent::CLASS_SIGNATURE = "com/eaglesakura/jc/ui/NativeKeyEvent";
 const ::jc::s32 NativeKeyEvent::EVENT_TYPE_DOWN = 0;
 const ::jc::s32 NativeKeyEvent::EVENT_TYPE_UP = 1;
 const ::jc::s32 NativeKeyEvent::KEYCODE_UNKNOWN = -1;

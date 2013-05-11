@@ -9,7 +9,7 @@
         android:targetSdkVersion="15" />
 
     <application
-        android:name="com.eaglesakura.jc.benchmark.BenchmarkApplication"
+        android:name="com.eaglesakura.jc.framework.context.JointApplication"
         android:allowBackup="true"
         android:debuggable="true"
         android:icon="@drawable/ic_launcher"

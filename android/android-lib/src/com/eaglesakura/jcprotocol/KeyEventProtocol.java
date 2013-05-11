@@ -1,4 +1,4 @@
-package com.eaglesakura.jc.protocol;
+package com.eaglesakura.jcprotocol;
 
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass.Mode;

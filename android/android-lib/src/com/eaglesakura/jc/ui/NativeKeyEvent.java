@@ -5,7 +5,7 @@ import java.util.Map;
 
 import android.view.KeyEvent;
 
-import com.eaglesakura.jc.protocol.KeyEventProtocol;
+import com.eaglesakura.jcprotocol.KeyEventProtocol;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 

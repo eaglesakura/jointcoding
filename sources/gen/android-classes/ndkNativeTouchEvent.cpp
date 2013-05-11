@@ -5,7 +5,7 @@
 
 namespace ndk {
 
-const ::jc::charactor* NativeTouchEvent::CLASS_SIGNATURE = "com/eaglesakura/jc/android/ui/NativeTouchEvent";
+const ::jc::charactor* NativeTouchEvent::CLASS_SIGNATURE = "com/eaglesakura/jc/ui/NativeTouchEvent";
 const ::jc::s32 NativeTouchEvent::EVENT_TYPE_BEGIN = 0;
 const ::jc::s32 NativeTouchEvent::EVENT_TYPE_MOVE = 1;
 const ::jc::s32 NativeTouchEvent::EVENT_TYPE_END = 2;

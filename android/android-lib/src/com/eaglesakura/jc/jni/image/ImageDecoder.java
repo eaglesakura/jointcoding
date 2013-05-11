@@ -1,4 +1,4 @@
-package com.eaglesakura.jc.util;
+package com.eaglesakura.jc.jni.image;
 
 import java.io.InputStream;
 import java.nio.Buffer;
@@ -9,7 +9,7 @@ import java.nio.IntBuffer;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.eaglesakura.jc.AndroidUtil;
+import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 

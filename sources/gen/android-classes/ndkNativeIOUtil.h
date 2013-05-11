@@ -17,6 +17,7 @@ public:
     static const ::jc::charactor* CLASS_SIGNATURE;
     static jobject openFromAssets_unsafe(jstring fileName, jobject appContext);
     static jobject openFromLocalStrage_unsafe(jstring path, jobject appContext);
+    static jstring localStoragePath2NativePath(jstring path);
     static jobject openFromExternalStrage_unsafe(jstring path, jobject appContext);
 
 

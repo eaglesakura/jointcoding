@@ -5,7 +5,7 @@
 
 namespace ndk {
 
-const ::jc::charactor* AppFont::CLASS_SIGNATURE = "com/eaglesakura/jc/android/app/font/AppFont";
+const ::jc::charactor* AppFont::CLASS_SIGNATURE = "com/eaglesakura/jc/font/AppFont";
 
 static jclass class_AppFont = NULL;
 
@@ -30,8 +30,8 @@ static void initialize_AppFont() {
 
     // load methods
     {
-        methods_AppFont[0] = ::ndk::JniWrapper::loadMethod(class_AppFont, "createInstance", "()Lcom/eaglesakura/jc/android/app/font/AppFont;", true);
-        methods_AppFont[1] = ::ndk::JniWrapper::loadMethod(class_AppFont, "createRawImage", "(Ljava/lang/String;I)Lcom/eaglesakura/jc/android/app/util/ImageDecoder;", true);
+        methods_AppFont[0] = ::ndk::JniWrapper::loadMethod(class_AppFont, "createInstance", "()Lcom/eaglesakura/jc/font/AppFont;", true);
+        methods_AppFont[1] = ::ndk::JniWrapper::loadMethod(class_AppFont, "createRawImage", "(Ljava/lang/String;I)Lcom/eaglesakura/jc/jni/image/ImageDecoder;", true);
         methods_AppFont[2] = ::ndk::JniWrapper::loadMethod(class_AppFont, "createImage", "(Ljava/lang/String;I)V", false);
         methods_AppFont[3] = ::ndk::JniWrapper::loadMethod(class_AppFont, "getImage", "()Landroid/graphics/Bitmap;", false);
 

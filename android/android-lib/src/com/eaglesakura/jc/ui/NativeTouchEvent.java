@@ -5,7 +5,7 @@ import java.util.List;
 
 import android.view.MotionEvent;
 
-import com.eaglesakura.jc.protocol.TouchEventProtocol;
+import com.eaglesakura.jcprotocol.TouchEventProtocol;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 

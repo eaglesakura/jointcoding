@@ -5,7 +5,7 @@
 
 namespace ndk {
 
-const ::jc::charactor* EGLWrapper::CLASS_SIGNATURE = "com/eaglesakura/jc/android/egl/EGLWrapper";
+const ::jc::charactor* EGLWrapper::CLASS_SIGNATURE = "com/eaglesakura/jc/egl/EGLWrapper";
 
 static jclass class_EGLWrapper = NULL;
 
@@ -31,8 +31,8 @@ static void initialize_EGLWrapper() {
     // load methods
     {
         methods_EGLWrapper[0] = ::ndk::JniWrapper::loadMethod(class_EGLWrapper, "dispose", "()V", false);
-        methods_EGLWrapper[1] = ::ndk::JniWrapper::loadMethod(class_EGLWrapper, "postFrontBuffer", "(Lcom/eaglesakura/jc/android/egl/EGLSurfaceWrapper;)Z", false);
-        methods_EGLWrapper[2] = ::ndk::JniWrapper::loadMethod(class_EGLWrapper, "current", "(Lcom/eaglesakura/jc/android/egl/EGLContextWrapper;Lcom/eaglesakura/jc/android/egl/EGLSurfaceWrapper;)Z", false);
+        methods_EGLWrapper[1] = ::ndk::JniWrapper::loadMethod(class_EGLWrapper, "current", "(Lcom/eaglesakura/jc/egl/EGLContextWrapper;Lcom/eaglesakura/jc/egl/EGLSurfaceWrapper;)Z", false);
+        methods_EGLWrapper[2] = ::ndk::JniWrapper::loadMethod(class_EGLWrapper, "postFrontBuffer", "(Lcom/eaglesakura/jc/egl/EGLSurfaceWrapper;)Z", false);
 
     }
 }
@@ -52,26 +52,26 @@ void EGLWrapper::dispose_(jobject _this) {
     env->CallVoidMethod(_this, methods_EGLWrapper[0]);
 }
 
-jboolean EGLWrapper::postFrontBuffer(jobject surface) {
-    CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_EGLWrapper[1], surface);
-}
-
-jboolean EGLWrapper::postFrontBuffer_(jobject _this, jobject surface) {
-    CALL_JNIENV();
-    initialize_EGLWrapper();
-    return (jboolean) env->CallBooleanMethod(_this, methods_EGLWrapper[1], surface);
-}
-
 jboolean EGLWrapper::current(jobject context, jobject surface) {
     CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_EGLWrapper[2], context, surface);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_EGLWrapper[1], context, surface);
 }
 
 jboolean EGLWrapper::current_(jobject _this, jobject context, jobject surface) {
     CALL_JNIENV();
     initialize_EGLWrapper();
-    return (jboolean) env->CallBooleanMethod(_this, methods_EGLWrapper[2], context, surface);
+    return (jboolean) env->CallBooleanMethod(_this, methods_EGLWrapper[1], context, surface);
+}
+
+jboolean EGLWrapper::postFrontBuffer(jobject surface) {
+    CALL_JNIENV();
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_EGLWrapper[2], surface);
+}
+
+jboolean EGLWrapper::postFrontBuffer_(jobject _this, jobject surface) {
+    CALL_JNIENV();
+    initialize_EGLWrapper();
+    return (jboolean) env->CallBooleanMethod(_this, methods_EGLWrapper[2], surface);
 }
 
 jc_sp<EGLWrapper> EGLWrapper::wrap(jobject obj) {

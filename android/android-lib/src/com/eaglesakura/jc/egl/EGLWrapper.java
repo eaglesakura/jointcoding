@@ -12,8 +12,8 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.view.SurfaceHolder;
 
-import com.eaglesakura.jc.AndroidUtil;
-import com.eaglesakura.jc.NativeContext;
+import com.eaglesakura.jc.jni.context.NativeContext;
+import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 

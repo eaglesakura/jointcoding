@@ -18,6 +18,8 @@ public:
     static jobject createInstance_unsafe(jobject target);
     virtual jboolean exist();
     static jboolean exist_(jobject _this);
+    virtual jobject get_unsafe();
+    static jobject get_unsafe_(jobject _this);
 
 
     static jc_sp<ObjMonitoring> wrap(jobject obj);

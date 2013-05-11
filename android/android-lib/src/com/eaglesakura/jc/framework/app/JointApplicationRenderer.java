@@ -1,10 +1,10 @@
 package com.eaglesakura.jc.framework.app;
 
-import com.eaglesakura.jc.AndroidUtil;
+import com.eaglesakura.jc.Jointable;
 import com.eaglesakura.jc.egl.DeviceManager;
 import com.eaglesakura.jc.egl.WindowDeviceManager;
-import com.eaglesakura.jc.resource.jni.Jointable;
-import com.eaglesakura.jc.resource.jni.Pointer;
+import com.eaglesakura.jc.jni.Pointer;
+import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 

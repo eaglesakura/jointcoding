@@ -6,13 +6,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.os.Looper;
+import android.util.Log;
+import android.view.Surface;
+import android.view.SurfaceHolder;
 
-import com.eaglesakura.jc.AndroidUtil;
+import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
+import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
-public class AppUtil {
-
-    public static final String SHIT_JIS = "Shift_JIS";
-
+@JCClass(
+         cppNamespace = "ndk")
+public class AndroidUtil {
     /**
      * 単純にsleepさせる。
      * 
@@ -22,8 +25,47 @@ public class AppUtil {
         try {
             Thread.sleep(timems);
         } catch (Exception e) {
-            AndroidUtil.log(e);
         }
+    }
+
+    /**
+     * ナノ秒単位でスリープする
+     * @param millisec
+     * @param nanosec
+     */
+    public static void sleep(long millisec, int nanosec) {
+        try {
+            Thread.sleep(millisec, nanosec);
+        } catch (Exception e) {
+        }
+    }
+
+    @JCMethod(
+              nativeMethod = true)
+    static native void _log(String message);
+
+    public static void log(String message) {
+        //        _log(message);
+        Log.i("JC-LOG", message);
+    }
+
+    public static void log(Exception e) {
+        //        _log(message);
+        if (e == null) {
+            return;
+        }
+        e.printStackTrace();
+        Log.i("JC-LOG", "" + e.getMessage());
+    }
+
+    /**
+     * サーフェイスホルダからサーフェイス本体を取得する
+     * @param holder
+     * @return
+     */
+    @JCMethod
+    public static Surface getSurface(SurfaceHolder holder) {
+        return holder.getSurface();
     }
 
     /**
@@ -175,26 +217,6 @@ public class AppUtil {
     }
 
     /**
-     * 360度系の正規化を行う。
-     * 
-     * 
-     * @param now
-     * @return
-     * 
-     */
-    public static final float normalizeDegree(float now) {
-        while (now < 0.0f) {
-            now += 360.0f;
-        }
-
-        while (now >= 360.0f) {
-            now -= 360.0f;
-        }
-
-        return now;
-    }
-
-    /**
      * 特定のビットフラグが立っていることを検証する。
      * 
      * 
@@ -233,60 +255,6 @@ public class AppUtil {
             return flg | check;
         else
             return flg & (~check);
-    }
-
-    /**
-     * 係数ブレンドを行い、結果を返す。
-     * 1.0に近いほどaに近い値となる。
-     * blend == 1 -> a
-     * blend == 0 -> b
-     * @param a
-     * @param b
-     * @param blend aのブレンド値
-     * @return
-     */
-    public static float blendValue(float a, float b, float blend) {
-        return a * blend + b * (1.0f - blend);
-    }
-
-    /**
-     * 目標数値へ移動する。
-     *
-     * 
-     * @param now
-     * @param offset
-     * @param target
-     * @return
-     */
-    public static final int targetMove(int now, int offset, int target) {
-        offset = Math.abs(offset);
-        if (Math.abs(target - now) <= offset) {
-            return target;
-        } else if (target > now) {
-            return now + offset;
-        } else {
-            return now - offset;
-        }
-    }
-
-    /**
-     * 目標数値へ移動する。
-     *
-     * 
-     * @param now
-     * @param offset
-     * @param target
-     * @return
-     */
-    public static final float targetMove(float now, float offset, float target) {
-        offset = Math.abs(offset);
-        if (Math.abs(target - now) <= offset) {
-            return target;
-        } else if (target > now) {
-            return now + offset;
-        } else {
-            return now - offset;
-        }
     }
 
     /**

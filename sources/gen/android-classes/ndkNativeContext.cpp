@@ -5,7 +5,7 @@
 
 namespace ndk {
 
-const ::jc::charactor* NativeContext::CLASS_SIGNATURE = "com/eaglesakura/jc/android/app/NativeContext";
+const ::jc::charactor* NativeContext::CLASS_SIGNATURE = "com/eaglesakura/jc/jni/context/NativeContext";
 
 static jclass class_NativeContext = NULL;
 
@@ -62,16 +62,16 @@ jboolean NativeContext::isNativeDebuggable() {
 
 extern "C" {
 // prototype
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isNativeDebuggable(JNIEnv *env, jobject _this);
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_isNativeDebuggable(JNIEnv *env, jobject _this);
 }
 
 // main
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isNativeDebuggable(JNIEnv *env, jobject _this) {
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_isNativeDebuggable(JNIEnv *env, jobject _this) {
     // call env reset
     initJniEnv(env);
     
     // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_app_NativeContext_isNativeDebuggable");
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_jni_context_NativeContext_isNativeDebuggable");
     
     return (jboolean) 0;
 }
@@ -94,16 +94,16 @@ void NativeContext::nativeInitialize() {
 
 extern "C" {
 // prototype
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeInitialize(JNIEnv *env, jobject _this);
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_nativeInitialize(JNIEnv *env, jobject _this);
 }
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeInitialize(JNIEnv *env, jobject _this) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_nativeInitialize(JNIEnv *env, jobject _this) {
     // call env reset
     initJniEnv(env);
     
     // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_app_NativeContext_nativeInitialize");
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_jni_context_NativeContext_nativeInitialize");
     
     return;
 }
@@ -121,16 +121,16 @@ void NativeContext::nativeInitialize_(jobject _this) {
 
 extern "C" {
 // prototype
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeInitialize(JNIEnv *env, jobject _this);
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_nativeInitialize(JNIEnv *env, jobject _this);
 }
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeInitialize(JNIEnv *env, jobject _this) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_nativeInitialize(JNIEnv *env, jobject _this) {
     // call env reset
     initJniEnv(env);
     
     // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_app_NativeContext_nativeInitialize");
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_jni_context_NativeContext_nativeInitialize");
     
     return;
 }
@@ -183,16 +183,16 @@ void NativeContext::nativeGC() {
 
 extern "C" {
 // prototype
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeGC(JNIEnv *env, jobject _this);
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_nativeGC(JNIEnv *env, jobject _this);
 }
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_nativeGC(JNIEnv *env, jobject _this) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_nativeGC(JNIEnv *env, jobject _this) {
     // call env reset
     initJniEnv(env);
     
     // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_app_NativeContext_nativeGC");
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_jni_context_NativeContext_nativeGC");
     
     return;
 }
@@ -228,16 +228,16 @@ jboolean NativeContext::isNativeLogOutput() {
 
 extern "C" {
 // prototype
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isNativeLogOutput(JNIEnv *env, jobject _this);
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_isNativeLogOutput(JNIEnv *env, jobject _this);
 }
 
 // main
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isNativeLogOutput(JNIEnv *env, jobject _this) {
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_isNativeLogOutput(JNIEnv *env, jobject _this) {
     // call env reset
     initJniEnv(env);
     
     // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_app_NativeContext_isNativeLogOutput");
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_jni_context_NativeContext_isNativeLogOutput");
     
     return (jboolean) 0;
 }

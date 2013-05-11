@@ -5,7 +5,7 @@ import static javax.microedition.khronos.egl.EGL10.*;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import com.eaglesakura.jc.AndroidUtil;
+import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 

@@ -9,7 +9,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 
-import com.eaglesakura.jc.AndroidUtil;
+import com.eaglesakura.jc.util.AndroidUtil;
 
 public class DefaultEGLConfigChooser implements EGLConfigChooser {
 

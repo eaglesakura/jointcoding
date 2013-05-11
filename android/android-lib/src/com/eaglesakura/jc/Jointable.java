@@ -1,5 +1,6 @@
-package com.eaglesakura.jc.resource.jni;
+package com.eaglesakura.jc;
 
+import com.eaglesakura.jc.jni.Pointer;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCField;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;

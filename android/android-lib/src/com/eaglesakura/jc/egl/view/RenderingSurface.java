@@ -2,14 +2,17 @@ package com.eaglesakura.jc.egl.view;
 
 import android.view.View;
 
-import com.eaglesakura.jc.egl.DeviceManager;
+import com.eaglesakura.jc.egl.WindowDeviceManager;
 
+/**
+ * EGLレンダリング用のサーフェイスを定義する
+ */
 public interface RenderingSurface {
     /**
      * 生成済みのデバイスを取得する
      * @return
      */
-    DeviceManager getDevice();
+    WindowDeviceManager getDevice();
 
     /**
      * サーフェイスを解放する

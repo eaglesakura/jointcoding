@@ -7,7 +7,6 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import com.eaglesakura.jc.egl.DefaultEGLConfigChooser;
-import com.eaglesakura.jc.egl.DeviceManager;
 import com.eaglesakura.jc.egl.SurfaceColorSpec;
 import com.eaglesakura.jc.egl.WindowDeviceManager;
 
@@ -36,7 +35,7 @@ public class EGLSurfaceView extends SurfaceView implements RenderingSurface {
     }
 
     @Override
-    public DeviceManager getDevice() {
+    public WindowDeviceManager getDevice() {
         return deviceManager;
     }
 

@@ -17,12 +17,12 @@ public:
     static const ::jc::charactor* CLASS_SIGNATURE;
     virtual jobject getEGLContextWrapper_unsafe();
     static jobject getEGLContextWrapper_unsafe_(jobject _this);
+    virtual void setNativePointer(jint key, jobject ptr);
+    static void setNativePointer_(jobject _this, jint key, jobject ptr);
     virtual jobject getNativePointer_unsafe(jint key);
     static jobject getNativePointer_unsafe_(jobject _this, jint key);
     virtual jobject getEGLWrapper_unsafe();
     static jobject getEGLWrapper_unsafe_(jobject _this);
-    virtual void setNativePointer(jint key, jobject ptr);
-    static void setNativePointer_(jobject _this, jint key, jobject ptr);
     virtual void createNative();
     static void createNative_(jobject _this);
     virtual void preDestroyNative();

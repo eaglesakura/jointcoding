@@ -1,13 +1,16 @@
-package com.eaglesakura.jc.util;
+package com.eaglesakura.jc.jni;
 
 import android.os.Build;
 
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
+/**
+ * Nativeからの呼び出しサポートを行う
+ */
 @JCClass(
          cppNamespace = "ndk")
-public class NativeAppUtil {
+public class JniUtil {
 
     /**
      * APIレベルを取得する
