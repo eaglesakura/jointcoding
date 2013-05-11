@@ -7,6 +7,8 @@
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="15" />
+    
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name="com.eaglesakura.jc.framework.context.JointApplication"

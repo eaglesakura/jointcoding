@@ -152,7 +152,6 @@ public class JointApplicationFragment extends Fragment {
     public static JointApplicationFragment createInstance(Class<? extends JointApplicationRenderer> renderingClass) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_RENDERING_CLASS, renderingClass);
-
         JointApplicationFragment result = new JointApplicationFragment();
         result.setArguments(args);
         return result;
