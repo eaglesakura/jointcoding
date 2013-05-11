@@ -1,10 +1,10 @@
 package com.eaglesakura.jc.framework.app;
 
-import com.eaglesakura.jc.android.app.AndroidUtil;
-import com.eaglesakura.jc.android.egl.DeviceManager;
-import com.eaglesakura.jc.android.egl.WindowDeviceManager;
-import com.eaglesakura.jc.android.resource.jni.Jointable;
-import com.eaglesakura.jc.android.resource.jni.Pointer;
+import com.eaglesakura.jc.AndroidUtil;
+import com.eaglesakura.jc.egl.DeviceManager;
+import com.eaglesakura.jc.egl.WindowDeviceManager;
+import com.eaglesakura.jc.resource.jni.Jointable;
+import com.eaglesakura.jc.resource.jni.Pointer;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -176,7 +176,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
 
         // コンテキストを廃棄する
         if (appContext != null) {
-            appContext.dispose();
+            appContext.release();
             appContext = null;
         }
     }
