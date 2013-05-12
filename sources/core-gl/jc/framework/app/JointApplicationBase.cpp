@@ -12,14 +12,15 @@ namespace gl {
 JointApplicationBase::JointApplicationBase() {
     flags.initialized = flags.destroyed = jcfalse;
     appState = JointApplicationProtocol::State_Initializing;
+    // 保留ステートを無効化する
+    pendingState = -1;
 }
 
 /**
  * ステータスの問い合わせを行う
  */
-jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 *result) const {
+jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_length) const {
     assert(key);
-    assert(result);
 
     if (key->main_key == JointApplicationProtocol::QueryKey_ApplicationState) {
         *result = getRunningState();
@@ -33,16 +34,47 @@ jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 
 /**
  * ステータスの書き込みを行う
  */
-jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const s32 *params) {
+jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const s32 *params, const s32 params_length) {
     assert(key);
     assert(params);
 
     if (key->main_key == JointApplicationProtocol::PostKey_SurfaceSize) {
+        // サーフェイスサイズ変更のリクエストを送る
+        assert(params && params_length >= 2);
+
         MutexLock lock(query_mutex);
 
         surfaceSize.x = params[0];
         surfaceSize.y = params[1];
         return jctrue;
+    } else if (key->main_key == JointApplicationProtocol::PostKey_StateRequest) {
+        // ステート変更のリクエストを送る
+        assert(params && params_length >= 1);
+
+        MutexLock lock(query_mutex);
+
+        if (pendingState == JointApplicationProtocol::State_Destroyed) {
+            // 既に廃棄リクエストが送られているならコレ以上何も送る必要はない
+            return jctrue;
+        }
+
+        const s32 request = params[0];
+
+        // レジュームリクエスト
+        if (request == JointApplicationProtocol::State_Resume) {
+            // 休止が保留されていたらリセットしてそれ以上何もしない
+            if (pendingState == JointApplicationProtocol::State_Paused) {
+                pendingState = -1;
+                return jctrue;
+            }
+
+            if (!isStateInitializing()) {
+                // 初期化も終わってないならレジュームの必要ない
+                return jctrue;
+            }
+
+            pendingState = request;
+        }
     }
 
     jclogf("drop post main(%d) sub(%d)", key->main_key, key->sub_key);

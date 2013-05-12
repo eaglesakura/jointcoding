@@ -37,14 +37,30 @@ public interface JointApplicationProtocol {
     public static final int State_Destroyed = 3;
 
     /**
+     * レジューム
+     * request only
+     */
+    @JCField
+    public static final int State_Resume = 4;
+
+    static final int QueryKey_Reserved = 0x00100000;
+
+    /**
      * 現在の実行状態問い合わせ
      */
     @JCField
-    public static final int QueryKey_ApplicationState = 0x00010000;
+    public static final int QueryKey_ApplicationState = QueryKey_Reserved + 0;
 
     /**
      * 現在のサーフェイスサイズを書き込む
      */
     @JCField
-    public static final int PostKey_SurfaceSize = 0x00010001;
+    public static final int PostKey_SurfaceSize = QueryKey_Reserved + 1;
+
+    /**
+     * ステートの変更リクエストを送る
+     */
+    @JCField
+    public static final int PostKey_StateRequest = QueryKey_Reserved + 2;
+
 }

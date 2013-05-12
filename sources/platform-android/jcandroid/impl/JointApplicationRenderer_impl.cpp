@@ -42,7 +42,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
     ApplicationQueryKey query(main_key, sub_key);
 
     // クエリを行う
-    jcboolean result = joint_context(_this, JointApplicationBase)->queryParams(&query, pParams);
+    jcboolean result = joint_context(_this, JointApplicationBase)->queryParams(&query, pParams, array->length());
 
     // クエリ結果を反映させる
     array->unlock(JniArrayUnlock_Commit);
@@ -61,7 +61,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
     ApplicationQueryKey query(main_key, sub_key);
 
     // 書き込みを行う
-    jcboolean result = joint_context(_this, JointApplicationBase)->postParams(&query, pParams);
+    jcboolean result = joint_context(_this, JointApplicationBase)->postParams(&query, pParams, array->length());
 
     array->unlock(JniArrayUnlock_Abort);
 
