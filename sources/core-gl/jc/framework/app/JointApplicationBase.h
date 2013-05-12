@@ -106,6 +106,11 @@ class JointApplicationBase: public Object, public WindowEventHandler {
      */
     s32 appState;
 
+    /**
+     * ステートの変更リクエスト
+     */
+    s32 pendingState;
+
     struct {
         /**
          * 初期化済みであればtrue
@@ -165,13 +170,17 @@ public:
 
     /**
      * ステータスの問い合わせを行う
+     * Native系との簡単なやり取りに利用する。
+     * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
      */
-    virtual jcboolean queryParams(const ApplicationQueryKey *key, s32 *result) const;
+    virtual jcboolean queryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_rength) const;
 
     /**
      * ステータスの書き込みを行う
+     * Native系との簡単なやり取りに利用する。
+     * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
      */
-    virtual jcboolean postParams(const ApplicationQueryKey *key, const s32 *params);
+    virtual jcboolean postParams(const ApplicationQueryKey *key, const s32 *params, const s32 params_length);
 
     /**
      * 現在の実行状態を取得する
@@ -302,6 +311,12 @@ protected:
      * 音声の再開等の処理を行う
      */
     virtual void onAppResume() = 0;
+
+    /**
+     * アプリのステートが変更された
+     */
+    virtual void onAppStateChanged(const s32 oldState, const s32 newState) {
+    }
 
 public:
     /* アプリライフサイクル */
