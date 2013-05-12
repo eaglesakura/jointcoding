@@ -20,6 +20,11 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      */
     SurfaceListener listener;
 
+    /**
+     * サーフェイス廃棄済みフラグ
+     */
+    boolean destroyed = false;
+
     public WindowDeviceManager(EGLConfigChooser configChooser, SurfaceListener listener) {
         super(configChooser);
         this.listener = listener;
@@ -33,6 +38,15 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
         synchronized (lock) {
             // サーフェイスの回復を図る
             egl.restoreWindowSurface(eglSurface, native_window);
+
+            if (destroyed) {
+
+            } else {
+                // 初期化完了
+                listener.onSurfaceInitializeCompleted(this);
+            }
+
+            destroyed = false;
         }
     }
 
@@ -47,7 +61,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
             eglSurface.onSurfaceResized();
             eglSurface.setSurfaceSize(width, height);
 
-            listener.onEGLSurfaceSizeChanged(this, width, height);
+            listener.onSurfaceSurfaceSizeChanged(this, width, height);
         }
     }
 
@@ -60,6 +74,8 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
             if (eglSurface != null) {
                 egl.restorePBufferSurface(eglSurface, 1, 1);
             }
+
+            destroyed = true;
         }
     }
 
@@ -126,7 +142,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
     public void dispose() {
         synchronized (lock) {
             // リスナを呼び出す
-            listener.onEGLDestroyBegin(this);
+            listener.onSurfaceDestroyBegin(this);
 
             // 解放処理を行う
             super.dispose();
@@ -162,7 +178,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
          * 呼び出し後、onEGLResume()がよばれる。
          * @param view
          */
-        void onEGLInitializeCompleted(WindowDeviceManager device);
+        void onSurfaceInitializeCompleted(WindowDeviceManager device);
 
         /**
          * EGLのサイズが変わった
@@ -170,12 +186,12 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
          * @param width
          * @param height
          */
-        void onEGLSurfaceSizeChanged(WindowDeviceManager device, int width, int height);
+        void onSurfaceSurfaceSizeChanged(WindowDeviceManager device, int width, int height);
 
         /**
          * EGL解放を開始する
          * @param device
          */
-        void onEGLDestroyBegin(WindowDeviceManager device);
+        void onSurfaceDestroyBegin(WindowDeviceManager device);
     }
 }
