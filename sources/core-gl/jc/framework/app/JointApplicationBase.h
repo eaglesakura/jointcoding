@@ -324,7 +324,7 @@ public:
     /**
      * アプリの実行ステートを変更する
      */
-    virtual void changeAppState(const s32 newState);
+    virtual void changeAppState();
 
     /**
      * サーフェイスが作成された

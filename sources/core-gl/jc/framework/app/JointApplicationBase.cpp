@@ -105,7 +105,7 @@ jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const
         const s32 request = params[0];
 
         // レジュームリクエスト
-        if (request == JointApplicationProtocol::State_Resume) {
+        if (request == JointApplicationProtocol::State_Running) {
             // 休止が保留されていたらリセットしてそれ以上何もしない
             if (pendingState == JointApplicationProtocol::State_Paused) {
                 pendingState = -1;
@@ -135,12 +135,48 @@ void JointApplicationBase::dispatchSurfaceCreated(MDevice device) {
 /**
  * アプリの実行ステートを変更する
  */
-void JointApplicationBase::changeAppState(const s32 newState) {
+void JointApplicationBase::changeAppState() {
+    if (pendingState < 0) {
+        return;
+    }
+
+    {
+        // ステート変更ロックをかける
+        MutexLock lock(query_mutex);
+
+        if (pendingState == appState) {
+            // 保留ステートをリセットして終了
+            pendingState = -1;
+            return;
+        }
+    }
+
+    // 古いステートをチェックする
     const s32 oldState = appState;
-    this->appState = newState;
+    this->appState = pendingState;
     assert(oldState != appState);
 
-    onAppStateChanged(oldState, newState);
+    // ステート変更を通知する
+    onAppStateChanged(oldState, appState);
+
+    // レジューム
+    if (appState == JointApplicationProtocol::State_Running) {
+        if (!flags.initialized) {
+            // 未初期化だから初期化する
+            dispatchInitialize();
+        } else {
+            // 初期化済みだからレジュームする
+            dispatchResume();
+        }
+    } else if (appState == JointApplicationProtocol::State_Paused) {
+        if (flags.initialized) {
+            // 休止を行う
+            dispatchPause();
+        }
+    } else if (appState == JointApplicationProtocol::State_Destroyed) {
+        // 廃棄処理を行う
+        dispatchDestroy();
+    }
 }
 
 /**
@@ -191,6 +227,8 @@ void JointApplicationBase::dispatchInitialize() {
     }
 
     onAppInitialize();
+
+    flags.initialized = jctrue;
 }
 
 /**
@@ -237,52 +275,46 @@ void JointApplicationBase::dispatchMainLoop() {
     assert(device);
     assert(device->valid());
 
+    while (!isStateDestroyed()) {
+        // 廃棄されるまでループする
+        try {
+            DeviceLock lock(device, jctrue);
 
-// 再度レンダリングチェックを行う
-    if (!device->valid()) {
-        // デバイスの準備が整っていない
-        return;
-    }
+            // ステートを変更する
+            changeAppState();
 
-// 実処理を行う
-    try {
-        DeviceLock lock(device, jctrue);
+            // サーフェイスサイズチェックを行う
+            if (checkedSurfaceSize != surfaceSize) {
+                // 書込み中の可能性があるため、ロックする
+                MutexLock lock(query_mutex);
 
-        // 初期化が終わって無ければ初期化を行う
-        if (!flags.initialized) {
-            dispatchInitialize();
-            flags.initialized = jctrue;
-        }
+                checkedSurfaceSize = surfaceSize;
+                jclogf("Resized Surface(%dx%d)", surfaceSize.x, surfaceSize.y);
 
-        // サーフェイスサイズチェックを行う
-        if (checkedSurfaceSize != surfaceSize) {
-            // 書込み中の可能性があるため、ロックする
-            MutexLock lock(query_mutex);
+                // ビューポート更新
+                getState()->viewport(0, 0, surfaceSize.x, surfaceSize.y);
 
-            checkedSurfaceSize = surfaceSize;
-            jclogf("Resized Surface(%dx%d)", surfaceSize.x, surfaceSize.y);
+                // スプライトマネージャーアスペクト比更新
+                getSpriteManager()->setSurfaceAspect(surfaceSize.x, surfaceSize.y);
 
-            // ビューポート更新
-            getState()->viewport(0, 0, surfaceSize.x, surfaceSize.y);
-
-            // スプライトマネージャーアスペクト比更新
-            getSpriteManager()->setSurfaceAspect(surfaceSize.x, surfaceSize.y);
-
-            // アプリに処理を任せる
-            onAppSurfaceResized(surfaceSize.x, surfaceSize.y);
-        }
-
-        // フレーム定形処理を行う
-        {
-            {
-                onAppMainUpdate();
+                // アプリに処理を任せる
+                onAppSurfaceResized(surfaceSize.x, surfaceSize.y);
             }
-            {
+
+            if (isStateRunning()) {
+                // フレーム定形処理を行う
+                onAppMainUpdate();
                 onAppMainRendering();
             }
+        } catch (EGLException &e) {
+            jcloge(e);
+            Thread::sleep(1);
         }
-    } catch (EGLException &e) {
-        jcloge(e);
+
+        // 休止中ならスリープをかける
+        if (isStatePaused()) {
+            Thread::sleep(10);
+        }
     }
 }
 
