@@ -52,15 +52,31 @@ public interface JointApplicationProtocol {
     public static final int QueryKey_ApplicationState = QueryKey_Reserved + 0;
 
     /**
+     * 初期化時に必要なサーフェイスの組み合わせを問い合わせる
+     * result[0] = ピクセルフォーマット {@link com.eaglesakura.jcprotocol.PixelFormatProtocol}
+     * result[1] = 0以外で深度バッファ有り
+     * result[2] = 0以外でステンシルバッファ有り
+     * result[3] = 0以外でTextureViewで利用
+     */
+    @JCField
+    public static final int QueryKey_RequestSurfaceSpecs = QueryKey_Reserved + 1;
+
+    /**
+     * {@value #QueryKey_RequestSurfaceSpecs}が要求する長さ
+     */
+    @JCField
+    public static final int QueryKey_RequestSurfaceSpecs_length = 4;
+
+    /**
      * 現在のサーフェイスサイズを書き込む
      */
     @JCField
-    public static final int PostKey_SurfaceSize = QueryKey_Reserved + 1;
+    public static final int PostKey_SurfaceSize = QueryKey_Reserved + 0;
 
     /**
      * ステートの変更リクエストを送る
      */
     @JCField
-    public static final int PostKey_StateRequest = QueryKey_Reserved + 2;
+    public static final int PostKey_StateRequest = QueryKey_Reserved + 1;
 
 }

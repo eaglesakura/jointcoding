@@ -13,7 +13,6 @@
 #include    "jc/egl/EGLContext.h"
 #include    "jc/egl/EGLSurface.h"
 #include    "EGL/egl.h"
-#include    "protocol/ndkPixelFormatProtocol.h"
 #include    "EGLContextManager.h"
 #include    "EGLSurfaceManager.h"
 #include    "EGLManager.h"

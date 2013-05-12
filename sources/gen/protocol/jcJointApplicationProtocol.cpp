@@ -11,8 +11,9 @@ const ::jc::s32 JointApplicationProtocol::State_Paused = 2;
 const ::jc::s32 JointApplicationProtocol::State_Destroyed = 3;
 const ::jc::s32 JointApplicationProtocol::State_Resume = 4;
 const ::jc::s32 JointApplicationProtocol::QueryKey_ApplicationState = 1048576;
-const ::jc::s32 JointApplicationProtocol::PostKey_SurfaceSize = 1048577;
-const ::jc::s32 JointApplicationProtocol::PostKey_StateRequest = 1048578;
+const ::jc::s32 JointApplicationProtocol::QueryKey_RequestSurfaceSpecs = 1048577;
+const ::jc::s32 JointApplicationProtocol::PostKey_SurfaceSize = 1048576;
+const ::jc::s32 JointApplicationProtocol::PostKey_StateRequest = 1048577;
 
 
 }

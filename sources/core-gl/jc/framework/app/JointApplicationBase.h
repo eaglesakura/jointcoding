@@ -132,7 +132,7 @@ protected:
     /**
      * 問い合わせ・書き込み操作のためのミューテックス
      */
-    Mutex query_mutex;
+    mutable Mutex query_mutex;
 
     /**
      * ウィンドウクラス

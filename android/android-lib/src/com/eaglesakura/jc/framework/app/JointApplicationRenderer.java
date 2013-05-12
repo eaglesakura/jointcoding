@@ -89,6 +89,18 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     }
 
     /**
+     * 初期化を行う
+     * この時点でNative側のクラスが生成され、呼び出し準備を整える
+     */
+    public void initialize() {
+        createNativeContext();
+        // 初期化されていなければエラーである
+        if (appContext == null) {
+            throw new IllegalStateException("appContext == null");
+        }
+    }
+
+    /**
      * フラグメント管理ステートを取得する
      * @return
      */
@@ -102,12 +114,6 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
             if (!validNative()) {
                 // 初期化完了したデバイスを保持する
                 this.windowDevice = device;
-
-                createNativeContext(device);
-                // 初期化されていなければエラーである
-                if (appContext == null) {
-                    throw new IllegalStateException("appContext == null");
-                }
 
                 // 初期化を行わせる
                 onNativeInitialize();
@@ -456,6 +462,6 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     /**
      * Native Contextを作成する。
      */
-    protected abstract void createNativeContext(DeviceManager deviceManager);
+    protected abstract void createNativeContext();
 
 }
