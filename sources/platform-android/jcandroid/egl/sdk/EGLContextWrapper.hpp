@@ -56,7 +56,10 @@ public:
     virtual void dispose() {
         vram.reset();
         state.reset();
-        eglContext.reset();
+        if(eglContext) {
+            eglContext->dispose();
+            eglContext.reset();
+        }
     }
 };
 

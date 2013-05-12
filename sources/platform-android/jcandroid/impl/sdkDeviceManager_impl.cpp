@@ -48,7 +48,11 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_preDestroyNativ
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_egl_DeviceManager_preDestroyNative");
 
     // デバイスに廃棄フラグを追加する
-    joint_context(_this, SdkDeviceManagerContext)->getDevice()->addFlags(DeviceFlag_RequestDestroy);
+    MDevice device = joint_context(_this, SdkDeviceManagerContext)->getDevice();
+    device->addFlags(DeviceFlag_RequestDestroy);
+
+    // デバイスの同期待を行う
+    MutexLock lock(device->getGPUMutex());
 }
 
 }

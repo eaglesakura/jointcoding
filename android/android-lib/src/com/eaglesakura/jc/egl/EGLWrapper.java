@@ -64,6 +64,16 @@ public class EGLWrapper {
     EGLContext systemContext = null;
 
     public EGLWrapper() {
+        egl = (EGL10) EGLContext.getEGL();
+        eglDisplay = egl.eglGetDisplay(EGL_DEFAULT_DISPLAY);
+
+        if (eglDisplay == EGL_NO_DISPLAY) {
+            throw new RuntimeException("EGL_NO_DISPLAY");
+        }
+
+        if (!egl.eglInitialize(eglDisplay, new int[2])) {
+            throw new RuntimeException("eglInitialize");
+        }
     }
 
     /**
@@ -71,29 +81,11 @@ public class EGLWrapper {
      */
     public void initialize(final EGLConfigChooser chooser) {
         synchronized (lock) {
-            if (egl != null) {
-                throw new RuntimeException("initialized");
-            }
-
-            egl = (EGL10) EGLContext.getEGL();
-            // ディスプレイ作成
-            {
-                eglDisplay = egl.eglGetDisplay(EGL_DEFAULT_DISPLAY);
-                if (eglDisplay == EGL_NO_DISPLAY) {
-                    throw new RuntimeException("EGL_NO_DISPLAY");
-                }
-
-                if (!egl.eglInitialize(eglDisplay, new int[2])) {
-                    throw new RuntimeException("eglInitialize");
-                }
-            }
             // コンフィグ取得
-            {
-                stashContext();
-                eglConfig = chooser.chooseConfig(egl, systemDisplay != EGL_NO_DISPLAY ? systemDisplay : eglDisplay);
-                if (eglConfig == null) {
-                    throw new RuntimeException("chooseConfig");
-                }
+            stashContext();
+            eglConfig = chooser.chooseConfig(egl, systemDisplay != EGL_NO_DISPLAY ? systemDisplay : eglDisplay);
+            if (eglConfig == null) {
+                throw new RuntimeException("chooseConfig");
             }
         }
     }
@@ -153,7 +145,7 @@ public class EGLWrapper {
      * @param native_window
      * @return
      */
-    public EGLSurfaceWrapper createSurface(Object native_window) {
+    public EGLSurfaceWrapper createWindowSurface(Object native_window) {
         if (!(native_window instanceof SurfaceHolder) && !(native_window instanceof SurfaceTexture)) {
             throw new IllegalArgumentException("surface error");
         }
@@ -189,13 +181,27 @@ public class EGLWrapper {
     }
 
     /**
+     * PBufferサーフェイスを復旧する
+     * @param surface
+     * @param surfaceWidth
+     * @param surfaceHeight
+     */
+    public void restorePBufferSurface(EGLSurfaceWrapper surface, int surfaceWidth, int surfaceHeight) {
+        EGLSurfaceWrapper newSurface = createPBufferSurface(surfaceWidth, surfaceHeight);
+        // サーフェイスをコピーする
+        surface.dispose();
+        surface.restore(newSurface.getSurface());
+    }
+
+    /**
      * レンダリングサーフェイスを復旧する
      * @param surface
      * @param native_window
      */
-    public void restoreSurface(EGLSurfaceWrapper surface, Object native_window) {
-        EGLSurfaceWrapper newSurface = createSurface(native_window);
+    public void restoreWindowSurface(EGLSurfaceWrapper surface, Object native_window) {
+        EGLSurfaceWrapper newSurface = createWindowSurface(native_window);
         // サーフェイスをコピーする
+        surface.dispose();
         surface.restore(newSurface.getSurface());
     }
 
@@ -256,22 +262,6 @@ public class EGLWrapper {
             systemReadSurface = egl.eglGetCurrentSurface(EGL_READ);
             systemDrawSurface = egl.eglGetCurrentSurface(EGL_DRAW);
             systemContext = egl.eglGetCurrentContext();
-
-            if (systemDisplay == null) {
-                systemDisplay = EGL_NO_DISPLAY;
-            }
-
-            if (systemReadSurface == null) {
-                systemReadSurface = EGL_NO_SURFACE;
-            }
-
-            if (systemDrawSurface == null) {
-                systemDrawSurface = EGL_NO_SURFACE;
-            }
-
-            if (systemContext == null) {
-                systemContext = EGL_NO_CONTEXT;
-            }
         } catch (Exception e) {
             systemDisplay = EGL_NO_DISPLAY;
             systemReadSurface = EGL_NO_SURFACE;
