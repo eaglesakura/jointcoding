@@ -153,5 +153,4 @@ public class DeviceManager implements Jointable {
     @JCMethod(
               nativeMethod = true)
     final native void preDestroyNative();
-
 }

@@ -66,12 +66,10 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
 
     @Override
     public void onSurfaceSurfaceSizeChanged(WindowDeviceManager device, int width, int height) {
-        if (validNative()) {
-            // 新しいサーフェイス値の書き込みを行う
-            postParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
-                    width, height
-            });
-        }
+        // 新しいサーフェイス値の書き込みを行う
+        postParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
+                width, height
+        });
     }
 
     /**
@@ -155,17 +153,6 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     }
 
     /**
-     * Rendererが有効であればtrueを返す
-     * @return
-     */
-    public boolean valid() {
-        if (!validNative()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * ネイティブコンテキストを取り出す
      */
     @Override
@@ -233,24 +220,6 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     @JCMethod(
               nativeMethod = true)
     final native void onNativeInitialize();
-
-    /**
-     * レンダリングサーフェイスの色情報をチェックする
-     * @return
-     */
-    final native int getSurfaceColorSpecRequest();
-
-    /**
-     * 深度バッファをリクエストしているかをチェックする
-     * @return
-     */
-    final native boolean isSurfaceDepthRequest();
-
-    /**
-     * ステンシルバッファをリクエストしているかをチェックする
-     * @return
-     */
-    final native boolean isSurfaceStencilRequest();
 
     /**
      * メインループを開始する
