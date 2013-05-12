@@ -109,23 +109,21 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     }
 
     @Override
-    public void onEGLInitializeCompleted(WindowDeviceManager device) {
+    public void onSurfaceInitializeCompleted(WindowDeviceManager device) {
         synchronized (lock) {
-            if (!validNative()) {
-                // 初期化完了したデバイスを保持する
-                this.windowDevice = device;
+            // 初期化完了したデバイスを保持する
+            this.windowDevice = device;
 
-                // 初期化を行わせる
-                onNativeInitialize();
+            // 初期化を行わせる
+            onNativeInitialize();
 
-                // メインループを開始する
-                startMainLoop();
-            }
+            // メインループを開始する
+            startMainLoop();
         }
     }
 
     @Override
-    public void onEGLSurfaceSizeChanged(WindowDeviceManager device, int width, int height) {
+    public void onSurfaceSurfaceSizeChanged(WindowDeviceManager device, int width, int height) {
         if (validNative()) {
             // 新しいサーフェイス値の書き込みを行う
             postParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
@@ -138,7 +136,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
      * EGLの廃棄に伴い、コンテキストも廃棄を行う
      */
     @Override
-    public void onEGLDestroyBegin(WindowDeviceManager device) {
+    public void onSurfaceDestroyBegin(WindowDeviceManager device) {
         waitNativeDestroyed();
     }
 

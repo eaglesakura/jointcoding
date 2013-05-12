@@ -50,6 +50,18 @@ public class DeviceManager implements Jointable {
             eglContext = egl.createContext();
             eglSurface = egl.createPBufferSurface(1, 1);
         }
+
+        // NDK側のデバイスを生成する
+        egl.current(eglContext, eglSurface);
+        {
+            createNative();
+        }
+        egl.current(null, null);
+
+        // デバイスの完全性チェック
+        if (ndkDevice == null) {
+            throw new RuntimeException("Native Device not initialized");
+        }
     }
 
     /**

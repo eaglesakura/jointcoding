@@ -75,7 +75,7 @@ public class EGLSurfaceWrapper {
         width = egl.querySurface(eglSurface, EGL_WIDTH);
         height = egl.querySurface(eglSurface, EGL_HEIGHT);
 
-        AndroidUtil.log(String.format("TextureView Surface Size from query = %d x %d", width, height));
+        AndroidUtil.log(String.format("EGLSurface Size from query = %d x %d", width, height));
     }
 
     /**
