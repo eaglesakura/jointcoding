@@ -235,36 +235,6 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     final native void onNativeInitialize();
 
     /**
-     * サーフェイスサイズが変更になった
-     * @param newWidth
-     * @param newHeight
-     */
-    @JCMethod(
-              nativeMethod = true)
-    final native void onNativeSurfaceResized(int newWidth, int newHeight);
-
-    /**
-     * Fragment休止を行う
-     */
-    @JCMethod(
-              nativeMethod = true)
-    final native void onNativePause();
-
-    /**
-     * Fragment復帰を行う
-     */
-    @JCMethod(
-              nativeMethod = true)
-    final native void onNativeResume();
-
-    /**
-     * Fragment廃棄を行う
-     */
-    @JCMethod(
-              nativeMethod = true)
-    final native void onNativeDestroy();
-
-    /**
      * レンダリングサーフェイスの色情報をチェックする
      * @return
      */
