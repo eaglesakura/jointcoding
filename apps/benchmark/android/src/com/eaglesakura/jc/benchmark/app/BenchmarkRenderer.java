@@ -57,5 +57,5 @@ public class BenchmarkRenderer extends JointApplicationRenderer {
     @JCMethod(
               nativeMethod = true)
     @Override
-    protected native void createNativeContext(DeviceManager deviceManager);
+    protected native void createNativeContext();
 }

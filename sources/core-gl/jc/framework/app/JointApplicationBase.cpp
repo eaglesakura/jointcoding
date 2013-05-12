@@ -5,6 +5,7 @@
  */
 
 #include    "jc/framework/app/JointApplicationBase.h"
+#include    "protocol/jcSurfacePixelFormatProtocol.h"
 
 namespace jc {
 namespace gl {
@@ -23,8 +24,51 @@ jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 
     assert(key);
 
     if (key->main_key == JointApplicationProtocol::QueryKey_ApplicationState) {
+        assert(result && result_length >= 1);
+        MutexLock lock(query_mutex);
+
         *result = getRunningState();
         return jctrue;
+    } else if (key->main_key == JointApplicationProtocol::QueryKey_RequestSurfaceSpecs) {
+        assert(result && result_length >= 4);
+
+        // サーフェイス性能を問い合わせる
+        SurfaceSpecs specs = getRenderingSurfaceSpecs();
+
+        s32 index = 0;
+        {
+            // フォーマット
+            switch (specs.surfaceFormat) {
+                case PixelFormat_RGB888:
+                    result[index] = SurfacePixelFormatProtocol::RGB8;
+                    break;
+
+                case PixelFormat_RGBA8888:
+                    result[index] = SurfacePixelFormatProtocol::RGBA8;
+                    break;
+                default:
+                    jcalertf("unsupported pixel format(%d)", specs.surfaceFormat);
+                    assert(false);
+                    break;
+            }
+            ++index;
+        }
+        {
+            // depth
+            result[index] = specs.hasDepth;
+            ++index;
+        }
+        {
+            // ステンシルバッファ
+            result[index] = specs.hasStencil;
+            ++index;
+        }
+        {
+            // TextureView request
+            // for Android
+            result[index] = specs.extensions.isEnable(SurfaceSupecExtension_AndroidTextureView);
+            ++index;
+        }
     }
 
     jclogf("drop query main(%d) sub(%d)", key->main_key, key->sub_key);

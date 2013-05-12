@@ -16,7 +16,7 @@ using namespace ndk;
 extern "C" {
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_createNativeContext(JNIEnv *env, jobject _this, jobject devicemanager_0) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_createNativeContext(JNIEnv *env, jobject _this) {
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_benchmark_app_BenchmarkRenderer_createNativeContext");
     ndk::setJointContextPointer_Object(_this, Jointable::KEY_MAINCONTEXT, (Object*) (new es::BenchmarkApplication()));

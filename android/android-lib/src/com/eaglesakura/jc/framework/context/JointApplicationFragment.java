@@ -9,8 +9,12 @@ import android.view.ViewGroup;
 
 import com.eaglesakura.jc.egl.SurfaceColorSpec;
 import com.eaglesakura.jc.egl.view.EGLSurfaceView;
+import com.eaglesakura.jc.egl.view.EGLTextureView;
 import com.eaglesakura.jc.egl.view.RenderingSurface;
 import com.eaglesakura.jc.framework.app.JointApplicationRenderer;
+import com.eaglesakura.jc.util.AndroidUtil;
+import com.eaglesakura.jcprotocol.SurfacePixelFormatProtocol;
+import com.eaglesakura.jcprotocol.framework.JointApplicationProtocol;
 
 /**
  * TextureView1枚でアプリ管理を行うFragmentを構築する
@@ -51,18 +55,17 @@ public class JointApplicationFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // レンダラーを作成する
         renderer = createRenderer();
         if (renderer == null) {
             throw new RuntimeException("Renderer null");
         }
-    }
+        // レンダラーを初期化する
+        renderer.initialize();
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // レンダリングサーフェイスを作成する
         surface = createRenderingView();
-
         View view = surface.getView();
         view.setOnTouchListener(surfaceTouchListener);
         return view;
@@ -138,10 +141,31 @@ public class JointApplicationFragment extends Fragment {
      * @return
      */
     protected RenderingSurface createRenderingView() {
-        //        EGLTextureView result = new EGLTextureView(getActivity());
-        EGLSurfaceView result = new EGLSurfaceView(getActivity());
-        result.initialize(SurfaceColorSpec.RGB8, true, true, renderer);
-        return result;
+        int[] surfaceSpecs = new int[JointApplicationProtocol.QueryKey_RequestSurfaceSpecs_length];
+
+        // サーフェイスを問い合わせる
+        renderer.queryParams(JointApplicationProtocol.QueryKey_RequestSurfaceSpecs, 0, surfaceSpecs);
+
+        RenderingSurface surface = null;
+        SurfaceColorSpec color = (surfaceSpecs[0] == SurfacePixelFormatProtocol.RGB8 ? SurfaceColorSpec.RGB8
+                : SurfaceColorSpec.RGBA8);
+        boolean depth = surfaceSpecs[1] != 0;
+        boolean stencil = surfaceSpecs[2] != 0;
+        if (surfaceSpecs[3] != 0) {
+            AndroidUtil.log("Rendering toTextureView");
+            EGLTextureView view = new EGLTextureView(getActivity());
+            view.initialize(color, depth, stencil, renderer);
+
+            surface = view;
+        } else {
+            AndroidUtil.log("Rendering to SurfaceView");
+            EGLSurfaceView view = new EGLSurfaceView(getActivity());
+            view.initialize(color, depth, stencil, renderer);
+
+            surface = view;
+        }
+
+        return surface;
     }
 
     /**
