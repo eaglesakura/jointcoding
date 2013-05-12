@@ -124,7 +124,10 @@ jcboolean SdkEGLWrapper::postFrontBuffer(jc_sp<EGLSurfaceProtocol> displaySurfac
  * 握っているEGL資源を明示的に開放する。
  */
 void SdkEGLWrapper::dispose() {
-    eglWrapper.reset();
+    if (eglWrapper) {
+        eglWrapper->dispose();
+        eglWrapper.reset();
+    }
 }
 
 }

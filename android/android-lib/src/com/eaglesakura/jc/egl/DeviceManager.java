@@ -1,5 +1,7 @@
 package com.eaglesakura.jc.egl;
 
+import android.opengl.GLSurfaceView.EGLConfigChooser;
+
 import com.eaglesakura.jc.Jointable;
 import com.eaglesakura.jc.jni.Pointer;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -31,13 +33,33 @@ public class DeviceManager implements Jointable {
      */
     Pointer ndkDevice;
 
-    public DeviceManager() {
+    /**
+     * 新規にデバイスを生成する
+     * @param chooser
+     */
+    protected DeviceManager(EGLConfigChooser configChooser) {
+
+        // EGLを生成する
+        {
+            egl = new EGLWrapper();
+            egl.initialize(configChooser);
+        }
+
+        // コンテキスト/仮サーフェイスを生成する
+        {
+            eglContext = egl.createContext();
+            eglSurface = egl.createPBufferSurface(1, 1);
+        }
     }
 
-    public DeviceManager(EGLWrapper egl, EGLContextWrapper context, EGLSurfaceWrapper surface) {
-        this.egl = egl;
-        this.eglContext = context;
-        this.eglSurface = surface;
+    /**
+     * マスターデバイスを元に、スレイブデバイスを生成する
+     * @param master
+     */
+    protected DeviceManager(DeviceManager master) {
+        this.egl = master.getEGLWrapper().createSlaveEGL();
+        this.eglContext = egl.createSharedContext(master.getEGLContextWrapper());
+        this.eglSurface = egl.createPBufferSurface(1, 1);
 
         // NDK側のデバイスを生成する
         egl.current(eglContext, eglSurface);
@@ -46,6 +68,7 @@ public class DeviceManager implements Jointable {
         }
         egl.current(null, null);
 
+        // デバイスの完全性チェック
         if (ndkDevice == null) {
             throw new RuntimeException("Native Device not initialized");
         }
@@ -97,21 +120,7 @@ public class DeviceManager implements Jointable {
         synchronized (lock) {
             // ネイティブ側の廃棄フラグを追加する
             // この状態で既にデバイスロックは行えなくなる
-            preDestroyNative();
-            if (eglSurface != null) {
-                eglSurface.dispose();
-                eglSurface = null;
-            }
-
-            if (eglContext != null) {
-                eglContext.dispose();
-                eglContext = null;
-            }
-
-            if (egl != null) {
-                egl.dispose();
-                egl = null;
-            }
+            //            preDestroyNative();
 
             if (ndkDevice != null) {
                 ndkDevice.release();

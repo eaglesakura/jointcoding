@@ -19,7 +19,7 @@ namespace ndk {
 using namespace jc;
 using namespace jc::gl;
 
-class SdkEGLSurfaceWrapper: public Object,  public EGLSurfaceProtocol {
+class SdkEGLSurfaceWrapper: public Object, public EGLSurfaceProtocol {
 public:
     jc_sp<EGLSurfaceWrapper> eglSurface;
 public:
@@ -50,7 +50,10 @@ public:
      * 握っている資源を明示的に開放する
      */
     virtual void dispose() {
-        eglSurface.reset();
+        if(eglSurface) {
+            eglSurface->dispose();
+            eglSurface.reset();
+        }
     }
 };
 

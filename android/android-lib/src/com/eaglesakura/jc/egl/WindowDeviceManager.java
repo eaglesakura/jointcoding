@@ -13,15 +13,6 @@ import android.view.TextureView;
  */
 public class WindowDeviceManager extends DeviceManager implements TextureView.SurfaceTextureListener,
         SurfaceHolder.Callback {
-    /**
-     * callbackで受け取ったSDKのウィンドウシステム
-     */
-    Object native_window = null;
-
-    /**
-     * 
-     */
-    EGLConfigChooser configChooser;
 
     /**
      * リスナー
@@ -30,39 +21,18 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
     SurfaceListener listener;
 
     public WindowDeviceManager(EGLConfigChooser configChooser, SurfaceListener listener) {
-        this.configChooser = configChooser;
+        super(configChooser);
         this.listener = listener;
+
     }
 
     /**
      * サーフェイスの生成が完了したら呼び出される
      */
-    private void onCreateSurface() {
+    private void onCreateSurface(Object native_window) {
         synchronized (lock) {
-            if (egl == null) {
-                // EGL初期化を行う
-                egl = new EGLWrapper();
-                egl.initialize(configChooser);
-
-                eglContext = egl.createContext();
-                eglSurface = egl.createSurface(native_window);
-
-                // NDK側のデバイスを生成する
-                egl.current(eglContext, eglSurface);
-                {
-                    createNative();
-                }
-                egl.current(null, null);
-
-                if (ndkDevice == null) {
-                    throw new RuntimeException("Native Device not initialized");
-                }
-
-                listener.onEGLInitializeCompleted(this);
-            } else {
-                // サーフェイスの回復を図る
-                egl.restoreSurface(eglSurface, native_window);
-            }
+            // サーフェイスの回復を図る
+            egl.restoreWindowSurface(eglSurface, native_window);
         }
     }
 
@@ -88,7 +58,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
     void onSurfaceDestroyed() {
         synchronized (lock) {
             if (eglSurface != null) {
-                eglSurface.dispose();
+                egl.restorePBufferSurface(eglSurface, 1, 1);
             }
         }
     }
@@ -98,8 +68,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      */
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        this.native_window = surface;
-        onCreateSurface();
+        onCreateSurface(surface);
         onResizedSurface(width, height);
     }
 
@@ -136,8 +105,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      */
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        this.native_window = holder;
-        onCreateSurface();
+        onCreateSurface(holder);
     }
 
     /**
@@ -181,12 +149,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      * @return
      */
     public DeviceManager createSlaveDevice() {
-        EGLWrapper slaveEGL = egl.createSlaveEGL();
-        EGLSurfaceWrapper surface = slaveEGL.createPBufferSurface(1, 1);
-        EGLContextWrapper context = slaveEGL.createSharedContext(eglContext);
-
-        return new DeviceManager(slaveEGL, context, surface);
-
+        return new DeviceManager(this);
     }
 
     /**
