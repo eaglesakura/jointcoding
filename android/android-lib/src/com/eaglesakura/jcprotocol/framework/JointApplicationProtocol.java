@@ -36,13 +36,6 @@ public interface JointApplicationProtocol {
     @JCField
     public static final int State_Destroyed = 3;
 
-    /**
-     * レジューム
-     * request only
-     */
-    @JCField
-    public static final int State_Resume = 4;
-
     static final int QueryKey_Reserved = 0x00100000;
 
     /**

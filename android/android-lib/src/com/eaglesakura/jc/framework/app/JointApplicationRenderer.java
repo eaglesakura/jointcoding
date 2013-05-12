@@ -101,7 +101,7 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
      */
     public void onAppResume() {
         postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
-            JointApplicationProtocol.State_Resume
+            JointApplicationProtocol.State_Running
         });
     }
 
