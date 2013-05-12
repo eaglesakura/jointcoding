@@ -17,6 +17,14 @@ JointApplicationBase::JointApplicationBase() {
     pendingState = -1;
 }
 
+JointApplicationBase::~JointApplicationBase() {
+    if(device) {
+        device->dispose();
+        device.reset();
+    }
+}
+
+
 /**
  * ステータスの問い合わせを行う
  */
@@ -117,8 +125,10 @@ jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const
                 return jctrue;
             }
 
-            pendingState = request;
         }
+
+        // 保留ステートに上書きする
+        pendingState = request;
     }
 
     jclogf("drop post main(%d) sub(%d)", key->main_key, key->sub_key);

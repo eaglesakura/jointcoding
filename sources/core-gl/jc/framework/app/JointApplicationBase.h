@@ -151,9 +151,7 @@ protected:
 public:
     JointApplicationBase();
 
-    virtual ~JointApplicationBase() {
-    }
-
+    virtual ~JointApplicationBase();
 public:
     /* 初期化情報 */
 
