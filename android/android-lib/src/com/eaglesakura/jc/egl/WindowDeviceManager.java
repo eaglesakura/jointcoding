@@ -40,7 +40,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
             egl.restoreWindowSurface(eglSurface, native_window);
 
             if (destroyed) {
-
+                // レストア完了メッセージを送る
             } else {
                 // 初期化完了
                 listener.onSurfaceInitializeCompleted(this);

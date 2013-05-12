@@ -35,56 +35,6 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
      */
     Pointer appContext = null;
 
-    /**
-     * フラグメント自体のステートを管理する
-     */
-    protected enum State {
-        /**
-         * 初期化中
-         */
-        Null,
-
-        /**
-         * 休止リクエスト中
-         */
-        Pausing,
-
-        /**
-         * 休止中
-         */
-        Paused,
-
-        /**
-         * 再開作業中
-         */
-        Resuming,
-
-        /**
-         * 復旧済み
-         */
-        Running,
-
-        /**
-         * サーフェイスのリサイズ中
-         */
-        SurfaceResizing,
-
-        /**
-         * 廃棄済み
-         */
-        Destroyed,
-
-        /**
-         * アプリを終了させた状態
-         */
-        Aborted,
-    }
-
-    /**
-     * 初期化前
-     */
-    protected State state = State.Null;
-
     public JointApplicationRenderer() {
     }
 
@@ -98,14 +48,6 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
         if (appContext == null) {
             throw new IllegalStateException("appContext == null");
         }
-    }
-
-    /**
-     * フラグメント管理ステートを取得する
-     * @return
-     */
-    public State getState() {
-        return state;
     }
 
     @Override
@@ -137,51 +79,48 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
      */
     @Override
     public void onSurfaceDestroyBegin(WindowDeviceManager device) {
-        waitNativeDestroyed();
+        if (validNative()) {
+            // アプリの休止を行う
+            postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
+                JointApplicationProtocol.State_Paused
+            });
+        }
     }
 
     /**
      * アプリの休止を行う
      */
     public void onAppPause() {
-        state = State.Pausing;
-
-        while (state != State.Paused) {
-            AndroidUtil.sleep(0, 100);
-        }
+        postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
+            JointApplicationProtocol.State_Paused
+        });
     }
 
     /**
      * アプリのレジュームを行う
      */
     public void onAppResume() {
-        state = State.Resuming;
+        postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
+            JointApplicationProtocol.State_Resume
+        });
     }
 
     /**
      * アプリの廃棄を行う
      */
     public void onAppDestroy() {
-        waitNativeDestroyed();
-    }
+        postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
+            JointApplicationProtocol.State_Destroyed
+        });
 
-    /**
-     * Native Appの廃棄を行う
-     */
-    final synchronized void waitNativeDestroyed() {
-        if (state == State.Aborted || state == State.Destroyed) {
-            return;
-        }
-
-        state = State.Destroyed;
-        while (state != State.Aborted) {
-            AndroidUtil.sleep(0, 100);
-        }
-
-        // コンテキストを廃棄する
         if (appContext != null) {
             appContext.release();
             appContext = null;
+        }
+
+        if (windowDevice != null) {
+            windowDevice.dispose();
+            windowDevice = null;
         }
     }
 
@@ -194,40 +133,25 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     }
 
     /**
-     * 解放済みであったらtrue
+     * レンダリングステートを取得する
      * @return
      */
-    protected boolean isDestroyed() {
-        if (state == State.Destroyed || state == State.Aborted) {
-            return true;
+    public int getRendererState() {
+        if (appContext != null) {
+            int[] param = new int[1];
+            queryParams(JointApplicationProtocol.QueryKey_ApplicationState, 0, param);
+            return param[0];
+        } else {
+            return JointApplicationProtocol.State_Destroyed;
         }
-
-        return false;
     }
 
     /**
-     * GL側の操作が可能であればtrue
+     * 解放済みであったらtrue
      * @return
      */
-    protected boolean validGLOperation() {
-        if (state != State.Running) {
-            // Running状態でない場合は何も出来ない
-            return false;
-        }
-
-        // デバイスの正常チェック
-        if (windowDevice != null && !windowDevice.valid()) {
-            // デバイスが不正な状態にある
-            return false;
-        }
-
-        // 状態が有効でない場合はfalse
-        if (!valid()) {
-            return false;
-        }
-
-        // その他の状況は問題ない
-        return true;
+    public boolean isDestroyed() {
+        return getRendererState() == JointApplicationProtocol.State_Destroyed;
     }
 
     /**
@@ -359,69 +283,33 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     final native boolean isSurfaceStencilRequest();
 
     /**
-     * メインスレッドの処理を行う
-     */
-    protected void onMainThread() {
-        // 状態が有効ならメインループを実行する
-        while (state != State.Destroyed) {
-            int sleepTimeMS = 0;
-
-            synchronized (lock) {
-                if (validGLOperation()) {
-                    // 操作可能な状態であればメインループ処理を行う
-                    onNativeMainLoop();
-                } else {
-                    switch (state) {
-                        case Paused:
-                            // 休止中なら長めにSleepして構わない
-                            sleepTimeMS = 10;
-                        default:
-                            // その他は同期待ちだから短めのsleepをかける
-                            sleepTimeMS = 1;
-                            break;
-                    }
-
-                    if (state == State.Resuming && windowDevice.valid()) {
-                        // レジュームリクエストが送られているので、レジューム処理を行わせる
-                        onNativeResume();
-                        sleepTimeMS = 0;
-                        state = State.Running;
-                    } else if (state == State.Pausing) {
-                        // 休止リクエストが送られているので、休止処理を行う
-                        onNativePause();
-                        state = State.Paused;
-                    }
-                }
-            }
-
-            // 休眠命令があるなら適当な時間休眠する
-            if (sleepTimeMS > 0) {
-                // その他の状況であれば休止する
-                AndroidUtil.sleep(sleepTimeMS);
-            }
-        }
-
-        // 廃棄を行う
-        synchronized (lock) {
-            onNativeDestroy();
-        }
-        AndroidUtil.log("abort Rendering");
-        state = State.Aborted;
-    }
-
-    /**
      * メインループを開始する
      */
     protected void startMainLoop() {
-        Thread thread = new Thread() {
+        //        Thread thread = new Thread() {
+        //            @Override
+        //            public void run() {
+        //                onMainThread();
+        //            }
+        //        };
+        //        thread.setName("jc-render");
+        //        thread.start();
+
+        EGLThread.Task task = new EGLThread.Task() {
             @Override
-            public void run() {
-                onMainThread();
+            public void run(EGLThread thread) {
+                // メインループを実行させる
+                onNativeMainLoop();
+
+                // レンダリングが終了したら何もしない
+                AndroidUtil.log("abort Rendering");
             }
         };
-        thread.setName("jc-render");
-        thread.start();
 
+        EGLThread thread = newThread(false, "jc-render", task);
+
+        // メインスレッドを開始する
+        thread.start();
     }
 
     /**
