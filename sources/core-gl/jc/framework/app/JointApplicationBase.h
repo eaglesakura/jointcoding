@@ -322,9 +322,14 @@ public:
     /* アプリライフサイクル */
 
     /**
+     * アプリの実行ステートを変更する
+     */
+    virtual void changeAppState(const s32 newState);
+
+    /**
      * サーフェイスが作成された
      */
-    virtual void dispatchSurfaceCreated(MDevice device);
+    virtual void dispatchSurfaceCreated(MDevice windowDevice);
 
     /**
      * アプリケーションの休止処理を行う
@@ -341,7 +346,7 @@ public:
     /**
      * サーフェイスのリサイズが行われた
      */
-    virtual void dispatchSurfaceResized(const s32 newWidth, const s32 newHeight);
+    virtual void dispatchSurfaceResized();
 
     /**
      * サーフェイスが廃棄された

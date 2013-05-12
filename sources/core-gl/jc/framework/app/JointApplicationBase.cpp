@@ -133,11 +133,20 @@ void JointApplicationBase::dispatchSurfaceCreated(MDevice device) {
 }
 
 /**
+ * アプリの実行ステートを変更する
+ */
+void JointApplicationBase::changeAppState(const s32 newState) {
+    const s32 oldState = appState;
+    this->appState = newState;
+    assert(oldState != appState);
+
+    onAppStateChanged(oldState, newState);
+}
+
+/**
  * サーフェイスのリサイズが行われた
  */
-void JointApplicationBase::dispatchSurfaceResized(const s32 newWidth, const s32 newHeight) {
-    surfaceSize.x = newWidth;
-    surfaceSize.y = newHeight;
+void JointApplicationBase::dispatchSurfaceResized() {
 }
 
 /**
@@ -225,23 +234,9 @@ void JointApplicationBase::dispatchResume() {
  * メインループの外部呼び出しを行う
  */
 void JointApplicationBase::dispatchMainLoop() {
-    if (!device || flags.destroyed) {
-        // デバイスが無ければ開始できない
-        return;
-    }
+    assert(device);
+    assert(device->valid());
 
-    if (!device->valid()) {
-        // デバイスの準備が整っていない
-        return;
-    }
-
-// デバイスの待ち合わせを行う
-    {
-        device->waitLockRequest(1, &flags.destroyed);
-        if (flags.destroyed) {
-            return;
-        }
-    }
 
 // 再度レンダリングチェックを行う
     if (!device->valid()) {

@@ -19,6 +19,7 @@ public:
     static const ::jc::s32 State_Resume;
     static const ::jc::s32 QueryKey_ApplicationState;
     static const ::jc::s32 QueryKey_RequestSurfaceSpecs;
+    static const ::jc::s32 QueryKey_RequestSurfaceSpecs_length;
     static const ::jc::s32 PostKey_SurfaceSize;
     static const ::jc::s32 PostKey_StateRequest;
 };

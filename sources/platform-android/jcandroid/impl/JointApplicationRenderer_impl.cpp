@@ -70,32 +70,6 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 }
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeResume(JNIEnv *env, jobject _this) {
-    // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeResume");
-    joint_context(_this, JointApplicationBase)->dispatchResume();
-}
-
-// main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativePause(JNIEnv *env, jobject _this) {
-    // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativePause");
-    joint_context(_this, JointApplicationBase)->dispatchPause();
-}
-
-// main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeSurfaceResized(JNIEnv *env, jobject _this, jint newWidth, jint newHeight) {
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeSurfaceResized");
-    joint_context(_this, JointApplicationBase)->dispatchSurfaceResized(newWidth, newHeight);
-}
-
-// main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeDestroy(JNIEnv *env, jobject _this) {
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeDestroy");
-    joint_context(_this, JointApplicationBase)->dispatchDestroy();
-}
-
-// main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeMainLoop(JNIEnv *env, jobject _this) {
     joint_context(_this, JointApplicationBase)->dispatchMainLoop();
 }
