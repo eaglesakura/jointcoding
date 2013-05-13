@@ -41,6 +41,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
 
             if (destroyed) {
                 // レストア完了メッセージを送る
+                listener.onSurfaceRestored(this);
             } else {
                 // 初期化完了
                 listener.onSurfaceInitializeCompleted(this);
@@ -72,9 +73,9 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
     void onSurfaceDestroyed() {
         synchronized (lock) {
             if (eglSurface != null) {
+                listener.onSurfaceDestroyBegin(this);
                 egl.restorePBufferSurface(eglSurface, 1, 1);
             }
-
             destroyed = true;
         }
     }
@@ -138,17 +139,6 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
         onResizedSurface(width, height);
     }
 
-    @Override
-    public void dispose() {
-        synchronized (lock) {
-            // リスナを呼び出す
-            listener.onSurfaceDestroyBegin(this);
-
-            // 解放処理を行う
-            super.dispose();
-        }
-    }
-
     /**
      * サーフェイスが廃棄された
      * 
@@ -158,6 +148,17 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         onSurfaceDestroyed();
+    }
+
+    @Override
+    public void dispose() {
+        synchronized (lock) {
+            // リスナを呼び出す
+            listener.onSurfaceDestroyBegin(this);
+
+            // 解放処理を行う
+            super.dispose();
+        }
     }
 
     /**
@@ -179,6 +180,12 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
          * @param view
          */
         void onSurfaceInitializeCompleted(WindowDeviceManager device);
+
+        /**
+         * サーフェイスの復旧に成功した
+         * @param device
+         */
+        void onSurfaceRestored(WindowDeviceManager device);
 
         /**
          * EGLのサイズが変わった
