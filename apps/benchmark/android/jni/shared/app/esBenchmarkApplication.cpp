@@ -23,8 +23,8 @@ BenchmarkApplication::~BenchmarkApplication() {
 void BenchmarkApplication::onAppInitialize() {
     jclogf("onAppInitialize 0x%x", this);
 
-    getState()->blendEnable(jctrue);
-    getState()->blendFunc(GLBlendType_Alpha);
+    getDevice()->getState()->blendEnable(jctrue);
+    getDevice()->getState()->blendFunc(GLBlendType_Alpha);
 }
 
 void BenchmarkApplication::loadTexture(MDevice subDevice) {
@@ -64,7 +64,7 @@ void BenchmarkApplication::onAppMainUpdate() {
  * フロントバッファ転送もメソッド内で行わせる。
  */
 void BenchmarkApplication::onAppMainRendering() {
-    MGLState state = getState();
+    MGLState state = getDevice()->getState();
     {
 //        state->clearColorf(0, 0, (float)(rand() % 0xFF) / 255.0f, 0);
         state->clearColorf(0, 1, 1, 1);
