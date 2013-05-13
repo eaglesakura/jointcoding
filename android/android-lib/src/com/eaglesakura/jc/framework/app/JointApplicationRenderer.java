@@ -18,7 +18,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-public abstract class JointApplicationRenderer implements Jointable, WindowDeviceManager.SurfaceListener {
+public abstract class JointApplicationRenderer implements Jointable {
     /**
      * GPU管理クラス
      */
@@ -50,34 +50,23 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
         }
     }
 
-    @Override
-    public void onSurfaceInitializeCompleted(WindowDeviceManager device) {
-        synchronized (lock) {
-            // 初期化完了したデバイスを保持する
-            this.windowDevice = device;
-
-            // 初期化を行わせる
-            onNativeInitialize();
-
-            // メインループを開始する
-            startMainLoop();
-        }
-    }
-
-    @Override
-    public void onSurfaceSurfaceSizeChanged(WindowDeviceManager device, int width, int height) {
-        // 新しいサーフェイス値の書き込みを行う
-        postParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
-                width, height
-        });
+    /**
+     * ウィンドウデバイスの設定を行う
+     * @param windowDevice
+     */
+    public void setWindowDevice(WindowDeviceManager windowDevice) {
+        this.windowDevice = windowDevice;
     }
 
     /**
-     * EGLの廃棄に伴い、コンテキストも廃棄を行う
+     * アプリの動作を開始する
      */
-    @Override
-    public void onSurfaceDestroyBegin(WindowDeviceManager device) {
-        postStateChangeRequest(JointApplicationProtocol.State_Paused);
+    public void onAppStart() {
+        // 初期化を行わせる
+        onNativeInitialize();
+
+        // メインループを開始する
+        startMainLoop();
     }
 
     /**
@@ -195,6 +184,18 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     @JCMethod(
               nativeMethod = true)
     public final native boolean postParams(int main_key, int sub_key, int[] params);
+
+    /**
+     * サーフェイスサイズの変更通知を行う
+     * @param width
+     * @param height
+     */
+    public void postSurfaceSize(int width, int height) {
+        // 新しいサーフェイス値の書き込みを行う
+        postParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
+                width, height
+        });
+    }
 
     /**
      * ステート変更リクエストを送る

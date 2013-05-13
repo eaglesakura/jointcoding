@@ -111,6 +111,8 @@ jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const
 
         // 保留ステートに上書きする
         pendingState = params[0];
+
+        return jctrue;
     }
 
     jclogf("drop post main(%d) sub(%d)", key->main_key, key->sub_key);
@@ -141,6 +143,11 @@ void JointApplicationBase::changeAppState() {
             pendingState = -1;
             return;
         }
+    }
+
+    // デバイスの初期設定が済んでいないなら何もしない
+    if (!device) {
+        return;
     }
 
     // 古いステートをチェックする
@@ -265,7 +272,7 @@ void JointApplicationBase::dispatchMainLoop() {
     while (!isStateDestroyed()) {
 
         // 休止中ならスリープをかける
-        if (isStatePaused() && !hasPendingState()) {
+        if ((isStatePaused() || isStateInitializing()) && !hasPendingState()) {
             Thread::sleep(10);
         } else {
             // 廃棄されるまでループする

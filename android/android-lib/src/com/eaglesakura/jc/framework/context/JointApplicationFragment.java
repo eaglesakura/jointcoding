@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eaglesakura.jc.egl.SurfaceColorSpec;
+import com.eaglesakura.jc.egl.WindowDeviceManager;
 import com.eaglesakura.jc.egl.view.EGLSurfaceView;
 import com.eaglesakura.jc.egl.view.EGLTextureView;
 import com.eaglesakura.jc.egl.view.RenderingSurface;
@@ -22,7 +23,7 @@ import com.eaglesakura.jcprotocol.framework.JointApplicationProtocol;
  * 
  * 現状では主にゲーム用途として考える。
  */
-public class JointApplicationFragment extends Fragment {
+public class JointApplicationFragment extends Fragment implements WindowDeviceManager.SurfaceListener {
 
     /**
      * 排他制御のためのロックオブジェクト
@@ -72,12 +73,47 @@ public class JointApplicationFragment extends Fragment {
     }
 
     /**
+     * サーフェイスの描画準備が完了した
+     */
+    @Override
+    public void onSurfaceInitializeCompleted(WindowDeviceManager device) {
+        renderer.onAppStart();
+    }
+
+    /**
+     * サーフェイスのサイズが変更された
+     */
+    @Override
+    public void onSurfaceSurfaceSizeChanged(WindowDeviceManager device, int width, int height) {
+        renderer.postSurfaceSize(width, height);
+    }
+
+    /**
+     * サーフェイスの復旧が行われた
+     */
+    @Override
+    public void onSurfaceRestored(WindowDeviceManager device) {
+        renderer.postStateChangeRequest(JointApplicationProtocol.State_Running);
+        //      renderer.onAppResume();
+    }
+
+    /**
+     * サーフェイスの廃棄が開始された
+     */
+    @Override
+    public void onSurfaceDestroyBegin(WindowDeviceManager device) {
+        if (renderer != null) {
+            renderer.postStateChangeRequest(JointApplicationProtocol.State_Paused);
+        }
+    }
+
+    /**
      * 復帰処理を行う
      */
     @Override
     public void onResume() {
         super.onResume();
-        renderer.onAppResume();
+        //        renderer.onAppResume();
     }
 
     /**
@@ -154,17 +190,19 @@ public class JointApplicationFragment extends Fragment {
         if (surfaceSpecs[3] != 0) {
             AndroidUtil.log("Rendering toTextureView");
             EGLTextureView view = new EGLTextureView(getActivity());
-            view.initialize(color, depth, stencil, renderer);
+            view.initialize(color, depth, stencil, this);
 
             surface = view;
         } else {
             AndroidUtil.log("Rendering to SurfaceView");
             EGLSurfaceView view = new EGLSurfaceView(getActivity());
-            view.initialize(color, depth, stencil, renderer);
+            view.initialize(color, depth, stencil, this);
 
             surface = view;
         }
 
+        // レンダリングデバイスの設定
+        renderer.setWindowDevice(surface.getDevice());
         return surface;
     }
 
