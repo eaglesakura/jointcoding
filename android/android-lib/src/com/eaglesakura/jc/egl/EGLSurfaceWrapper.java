@@ -33,10 +33,14 @@ public class EGLSurfaceWrapper {
      */
     int height = 0;
 
+    /**
+     * ウィンドウ描画が可能なサーフェイスならばtrue
+     */
+    boolean windowSurface = false;
+
     EGLSurfaceWrapper(EGLWrapper egl, EGLSurface surface) {
         this.egl = egl;
         this.eglSurface = surface;
-
         onSurfaceResized();
     }
 
@@ -100,6 +104,14 @@ public class EGLSurfaceWrapper {
         EGL10 egl = this.egl.getEGL();
         egl.eglDestroySurface(this.egl.getDisplay(), eglSurface);
         eglSurface = null;
+    }
+
+    /**
+     * ウィンドウ描画が可能なサーフェイスならばtrueを返す
+     * @return
+     */
+    public boolean isWindowSurface() {
+        return windowSurface;
     }
 
     /**

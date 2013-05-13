@@ -18,12 +18,11 @@ JointApplicationBase::JointApplicationBase() {
 }
 
 JointApplicationBase::~JointApplicationBase() {
-    if(device) {
+    if (device) {
         device->dispose();
         device.reset();
     }
 }
-
 
 /**
  * ステータスの問い合わせを行う
@@ -105,30 +104,13 @@ jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const
 
         MutexLock lock(query_mutex);
 
-        if (pendingState == JointApplicationProtocol::State_Destroyed) {
+        if (isStateDestroyed() || pendingState == JointApplicationProtocol::State_Destroyed) {
             // 既に廃棄リクエストが送られているならコレ以上何も送る必要はない
             return jctrue;
         }
 
-        const s32 request = params[0];
-
-        // レジュームリクエスト
-        if (request == JointApplicationProtocol::State_Running) {
-            // 休止が保留されていたらリセットしてそれ以上何もしない
-            if (pendingState == JointApplicationProtocol::State_Paused) {
-                pendingState = -1;
-                return jctrue;
-            }
-
-            if (!isStateInitializing()) {
-                // 初期化も終わってないならレジュームの必要ない
-                return jctrue;
-            }
-
-        }
-
         // 保留ステートに上書きする
-        pendingState = request;
+        pendingState = params[0];
     }
 
     jclogf("drop post main(%d) sub(%d)", key->main_key, key->sub_key);
@@ -146,7 +128,7 @@ void JointApplicationBase::dispatchSurfaceCreated(MDevice device) {
  * アプリの実行ステートを変更する
  */
 void JointApplicationBase::changeAppState() {
-    if (pendingState < 0) {
+    if (!hasPendingState()) {
         return;
     }
 
@@ -164,10 +146,13 @@ void JointApplicationBase::changeAppState() {
     // 古いステートをチェックする
     const s32 oldState = appState;
     this->appState = pendingState;
+    this->pendingState = -1;
     assert(oldState != appState);
 
     // ステート変更を通知する
     onAppStateChanged(oldState, appState);
+
+    jclogf("change state(%d) -> (%d)", oldState, appState);
 
     // レジューム
     if (appState == JointApplicationProtocol::State_Running) {
@@ -193,6 +178,20 @@ void JointApplicationBase::changeAppState() {
  * サーフェイスのリサイズが行われた
  */
 void JointApplicationBase::dispatchSurfaceResized() {
+    // 書込み中の可能性があるため、ロックする
+    MutexLock lock(query_mutex);
+
+    checkedSurfaceSize = surfaceSize;
+    jclogf("Resized Surface(%dx%d)", surfaceSize.x, surfaceSize.y);
+
+    // ビューポート更新
+    device->getState()->viewport(0, 0, surfaceSize.x, surfaceSize.y);
+
+    // スプライトマネージャーアスペクト比更新
+    getSpriteManager()->setSurfaceAspect(surfaceSize.x, surfaceSize.y);
+
+    // アプリに処理を任せる
+    onAppSurfaceResized(surfaceSize.x, surfaceSize.y);
 }
 
 /**
@@ -201,26 +200,25 @@ void JointApplicationBase::dispatchSurfaceResized() {
 void JointApplicationBase::dispatchDestroy() {
 
     flags.destroyed = jctrue;
-    try {
-        DeviceLock lock(device, jctrue);
+    if (!flags.initialized) {
+        // 初期化前であれば何もしない
+        return;
+    }
 
-        if (!flags.initialized) {
-            // 初期化前であれば何もしない
-            return;
-        }
+    {
+        // アプリの解放を行う
+        onAppDestroy();
+    }
 
-        {
-            // アプリの解放を行う
-            onAppDestroy();
-        }
-
+    // 各種解放処理を行う
+    {
         windowManager.reset();
 
-        getVRAM()->gc();
-    } catch (Exception &e) {
-        jcloge(e);
+        {
+            MDevice windowDevice = getDevice();
+            windowDevice->getVRAM()->gc();
+        }
     }
-    device.reset();
 }
 
 /**
@@ -246,18 +244,7 @@ void JointApplicationBase::dispatchInitialize() {
  * Activityの休止等
  */
 void JointApplicationBase::dispatchPause() {
-    if (!flags.initialized) {
-        return;
-    }
-
-    try {
-        DeviceLock lock(device, jctrue);
-
-        onAppResume();
-    } catch (Exception &e) {
-
-        jcloge(e);
-    }
+    onAppResume();
 }
 
 /**
@@ -265,17 +252,7 @@ void JointApplicationBase::dispatchPause() {
  * Activity再開等
  */
 void JointApplicationBase::dispatchResume() {
-    if (!flags.initialized) {
-        return;
-    }
-
-    try {
-        DeviceLock lock(device, jctrue);
-
-        onAppResume();
-    } catch (Exception &e) {
-        jcloge(e);
-    }
+    onAppResume();
 }
 
 /**
@@ -286,46 +263,39 @@ void JointApplicationBase::dispatchMainLoop() {
     assert(device->valid());
 
     while (!isStateDestroyed()) {
-        // 廃棄されるまでループする
-        try {
-            DeviceLock lock(device, jctrue);
-
-            // ステートを変更する
-            changeAppState();
-
-            // サーフェイスサイズチェックを行う
-            if (checkedSurfaceSize != surfaceSize) {
-                // 書込み中の可能性があるため、ロックする
-                MutexLock lock(query_mutex);
-
-                checkedSurfaceSize = surfaceSize;
-                jclogf("Resized Surface(%dx%d)", surfaceSize.x, surfaceSize.y);
-
-                // ビューポート更新
-                getState()->viewport(0, 0, surfaceSize.x, surfaceSize.y);
-
-                // スプライトマネージャーアスペクト比更新
-                getSpriteManager()->setSurfaceAspect(surfaceSize.x, surfaceSize.y);
-
-                // アプリに処理を任せる
-                onAppSurfaceResized(surfaceSize.x, surfaceSize.y);
-            }
-
-            if (isStateRunning()) {
-                // フレーム定形処理を行う
-                onAppMainUpdate();
-                onAppMainRendering();
-            }
-        } catch (EGLException &e) {
-            jcloge(e);
-            Thread::sleep(1);
-        }
 
         // 休止中ならスリープをかける
-        if (isStatePaused()) {
+        if (isStatePaused() && !hasPendingState()) {
             Thread::sleep(10);
+        } else {
+            // 廃棄されるまでループする
+            try {
+                DeviceLock lock(device, jctrue);
+
+                // ステートを変更する
+                changeAppState();
+
+                if (isStateRunning()) {
+                    // サーフェイスサイズチェックを行う
+                    if (checkedSurfaceSize != surfaceSize) {
+                        dispatchSurfaceResized();
+                    }
+
+                    // フレーム定形処理を行う
+                    onAppMainUpdate();
+                    onAppMainRendering();
+                } else if (isStateInitializing()) {
+
+                }
+            } catch (EGLException &e) {
+                jcloge(e);
+                Thread::sleep(1);
+            }
         }
+//        jclogf("main loop(%d)", getRunningState());
     }
+
+    jclog("main loop finish");
 }
 
 }

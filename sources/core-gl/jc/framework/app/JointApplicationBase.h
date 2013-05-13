@@ -188,6 +188,13 @@ public:
     }
 
     /**
+     * 保留ステートを持っているならtrue
+     */
+    virtual s32 hasPendingState() const {
+        return pendingState >= 0;
+    }
+
+    /**
      * 初期化中の場合はtrue
      */
     virtual jcboolean isStateInitializing() const {
@@ -237,23 +244,10 @@ public:
     }
 
     /**
-     * 現在のカレントステートを取得する
-     */
-    virtual MGLState getState() const {
-        return device->getState();
-    }
-
-    /**
-     * VRAMを取得する
-     */
-    virtual VRAM getVRAM() const {
-        return device->getVRAM();
-    }
-
-    /**
      * ウィンドウサイズを取得する
      */
     virtual Vector2i getWindowSize() const {
+        assert(device);
         return device->getSurfaceArea().wh();
     }
 
@@ -261,6 +255,7 @@ public:
      * スプライト管理クラスを取得する
      */
     virtual MSpriteManager getSpriteManager() const {
+        assert(windowManager);
         return windowManager->getWindowContext()->getSpriteManager();
     }
 

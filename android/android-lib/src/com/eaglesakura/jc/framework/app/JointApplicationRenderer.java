@@ -77,39 +77,28 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
      */
     @Override
     public void onSurfaceDestroyBegin(WindowDeviceManager device) {
-        if (validNative()) {
-            // アプリの休止を行う
-            postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
-                JointApplicationProtocol.State_Paused
-            });
-        }
+        postStateChangeRequest(JointApplicationProtocol.State_Paused);
     }
 
     /**
      * アプリの休止を行う
      */
     public void onAppPause() {
-        postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
-            JointApplicationProtocol.State_Paused
-        });
+        postStateChangeRequest(JointApplicationProtocol.State_Paused);
     }
 
     /**
      * アプリのレジュームを行う
      */
     public void onAppResume() {
-        postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
-            JointApplicationProtocol.State_Running
-        });
+        postStateChangeRequest(JointApplicationProtocol.State_Running);
     }
 
     /**
      * アプリの廃棄を行う
      */
     public void onAppDestroy() {
-        postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
-            JointApplicationProtocol.State_Destroyed
-        });
+        postStateChangeRequest(JointApplicationProtocol.State_Destroyed);
 
         if (appContext != null) {
             appContext.release();
@@ -206,6 +195,18 @@ public abstract class JointApplicationRenderer implements Jointable, WindowDevic
     @JCMethod(
               nativeMethod = true)
     public final native boolean postParams(int main_key, int sub_key, int[] params);
+
+    /**
+     * ステート変更リクエストを送る
+     * @param JointApplicationProtocol_State
+     */
+    public void postStateChangeRequest(int JointApplicationProtocol_State) {
+        if (validNative()) {
+            postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
+                JointApplicationProtocol_State
+            });
+        }
+    }
 
     /**
      * ネイティブ側のメインループ処理を行う
