@@ -56,7 +56,7 @@ jc_sp<T> downcast( const jc_sp<jc::Object> obj ) {
  * スマートポインタのダウンキャストを行う
  */
 template<typename T, typename T2>
-jc_sp<T> downcast( const jc_sp<T2> obj ) {
+jc_sp<T> downcast( const jc_sp<T2> &obj ) {
     if(!obj) {
         return jc_sp<T>();
     }
