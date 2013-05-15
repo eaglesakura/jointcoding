@@ -73,6 +73,21 @@ struct SurfaceSpecs {
 };
 
 /**
+ * 何らかのエラーが生じた時にどのようなアクションを取らせるかを確認する
+ */
+enum ApplicationRestoreStatus_e {
+    /**
+     * 復旧が可能なため、実行を継続する
+     */
+    ApplicationRestoreStatus_Running,
+
+    /**
+     * 復旧を諦めてアプリを終了する
+     */
+    ApplicationRestoreStatus_Abort,
+};
+
+/**
  * 状態の問い合わせを行うキー情報
  */
 struct ApplicationQueryKey {
@@ -311,6 +326,22 @@ protected:
     virtual void onAppStateChanged(const s32 oldState, const s32 newState) {
     }
 
+    /**
+     * エラーハンドリングを行う
+     */
+    virtual ApplicationRestoreStatus_e handleError(const EGLException_e exception) {
+        switch(exception) {
+            // 復旧が不可能なエラー一覧
+            case EGLException_OutOfMemory:
+            case EGLException_InitializeFailed:
+                return ApplicationRestoreStatus_Abort;
+            default:
+                break;
+        }
+
+        return ApplicationRestoreStatus_Running;
+    }
+
 public:
     /**
      * メインループの外部呼び出しを行う
@@ -334,6 +365,11 @@ protected:
      * アプリの実行ステートを変更する
      */
     virtual void changeAppState();
+
+    /**
+     * ステート変更リクエストが送られた
+     */
+    virtual jcboolean dispatchOnStateChangeRequest(const ApplicationQueryKey *key, const s32 *params, const s32 params_length);
 
     /**
      * 初期化処理を行う
