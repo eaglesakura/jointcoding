@@ -18,7 +18,16 @@ public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();
 
-public:
+    virtual void loadTexture(MDevice subDevice);
+
+protected:
+
+    /**
+     * サーフェイスの初期化に必要なスペックのリクエストを受け取る。
+     * 可能な限りリクエストに沿ったサーフェイスを作成する。
+     */
+    virtual SurfaceSpecs getRenderingSurfaceSpecs() const;
+protected:
     /* アプリライフサイクル */
 
     /**
@@ -26,8 +35,6 @@ public:
      * メソッド呼び出し時点でデバイスロック済み。
      */
     virtual void onAppInitialize();
-
-    virtual void loadTexture(MDevice subDevice);
 
     /**
      * アプリのサーフェイスリサイズを行わせる

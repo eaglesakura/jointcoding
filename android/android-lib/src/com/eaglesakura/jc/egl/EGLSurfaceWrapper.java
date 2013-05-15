@@ -101,6 +101,7 @@ public class EGLSurfaceWrapper {
             return;
         }
 
+        AndroidUtil.log(String.format("EGLSurfaceWrapper#dispose(%d)", hashCode()));
         EGL10 egl = this.egl.getEGL();
         egl.eglDestroySurface(this.egl.getDisplay(), eglSurface);
         eglSurface = null;

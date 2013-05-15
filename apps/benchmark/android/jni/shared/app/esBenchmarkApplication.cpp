@@ -17,6 +17,16 @@ BenchmarkApplication::~BenchmarkApplication() {
 }
 
 /**
+ * サーフェイスの初期化に必要なスペックのリクエストを受け取る。
+ * 可能な限りリクエストに沿ったサーフェイスを作成する。
+ */
+SurfaceSpecs BenchmarkApplication::getRenderingSurfaceSpecs() const {
+    SurfaceSpecs specs;
+    specs.extensions.enable(SurfaceSupecExtension_AndroidTextureView);
+    return specs;
+}
+
+/**
  * アプリ初期化を行わせる
  * メソッド呼び出し時点でデバイスロック済み。
  */

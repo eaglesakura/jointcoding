@@ -77,6 +77,7 @@ void Device::dispose() {
     }
 
     if (egl) {
+        egl->dispose();
         egl.reset();
     }
 
