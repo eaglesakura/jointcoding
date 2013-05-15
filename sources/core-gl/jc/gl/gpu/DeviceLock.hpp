@@ -53,7 +53,7 @@ class DeviceLock {
      * デバイスの専有を行う
      */
     void lockDevice() {
-        if(!device || !device->lockEnable()) {
+        if(!device) {
             locked = jcfalse;
             lock.reset();
             return;
@@ -78,8 +78,14 @@ class DeviceLock {
             def_locked = jctrue;
         }
 
+        // ロックが許可されていないならここで一切をキャンセルする
+        if(!device->lockEnable()) {
+            return;
+        }
+
         // contextとthreadを結びつける
         if(current_thread) {
+            // 既に占有状態なら何もしない
             locked = jctrue;
         } else {
             if(makeCurrent) {

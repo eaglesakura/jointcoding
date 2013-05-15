@@ -321,7 +321,6 @@ void JointApplicationBase::dispatchMainLoop() {
                     onAppMainUpdate();
                     onAppMainRendering();
                 } else if (isStateInitializing()) {
-
                 }
             } catch (EGLException &e) {
                 jcloge(e);

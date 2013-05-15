@@ -76,10 +76,12 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      */
     private void onResizedSurface(int width, int height) {
         synchronized (lock) {
+            beginOperation();
             eglSurface.onSurfaceResized();
             eglSurface.setSurfaceSize(width, height);
 
             listener.onSurfaceSurfaceSizeChanged(this, width, height);
+            endOperation();
         }
     }
 
