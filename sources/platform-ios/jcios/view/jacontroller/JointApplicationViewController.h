@@ -11,34 +11,7 @@
 #include "jointcoding-ios.h"
 #include "jc/framework/app/JointApplicationBase.h"
 
-enum JointApplicationState_e {
-    /**
-     * 初期化中
-     */
-    JointApplicationState_Null,
-    
-    /**
-     * 実行中
-     */
-    JointApplicationState_Running,
-    
-    /**
-     * リサイズ中
-     */
-    JointApplicationState_Resizing,
-    
-    /**
-     * 廃棄済み
-     */
-    JointApplicationState_Destroyed,
-};
-
 @interface JointApplicationViewController : UIViewController<ES20Delegate> {
-    /**
-     * 現在の状態
-     */
-    JointApplicationState_e _state;
-    
     /**
      * レンダリングサーフェイス
      */
@@ -54,11 +27,6 @@ enum JointApplicationState_e {
  * レンダリングサーフェイス
  */
 @property(readonly) JCOpenGLES20View*   surface;
-
-/**
- * 現在の実行状態
- */
-@property(readonly) JointApplicationState_e state;
 
 /**
  * アプリの実行が有効状態ならYES

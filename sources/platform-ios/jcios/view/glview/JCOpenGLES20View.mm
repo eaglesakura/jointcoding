@@ -77,10 +77,6 @@ using namespace ios;
 //    [self performSelectorInBackground:@selector(testRender:) withObject:nil];
 }
 
-- (void) dealloc {
-    [self disposeGL];
-}
-
 // GLの初期化を行う
 - (void) initializeGL {
     // スケールファクタを設定する
@@ -135,24 +131,6 @@ using namespace ios;
     }
 }
 
-
-- (void) disposeGL {
-    
-    @synchronized(self) {
-        if(!_device) {
-            return;
-        }
-        
-        jclog("dispose GL");
-        _device->addFlags(DeviceFlag_RequestDestroy);
-        
-        _device.reset();
-        eglSurface.reset();
-        eglManager.reset();
-        eglContext.reset();
-   
-    }
-}
 
 - (void) testRender:(id)_temp {
     Thread::sleep(10);

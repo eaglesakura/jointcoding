@@ -5,7 +5,6 @@
  */
 
 #include    "esBenchmarkApplication.h"
-#include    "jcandroid/egl/sdk/SdkDeviceManagerContext.hpp"
 
 namespace es {
 

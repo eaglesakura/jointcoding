@@ -52,9 +52,4 @@
  */
 - (BOOL) isInitializedGL;
 
-/**
- * GL ES 2.0の解放処理を行う
- */
--(void) disposeGL;
-
 @end
