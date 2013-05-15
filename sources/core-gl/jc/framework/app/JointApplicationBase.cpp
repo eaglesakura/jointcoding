@@ -263,16 +263,38 @@ void JointApplicationBase::dispatchResume() {
 }
 
 /**
+ * レンダリングの休止を求める場合、trueを返す
+ */
+jcboolean JointApplicationBase::isLoopSleep() const {
+    if(!device->lockEnable()) {
+        // ロックが不可能な状態だったらスリープを継続させる
+        return jctrue;
+    }
+
+    if (hasPendingState()) {
+        // pendingされたステートがあるなら実行を行う
+        return jcfalse;
+    }
+
+    if (isStatePaused() || isStateInitializing()) {
+        // ステートが休止中か初期化中ならループを行わない
+        return jctrue;
+    }
+
+    // それ以外ならば実行
+    return jcfalse;
+}
+
+/**
  * メインループの外部呼び出しを行う
  */
 void JointApplicationBase::dispatchMainLoop() {
     assert(device);
-    assert(device->valid());
 
     while (!isStateDestroyed()) {
 
         // 休止中ならスリープをかける
-        if ((isStatePaused() || isStateInitializing()) && !hasPendingState()) {
+        if (isLoopSleep()) {
             Thread::sleep(10);
         } else {
             // 廃棄されるまでループする
@@ -296,7 +318,7 @@ void JointApplicationBase::dispatchMainLoop() {
                 }
             } catch (EGLException &e) {
                 jcloge(e);
-                Thread::sleep(1);
+                Thread::sleep(10);
             }
         }
 //        jclogf("main loop(%d)", getRunningState());

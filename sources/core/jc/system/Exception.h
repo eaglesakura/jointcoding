@@ -244,9 +244,9 @@ enum EGLException_e {
     EGLException_ContextDetachFailed,
 
     /**
-     * デバイスに廃棄フラグが立っている
+     * デバイスのロックが行えない状態だった
      */
-    EGLException_DeviceHasDestroyFlag,
+    EGLException_DeviceLockFail,
 };
 
 /**

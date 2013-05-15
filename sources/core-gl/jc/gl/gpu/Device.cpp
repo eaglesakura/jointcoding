@@ -10,7 +10,6 @@ namespace jc {
 namespace gl {
 
 Device::Device() {
-    flags = 0;
     current_request = 0;
     current_id = 0;
 }
@@ -25,13 +24,7 @@ Device::~Device() {
 jcboolean Device::makeCurrent(EGLMakeCurrent_e type) {
     switch (type) {
         case EGLMakeCurrent_Bind:
-            // 廃棄フラグが設定されているなら、カレントに設定できない
-            if (hasFlags(DeviceFlag_RequestDestroy)) {
-                jclog("has destroy flag");
-                return jcfalse;
-            }
-
-            // 既に廃棄済みでもカレントにできない
+            // 既に廃棄済みの場合、currentに出来ない
             if (context.get() == NULL || surface.get() == NULL) {
                 jclogf("error context(%x) || surface(%x)", context.get(), surface.get());
                 return jcfalse;
@@ -56,10 +49,6 @@ jcboolean Device::makeCurrent(EGLMakeCurrent_e type) {
  * DeviceLockを得ている必要がある。
  */
 jcboolean Device::postFrontBuffer() {
-    if (hasFlags(DeviceFlag_RequestDestroy)) {
-        return jcfalse;
-    }
-
     return egl->postFrontBuffer(surface);
 }
 
@@ -68,7 +57,12 @@ jcboolean Device::postFrontBuffer() {
  */
 void Device::dispose() {
     // 廃棄フラグを立てる
-    flags |= DeviceFlag_RequestDestroy;
+    {
+        // 二度とロックできなくする
+        flags.enable(DeviceFlag_NoLock);
+        // 排他制御待ちを行う
+        MutexLock lock(gpuMutex);
+    }
 
     // レンダリング用サーフェイスも強制廃棄
     if (surface) {

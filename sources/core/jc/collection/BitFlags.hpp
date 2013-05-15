@@ -49,6 +49,9 @@ public:
         flags[index / 32] &= ~(0x1 << (index % 32));
     }
 
+    /**
+     * フラグを立てる
+     */
     void set(const u32 index, const jcboolean set) {
         if (set) {
             enable(index);
@@ -60,7 +63,7 @@ public:
     /**
      * 特定インデックスがtrueであることを確認する
      */
-    jcboolean isEnable(const u32 index) {
+    jcboolean isEnable(const u32 index) const {
         assert((index / 32) < ((sizeof(flags) / sizeof(u32))));
 
         return (flags[index / 32] & (0x1 << (index % 32))) != 0;
@@ -69,14 +72,22 @@ public:
     /**
      * 特定インデックスがfalseであることを確認する
      */
-    jcboolean isDisable(const u32 index) {
+    jcboolean isDisable(const u32 index) const {
         return !isEnable(index);
+    }
+
+    /**
+     * ビット演算でまとめたフラグがONになっていることを確認する
+     * flags[0]に対してのみ対応可能なため、注意すること
+     */
+    jcboolean isAllEnableFlags(const u32 bits) const {
+        return has_flag_all(flags[0], bits);
     }
 
     /**
      * 全チェック
      */
-    jcboolean isAllEnable(const u32 indices_num, const u32* indices) {
+    jcboolean isAllEnable(const u32 indices_num, const u32* indices) const {
         for (u32 i = 0; i < indices_num; ++i) {
             if (isDisable(indices[i])) {
                 // 一つでもdisableがあったら廃棄
@@ -90,7 +101,7 @@ public:
     /**
      * 全チェック
      */
-    jcboolean isAllDisable(const u32 indices_num, const u32* indices) {
+    jcboolean isAllDisable(const u32 indices_num, const u32* indices) const {
         for (u32 i = 0; i < indices_num; ++i) {
             if (isEnable(indices[i])) {
                 // 一つでもenableがあったら廃棄

@@ -23,10 +23,12 @@ public:
     static jobject getNativePointer_unsafe_(jobject _this, jint key);
     virtual jobject getEGLWrapper_unsafe();
     static jobject getEGLWrapper_unsafe_(jobject _this);
+    virtual void onNativeEndOperation();
+    static void onNativeEndOperation_(jobject _this);
+    virtual void onNativeBeginOperation();
+    static void onNativeBeginOperation_(jobject _this);
     virtual void createNative();
     static void createNative_(jobject _this);
-    virtual void preDestroyNative();
-    static void preDestroyNative_(jobject _this);
     virtual jobject getEGLSurfaceWrapper_unsafe();
     static jobject getEGLSurfaceWrapper_unsafe_(jobject _this);
 

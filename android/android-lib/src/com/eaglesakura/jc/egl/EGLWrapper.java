@@ -159,7 +159,10 @@ public class EGLWrapper {
             throw new RuntimeException("eglCreateWindowSurface");
         }
 
-        return new EGLSurfaceWrapper(this, eglSurface);
+        EGLSurfaceWrapper result = new EGLSurfaceWrapper(this, eglSurface);
+        // ウィンドウ属性を付与する
+        result.windowSurface = true;
+        return result;
     }
 
     /**
@@ -189,7 +192,6 @@ public class EGLWrapper {
     public void restorePBufferSurface(EGLSurfaceWrapper surface, int surfaceWidth, int surfaceHeight) {
         EGLSurfaceWrapper newSurface = createPBufferSurface(surfaceWidth, surfaceHeight);
         // サーフェイスをコピーする
-        surface.dispose();
         surface.restore(newSurface.getSurface());
     }
 
@@ -201,7 +203,6 @@ public class EGLWrapper {
     public void restoreWindowSurface(EGLSurfaceWrapper surface, Object native_window) {
         EGLSurfaceWrapper newSurface = createWindowSurface(native_window);
         // サーフェイスをコピーする
-        surface.dispose();
         surface.restore(newSurface.getSurface());
     }
 
@@ -322,6 +323,11 @@ public class EGLWrapper {
                 AndroidUtil.log("postFrontBuffer(targetSurface != currentSurface)");
                 return false;
             }
+            if (!surface.windowSurface) {
+                // ウィンドウサーフェイス以外にpostはできなくするが、OKを返す
+                return true;
+            }
+
             boolean result = egl.eglSwapBuffers(eglDisplay, targetSurface);
             return result;
         }

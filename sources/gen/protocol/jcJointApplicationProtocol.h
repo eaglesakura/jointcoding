@@ -16,7 +16,6 @@ public:
     static const ::jc::s32 State_Running;
     static const ::jc::s32 State_Paused;
     static const ::jc::s32 State_Destroyed;
-    static const ::jc::s32 State_Resume;
     static const ::jc::s32 QueryKey_ApplicationState;
     static const ::jc::s32 QueryKey_RequestSurfaceSpecs;
     static const ::jc::s32 QueryKey_RequestSurfaceSpecs_length;

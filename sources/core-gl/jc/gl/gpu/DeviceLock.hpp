@@ -50,21 +50,10 @@ class DeviceLock {
     jcboolean makeCurrent;
 
     /**
-     * ロックリクエスト整理番号
-     */
-    request_id lock_request;
-
-    /**
-     * ロックリクエストをこのインスタンスが行った場合はtrue
-     */
-    jcboolean lock_requested;
-
-    /**
      * デバイスの専有を行う
      */
     void lockDevice() {
-        if(!device) {
-            jclog("device not found");
+        if(!device || !device->lockEnable()) {
             locked = jcfalse;
             lock.reset();
             return;
@@ -75,15 +64,16 @@ class DeviceLock {
 
         // 専有が現在のスレッドと違うのならば、ロックリクエストを送る
         if(!current_thread) {
-            lock_request = device->lockRequest();
-            lock_requested = jctrue;
-
+            const request_id lock_request = device->lockRequest();
             while(!device->isCurrentRequest(lock_request)) {
-//                jclogf("wait lock request(%d)", (s32)lock_request);
+                jclogf("wait lock request(%d)", (s32)lock_request);
                 Thread::sleep(1);
             }
             // Mutex占有権を取得する
             lock.reset(new MutexLock(device->getGPUMutex()));
+
+            // リクエストを削除する
+            device->unlockRequest(lock_request);
         } else {
             def_locked = jctrue;
         }
@@ -112,13 +102,11 @@ class DeviceLock {
     void unlockDevice() {
         if(locked && !def_locked) {
             if(makeCurrent) {
+                makeCurrent = jcfalse;
                 device->makeCurrent(EGLMakeCurrent_Unbind);
             }
         }
 
-        if(lock_requested) {
-            device->unlockRequest(lock_request);
-        }
         lock.reset();
     }
 public:
@@ -129,18 +117,22 @@ public:
      * @param throw_error エラーが発生した場合、例外を投げるならtrue。デフォルトがtrueなのは、チェック機構予備忘れ防止の為。
      */
     DeviceLock(MDevice device, const jcboolean throw_error, const jcboolean makeCurrent = jctrue) {
+        // デバイスは必ず引数に含めなければならない
+        assert(device);
+
         this->locked = jcfalse;
         this->def_locked = jcfalse;
         this->device = device;
-        this->lock_request = 0;
-        this->lock_requested = jcfalse;
         this->makeCurrent = makeCurrent;
+
+        // ロックを試みる
         lockDevice();
 
         if(throw_error) {
             if(!isLockCompleted()) {
-                if(device->hasFlags(DeviceFlag_RequestDestroy)) {
-                    throw create_exception_mt(EGLException, EGLException_DeviceHasDestroyFlag, "Abort Rendering...");
+                unlockDevice();
+                if(device->hasFlag(DeviceFlag_NoLock)) {
+                    throw create_exception_mt(EGLException, EGLException_DeviceLockFail, "Device lock error...");
                 } else {
                     throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
                 }
@@ -156,7 +148,7 @@ public:
      * 速やかにロックを外して欲しいというリクエストを受けている。
      */
     jcboolean hasAbortRequest() {
-        return device->hasFlags(DeviceFlag_RequestDestroy);
+        return device->hasFlag(DeviceFlag_NoLock);
     }
 
     /**
