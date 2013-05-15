@@ -12,31 +12,18 @@
 
 namespace jc {
 
-// Android版のplatform定数
-#ifdef BUILD_Android
 enum Platform_e {
     /**
      * Androidで実行されている
      */
     Platform_Android,
-};
-#endif // BUILD_Android
-// iOS版のplatform定数
-#ifdef  BUILD_iOS
-enum Platform_e {
-    /**
-     * iPhoneで実行されている
-     */
-    Platform_iPhone,
 
     /**
-     * iPadで実行されている
+     * iOSで実行されている
      */
-    Platform_iPad,
-
+    Platform_iOS,
 };
-#endif // BUILD_iOS
-#ifdef  BUILD_Android
+
 /**
  * Androidのバージョン定数を示す。
  * APIレベルごとに定義する。
@@ -63,18 +50,11 @@ enum AndroidAPI_e {
     AndroidAPI_Develop = AndroidAPI_API14_ICS,
 };
 
-#endif // BUILD_Android
-#ifdef  BUILD_iOS
 /**
  * iOSのバージョン定数を示す。
  * 上の桁がメジャーバージョン、下の桁がマイナーバージョン
  */
 enum iOSAPI_e {
-    /**
-     * iOS前バージョン
-     */
-    iOSAPI_051 = 51,
-
     /**
      * iOS現バージョン
      */
@@ -85,7 +65,7 @@ enum iOSAPI_e {
      */
     iOSAPI_Develop = iOSAPI_060,
 };
-#endif // BUILD_iOS
+
 /**
  * プラットフォーム固有処理を行う
  */

@@ -9,6 +9,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/collection/BitFlags.hpp"
+#include    "jc/platform/Platform.h"
 #include    "jc/widget/window/WindowManager.h"
 #include    "jc/gl/GL2D.h"
 #include    "protocol/jcJointApplicationProtocol.h"
@@ -113,6 +114,37 @@ struct ApplicationQueryKey {
 };
 
 /**
+ * プラットフォームへのアクセスが必要な場合に必要なコンテキスト
+ * 各プラットフォームで継承して利用するため、アプリが直接触ることは無い。
+ */
+class PlatformContext: public Object {
+protected:
+    /**
+     * 実行されているプラットフォーム
+     */
+    Platform_e platform;
+
+    PlatformContext(Platform_e platform) {
+        this->platform = platform;
+    }
+public:
+    virtual ~PlatformContext() {
+    }
+
+    /**
+     * 実行中のプラットフォームを取得する
+     */
+    virtual Platform_e getPlatform() const {
+        return platform;
+    }
+};
+
+/**
+ * managed
+ */
+typedef jc_sp<PlatformContext> MPlatformContext;
+
+/**
  * マルチプラットフォーム共通アプリのベースクラス
  */
 class JointApplicationBase: public Object, public WindowEventHandler {
@@ -143,6 +175,11 @@ protected:
      * レンダリングデバイス
      */
     MDevice device;
+
+    /**
+     * バインドされているプラットフォーム情報
+     */
+    MPlatformContext platformContext;
 
     /**
      * 問い合わせ・書き込み操作のためのミューテックス
@@ -330,7 +367,7 @@ protected:
      * エラーハンドリングを行う
      */
     virtual ApplicationRestoreStatus_e handleError(const EGLException_e exception) {
-        switch(exception) {
+        switch (exception) {
             // 復旧が不可能なエラー一覧
             case EGLException_OutOfMemory:
             case EGLException_InitializeFailed:
@@ -352,6 +389,11 @@ public:
      * サーフェイスが作成された
      */
     virtual void dispatchSurfaceCreated(MDevice windowDevice);
+
+    /**
+     * プラットフォームの接続を行う
+     */
+    virtual void dispatchBindPlatform(const MPlatformContext context);
 
 protected:
     /* アプリライフサイクル */

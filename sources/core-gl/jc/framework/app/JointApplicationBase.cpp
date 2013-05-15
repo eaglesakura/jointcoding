@@ -114,6 +114,13 @@ void JointApplicationBase::dispatchSurfaceCreated(MDevice device) {
 }
 
 /**
+ * プラットフォームの接続を行う
+ */
+void JointApplicationBase::dispatchBindPlatform(const MPlatformContext context) {
+    this->platformContext = context;
+}
+
+/**
  * アプリの実行ステートを変更する
  */
 void JointApplicationBase::changeAppState() {
