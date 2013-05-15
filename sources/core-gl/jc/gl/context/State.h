@@ -115,11 +115,11 @@ class GLState: public Object {
      * color, depth, stencilマスク
      * デフォルトはtrue
      */
-    struct {
-        jcboolean r;
-        jcboolean g;
-        jcboolean b;
-        jcboolean a;
+    struct ColormaskContext {
+        GLboolean r;
+        GLboolean g;
+        GLboolean b;
+        GLboolean a;
     } maskContext;
 
     /**
@@ -188,7 +188,7 @@ class GLState: public Object {
         jcboolean enable;
     } depthContext;
 
-    struct {
+    struct BlendContext {
         /**
          * ブレンド有効・無効設定
          */
@@ -243,7 +243,7 @@ class GLState: public Object {
          * 現在Contextにバインドされているフレームバッファ
          */
         GLuint frameBuffer;
-        
+
         /**
          * 現在Contextにバインドされているレンダリングバッファ
          */
@@ -277,7 +277,7 @@ public:
         if (temp.rgba != clearContext.clearColor.rgba) {
             // 最後に呼び出した色を保存
             clearContext.clearColor = temp;
-            
+
             // 色が違うからコマンド呼び出し
             glClearColor(r, g, b, a);
             assert_gl();
@@ -431,33 +431,6 @@ public:
             return jctrue;
         }
         return jcfalse;
-    }
-
-private:
-    std::list<ScissorContext> scissor_stack;
-public:
-    /**
-     * 現在のシザーパラメータを保存する
-     */
-    inline void pushScissor() {
-        scissor_stack.push_front(scissorContext);
-    }
-
-    /**
-     * 一つ前に保存したシザーパラメータに戻す
-     */
-    inline void popScissor() {
-        assert(!scissor_stack.empty());
-
-        // 一番上のパラメータを取り出す
-        ScissorContext back_scissor = scissor_stack.front();
-        scissor_stack.erase(scissor_stack.begin());
-
-        {
-            // 状態を再設定する
-            enableScissor(back_scissor.enable);
-            scissor(back_scissor.box.left, back_scissor.box.top, back_scissor.box.width(), back_scissor.box.height());
-        }
     }
 
     /**
@@ -768,21 +741,109 @@ public:
         // 同じオブジェクトがバインド済みのため何もしない
         return jcfalse;
     }
-    
+
     /**
      * レンダリングバッファへの関連付けを行う
      */
     inline jcboolean bindRenderbuffer(const GLenum target, const GLuint renderBuffer) {
         assert(target == GL_RENDERBUFFER);
-        
-        if(frameBufferContext.renderBuffer != renderBuffer) {
+
+        if (frameBufferContext.renderBuffer != renderBuffer) {
             frameBufferContext.renderBuffer = renderBuffer;
             glBindRenderbuffer(target, renderBuffer);
             assert_gl();
-            
+
             return jctrue;
         }
         return jcfalse;
+    }
+private:
+    /* stacks */
+
+    /**
+     * シザー状態のスタック
+     */
+    std::list<ScissorContext> scissor_stack;
+
+    /**
+     * ブレンド状態のスタック
+     */
+    std::list<BlendContext> blend_stack;
+
+    /**
+     * ピクセルマスク状態のスタック
+     */
+    std::list<ColormaskContext> colormask_stack;
+public:
+    /**
+     * 現在のシザーパラメータを保存する
+     */
+    inline void pushScissor() {
+        scissor_stack.push_front(scissorContext);
+    }
+
+    /**
+     * 現在のブレンドパラメータを保存する
+     */
+    inline void pushBlendfunc() {
+        blend_stack.push_front(blendContext);
+    }
+
+    /**
+     * 現在のカラーマスクを保存する
+     */
+    inline void pushColorMask() {
+        colormask_stack.push_front(maskContext);
+    }
+
+    /**
+     * 直近に保存したシザーパラメータに戻す
+     */
+    inline void popScissor() {
+        assert(!scissor_stack.empty());
+
+        // 一番上のパラメータを取り出す
+        ScissorContext back_scissor = scissor_stack.front();
+        scissor_stack.pop_front();
+
+        {
+            // 状態を再設定する
+            enableScissor(back_scissor.enable);
+            scissor(back_scissor.box.left, back_scissor.box.top, back_scissor.box.width(), back_scissor.box.height());
+        }
+    }
+
+    /**
+     * 直近に保存したブレンドパラメータを取り出す
+     */
+    inline void popBlendfunc() {
+        assert(!blend_stack.empty());
+
+        // 一番上のパラメータを取り出す
+        BlendContext back_context = blend_stack.front();
+        blend_stack.pop_front();
+
+        // 状態を再設定する
+        {
+            blendEnable(back_context.enable);
+            blendFunc(back_context.src, back_context.dst);
+        }
+    }
+
+    /**
+     * 直近に保存したカラーマスクパラメータを取り出す
+     */
+    inline void popColorMask() {
+        assert(!colormask_stack.empty());
+
+        // 一番上のパラメータを取り出す
+        ColormaskContext back_context = colormask_stack.front();
+        colormask_stack.pop_front();
+
+        // 状態を再設定する
+        {
+            colorMask(back_context.r, back_context.g, back_context.b, back_context.a);
+        }
     }
 
 public:
