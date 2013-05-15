@@ -40,6 +40,11 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     JointApplicationRenderer renderer = null;
 
+    /**
+     * サーフェイスが休止状態だったらtrue
+     */
+    boolean surfaceSuspend = false;
+
     static final String ARG_RENDERING_CLASS = "ARG_RENDERING_CLASS";
 
     /**
@@ -77,6 +82,8 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     @Override
     public void onSurfaceInitializeCompleted(WindowDeviceManager device) {
+        AndroidUtil.log("onSurfaceInitializeCompleted");
+        surfaceSuspend = false;
         renderer.onAppStart();
     }
 
@@ -85,6 +92,8 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     @Override
     public void onSurfaceSurfaceSizeChanged(WindowDeviceManager device, int width, int height) {
+        AndroidUtil.log("onSurfaceSurfaceSizeChanged");
+        surfaceSuspend = false;
         renderer.postSurfaceSize(width, height);
     }
 
@@ -93,8 +102,10 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     @Override
     public void onSurfaceRestored(WindowDeviceManager device) {
+        AndroidUtil.log("onSurfaceRestored");
+        surfaceSuspend = false;
         renderer.postStateChangeRequest(JointApplicationProtocol.State_Running);
-        //      renderer.onAppResume();
+        renderer.onAppResume();
     }
 
     /**
@@ -102,9 +113,19 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     @Override
     public void onSurfaceDestroyBegin(WindowDeviceManager device) {
+        AndroidUtil.log("onSurfaceDestroyBegin");
         if (renderer != null) {
             renderer.postStateChangeRequest(JointApplicationProtocol.State_Paused);
         }
+        surfaceSuspend = true;
+    }
+
+    /**
+     * サーフェイスが休止状態だったらtrueを返す
+     * @return
+     */
+    public boolean isSurfaceSuspend() {
+        return surfaceSuspend;
     }
 
     /**
@@ -113,7 +134,10 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
     @Override
     public void onResume() {
         super.onResume();
-        //        renderer.onAppResume();
+
+        if (!isSurfaceSuspend()) {
+            renderer.onAppResume();
+        }
     }
 
     /**
@@ -136,8 +160,8 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     @Override
     public void onDestroy() {
-        super.onDestroy();
         destroyAppContexts();
+        super.onDestroy();
     }
 
     /**

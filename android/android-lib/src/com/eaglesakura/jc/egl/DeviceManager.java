@@ -148,9 +148,28 @@ public class DeviceManager implements Jointable {
     final native void createNative();
 
     /**
-     * 解放の前処理を行う
+     * デバイスの操作を開始する
      */
+    public void beginOperation() {
+        synchronized (lock) {
+            onNativeBeginOperation();
+        }
+    }
+
+    /**
+     * デバイス操作を終了する
+     */
+    public void endOperation() {
+        synchronized (lock) {
+            onNativeEndOperation();
+        }
+    }
+
     @JCMethod(
               nativeMethod = true)
-    final native void preDestroyNative();
+    native void onNativeBeginOperation();
+
+    @JCMethod(
+              nativeMethod = true)
+    native void onNativeEndOperation();
 }

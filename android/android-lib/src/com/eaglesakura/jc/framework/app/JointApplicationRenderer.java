@@ -67,6 +67,9 @@ public abstract class JointApplicationRenderer implements Jointable {
 
         // メインループを開始する
         startMainLoop();
+
+        // ステートを変更する
+        postStateChangeRequest(JointApplicationProtocol.State_Running);
     }
 
     /**

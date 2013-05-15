@@ -312,7 +312,23 @@ protected:
     }
 
 public:
+    /**
+     * メインループの外部呼び出しを行う
+     */
+    virtual void dispatchMainLoop();
+
+    /**
+     * サーフェイスが作成された
+     */
+    virtual void dispatchSurfaceCreated(MDevice windowDevice);
+
+protected:
     /* アプリライフサイクル */
+
+    /**
+     * レンダリングの休止を求める場合、trueを返す
+     */
+    virtual jcboolean isLoopSleep() const;
 
     /**
      * アプリの実行ステートを変更する
@@ -320,9 +336,9 @@ public:
     virtual void changeAppState();
 
     /**
-     * サーフェイスが作成された
+     * 初期化処理を行う
      */
-    virtual void dispatchSurfaceCreated(MDevice windowDevice);
+    virtual void dispatchInitialize();
 
     /**
      * アプリケーションの休止処理を行う
@@ -345,16 +361,6 @@ public:
      * サーフェイスが廃棄された
      */
     virtual void dispatchDestroy();
-
-    /**
-     * メインループの外部呼び出しを行う
-     */
-    virtual void dispatchMainLoop();
-protected:
-    /**
-     * 初期化処理を行う
-     */
-    virtual void dispatchInitialize();
 
 };
 

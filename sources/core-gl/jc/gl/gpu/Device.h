@@ -13,6 +13,8 @@
 #include    "jc/thread/Thread.h"
 #include    "jc/thread/Mutex.h"
 
+#include    "jc/collection/BitFlags.hpp"
+
 namespace jc {
 namespace gl {
 
@@ -32,12 +34,16 @@ enum EGLMakeCurrent_e {
  * レンダリングデバイスに与えるフラグ情報。
  */
 enum DeviceFlag_e {
+    /**
+     * 一時的にロックを行えなくする
+     * 例えば、ウィンドウの廃棄や再生成を行なっている等の状態
+     */
+    DeviceFlag_NoLock,
 
     /**
-     * 廃棄リクエストが行われた。
-     * 速やかにレンダリング排除を行わなければならない。
+     * 数量管理
      */
-    DeviceFlag_RequestDestroy = 0x1 << 0,
+    DeviceFlag_Num,
 };
 
 class DeviceLock;
@@ -75,7 +81,7 @@ protected:
     /**
      * デバイスに付与されたフラグ
      */
-    u32 flags;
+    BitFlags<DeviceFlag_Num> flags;
 
     /**
      * ロックリクエストを送るためのMutex
@@ -131,7 +137,7 @@ private:
     /**
      * リクエストが占有権を持っている場合はtrueを返す
      */
-    virtual request_id isCurrentRequest(const request_id id) {
+    virtual jcboolean isCurrentRequest(const request_id id) {
         MutexLock lock(request_mutex);
         assert(current_id <= id);
         return current_id == id;
@@ -213,9 +219,10 @@ public:
     /**
      * フラグが設定されている場合、trueを返す。
      */
-    virtual jcboolean hasFlags(const u32 check_flags) const {
-        return has_flag_all(flags, check_flags);
+    virtual jcboolean hasFlag(const DeviceFlag_e flag) const {
+        return flags.isEnable(flag);
     }
+
     /**
      * 管理しているリソースを解放する。
      */
@@ -229,17 +236,17 @@ public:
     }
 
     /**
-     * 管理フラグを追加する。
+     * フラグを追加する
      */
-    virtual void addFlags(const u32 flags_bits) {
-        flags |= flags_bits;
+    virtual void addFlag(const DeviceFlag_e flag) {
+        flags.enable(flag);
     }
 
     /**
      * 管理フラグを削除する。
      */
-    virtual void removeFlags(const u32 flags_bits) {
-        flags = (flags & (~flags_bits));
+    virtual void removeFlag(const DeviceFlag_e flag) {
+        flags.disable(flag);
     }
 
     /**
@@ -271,14 +278,20 @@ public:
     }
 
     /**
-     * デバイスがレンダリング可能な状態であればtrueを返す
+     * ロックが可能だったらtrue
      */
-    virtual jcboolean valid() const {
+    virtual jcboolean lockEnable() const {
         // 必要な状態を持っていなければfalse
-        if (!egl || !surface || !context || hasFlags(DeviceFlag_RequestDestroy)) {
+        if (!egl || !surface || !context) {
             return jcfalse;
         }
 
+        if (flags.isEnable(DeviceFlag_NoLock)) {
+            // ロック不可能フラグが設定されている
+            return jcfalse;
+        }
+
+        // その他は問題ない
         return jctrue;
     }
 

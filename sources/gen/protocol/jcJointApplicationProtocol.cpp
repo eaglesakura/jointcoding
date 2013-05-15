@@ -9,7 +9,6 @@ const ::jc::s32 JointApplicationProtocol::State_Initializing = 0;
 const ::jc::s32 JointApplicationProtocol::State_Running = 1;
 const ::jc::s32 JointApplicationProtocol::State_Paused = 2;
 const ::jc::s32 JointApplicationProtocol::State_Destroyed = 3;
-const ::jc::s32 JointApplicationProtocol::State_Resume = 4;
 const ::jc::s32 JointApplicationProtocol::QueryKey_ApplicationState = 1048576;
 const ::jc::s32 JointApplicationProtocol::QueryKey_RequestSurfaceSpecs = 1048577;
 const ::jc::s32 JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length = 4;

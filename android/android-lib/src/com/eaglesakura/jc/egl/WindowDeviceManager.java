@@ -21,9 +21,11 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
     SurfaceListener listener;
 
     /**
-     * サーフェイス廃棄済みフラグ
+     * ウィンドウサーフェイスとPBufferサーフェイスの入れ替えを行うため、一時的に保持しておく
+     * 
+     * ウィンドウサーフェイスが利用不可能なタイミングでは、PBufferサーフェイスを利用させる。
      */
-    boolean destroyed = false;
+    EGLSurfaceWrapper restoreSurface;
 
     public WindowDeviceManager(EGLConfigChooser configChooser, SurfaceListener listener) {
         super(configChooser);
@@ -36,18 +38,33 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      */
     private void onCreateSurface(Object native_window) {
         synchronized (lock) {
-            // サーフェイスの回復を図る
-            egl.restoreWindowSurface(eglSurface, native_window);
+            beginOperation();
 
-            if (destroyed) {
-                // レストア完了メッセージを送る
-                listener.onSurfaceRestored(this);
+            // レストアフラグを保持しておく
+            boolean restore = (restoreSurface != null);
+
+            if (restoreSurface == null) {
+                // ウィンドウサーフェイスの生成を行う
+                restoreSurface = egl.createWindowSurface(native_window);
             } else {
-                // 初期化完了
-                listener.onSurfaceInitializeCompleted(this);
+                // ウィンドウサーフェイスの復旧を行う
+                egl.restoreWindowSurface(restoreSurface, native_window);
+
             }
 
-            destroyed = false;
+            // native側で参照の変更を行いたくないため、SDK側で
+            // サーフェイスの中身を入れ替える
+            eglSurface.swap(restoreSurface);
+
+            if (!restore) {
+                // 初期化完了
+                listener.onSurfaceInitializeCompleted(this);
+            } else {
+                // レストア完了メッセージを送る
+                listener.onSurfaceRestored(this);
+            }
+
+            endOperation();
         }
     }
 
@@ -72,11 +89,17 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      */
     void onSurfaceDestroyed() {
         synchronized (lock) {
-            if (eglSurface != null) {
-                listener.onSurfaceDestroyBegin(this);
-                egl.restorePBufferSurface(eglSurface, 1, 1);
-            }
-            destroyed = true;
+            beginOperation();
+
+            listener.onSurfaceDestroyBegin(this);
+
+            // 古いウィンドウサーフェイスは廃棄する
+            eglSurface.dispose();
+
+            // サーフェイスの中身をPBufferに入れ替える
+            eglSurface.swap(restoreSurface);
+
+            endOperation();
         }
     }
 
@@ -156,6 +179,12 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
             // リスナを呼び出す
             listener.onSurfaceDestroyBegin(this);
 
+            // 一時的に保持していたバッファを解放する
+            {
+                restoreSurface.dispose();
+                restoreSurface = null;
+            }
+
             // 解放処理を行う
             super.dispose();
         }
@@ -173,7 +202,6 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      * ウィンドウサーフェイスのライフサイクル処理に合わせたコールバックを行う
      */
     public interface SurfaceListener {
-
         /**
          * EGL初期化が完了した。
          * 呼び出し後、onEGLResume()がよばれる。

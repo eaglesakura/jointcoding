@@ -121,4 +121,41 @@ public class EGLSurfaceWrapper {
     public boolean valid() {
         return eglSurface != null;
     }
+
+    /**
+     * 中身を入れ替える
+     * WindowSurfaceと仮バインド用のPBufferSurfaceを入れ替えるために利用する
+     */
+    public void swap(EGLSurfaceWrapper surface) {
+        synchronized (this) {
+            synchronized (surface) {
+
+                // EGLSurface入れ替え
+                {
+                    final EGLSurface tempSurface = this.eglSurface;
+                    this.eglSurface = surface.eglSurface;
+                    surface.eglSurface = tempSurface;
+                }
+
+                // ウィンドウサイズ入れ替え
+                {
+                    final int tempWidth = this.width;
+                    this.width = surface.width;
+                    surface.width = tempWidth;
+                }
+                {
+                    final int tempHeight = this.height;
+                    this.height = surface.height;
+                    surface.height = tempHeight;
+                }
+
+                // ウィンドウサーフェイスフラグ入れ替え
+                {
+                    final boolean tempWindowSurface = this.windowSurface;
+                    this.windowSurface = surface.windowSurface;
+                    surface.windowSurface = tempWindowSurface;
+                }
+            }
+        }
+    }
 }

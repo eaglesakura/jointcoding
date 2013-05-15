@@ -43,16 +43,33 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_createNative(JN
 }
 
 // main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_preDestroyNative(JNIEnv *env, jobject _this) {
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_onNativeBeginOperation(JNIEnv *env, jobject _this) {
     // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_egl_DeviceManager_preDestroyNative");
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_egl_DeviceManager_beginOperation");
 
-    // デバイスに廃棄フラグを追加する
-    MDevice device = joint_context(_this, SdkDeviceManagerContext)->getDevice();
-    device->addFlags(DeviceFlag_RequestDestroy);
+    MDevice device = SdkDeviceManagerContext::getDeviceFromSdkDeviceManager(_this);
 
-    // デバイスの同期待を行う
-    MutexLock lock(device->getGPUMutex());
+    if (device) {
+        // デバイスにロック禁止フラグを追加する
+        device->addFlag(DeviceFlag_NoLock);
+        // デバイスの同期待を行う
+        MutexLock lock(device->getGPUMutex());
+    }
+}
+
+// main
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_onNativeEndOperation(JNIEnv *env, jobject _this) {
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_egl_DeviceManager_endOperation");
+
+    MDevice device = SdkDeviceManagerContext::getDeviceFromSdkDeviceManager(_this);
+
+    if (device) {
+        // デバイスにロック禁止フラグを終了する
+        device->removeFlag(DeviceFlag_NoLock);
+        // デバイスの同期待を行う
+        MutexLock lock(device->getGPUMutex());
+    }
 }
 
 }

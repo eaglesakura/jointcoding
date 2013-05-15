@@ -34,7 +34,12 @@ public:
      * デバイスを取得する
      */
     static MDevice getDeviceFromSdkDeviceManager(jobject jDeviceManager) {
-        return joint_context(jDeviceManager, SdkDeviceManagerContext)->device;
+        SdkDeviceManagerContext *context = joint_context(jDeviceManager, SdkDeviceManagerContext);
+        if(context) {
+            return context->device;
+        } else {
+            return MDevice();
+        }
     }
 };
 
