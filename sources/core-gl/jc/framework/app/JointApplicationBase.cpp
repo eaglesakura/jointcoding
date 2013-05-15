@@ -99,20 +99,7 @@ jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const
         surfaceSize.y = params[1];
         return jctrue;
     } else if (key->main_key == JointApplicationProtocol::PostKey_StateRequest) {
-        // ステート変更のリクエストを送る
-        assert(params && params_length >= 1);
-
-        MutexLock lock(query_mutex);
-
-        if (isStateDestroyed() || pendingState == JointApplicationProtocol::State_Destroyed) {
-            // 既に廃棄リクエストが送られているならコレ以上何も送る必要はない
-            return jctrue;
-        }
-
-        // 保留ステートに上書きする
-        pendingState = params[0];
-
-        return jctrue;
+        return dispatchOnStateChangeRequest(key, params, params_length);
     }
 
     jclogf("drop post main(%d) sub(%d)", key->main_key, key->sub_key);
@@ -247,6 +234,26 @@ void JointApplicationBase::dispatchInitialize() {
 }
 
 /**
+ * ステート変更リクエストが送られた
+ */
+jcboolean JointApplicationBase::dispatchOnStateChangeRequest(const ApplicationQueryKey *key, const s32 *params, const s32 params_length) {
+    // ステート変更のリクエストを送る
+    assert(params && params_length >= 1);
+
+    MutexLock lock(query_mutex);
+
+    if (isStateDestroyed() || pendingState == JointApplicationProtocol::State_Destroyed) {
+        // 既に廃棄リクエストが送られているならコレ以上何も送る必要はない
+        return jctrue;
+    }
+
+    // 保留ステートに上書きする
+    pendingState = params[0];
+
+    return jctrue;
+}
+
+/**
  * アプリケーションの休止処理を行う
  * Activityの休止等
  */
@@ -266,7 +273,7 @@ void JointApplicationBase::dispatchResume() {
  * レンダリングの休止を求める場合、trueを返す
  */
 jcboolean JointApplicationBase::isLoopSleep() const {
-    if(!device->lockEnable()) {
+    if (!device->lockEnable()) {
         // ロックが不可能な状態だったらスリープを継続させる
         return jctrue;
     }
@@ -318,6 +325,12 @@ void JointApplicationBase::dispatchMainLoop() {
                 }
             } catch (EGLException &e) {
                 jcloge(e);
+                if (handleError((EGLException_e) e.getType()) == ApplicationRestoreStatus_Abort) {
+                    // レンダリングループを抜ける
+                    jcalert("Abort Main Loop");
+                    break;
+                }
+
                 Thread::sleep(10);
             }
         }

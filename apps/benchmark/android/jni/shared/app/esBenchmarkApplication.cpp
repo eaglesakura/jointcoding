@@ -22,7 +22,7 @@ BenchmarkApplication::~BenchmarkApplication() {
  */
 SurfaceSpecs BenchmarkApplication::getRenderingSurfaceSpecs() const {
     SurfaceSpecs specs;
-    specs.extensions.enable(SurfaceSupecExtension_AndroidTextureView);
+//    specs.extensions.enable(SurfaceSupecExtension_AndroidTextureView);
     return specs;
 }
 
