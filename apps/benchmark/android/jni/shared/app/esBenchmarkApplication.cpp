@@ -37,19 +37,19 @@ void BenchmarkApplication::onAppInitialize() {
 }
 
 void BenchmarkApplication::loadTexture(MDevice subDevice) {
-    try {
-        jclog("lock start");
-        DeviceLock lock(subDevice, jctrue);
-
-        Thread::sleep(1000);
-        jclog("load start");
-        texture = TextureImage::decode(subDevice, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
-
-        Thread::sleep(500);
-        jclog("load finish");
-    } catch (Exception &e) {
-        jcloge(e);
-    }
+//    try {
+//        jclog("lock start");
+//        DeviceLock lock(subDevice, jctrue);
+//
+//        Thread::sleep(1000);
+//        jclog("load start");
+//        texture = TextureImage::decode(subDevice, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
+//
+//        Thread::sleep(500);
+//        jclog("load finish");
+//    } catch (Exception &e) {
+//        jcloge(e);
+//    }
 }
 
 /**

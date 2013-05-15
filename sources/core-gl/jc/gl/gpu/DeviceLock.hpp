@@ -138,7 +138,7 @@ public:
             if(!isLockCompleted()) {
                 unlockDevice();
                 if(device->hasFlag(DeviceFlag_NoLock)) {
-                    throw create_exception_mt(EGLException, EGLException_DeviceLockFail, "Device lock error...");
+                    throw create_exception_t(EGLException, EGLException_DeviceLockFail);
                 } else {
                     throw create_exception_t(EGLException, EGLException_ContextAttachFailed);
                 }

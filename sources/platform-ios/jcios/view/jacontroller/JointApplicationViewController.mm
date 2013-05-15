@@ -8,6 +8,9 @@
 
 #import "JointApplicationViewController.h"
 
+// FIXME 後で直す
+#include "benchmark.hpp"
+
 @interface JointApplicationViewController ()
 /**
  * メインループ処理
@@ -30,15 +33,25 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // アプリコンテキストを生成する
+    [self createApplicationContext];
 
     // フルスクリーンでViewを作成
     self->_surface = [[JCOpenGLES20View alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
     [self setView:_surface];
     _surface.delegate = self;
+    
 }
 
 // 解放処理を行う
 - (void) viewDidDisappear:(BOOL)animated {
+    if(application) {
+        ApplicationQueryKey key;
+        key.main_key = JointApplicationProtocol::PostKey_StateRequest;
+        application->postParams(&key, &JointApplicationProtocol::State_Destroyed, 1);
+    }
+    
     [super viewDidDisappear:animated];
 }
 
@@ -51,12 +64,18 @@
     
     // アプリ初期化を行わせる
     @synchronized(self) {
-        // アプリコンテキストを生成する
-        [self createApplicationContext];
+        // アプリにデバイスを渡す
+        application->dispatchSurfaceCreated(_surface.device);
         
         // メインスレッドを開始する
         [self performSelectorInBackground:@selector(appMainLoop:) withObject:self];
 
+        // アプリを開始する
+        {
+            ApplicationQueryKey key;
+            key.main_key = JointApplicationProtocol::PostKey_StateRequest;
+            application->postParams(&key, &JointApplicationProtocol::State_Running, 1);
+        }
     }
 }
 
@@ -68,10 +87,6 @@
     
     MDevice device = _surface.device;
     assert(device);
-    
-    // 一時的にデバイスのロックを行えなくする
-    device->addFlag(DeviceFlag_NoLock);
-    MutexLock lock(device->getGPUMutex());
 }
 
 /**
@@ -82,6 +97,10 @@
     
     MDevice device = _surface.device;
     assert(device);
+    
+    // 一時的にデバイスのロックを行えなくする
+    device->addFlag(DeviceFlag_NoLock);
+    MutexLock lock(device->getGPUMutex());
     
     // リサイズ命令を送信
     const Vector2i surfaceSize = device->getSurfaceArea().wh();
@@ -102,7 +121,7 @@
 }
 
 - (void) createApplicationContext {
-    assert(false);
+    self->application.reset(new es::BenchmarkApplication());
 }
 
 

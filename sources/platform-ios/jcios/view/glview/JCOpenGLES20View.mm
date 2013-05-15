@@ -113,7 +113,7 @@ using namespace ios;
             eglSurface->onResized();
             
             // コンテキストを同期する
-            eglContext->getState()->syncContext();
+//            eglContext->getState()->syncContext();
         }
     }catch( EGLException &e) {
         jcloge(e);
