@@ -251,7 +251,7 @@ void JointApplicationBase::dispatchInitialize() {
  * Activityの休止等
  */
 void JointApplicationBase::dispatchPause() {
-    onAppResume();
+    onAppPause();
 }
 
 /**

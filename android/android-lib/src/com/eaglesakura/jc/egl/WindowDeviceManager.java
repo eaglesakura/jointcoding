@@ -89,17 +89,20 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      */
     void onSurfaceDestroyed() {
         synchronized (lock) {
-            beginOperation();
+            if (restoreSurface != null) {
+                beginOperation();
 
-            listener.onSurfaceDestroyBegin(this);
+                listener.onSurfaceDestroyBegin(this);
 
-            // 古いウィンドウサーフェイスは廃棄する
-            eglSurface.dispose();
+                // 古いウィンドウサーフェイスは廃棄する
+                eglSurface.dispose();
 
-            // サーフェイスの中身をPBufferに入れ替える
-            eglSurface.swap(restoreSurface);
+                // サーフェイスの中身をPBufferに入れ替える
+                eglSurface.swap(restoreSurface);
 
-            endOperation();
+                endOperation();
+            }
+
         }
     }
 
@@ -180,7 +183,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
             listener.onSurfaceDestroyBegin(this);
 
             // 一時的に保持していたバッファを解放する
-            {
+            if (restoreSurface != null) {
                 restoreSurface.dispose();
                 restoreSurface = null;
             }

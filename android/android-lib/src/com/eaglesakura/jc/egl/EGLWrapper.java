@@ -12,7 +12,6 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.view.SurfaceHolder;
 
-import com.eaglesakura.jc.jni.context.NativeContext;
 import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -43,26 +42,6 @@ public class EGLWrapper {
      */
     EGLConfig eglConfig = null;
 
-    /**
-     * システムがデフォルトで使用しているEGLDisplayオブジェクト
-     */
-    EGLDisplay systemDisplay = null;
-
-    /**
-     * システムがデフォルトで使用しているEGLSurface(Read)
-     */
-    EGLSurface systemReadSurface = null;
-
-    /**
-     * システムがデフォルトで使用しているEGLSurface(Draw)
-     */
-    EGLSurface systemDrawSurface = null;
-
-    /**
-     * システムがデフォルトで使用しているコンテキスト
-     */
-    EGLContext systemContext = null;
-
     public EGLWrapper() {
         egl = (EGL10) EGLContext.getEGL();
         eglDisplay = egl.eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -82,8 +61,7 @@ public class EGLWrapper {
     public void initialize(final EGLConfigChooser chooser) {
         synchronized (lock) {
             // コンフィグ取得
-            stashContext();
-            eglConfig = chooser.chooseConfig(egl, systemDisplay != EGL_NO_DISPLAY ? systemDisplay : eglDisplay);
+            eglConfig = chooser.chooseConfig(egl, eglDisplay);
             if (eglConfig == null) {
                 throw new RuntimeException("chooseConfig");
             }
@@ -244,30 +222,13 @@ public class EGLWrapper {
                 return;
             }
 
+            AndroidUtil.log(String.format("EGLWrapper#dispose(%d)", hashCode()));
             if (eglDisplay != null) {
                 egl.eglTerminate(eglDisplay);
                 eglDisplay = null;
             }
 
             egl = null;
-        }
-    }
-
-    /**
-     * システムコンテキストを保存する
-     */
-    private void stashContext() {
-        try {
-            // システムのデフォルトオブジェクトを取り出す
-            systemDisplay = egl.eglGetCurrentDisplay();
-            systemReadSurface = egl.eglGetCurrentSurface(EGL_READ);
-            systemDrawSurface = egl.eglGetCurrentSurface(EGL_DRAW);
-            systemContext = egl.eglGetCurrentContext();
-        } catch (Exception e) {
-            systemDisplay = EGL_NO_DISPLAY;
-            systemReadSurface = EGL_NO_SURFACE;
-            systemDrawSurface = EGL_NO_SURFACE;
-            systemContext = EGL_NO_CONTEXT;
         }
     }
 
@@ -281,28 +242,12 @@ public class EGLWrapper {
         synchronized (lock) {
             boolean result = false;
             if (context != null && surface != null) {
-                if (NativeContext.isUIThread()) {
-                    stashContext();
-                }
-
                 EGLContext eglContext = context.getContext();
                 EGLSurface eglSurface = surface.getSurface();
 
                 result = egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
             } else if (context == null && surface == null) {
-                EGLContext eglContext = EGL_NO_CONTEXT;
-                EGLSurface eglReadSurface = EGL_NO_SURFACE;
-                EGLSurface eglDrawSurface = EGL_NO_SURFACE;
-                EGLDisplay eglDisplay = this.eglDisplay;
-
-                // UIスレッドならば書き戻す
-                if (NativeContext.isUIThread()) {
-                    eglDisplay = systemDisplay;
-                    eglReadSurface = systemReadSurface;
-                    eglDrawSurface = systemDrawSurface;
-                    eglContext = systemContext;
-                }
-                result = egl.eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext);
+                result = egl.eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
             }
 
             return result;
@@ -323,6 +268,7 @@ public class EGLWrapper {
                 AndroidUtil.log("postFrontBuffer(targetSurface != currentSurface)");
                 return false;
             }
+
             if (!surface.windowSurface) {
                 // ウィンドウサーフェイス以外にpostはできなくするが、OKを返す
                 return true;

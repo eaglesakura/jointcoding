@@ -3,6 +3,7 @@ package com.eaglesakura.jc.egl;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
 
+import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -42,6 +43,7 @@ public class EGLContextWrapper {
             return;
         }
 
+        AndroidUtil.log(String.format("EGLContextWrapper#dispose(%d)", hashCode()));
         EGL10 egl = this.egl.getEGL();
         egl.eglDestroyContext(this.egl.getDisplay(), eglContext);
         eglContext = null;
