@@ -71,7 +71,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 
 // main
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeMainLoop(JNIEnv *env, jobject _this) {
-    joint_context(_this, JointApplicationBase)->dispatchMainLoop();
+    joint_context(_this, JointApplicationBase)->dispatchMainloop();
 }
 
 }

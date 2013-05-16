@@ -107,10 +107,45 @@ struct ApplicationQueryKey {
         main_key = sub_key = 0;
     }
 
-    ApplicationQueryKey(s32 main_key, s32 sub_key) {
+    ApplicationQueryKey(s32 main_key, s32 sub_key = 0) {
         this->main_key = main_key;
         this->sub_key = sub_key;
     }
+};
+
+/**
+ * アプリのタスクを定義する
+ */
+struct ApplicationTaskContext {
+    /**
+     * タスクの一意のID
+     */
+    s32 uniqueId;
+
+    /**
+     * ユーザーが自由に使える領域
+     */
+    s32 user_data;
+
+    /**
+     * スレッド識別用のID
+     */
+    ThreadID threadId;
+
+    ApplicationTaskContext() {
+        uniqueId = 0;
+        user_data = 0;
+    }
+};
+
+/**
+ * システムタスク
+ */
+enum SystemTask_e {
+    /**
+     * メインループを示す
+     */
+    SystemTask_Mainloop = 0x00010000,
 };
 
 /**
@@ -315,19 +350,26 @@ protected:
     /* フレームワークライフサイクル */
 
     /**
-     * アプリ初期化を行わせる
+     * プラットフォームとの接続が完了した
+     */
+    virtual void onBindPlatform() {
+
+    }
+
+    /**
+     * メインループでアプリ初期化を行わせる
      * メソッド呼び出し時点でデバイスロック済み。
      */
     virtual void onAppInitialize() = 0;
 
     /**
-     * アプリのサーフェイスリサイズを行わせる
+     * メインループでアプリのサーフェイスリサイズを行わせる
      * メソッド呼び出し時点でデバイスロック済み。
      */
     virtual void onAppSurfaceResized(const s32 width, const s32 height) = 0;
 
     /**
-     * メインループを行わせる
+     * メインループ更新を行わせる
      * メソッド呼び出し時点でデバイスロック済み
      */
     virtual void onAppMainUpdate() = 0;
@@ -383,7 +425,7 @@ public:
     /**
      * メインループの外部呼び出しを行う
      */
-    virtual void dispatchMainLoop();
+    virtual void dispatchMainloop();
 
     /**
      * サーフェイスが作成された
@@ -392,8 +434,15 @@ public:
 
     /**
      * プラットフォームの接続を行う
+     * このメソッド呼び出し後、プラットフォーム固有のAPIを利用できる
      */
     virtual void dispatchBindPlatform(const MPlatformContext context);
+
+    /**
+     * 新規タスクを実行する。
+     * 実行される度に新たなスレッドとして呼び出される。
+     */
+    virtual void dispatchTask(const ApplicationTaskContext &task);
 
 protected:
     /* アプリライフサイクル */

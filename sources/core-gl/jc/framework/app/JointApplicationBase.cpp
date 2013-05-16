@@ -54,7 +54,8 @@ jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 
                     result[index] = SurfacePixelFormatProtocol::RGBA8;
                     break;
                 default:
-                    jcalertf("unsupported pixel format(%d)", specs.surfaceFormat);
+                    jcalertf("unsupported pixel format(%d)", specs.surfaceFormat)
+                    ;
                     assert(false);
                     break;
             }
@@ -118,6 +119,27 @@ void JointApplicationBase::dispatchSurfaceCreated(MDevice device) {
  */
 void JointApplicationBase::dispatchBindPlatform(const MPlatformContext context) {
     this->platformContext = context;
+}
+
+/**
+ * 新規タスクを実行する。
+ * 実行される度に新たなスレッドとして呼び出される。
+ */
+void JointApplicationBase::dispatchTask(const ApplicationTaskContext &task) {
+    jclogf("new thread(%s)", task.threadId.toString().c_str());
+
+    switch (task.uniqueId) {
+        case SystemTask_Mainloop: {
+            // システムがデフォルトで用意したタスクを選別する
+            dispatchMainloop();
+            break;
+        }
+        default: {
+            // その他のタスクのハンドルはアプリに任せる
+
+            break;
+        }
+    }
 }
 
 /**
@@ -302,7 +324,7 @@ jcboolean JointApplicationBase::isLoopSleep() const {
 /**
  * メインループの外部呼び出しを行う
  */
-void JointApplicationBase::dispatchMainLoop() {
+void JointApplicationBase::dispatchMainloop() {
     assert(device);
 
     while (!isStateDestroyed()) {
