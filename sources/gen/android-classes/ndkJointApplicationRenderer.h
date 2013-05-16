@@ -27,10 +27,13 @@ public:
     static jboolean queryParams_(jobject _this, jint int_0, jint int_1, jintArray int_array_2);
     virtual void onNativeInitialize();
     static void onNativeInitialize_(jobject _this);
-    virtual jobject getNativePointer_unsafe(jint key);
-    static jobject getNativePointer_unsafe_(jobject _this, jint key);
     virtual jboolean postParams(jint int_0, jint int_1, jintArray int_array_2);
     static jboolean postParams_(jobject _this, jint int_0, jint int_1, jintArray int_array_2);
+<<<<<<< HEAD
+=======
+    virtual jobject getNativePointer_unsafe(jint key);
+    static jobject getNativePointer_unsafe_(jobject _this, jint key);
+>>>>>>> スレッドの開始を共通化
     virtual jobject getWindowDevice_unsafe();
     static jobject getWindowDevice_unsafe_(jobject _this);
     virtual void startNewtask(jint taskId, jint userData);
