@@ -3,7 +3,7 @@ package com.eaglesakura.jc.framework.context;
 import android.app.Application;
 
 import com.eaglesakura.jc.JointCoding;
-import com.eaglesakura.jc.sample.R;
+import com.eaglesakura.jc.R;
 
 public class JointApplication extends Application {
 
