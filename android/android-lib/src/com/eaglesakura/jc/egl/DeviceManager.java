@@ -127,13 +127,10 @@ public class DeviceManager implements Jointable {
 
     /**
      * デバイスの完全な解放処理を行う
+     * 既にNDK側でDeviceを得ている場合は解放しても問題ない
      */
     public void dispose() {
         synchronized (lock) {
-            // ネイティブ側の廃棄フラグを追加する
-            // この状態で既にデバイスロックは行えなくなる
-            //            preDestroyNative();
-
             if (ndkDevice != null) {
                 ndkDevice.release();
             }

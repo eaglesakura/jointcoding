@@ -18,7 +18,7 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeInitialize(JNIEnv *env, jobject _this) {
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeInitialize");
-    jobject jDeviceManager = JointApplicationRenderer::getDeviceManager_unsafe_(_this);
+    jobject jDeviceManager = JointApplicationRenderer::getWindowDevice_unsafe_(_this);
     assert(jDeviceManager);
     {
         // レンダリングデバイスを得る
@@ -69,9 +69,14 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 
 }
 
-// main
-JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeMainLoop(JNIEnv *env, jobject _this) {
-    joint_context(_this, JointApplicationBase)->dispatchMainloop();
+
+// 非同期タスクの開始を行う
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeNewtask(JNIEnv *env, jobject _this, jint uniqueId, jint user_data) {
+
+    ApplicationTaskContext task;
+    task.uniqueId = uniqueId;
+    task.user_data = user_data;
+    joint_context(_this, JointApplicationBase)->dispatchTask(task);
 }
 
 }

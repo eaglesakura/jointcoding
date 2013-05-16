@@ -3,9 +3,8 @@ package com.eaglesakura.jc.framework.app;
 import com.eaglesakura.jc.Jointable;
 import com.eaglesakura.jc.egl.DeviceManager;
 import com.eaglesakura.jc.egl.WindowDeviceManager;
-import com.eaglesakura.jc.framework.app.thread.EGLThread;
+import com.eaglesakura.jc.framework.app.thread.JointThread;
 import com.eaglesakura.jc.jni.Pointer;
-import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.jcprotocol.framework.JointApplicationProtocol;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -104,14 +103,6 @@ public abstract class JointApplicationRenderer implements Jointable {
     }
 
     /**
-     * Nativeのクラスが有効である場合true
-     * @return
-     */
-    protected boolean validNative() {
-        return appContext != null;
-    }
-
-    /**
      * レンダリングステートを取得する
      * @return
      */
@@ -162,8 +153,17 @@ public abstract class JointApplicationRenderer implements Jointable {
      * @return
      */
     @JCMethod
-    public final DeviceManager getDeviceManager() {
+    public final DeviceManager getWindowDevice() {
         return windowDevice;
+    }
+
+    /**
+     * ウィンドウデバイスのスレイブとなるデバイスを生成する
+     * @return
+     */
+    @JCMethod
+    public final DeviceManager createSlaveDevice() {
+        return windowDevice.createSlaveDevice();
     }
 
     /**
@@ -205,7 +205,7 @@ public abstract class JointApplicationRenderer implements Jointable {
      * @param JointApplicationProtocol_State
      */
     public void postStateChangeRequest(int JointApplicationProtocol_State) {
-        if (validNative()) {
+        if (appContext != null) {
             postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
                 JointApplicationProtocol_State
             });
@@ -227,33 +227,46 @@ public abstract class JointApplicationRenderer implements Jointable {
     final native void onNativeInitialize();
 
     /**
+     * 新規タスクの生成を伝える
+     * @param taskId
+     * @param userData
+     */
+    @JCMethod(
+              nativeMethod = true)
+    native void onNativeNewtask(int taskId, int userData);
+
+    /**
+     * 新規の処理タスクを生成する
+     * @param taskId
+     * @param userData
+     */
+    @JCMethod
+    public void startNewtask(final int taskId, final int userData) {
+
+        // スレッド名を決定する
+        String name = null;
+        if (taskId == JointApplicationProtocol.SystemTask_Mainloop) {
+            name = "jctask-mainloop";
+        } else {
+            name = "jctask-" + String.format("ID(0x%x)", taskId);
+        }
+
+        // 新規スレッドを作成する
+        final JointThread thread = createThread(name, new JointThread.Task() {
+            @Override
+            public void run(JointThread thread) {
+                // 裏スレッドからタスクをコールバックする
+                thread.getRenderer().onNativeNewtask(taskId, userData);
+            }
+        });
+        thread.start();
+    }
+
+    /**
      * メインループを開始する
      */
     protected void startMainLoop() {
-        //        Thread thread = new Thread() {
-        //            @Override
-        //            public void run() {
-        //                onMainThread();
-        //            }
-        //        };
-        //        thread.setName("jc-render");
-        //        thread.start();
-
-        EGLThread.Task task = new EGLThread.Task() {
-            @Override
-            public void run(EGLThread thread) {
-                // メインループを実行させる
-                onNativeMainLoop();
-
-                // レンダリングが終了したら何もしない
-                AndroidUtil.log("abort Rendering");
-            }
-        };
-
-        EGLThread thread = newThread(false, "jc-render", task);
-
-        // メインスレッドを開始する
-        thread.start();
+        startNewtask(JointApplicationProtocol.SystemTask_Mainloop, 0);
     }
 
     /**
@@ -276,21 +289,15 @@ public abstract class JointApplicationRenderer implements Jointable {
      * @param threadName
      * @return
      */
-    protected EGLThread newThread(boolean slave, String threadName, EGLThread.Task task) {
-        DeviceManager device;
-        if (slave) {
-            device = windowDevice.createSlaveDevice();
-        } else {
-            device = windowDevice;
-        }
-
-        EGLThread thread = new EGLThread(this, device, retainAppContextPointer(), task);
+    protected JointThread createThread(String threadName, JointThread.Task task) {
+        JointThread thread = new JointThread(this, retainAppContextPointer(), task);
         thread.setName(threadName);
         return thread;
     }
 
     /**
      * Native Contextを作成する。
+     * どのようなApplicationがNative側で生成されるかはこの実装に任せる
      */
     protected abstract void createNativeContext();
 
