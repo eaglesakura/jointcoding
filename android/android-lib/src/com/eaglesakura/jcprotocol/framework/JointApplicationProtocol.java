@@ -78,5 +78,4 @@ public interface JointApplicationProtocol {
      */
     @JCField
     public static final int SystemTask_Mainloop = 0x01000000;
-
 }

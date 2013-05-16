@@ -355,6 +355,14 @@ public:
     virtual void dispose();
 
     /**
+     * 配下にあるデバイスを移動する
+     */
+    virtual void resetDevice(MDevice device) {
+        this->state = device->getState();
+        bindUnit = state->getBindedTextureUnit(target, texture.get());
+    }
+
+    /**
      * テクスチャへのデコードを行う。
      * uriにはJpegテクスチャへのURIを指定する。
      *

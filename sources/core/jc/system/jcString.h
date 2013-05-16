@@ -7,6 +7,7 @@
 #ifndef JCSTRING_H_
 #define JCSTRING_H_
 
+#include    "jointcoding.h"
 #include    "jc/system/Macro.h"
 #include    "jc/util/ImplCapsule.h"
 #include    <vector>

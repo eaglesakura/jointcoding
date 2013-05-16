@@ -8,6 +8,7 @@
 #ifndef EGLLOG_H_
 #define EGLLOG_H_
 
+#include    <string.h>
 #include    "jc/system/Macro.h"
 
 // SmartPtrクラスのログを出力

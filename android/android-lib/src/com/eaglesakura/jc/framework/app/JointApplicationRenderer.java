@@ -63,12 +63,6 @@ public abstract class JointApplicationRenderer implements Jointable {
     public void onAppStart() {
         // 初期化を行わせる
         onNativeInitialize();
-
-        //        // メインループを開始する
-        //        startMainLoop();
-        //
-        //        // ステートを変更する
-        //        postStateChangeRequest(JointApplicationProtocol.State_Running);
     }
 
     /**
@@ -95,7 +89,6 @@ public abstract class JointApplicationRenderer implements Jointable {
             appContext.release();
             appContext = null;
         }
-
         if (windowDevice != null) {
             windowDevice.dispose();
             windowDevice = null;
@@ -262,10 +255,6 @@ public abstract class JointApplicationRenderer implements Jointable {
         thread.start();
     }
 
-    /**
-     * アプリコンテキストポインタを取得する
-     * @return
-     */
     protected Pointer retainAppContextPointer() {
         synchronized (lock) {
             Pointer result = appContext;
