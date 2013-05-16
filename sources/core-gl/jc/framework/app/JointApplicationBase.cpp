@@ -126,14 +126,14 @@ void JointApplicationBase::dispatchBindPlatform(const MPlatformContext context) 
  * 実行される度に新たなスレッドとして呼び出される。
  */
 void JointApplicationBase::dispatchTask(const ApplicationTaskContext &task) {
-    jclogf("new thread(%s)", task.threadId.toString().c_str());
-
+    jclogf("start task(%s)", task.threadId.toString().c_str());
     if (task.uniqueId == JointApplicationProtocol::SystemTask_Mainloop) {
         // システムがデフォルトで用意したタスクを選別する
         dispatchMainloop();
     } else {
         // FIXME その他のタスクのハンドルはアプリに任せる
     }
+    jclogf("end task(%s)", task.threadId.toString().c_str());
 }
 
 /**
