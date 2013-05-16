@@ -72,4 +72,11 @@ public interface JointApplicationProtocol {
     @JCField
     public static final int PostKey_StateRequest = QueryKey_Reserved + 1;
 
+    /**
+     * デフォルトで用意するタスク
+     * メインループ用
+     */
+    @JCField
+    public static final int SystemTask_Mainloop = 0x01000000;
+
 }

@@ -128,17 +128,11 @@ void JointApplicationBase::dispatchBindPlatform(const MPlatformContext context) 
 void JointApplicationBase::dispatchTask(const ApplicationTaskContext &task) {
     jclogf("new thread(%s)", task.threadId.toString().c_str());
 
-    switch (task.uniqueId) {
-        case SystemTask_Mainloop: {
-            // システムがデフォルトで用意したタスクを選別する
-            dispatchMainloop();
-            break;
-        }
-        default: {
-            // その他のタスクのハンドルはアプリに任せる
-
-            break;
-        }
+    if (task.uniqueId == JointApplicationProtocol::SystemTask_Mainloop) {
+        // システムがデフォルトで用意したタスクを選別する
+        dispatchMainloop();
+    } else {
+        // FIXME その他のタスクのハンドルはアプリに任せる
     }
 }
 
