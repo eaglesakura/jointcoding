@@ -363,8 +363,8 @@ public:
      * ウィンドウサイズを取得する
      */
     virtual Vector2i getWindowSize() const {
-        assert(device);
-        return device->getSurfaceArea().wh();
+        assert(platformContext);
+        return getWindowDevice()->getSurfaceArea().wh();
     }
 
     /**

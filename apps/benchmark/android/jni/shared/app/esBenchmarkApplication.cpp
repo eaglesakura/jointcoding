@@ -32,8 +32,8 @@ SurfaceSpecs BenchmarkApplication::getRenderingSurfaceSpecs() const {
 void BenchmarkApplication::onAppInitialize() {
     jclogf("onAppInitialize 0x%x", this);
 
-    getDevice()->getState()->blendEnable(jctrue);
-    getDevice()->getState()->blendFunc(GLBlendType_Alpha);
+    getWindowDevice()->getState()->blendEnable(jctrue);
+    getWindowDevice()->getState()->blendFunc(GLBlendType_Alpha);
 }
 
 void BenchmarkApplication::loadTexture(MDevice subDevice) {
@@ -73,7 +73,7 @@ void BenchmarkApplication::onAppMainUpdate() {
  * フロントバッファ転送もメソッド内で行わせる。
  */
 void BenchmarkApplication::onAppMainRendering() {
-    MGLState state = getDevice()->getState();
+    MGLState state = getWindowDevice()->getState();
     {
 //        state->clearColorf(0, 0, (float)(rand() % 0xFF) / 255.0f, 0);
         state->clearColorf(0, 1, 1, 1);
@@ -85,7 +85,7 @@ void BenchmarkApplication::onAppMainRendering() {
         spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
 
         if (texture) {
-            texture->resetDevice(device);
+            texture->resetDevice(getWindowDevice());
             spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
 
             static float rotate = 0;
@@ -93,7 +93,7 @@ void BenchmarkApplication::onAppMainRendering() {
         }
     }
 
-    device->postFrontBuffer();
+    getWindowDevice()->postFrontBuffer();
 }
 
 /**

@@ -12,7 +12,7 @@ using namespace boost;
 
 namespace jc {
 
-MutexLock::MutexLock(jc::Mutex &mtx) {
+MutexLock::MutexLock(const jc::Mutex &mtx) {
     this->mutex = mtx.mutex;
     nativeLock = (new native_lock(mtx.mutex.as<native_mutex>()));
 }

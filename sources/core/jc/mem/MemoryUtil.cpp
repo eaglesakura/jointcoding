@@ -5,7 +5,7 @@
  */
 
 #include    "jc/mem/MemoryUtil.h"
-#include    "string.h"
+#include    <string.h>
 
 namespace jc {
 

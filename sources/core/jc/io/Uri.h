@@ -9,7 +9,7 @@
 #define URI_H_
 
 #include	"jointcoding.h"
-#include    "jc/system/String.h"
+#include    "jc/system/jcString.h"
 
 namespace jc {
 

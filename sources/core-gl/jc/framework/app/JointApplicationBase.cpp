@@ -18,10 +18,8 @@ JointApplicationBase::JointApplicationBase() {
 }
 
 JointApplicationBase::~JointApplicationBase() {
-    if (device) {
-        device->dispose();
-        device.reset();
-    }
+    // 明示的にプラットフォームを廃棄する
+    platformContext.reset();
 }
 
 /**
@@ -148,11 +146,6 @@ void JointApplicationBase::changeAppState() {
         }
     }
 
-    // デバイスの初期設定が済んでいないなら何もしない
-    if (!device) {
-        return;
-    }
-
     // 古いステートをチェックする
     const s32 oldState = appState;
     this->appState = pendingState;
@@ -195,7 +188,7 @@ void JointApplicationBase::dispatchSurfaceResized() {
     jclogf("Resized Surface(%dx%d)", surfaceSize.x, surfaceSize.y);
 
     // ビューポート更新
-    device->getState()->viewport(0, 0, surfaceSize.x, surfaceSize.y);
+    getWindowDevice()->getState()->viewport(0, 0, surfaceSize.x, surfaceSize.y);
 
     // スプライトマネージャーアスペクト比更新
     getSpriteManager()->setSurfaceAspect(surfaceSize.x, surfaceSize.y);
@@ -225,7 +218,7 @@ void JointApplicationBase::dispatchDestroy() {
         windowManager.reset();
 
         {
-            MDevice windowDevice = getDevice();
+            MDevice windowDevice = getWindowDevice();
             windowDevice->getVRAM()->gc();
         }
     }
@@ -289,7 +282,7 @@ void JointApplicationBase::dispatchResume() {
  * レンダリングの休止を求める場合、trueを返す
  */
 jcboolean JointApplicationBase::isLoopSleep() const {
-    if (!device->lockEnable()) {
+    if (!getWindowDevice()->lockEnable()) {
         // ロックが不可能な状態だったらスリープを継続させる
         return jctrue;
     }
@@ -312,8 +305,6 @@ jcboolean JointApplicationBase::isLoopSleep() const {
  * メインループの外部呼び出しを行う
  */
 void JointApplicationBase::dispatchMainloop() {
-    assert(device);
-
     while (!isStateDestroyed()) {
 
         // 休止中ならスリープをかける
@@ -322,7 +313,7 @@ void JointApplicationBase::dispatchMainloop() {
         } else {
             // 廃棄されるまでループする
             try {
-                DeviceLock lock(device, jctrue);
+                DeviceLock lock(getWindowDevice(), jctrue);
 
                 // ステートを変更する
                 changeAppState();
