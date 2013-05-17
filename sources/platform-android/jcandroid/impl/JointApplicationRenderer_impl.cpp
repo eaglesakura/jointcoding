@@ -19,8 +19,15 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeInitialize(JNIEnv *env, jobject _this) {
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeInitialize");
+
+    // JointAppを先に取り出しておく
+    JointApplicationBase *application = joint_context(_this, JointApplicationBase);
+
+    // プラットフォームを生成する
     jc_sp<NDKPlatformContext> platform(new NDKPlatformContext( JointApplicationRenderer::global(_this) ));
-    joint_context(_this, JointApplicationBase)->dispatchBindPlatform(platform);
+
+    // プラットフォームとのバインドを行う
+    application->dispatchBindPlatform(platform);
 }
 
 // main

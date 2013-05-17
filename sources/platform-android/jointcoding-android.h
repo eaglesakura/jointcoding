@@ -14,6 +14,9 @@
 #include "jointcoding.h"
 #include "jc/system/Macro.h"
 
+namespace ndk {
+using namespace jc;
+}
 
 // include jni file
 #include	"jni.h"

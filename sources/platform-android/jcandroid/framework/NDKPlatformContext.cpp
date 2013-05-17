@@ -5,6 +5,7 @@
  */
 
 #include    "jcandroid/framework/NDKPlatformContext.h"
+#include    "android-classes/ndkDeviceManager.h"
 #include    "jcandroid/egl/sdk/SdkDeviceManagerContext.hpp"
 
 namespace ndk {
@@ -49,7 +50,10 @@ MDevice NDKPlatformContext::createSlaveDevice() const {
     DeviceManager::dispose_(jDeviceManager);
 
     // 参照の廃棄を行う
-    env->DeleteLocalRef(jDeviceManager);
+    {
+        CALL_JNIENV();
+        env->DeleteLocalRef(jDeviceManager);
+    }
 
     // 残ったデバイスを返す
     return device;

@@ -15,13 +15,13 @@
 /*
 #include "stdio.h"
 #include "math.h"
-#include "string.h"
+#include <string.h>
 #include "stdarg.h"
 */
 #include "jc/system/Log.h"
 #include "jc/mem/SmartPtr.h"
 #include "jc/util/ImplCapsule.h"
-#include "jc/system/String.h"
+#include "jc/system/jcString.h"
 
 // joint code library
 #include "jc/model/Object.h"
