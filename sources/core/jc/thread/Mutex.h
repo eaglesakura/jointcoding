@@ -17,7 +17,7 @@ class MutexLock;
  * Mutexをもう1枚ラップして、boostの直接includeを行わないようにする。
  */
 class Mutex {
-    ImplCapsule mutex;
+    mutable ImplCapsule mutex;
 
     /**
      * コピーコンストラクタは作らせない
@@ -56,7 +56,7 @@ class MutexLock {
     NativeMutexLockPtr nativeLock;
 
 public:
-    MutexLock(Mutex &mtx);
+    MutexLock(const Mutex &mtx);
     ~MutexLock();
 
     /**

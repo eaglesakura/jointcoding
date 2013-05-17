@@ -7,6 +7,7 @@
 #include    "jointcoding-android.h"
 #include    "jc/framework/JointApplicationFramework.h"
 #include    "android-classes/ndkJointApplicationRenderer.h"
+#include    "android-classes/ndkWindowDeviceManager.h"
 
 namespace ndk {
 
@@ -19,6 +20,10 @@ class NDKPlatformContext: public PlatformContext {
      */
     jc_sp<JointApplicationRenderer> renderer;
 
+    /**
+     * SDK側のウィンドウクラス
+     */
+    jc_sp<WindowDeviceManager> windowDeviceManager;
 public:
     NDKPlatformContext(jc_sp<JointApplicationRenderer> renderer);
 
@@ -27,12 +32,13 @@ public:
     /**
      * 制御用のスレイブデバイスを作成する
      */
-    MDevice createSlaveDevice();
+    virtual MDevice createSlaveDevice() const;
 
     /**
      * 新規タスクを生成する
+     * タスクはJointApplicationBase::dispatchNewtask()をコールし、その中で処理を行う
      */
-    void startNewtask( const s32 uniqueId, const s32 user_data);
+    virtual void startNewtask( const s32 uniqueId, const s32 user_data);
 };
 
 }

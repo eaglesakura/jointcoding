@@ -10,10 +10,10 @@ const ::jc::s32 DeviceManager::KEY_MAINCONTEXT = 0;
 
 static jclass class_DeviceManager = NULL;
 
-#define methods_DeviceManager_LENGTH 8
+#define methods_DeviceManager_LENGTH 9
 
 #if methods_DeviceManager_LENGTH
-static jmethodID methods_DeviceManager[8];
+static jmethodID methods_DeviceManager[9];
 #endif
 
 static void initialize_DeviceManager() {
@@ -31,14 +31,15 @@ static void initialize_DeviceManager() {
 
     // load methods
     {
-        methods_DeviceManager[0] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "getEGLContextWrapper", "()Lcom/eaglesakura/jc/egl/EGLContextWrapper;", false);
-        methods_DeviceManager[1] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "setNativePointer", "(ILcom/eaglesakura/jc/jni/Pointer;)V", false);
-        methods_DeviceManager[2] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
-        methods_DeviceManager[3] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "getEGLWrapper", "()Lcom/eaglesakura/jc/egl/EGLWrapper;", false);
-        methods_DeviceManager[4] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "onNativeEndOperation", "()V", false);
-        methods_DeviceManager[5] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "onNativeBeginOperation", "()V", false);
-        methods_DeviceManager[6] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "createNative", "()V", false);
-        methods_DeviceManager[7] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "getEGLSurfaceWrapper", "()Lcom/eaglesakura/jc/egl/EGLSurfaceWrapper;", false);
+        methods_DeviceManager[0] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "dispose", "()V", false);
+        methods_DeviceManager[1] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "getEGLContextWrapper", "()Lcom/eaglesakura/jc/egl/EGLContextWrapper;", false);
+        methods_DeviceManager[2] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "setNativePointer", "(ILcom/eaglesakura/jc/jni/Pointer;)V", false);
+        methods_DeviceManager[3] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
+        methods_DeviceManager[4] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "getEGLWrapper", "()Lcom/eaglesakura/jc/egl/EGLWrapper;", false);
+        methods_DeviceManager[5] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "onNativeEndOperation", "()V", false);
+        methods_DeviceManager[6] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "onNativeBeginOperation", "()V", false);
+        methods_DeviceManager[7] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "createNative", "()V", false);
+        methods_DeviceManager[8] = ::ndk::JniWrapper::loadMethod(class_DeviceManager, "getEGLSurfaceWrapper", "()Lcom/eaglesakura/jc/egl/EGLSurfaceWrapper;", false);
 
     }
 }
@@ -47,53 +48,64 @@ DeviceManager::DeviceManager(jobject obj): ::ndk::JniWrapper(obj){
     initialize_DeviceManager();
 }
 
+void DeviceManager::dispose() {
+    CALL_JNIENV();
+    env->CallVoidMethod(this->getObject(), methods_DeviceManager[0]);
+}
+
+void DeviceManager::dispose_(jobject _this) {
+    CALL_JNIENV();
+    initialize_DeviceManager();
+    env->CallVoidMethod(_this, methods_DeviceManager[0]);
+}
+
 jobject DeviceManager::getEGLContextWrapper_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_DeviceManager[0]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_DeviceManager[1]);
 }
 
 jobject DeviceManager::getEGLContextWrapper_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_DeviceManager();
-    return (jobject) env->CallObjectMethod(_this, methods_DeviceManager[0]);
+    return (jobject) env->CallObjectMethod(_this, methods_DeviceManager[1]);
 }
 
 void DeviceManager::setNativePointer(jint key, jobject ptr) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_DeviceManager[1], key, ptr);
+    env->CallVoidMethod(this->getObject(), methods_DeviceManager[2], key, ptr);
 }
 
 void DeviceManager::setNativePointer_(jobject _this, jint key, jobject ptr) {
     CALL_JNIENV();
     initialize_DeviceManager();
-    env->CallVoidMethod(_this, methods_DeviceManager[1], key, ptr);
+    env->CallVoidMethod(_this, methods_DeviceManager[2], key, ptr);
 }
 
 jobject DeviceManager::getNativePointer_unsafe(jint key) {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_DeviceManager[2], key);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_DeviceManager[3], key);
 }
 
 jobject DeviceManager::getNativePointer_unsafe_(jobject _this, jint key) {
     CALL_JNIENV();
     initialize_DeviceManager();
-    return (jobject) env->CallObjectMethod(_this, methods_DeviceManager[2], key);
+    return (jobject) env->CallObjectMethod(_this, methods_DeviceManager[3], key);
 }
 
 jobject DeviceManager::getEGLWrapper_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_DeviceManager[3]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_DeviceManager[4]);
 }
 
 jobject DeviceManager::getEGLWrapper_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_DeviceManager();
-    return (jobject) env->CallObjectMethod(_this, methods_DeviceManager[3]);
+    return (jobject) env->CallObjectMethod(_this, methods_DeviceManager[4]);
 }
 
 void DeviceManager::onNativeEndOperation() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_DeviceManager[4]);
+    env->CallVoidMethod(this->getObject(), methods_DeviceManager[5]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -120,7 +132,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_onNativeEndOper
 void DeviceManager::onNativeEndOperation_(jobject _this) {
     CALL_JNIENV();
     initialize_DeviceManager();
-    env->CallVoidMethod(_this, methods_DeviceManager[4]);
+    env->CallVoidMethod(_this, methods_DeviceManager[5]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -146,7 +158,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_onNativeEndOper
 
 void DeviceManager::onNativeBeginOperation() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_DeviceManager[5]);
+    env->CallVoidMethod(this->getObject(), methods_DeviceManager[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -173,7 +185,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_onNativeBeginOp
 void DeviceManager::onNativeBeginOperation_(jobject _this) {
     CALL_JNIENV();
     initialize_DeviceManager();
-    env->CallVoidMethod(_this, methods_DeviceManager[5]);
+    env->CallVoidMethod(_this, methods_DeviceManager[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -199,7 +211,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_onNativeBeginOp
 
 void DeviceManager::createNative() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_DeviceManager[6]);
+    env->CallVoidMethod(this->getObject(), methods_DeviceManager[7]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -226,7 +238,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_createNative(JN
 void DeviceManager::createNative_(jobject _this) {
     CALL_JNIENV();
     initialize_DeviceManager();
-    env->CallVoidMethod(_this, methods_DeviceManager[6]);
+    env->CallVoidMethod(_this, methods_DeviceManager[7]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -252,13 +264,13 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_DeviceManager_createNative(JN
 
 jobject DeviceManager::getEGLSurfaceWrapper_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_DeviceManager[7]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_DeviceManager[8]);
 }
 
 jobject DeviceManager::getEGLSurfaceWrapper_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_DeviceManager();
-    return (jobject) env->CallObjectMethod(_this, methods_DeviceManager[7]);
+    return (jobject) env->CallObjectMethod(_this, methods_DeviceManager[8]);
 }
 
 jc_sp<DeviceManager> DeviceManager::wrap(jobject obj) {

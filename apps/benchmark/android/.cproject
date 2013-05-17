@@ -31,7 +31,7 @@
 							<tool id="com.android.gcc.compiler.690037312" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<option id="com.android.gcc.option.includePath.481552178" superClass="com.android.gcc.option.includePath" valueType="includePath">
 									<listOptionValue builtIn="false" value="/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include"/>
-									<listOptionValue builtIn="false" value="/dev-home/android/ndk/sources/cxx-stl/gnu-libstdc++/4.7/include"/>
+									<listOptionValue builtIn="false" value="/dev-home/android/ndk/sources/cxx-stl/stlport/stlport"/>
 								</option>
 								<inputType id="com.android.gcc.inputType.485913305" superClass="com.android.gcc.inputType"/>
 							</tool>

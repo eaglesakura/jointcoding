@@ -129,6 +129,7 @@ public class DeviceManager implements Jointable {
      * デバイスの完全な解放処理を行う
      * 既にNDK側でDeviceを得ている場合は解放しても問題ない
      */
+    @JCMethod
     public void dispose() {
         synchronized (lock) {
             if (ndkDevice != null) {

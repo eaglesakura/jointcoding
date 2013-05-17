@@ -9,6 +9,7 @@
 
 #include    "jc/framework/app/JointApplicationBase.h"
 #include    "jcandroid/egl/sdk/SdkDeviceManagerContext.hpp"
+#include    "jcandroid/framework/NDKPlatformContext.h"
 
 using namespace ndk;
 
@@ -18,17 +19,8 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeInitialize(JNIEnv *env, jobject _this) {
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeInitialize");
-    jobject jDeviceManager = JointApplicationRenderer::getWindowDevice_unsafe_(_this);
-    assert(jDeviceManager);
-    {
-        // レンダリングデバイスを得る
-        MDevice device = SdkDeviceManagerContext::getDeviceFromSdkDeviceManager(jDeviceManager);
-        assert(device);
-
-        // サーフェイスの作成完了を通知する
-        joint_context(_this, JointApplicationBase)->dispatchSurfaceCreated(device);
-    }
-    env->DeleteLocalRef(jDeviceManager);
+    jc_sp<NDKPlatformContext> platform(new NDKPlatformContext( JointApplicationRenderer::global(_this) ));
+    joint_context(_this, JointApplicationBase)->dispatchBindPlatform(platform);
 }
 
 // main
@@ -68,7 +60,6 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
     return result;
 
 }
-
 
 // 非同期タスクの開始を行う
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeNewtask(JNIEnv *env, jobject _this, jint uniqueId, jint user_data) {

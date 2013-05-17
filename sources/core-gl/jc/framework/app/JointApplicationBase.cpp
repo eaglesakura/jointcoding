@@ -108,13 +108,6 @@ jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const
 }
 
 /**
- * サーフェイスが作成された
- */
-void JointApplicationBase::dispatchSurfaceCreated(MDevice device) {
-    this->device = device;
-}
-
-/**
  * プラットフォームの接続を行う
  */
 void JointApplicationBase::dispatchBindPlatform(const MPlatformContext context) {
@@ -248,7 +241,7 @@ void JointApplicationBase::dispatchInitialize() {
         // 30fps〜60fpsで扱う
         windowManager->setFramerateRange(30, 60);
         windowManager->setWindowEventHandler(this);
-        windowManager->getWindowContext()->setSpriteManager(SpriteManager::createInstance(device));
+        windowManager->getWindowContext()->setSpriteManager(SpriteManager::createInstance(getWindowDevice()));
     }
 
     onAppInitialize();
@@ -334,6 +327,7 @@ void JointApplicationBase::dispatchMainloop() {
                 // ステートを変更する
                 changeAppState();
 
+                // メインループ中
                 if (isStateRunning()) {
                     // サーフェイスサイズチェックを行う
                     if (checkedSurfaceSize != surfaceSize) {
@@ -343,7 +337,6 @@ void JointApplicationBase::dispatchMainloop() {
                     // フレーム定形処理を行う
                     onAppMainUpdate();
                     onAppMainRendering();
-                } else if (isStateInitializing()) {
                 }
             } catch (EGLException &e) {
                 jcloge(e);
