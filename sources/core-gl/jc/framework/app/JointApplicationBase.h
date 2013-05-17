@@ -149,6 +149,11 @@ protected:
      */
     Platform_e platform;
 
+    /**
+     * 描画先のウィンドウ
+     */
+    MDevice windowDevice;
+
     PlatformContext(Platform_e platform) {
         this->platform = platform;
     }
@@ -162,6 +167,32 @@ public:
     virtual Platform_e getPlatform() const {
         return platform;
     }
+
+    /**
+     * 描画用のウィンドウデバイスを取得する
+     */
+    virtual MDevice getWindowDevice() const {
+        return windowDevice;
+    }
+
+    /**
+     * スレイブ操作用デバイスを生成する。
+     * ウィンドウデバイスとSharedContextになっており、例えば別スレッドでのテクスチャ読込等を行うために利用する。
+     *
+     * ----
+     * for Android.
+     * 内部的には1x1のPBufferSurfaceを保持しているが、描画には適さない。
+     * ----
+     * for iOS
+     * 内部的には空のEGLSurfaceProtocolを保持し、bind()してもコンテキストを変更しない。
+     */
+    virtual MDevice createSlaveDevice() const = 0;
+
+    /**
+     * 新規タスクを生成する
+     * タスクはJointApplicationBase::dispatchNewtask()をコールし、その中で処理を行う
+     */
+    virtual void startNewtask(const s32 uniqueId, const s32 user_data) = 0;
 };
 
 /**
@@ -197,11 +228,6 @@ class JointApplicationBase: public Object, public WindowEventHandler {
 
 protected:
     /**
-     * レンダリングデバイス
-     */
-    MDevice device;
-
-    /**
      * バインドされているプラットフォーム情報
      */
     MPlatformContext platformContext;
@@ -209,7 +235,7 @@ protected:
     /**
      * 問い合わせ・書き込み操作のためのミューテックス
      */
-    mutable Mutex query_mutex;
+    Mutex query_mutex;
 
     /**
      * ウィンドウクラス
@@ -300,10 +326,23 @@ public:
     }
 
     /**
-     * レンダリングデバイスを取得する
+     * ウィンドウ描画用デバイスを取得する
      */
-    virtual MDevice getDevice() const {
-        return device;
+    virtual MDevice getWindowDevice() const {
+        assert(platformContext);
+        return platformContext->getWindowDevice();
+    }
+
+    /**
+     * 新規の非同期タスク（スレッド）を生成する。
+     * 新規のスレッドからdispatchNewtask()に引数の値が渡され、JointApplicationBaseと継承したクラスはuniqueIdの値を元に処理を分岐させる。
+     *
+     * JointApplicationProtocol#SystemTask_XXXX系のuniqueIdは予約されている。
+     * システムによって予約されているuniqueIdは利用時に注意すること。
+     */
+    virtual void startNewtask(const s32 uniqueId, const s32 user_data) {
+        assert(platformContext);
+        platformContext->startNewtask(uniqueId, user_data);
     }
 
     /**
@@ -412,19 +451,10 @@ protected:
     }
 
 public:
-    /**
-     * メインループの外部呼び出しを行う
-     */
-    virtual void dispatchMainloop();
-
-    /**
-     * サーフェイスが作成された
-     */
-    virtual void dispatchSurfaceCreated(MDevice windowDevice);
 
     /**
      * プラットフォームの接続を行う
-     * このメソッド呼び出し後、プラットフォーム固有のAPIを利用できる
+     * このメソッド呼び出し後、ウィンドウ描画やプラットフォーム固有のAPIを利用できる
      */
     virtual void dispatchBindPlatform(const MPlatformContext context);
 
@@ -448,9 +478,16 @@ protected:
     virtual void changeAppState();
 
     /**
-     * ステート変更リクエストが送られた
+     * メインループの呼び出しを行う
+     * SystemTask_Mainloopによって開始される。
+     * メインループは現在の状態を管理し、シンプルな状態遷移を行う
+     *
+     * 1. 初期化
+     * 2. メインループ -> 休止 || リサイズ -> メインループ
+     * 3. 休止 -> 復帰 -> メインループ
+     * 4. メインループ -> 廃棄ß
      */
-    virtual jcboolean dispatchOnStateChangeRequest(const ApplicationQueryKey *key, const s32 *params, const s32 params_length);
+    virtual void dispatchMainloop();
 
     /**
      * 初期化処理を行う
@@ -479,6 +516,10 @@ protected:
      */
     virtual void dispatchDestroy();
 
+    /**
+     * ステート変更リクエストが送られた
+     */
+    virtual jcboolean dispatchOnStateChangeRequest(const ApplicationQueryKey *key, const s32 *params, const s32 params_length);
 };
 
 }

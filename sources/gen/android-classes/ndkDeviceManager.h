@@ -15,6 +15,8 @@ public:
     }
 
     static const ::jc::charactor* CLASS_SIGNATURE;
+    virtual void dispose();
+    static void dispose_(jobject _this);
     virtual jobject getEGLContextWrapper_unsafe();
     static jobject getEGLContextWrapper_unsafe_(jobject _this);
     virtual void setNativePointer(jint key, jobject ptr);
