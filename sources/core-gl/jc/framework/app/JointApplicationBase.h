@@ -429,9 +429,11 @@ protected:
     virtual void onAppResume() = 0;
 
     /**
-     * 新規タスクの実行をリクエストした
+     * 新規タスクの実行をリクエストされた
+     * ハンドル出来るタスクならtrueを返す
+     * ハンドル出来なかったらfalseを返す
      */
-    virtual void onAppTask(const ApplicationTaskContext &task) = 0;
+    virtual jcboolean onAppTask(const ApplicationTaskContext &task) = 0;
 
     /**
      * アプリのステートが変更された

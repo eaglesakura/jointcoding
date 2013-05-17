@@ -78,7 +78,7 @@ void BenchmarkApplication::onAppMainUpdate() {
 void BenchmarkApplication::onAppMainRendering() {
     MGLState state = getWindowDevice()->getState();
     {
-        state->clearColorf(0, 0, (float)(rand() % 0xFF) / 255.0f, 0);
+        state->clearColorf(0, 0, (float) (rand() % 0xFF) / 255.0f, 0);
 //        state->clearColorf(0, 1, 1, 1);
         state->clearSurface();
     }
@@ -102,13 +102,14 @@ void BenchmarkApplication::onAppMainRendering() {
 /**
  * 新規タスクの実行をリクエストした
  */
-void BenchmarkApplication::onAppTask(const ApplicationTaskContext &task) {
+jcboolean BenchmarkApplication::onAppTask(const ApplicationTaskContext &task) {
     switch (task.uniqueId) {
         case BenchmarkTask_LoadTexture:
             loadTexture(platformContext->createSlaveDevice());
-            break;
+            return jctrue;
         default:
-            break;
+            // ハンドル出来なかった
+            return jcfalse;
     }
 }
 

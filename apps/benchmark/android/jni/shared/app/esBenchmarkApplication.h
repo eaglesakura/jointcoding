@@ -83,7 +83,7 @@ protected:
     /**
      * 新規タスクの実行をリクエストした
      */
-    virtual void onAppTask(const ApplicationTaskContext &task);
+    virtual jcboolean onAppTask(const ApplicationTaskContext &task);
 
 };
 
