@@ -132,7 +132,10 @@ void JointApplicationBase::dispatchTask(const ApplicationTaskContext &task) {
         dispatchMainloop();
     } else {
         // その他のタスクのハンドルはアプリに任せる
-        onAppTask(task);
+        if (!onAppTask(task)) {
+            // ハンドリングに失敗した
+            jcalertf("task handle error uid(0x%x) ud(0x%x) task(%s)", task.uniqueId, task.user_data, task.threadId.toString().c_str());
+        }
     }
     jclogf("finish uid(0x%x) ud(0x%x) task(%s)", task.uniqueId, task.user_data, task.threadId.toString().c_str());
 }
