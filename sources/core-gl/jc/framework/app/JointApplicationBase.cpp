@@ -110,6 +110,13 @@ jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const
  */
 void JointApplicationBase::dispatchBindPlatform(const MPlatformContext context) {
     this->platformContext = context;
+
+    // メインループタスクを開始する
+    startNewtask(JointApplicationProtocol::SystemTask_Mainloop, 0);
+
+    // 実行開始の予約を行う
+    ApplicationQueryKey key(JointApplicationProtocol::PostKey_StateRequest);
+    dispatchOnStateChangeRequest(&key, &JointApplicationProtocol::State_Running, 1);
 }
 
 /**

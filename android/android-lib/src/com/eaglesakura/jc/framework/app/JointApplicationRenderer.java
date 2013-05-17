@@ -64,11 +64,11 @@ public abstract class JointApplicationRenderer implements Jointable {
         // 初期化を行わせる
         onNativeInitialize();
 
-        // メインループを開始する
-        startMainLoop();
-
-        // ステートを変更する
-        postStateChangeRequest(JointApplicationProtocol.State_Running);
+        //        // メインループを開始する
+        //        startMainLoop();
+        //
+        //        // ステートを変更する
+        //        postStateChangeRequest(JointApplicationProtocol.State_Running);
     }
 
     /**
@@ -260,13 +260,6 @@ public abstract class JointApplicationRenderer implements Jointable {
             }
         });
         thread.start();
-    }
-
-    /**
-     * メインループを開始する
-     */
-    protected void startMainLoop() {
-        startNewtask(JointApplicationProtocol.SystemTask_Mainloop, 0);
     }
 
     /**
