@@ -14,6 +14,13 @@ namespace es {
 class BenchmarkApplication: public JointApplicationBase {
     MTextureImage texture;
 
+    enum {
+        /**
+         * テクスチャ読込を行わせるタスク
+         */
+        BenchmarkTask_LoadTexture,
+    };
+
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();
@@ -72,6 +79,11 @@ protected:
      * メソッド呼び出し時点でデバイスロック済み。
      */
     virtual void onAppDestroy();
+
+    /**
+     * 新規タスクの実行をリクエストした
+     */
+    virtual void onAppTask(const ApplicationTaskContext &task);
 
 };
 
