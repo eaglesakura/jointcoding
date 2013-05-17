@@ -429,6 +429,11 @@ protected:
     virtual void onAppResume() = 0;
 
     /**
+     * 新規タスクの実行をリクエストした
+     */
+    virtual void onAppTask(const ApplicationTaskContext &task) = 0;
+
+    /**
      * アプリのステートが変更された
      */
     virtual void onAppStateChanged(const s32 oldState, const s32 newState) {

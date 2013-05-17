@@ -34,22 +34,25 @@ void BenchmarkApplication::onAppInitialize() {
 
     getWindowDevice()->getState()->blendEnable(jctrue);
     getWindowDevice()->getState()->blendFunc(GLBlendType_Alpha);
+
+    // テクスチャロードを開始する
+    startNewtask(BenchmarkTask_LoadTexture, 0);
 }
 
 void BenchmarkApplication::loadTexture(MDevice subDevice) {
-//    try {
-//        jclog("lock start");
-//        DeviceLock lock(subDevice, jctrue);
-//
-//        Thread::sleep(1000);
-//        jclog("load start");
-//        texture = TextureImage::decode(subDevice, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
-//
-//        Thread::sleep(500);
-//        jclog("load finish");
-//    } catch (Exception &e) {
-//        jcloge(e);
-//    }
+    try {
+        jclog("lock start");
+        DeviceLock lock(subDevice, jctrue);
+
+        Thread::sleep(1000);
+        jclog("load start");
+        texture = TextureImage::decode(subDevice, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
+
+        Thread::sleep(500);
+        jclog("load finish");
+    } catch (Exception &e) {
+        jcloge(e);
+    }
 }
 
 /**
@@ -75,8 +78,8 @@ void BenchmarkApplication::onAppMainUpdate() {
 void BenchmarkApplication::onAppMainRendering() {
     MGLState state = getWindowDevice()->getState();
     {
-//        state->clearColorf(0, 0, (float)(rand() % 0xFF) / 255.0f, 0);
-        state->clearColorf(0, 1, 1, 1);
+        state->clearColorf(0, 0, (float)(rand() % 0xFF) / 255.0f, 0);
+//        state->clearColorf(0, 1, 1, 1);
         state->clearSurface();
     }
 
@@ -94,6 +97,19 @@ void BenchmarkApplication::onAppMainRendering() {
     }
 
     getWindowDevice()->postFrontBuffer();
+}
+
+/**
+ * 新規タスクの実行をリクエストした
+ */
+void BenchmarkApplication::onAppTask(const ApplicationTaskContext &task) {
+    switch (task.uniqueId) {
+        case BenchmarkTask_LoadTexture:
+            loadTexture(platformContext->createSlaveDevice());
+            break;
+        default:
+            break;
+    }
 }
 
 /**
