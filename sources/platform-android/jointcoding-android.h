@@ -19,7 +19,7 @@ using namespace jc;
 }
 
 // include jni file
-#include	"jni.h"
+#include	<jni.h>
 
 #include    "jcandroid/ndk-support.h"
 #include	"jcandroid/jni/SmartJObject.h"
