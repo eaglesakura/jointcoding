@@ -17,8 +17,8 @@
 #else
 
 #ifdef BUILD_Android
-#include    "GLES2/gl2.h"
-#include    "GLES2/gl2ext.h"
+#include    <GLES2/gl2.h>
+#include    <GLES2/gl2ext.h>
 #endif // BUILD_Android
 #ifdef BUILD_iOS
 #import     <OpenGLES/ES2/gl.h>

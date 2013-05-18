@@ -35,7 +35,7 @@ jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 
         *result = getRunningState();
         return jctrue;
     } else if (key->main_key == JointApplicationProtocol::QueryKey_RequestSurfaceSpecs) {
-        assert(result && result_length >= 4);
+        assert(result && result_length >= JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
 
         // サーフェイス性能を問い合わせる
         SurfaceSpecs specs = getRenderingSurfaceSpecs();
@@ -75,6 +75,9 @@ jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 
             result[index] = specs.extensions.isEnable(SurfaceSupecExtension_AndroidTextureView);
             ++index;
         }
+
+        // 正しくリクエストを書き込んでいることを検証する
+        assert(index == JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
     }
 
     jclogf("drop query main(%d) sub(%d)", key->main_key, key->sub_key);
