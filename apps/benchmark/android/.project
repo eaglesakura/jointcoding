@@ -58,6 +58,11 @@
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/core-gl</locationURI>
 		</link>
 		<link>
+			<name>jni/include</name>
+			<type>2</type>
+			<locationURI>$%7BANDROID_NDK_HOME%7D/platforms/android-14/arch-arm/usr/include</locationURI>
+		</link>
+		<link>
 			<name>jni/platform-android</name>
 			<type>2</type>
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/platform-android</locationURI>
