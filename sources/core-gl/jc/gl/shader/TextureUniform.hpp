@@ -19,6 +19,10 @@ namespace gl {
 class TextureUniform: public UniformBase {
     u32 bindUnit;
 
+    /**
+     * アップロード対象のコンテキスト
+     */
+    MGLState state;
 public:
     TextureUniform() {
         bindUnit = -1;
@@ -29,9 +33,16 @@ public:
         setLocation(program, name);
     }
 
-
     ~TextureUniform() {
 
+    }
+
+    /**
+     * アップロード対象のコンテキストを指定する
+     */
+    void setState(MGLState state) {
+        this->state = state;
+        bindUnit = -1;
     }
 
     /**
@@ -44,7 +55,7 @@ public:
             return jcfalse;
         }
 
-        const u32 texUnit = tex->bind();
+        const u32 texUnit = tex->bind(state);
         if (bindUnit != texUnit) {
             glUniform1i(location, texUnit);
             assert_gl();

@@ -132,16 +132,6 @@ class TextureImage: public Object {
     vram_handle texture;
 
     /**
-     * GLのステート保持
-     */
-    MGLState state;
-
-    /**
-     * バインドしたユニット番号
-     */
-    s32 bindUnit;
-
-    /**
      * テクスチャ領域を確保済みならtrue
      */
     jcboolean alloced;
@@ -175,6 +165,16 @@ class TextureImage: public Object {
         GLint wrapT;
     } context;
 
+    /**
+     * GLのステート保持
+     */
+    MGLState state;
+
+    /**
+     * バインドしたユニット番号
+     */
+    s32 bindUnit;
+
 protected:
     virtual s32 getFreeTextureUnitIndex();
 
@@ -183,6 +183,16 @@ protected:
             return jc::toPowerOfTwo(size);
         } else {
             return size;
+        }
+    }
+
+    /**
+     * 配下にあるデバイスを移動する
+     */
+    virtual void resetState(MGLState state) {
+        if (this->state != state) {
+            this->state = state;
+            bindUnit = state->getBindedTextureUnit(target, texture.get());
         }
     }
 
@@ -280,13 +290,13 @@ public:
     /**
      * テクスチャをindex番のユニットに関連付ける
      */
-    virtual void bind(s32 index);
+    virtual void bind(s32 index, MGLState state);
 
     /**
      * 空いているテクスチャユニットにバインドする。
      * @return バインドされたテクスチャユニット番号を返却する
      */
-    virtual s32 bind();
+    virtual s32 bind(MGLState state);
 
     /**
      * バインドされたテクスチャユニットの番号を取得する。
@@ -307,7 +317,7 @@ public:
      * 名称は一意の32bit整数になる。
      */
     virtual u32 getName() const {
-        if(!texture.exist()) {
+        if (!texture.exist()) {
             return 0;
         }
         return texture.get();
@@ -322,14 +332,6 @@ public:
      * 管理している資源を開放する
      */
     virtual void dispose();
-
-    /**
-     * 配下にあるデバイスを移動する
-     */
-    virtual void resetDevice(MDevice device) {
-        this->state = device->getState();
-        bindUnit = state->getBindedTextureUnit(target, texture.get());
-    }
 
     /**
      * テクスチャへのデコードを行う。

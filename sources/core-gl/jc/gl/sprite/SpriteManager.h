@@ -33,7 +33,7 @@ protected:
     /**
      * ステータス情報
      */
-    MDevice device;
+    MDevice windowDevice;
 
     /**
      * 頂点属性インデックス
@@ -239,7 +239,7 @@ public:
      * レンダリングデバイスを取得する
      */
     virtual MDevice getDevice() const {
-        return device;
+        return windowDevice;
     }
 
     /**
@@ -265,7 +265,7 @@ public:
      * 線レンダリングの幅を取得する
      */
     virtual void setLineWidth( const float width) {
-        device->getState()->lineWidth(2.0f);
+        windowDevice->getState()->lineWidth(2.0f);
     }
 
     /**
@@ -273,7 +273,7 @@ public:
      */
     virtual void startLineRendering() {
         quad->setPrimitiveType(GL_LINE_LOOP);
-        device->getState()->lineWidth(2.0f);
+        windowDevice->getState()->lineWidth(2.0f);
     }
 
     /**
@@ -304,11 +304,11 @@ public:
      * 設定はディスプレイ座標系（左上原点）で行う
      */
     virtual void setRenderArea( const s32 x, const s32 y, const s32 w, const s32 h ) {
-        MGLState state = device->getState();
+        MGLState state = windowDevice->getState();
         s32 view_x = 0, view_y = 0, view_w = 0, view_h = 0;
 
         // display -> viewport
-        device->convertViewportRect(createRectFromXYWH<s32>(x, y, w, h), &view_x, &view_y, &view_w, &view_h);
+        windowDevice->convertViewportRect(createRectFromXYWH<s32>(x, y, w, h), &view_x, &view_y, &view_w, &view_h);
 
         // enable scissor
         state->enableScissor(jctrue);
@@ -319,21 +319,21 @@ public:
      * シザーボックスを削除する
      */
     virtual void clearRenderArea() {
-        device->getState()->enableScissor(jcfalse);
+        windowDevice->getState()->enableScissor(jcfalse);
     }
 
     /**
      * レンダリングエリアを１段階保存する
      */
     virtual void pushRenderArea() {
-        device->getState()->pushScissor();
+        windowDevice->getState()->pushScissor();
     }
 
     /**
      * レンダリングエリアのpushと同時にクリアを行う
      */
     virtual void pushRenderArea(const jcboolean withClear) {
-        device->getState()->pushScissor();
+        windowDevice->getState()->pushScissor();
         if(withClear) {
             clearRenderArea();
         }
@@ -343,7 +343,7 @@ public:
      * レンダリングエリアを１段階取り出す
      */
     virtual void popRenderArea() {
-        device->getState()->popScissor();
+        windowDevice->getState()->popScissor();
     }
 
     /**

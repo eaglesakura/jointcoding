@@ -51,7 +51,7 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
                 state->vertexAttribPointer(attr_uv, 2, GL_FLOAT, GL_FALSE, sizeof(GLFigureVertex), NULL, sizeof(Vector3f));
             }
             // uv offset
-            if(params->uniforms.uv_offset != UNIFORM_DISABLE_INDEX) {
+            if (params->uniforms.uv_offset != UNIFORM_DISABLE_INDEX) {
                 const u32 unif_uv_offset = params->uniforms.uv_offset;
                 glUniform2f(unif_uv_offset, material->offset.u, material->offset.v);
             }
@@ -83,13 +83,13 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
 
                     // テクスチャが設定済みの場合、バインドする
                     if (material->texture) {
-                        const s32 index = material->texture->bind();
+                        const s32 index = material->texture->bind(device->getState());
                         glUniform1i(unif_tex0, index);
                     }
                 } else {
                     // テクスチャが設定済みの場合、バインドする
                     if (material->texture) {
-                        const s32 index = material->texture->bind();
+                        const s32 index = material->texture->bind(device->getState());
                         glUniform1i(unif_tex0, index);
                     }
                 }

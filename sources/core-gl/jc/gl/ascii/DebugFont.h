@@ -34,16 +34,6 @@ private:
     Vector2i fontCharSize;
 
     /**
-     * レンダリングステート
-     */
-    MGLState state;
-
-    /**
-     * レンダリングデバイス
-     */
-    MDevice device;
-
-    /**
      * フォントテクスチャ
      * １テクスチャ１文字で格納する
      */
@@ -58,7 +48,7 @@ private:
     /**
      * 初期化を行う
      */
-    void initialize();
+    void initialize(MDevice device);
 
     /**
      * フォント色
@@ -94,7 +84,7 @@ public:
      * デバッグ用文字列を画面に表示する
      * レンダリング速度が低いため注意すること。
      */
-    virtual void rendering(const String text, const s32 x, const s32 y);
+    virtual void rendering(MDevice device, const String text, const s32 x, const s32 y);
 
     /**
      * レンダリングの幅・高さを計算する
