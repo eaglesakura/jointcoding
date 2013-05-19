@@ -61,6 +61,18 @@ enum HandleCallback_e {
      * オブジェクトの全参照が廃棄された
      */
     HandleCallback_Released,
+
+    /**
+     * for each用コールバック
+     * 有効なオブジェクト
+     */
+    HandleCallback_Exist,
+
+    /**
+     * for each用コールバック
+     * 無効なオブジェクト
+     */
+    HandleCallback_Unused,
 };
 
 /**
@@ -358,6 +370,13 @@ public:
         // 新規割り当て
         allocHandles(result, length);
     }
+
+    /**
+     * コールバック関数を設定する
+     */
+    inline void setCallback(const handletable_callback call) {
+        this->callback = call;
+    }
 };
 
 /**
@@ -367,8 +386,7 @@ public:
  * VRAM等の管理に利用する
  */
 template<typename value_type>
-class ArrayHandle: public Object {
-public:
+class ArrayHandle {
 private:
     /**
      * 配列実体を保持する
@@ -393,7 +411,7 @@ public:
     /**
      * masterの配列を共有し、次からその数の割り当てを行う
      */
-    void sharedFrom( const jc_sp<ArrayHandle> master) {
+    inline void sharedFrom( const jc_sp<ArrayHandle> master) {
         assert(master);
 
         this->ref = master->ref;
@@ -403,29 +421,36 @@ public:
     /**
      * 実体テーブルへのポインタを取得する
      */
-    const handle_table<value_type>* getTable() const {
+    inline const handle_table<value_type>* getTable() const {
         return pRef;
     }
 
     /**
      * 実体テーブルへのポインタを取得する
      */
-    handle_table<value_type>* getTable() {
+    inline handle_table<value_type>* getTable() {
         return pRef;
     }
 
     /**
      * 値の取得を行う
      */
-    const value_type& get(const handle_data &handle) const {
+    inline const value_type& get(const handle_data &handle) const {
         return pRef->get(handle);
     }
 
     /**
      * 値の取得を行う
      */
-    value_type& get(const handle_data &handle) {
+    inline value_type& get(const handle_data &handle) {
         return pRef->get(handle);
+    }
+
+    /**
+     * コールバック関数を設定する
+     */
+    inline void setCallback(const handletable_callback callback) {
+        pRef->setCallback(callback);
     }
 };
 
@@ -525,11 +550,16 @@ public:
         }
 
         // マスターデータとハンドルを書き換える
+        self = handle;
         {
             this->master = master;
             pMaster = master.get();
+
         }
-        self = handle;
+        // ハンドルが有効ならretainする
+        if(pMaster) {
+            pMaster->getTable()->retain(self);
+        }
     }
 
     /**
@@ -593,6 +623,14 @@ public:
     value_type& operator*() {
         assert(self.index >= 0);
         return get();
+    }
+
+    /**
+     * 参照の上書きを行う
+     */
+    Handle<value_type>& operator=(const Handle<value_type> cpy) {
+        reset(cpy.self, cpy.master);
+        return (*this);
     }
 };
 

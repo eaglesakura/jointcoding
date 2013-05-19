@@ -27,15 +27,30 @@ BenchmarkApplication::BenchmarkApplication() {
         assert(handle.get() == 10);
     }
     assert(vram->getTable()->getExistValueNum() == 0);
+
+    vram_handle handle;
     {
-        vram_handle handle;
         handle.reset(vram);
         handle.alloc_back();
 
         assert(vram->getTable()->getTableNum() == 2);
         assert(vram->getTable()->getAllocatedHandleNum() == 2);
         assert(vram->getTable()->getExistValueNum() == 1);
+
+        vram_handle handle2 = handle;
+
+        (*handle) = 128;
+
+        assert(handle2.get() == 128);
+        handle.reset();
+
+        assert(vram->getTable()->getTableNum() == 2);
+        assert(vram->getTable()->getAllocatedHandleNum() == 2);
+        assert(vram->getTable()->getExistValueNum() == 1);
     }
+
+    assert(vram->getTable()->getExistValueNum() == 0);
+    assert(!handle.exist());
 }
 
 BenchmarkApplication::~BenchmarkApplication() {
