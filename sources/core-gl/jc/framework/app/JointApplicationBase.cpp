@@ -7,6 +7,7 @@
 #include    "jc/framework/app/JointApplicationBase.h"
 #include    "protocol/jcSurfacePixelFormatProtocol.h"
 
+
 namespace jc {
 namespace gl {
 
