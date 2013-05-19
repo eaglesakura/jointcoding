@@ -55,14 +55,18 @@ MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const
 MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charactor* sourceCode) {
     // シェーダオブジェクトを作成
     vram_handle shader = vram->alloc(type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader);
+    assert(shader.get());
 
     // シェーダソースを設定
     const s32 src_length = strlen(sourceCode);
     jclogf("source chars = %d", src_length);
     glShaderSource(shader.get(), 1, &sourceCode, &src_length);
+    jclog("check");
     // コンパイル
     glCompileShader(shader.get());
+    jclog("check");
     assert_gl();
+    jclog("check");
 
     // エラーチェック
     if (GLState::printShaderError(shader.get(), GL_COMPILE_STATUS)) {
@@ -71,8 +75,10 @@ MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charac
         return MGLShader();
     }
 
+    jclog("check");
     // エラーが発生していないから、オブジェクトを生成して返す
     Shader *result = new Shader(type, shader);
+    jclog("check");
     return MGLShader(result);
 }
 

@@ -448,6 +448,7 @@ public:
      */
     inline void sharedFrom( const jc_sp<ArrayHandle<value_type> > master) {
         assert(master);
+        assert(master->ref);
 
         this->ref = master->ref;
         this->pRef = this->ref.get();
@@ -520,6 +521,7 @@ public:
      * ハンドルコピーを行う
      */
     Handle(const Handle &cpy) {
+        pMaster = NULL;
         reset(cpy.self, cpy.master);
     }
 
