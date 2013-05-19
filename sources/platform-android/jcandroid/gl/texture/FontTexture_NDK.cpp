@@ -39,7 +39,7 @@ jc_sp<FontTexture> FontTexture::createInstance(const String &text, const u32 hei
     jc_sp<FontTexture> result(new FontTexture(imageWidth, imageHeight, device, text));
     {
         void* raw_buffer = env->GetDirectBufferAddress(pixelBuffer);
-        result->bind();
+        result->bind(device->getState());
         {
             result->copyPixelLine(raw_buffer, PixelFormat_NativeRGBA, 0, 0, imageHeight);
         }

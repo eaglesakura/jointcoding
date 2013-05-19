@@ -43,6 +43,12 @@ enum PixelFormat_e {
     PixelFormat_RGBA8888,
 
     /**
+     * 4byte
+     * GL_UNSIGNED_BYTE
+     */
+    PixelFormat_BGRA8888,
+
+    /**
      * RGBA各要素を含み、プラットフォームに最適化した状態でロードする
      * 各1byteは保証するが、RGBA並び順は保証しない。
      *
@@ -51,7 +57,11 @@ enum PixelFormat_e {
      * GL_BGRA_EXT
      * GL_UNSIGNED_BYTE
      */
-    PixelFormat_NativeRGBA,
+#ifdef  BUILD_Android
+    PixelFormat_NativeRGBA = PixelFormat_BGRA8888,
+#else
+    PixelFormat_NativeRGBA = PixelFormat_RGBA8888,
+#endif
 };
 
 class Pixel {
@@ -67,7 +77,7 @@ public:
                 2, // RGBA5551
                 3, // RGB888
                 4, // RGBA8888
-                4, // NativeRGBA
+                4, // BGRA8888
                 };
         return size[fmt];
     }

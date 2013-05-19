@@ -35,7 +35,11 @@ void SpriteManager::initialize(MDevice device) {
     {
         uniform.poly_data.setLocation(shader, "poly_data");
         uniform.poly_uv.setLocation(shader, "poly_uv");
-        uniform.texture.setLocation(shader, "tex");
+
+        {
+            uniform.texture.setLocation(shader, "tex");
+            uniform.texture.setState(windowDevice->getState());
+        }
         uniform.color.setLocation(shader, "blendColor");
         uniform.aspect.setLocation(shader, "aspect");
         uniform.rotate.setLocation(shader, "rotate");
@@ -55,7 +59,7 @@ void SpriteManager::initialize(MDevice device) {
 
     {
         whiteTexture.reset(new TextureImage(1, 1, device));
-        whiteTexture->bind();
+        whiteTexture->bind(windowDevice->getState());
         {
             const u16 rgb565 = 0xFFFF;
             whiteTexture->copyPixelLine(&rgb565, PixelFormat_RGB565, 0, 0, 1);
@@ -68,7 +72,7 @@ void SpriteManager::initialize(MDevice device) {
 }
 
 SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
-    this->device = device;
+    this->windowDevice = device;
 
     this->shader = shader;
 
@@ -111,8 +115,8 @@ void SpriteManager::rendering(const float x, const float y, const float width, c
 
     {
         // ポリゴンのXYWH情報を生成する
-        const float displayWidth = (float) device->getSurface()->getWidth();
-        const float displayHeight = (float) device->getSurface()->getHeight();
+        const float displayWidth = (float) windowDevice->getSurface()->getWidth();
+        const float displayHeight = (float) windowDevice->getSurface()->getHeight();
 
         const float sizeX = width / displayWidth * 2;
         const float sizeY = height / displayHeight * 2;
@@ -174,7 +178,7 @@ void SpriteManager::dispose() {
     quad.reset();
     shader.reset();
     whiteTexture.reset();
-    device.reset();
+    windowDevice.reset();
 }
 
 /**

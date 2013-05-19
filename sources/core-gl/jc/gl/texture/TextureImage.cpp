@@ -28,23 +28,19 @@ static u32 PIXEL_FORMATS[] = {
         GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_RGBA,
 #endif
 //
-    };
+        };
 }
 
 TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     this->alloced = jcfalse;
     size.img_width = size.tex_width = width;
     size.img_height = size.tex_height = height;
-    this->state = device->getState();
     this->target = GL_TEXTURE_2D;
     bindUnit = -1;
-//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
     texture = device->getVRAM()->alloc(VRAM_Texture);
 
     {
-        s32 index = getFreeTextureUnitIndex();
-        this->bind(index);
+        this->bind(device->getState());
         {
             // npotでは GL_CLAMP_TO_EDGE を指定する必要がある
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -67,15 +63,12 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     this->alloced = jcfalse;
     size.img_width = size.tex_width = width;
     size.img_height = size.tex_height = height;
-    this->state = device->getState();
     this->target = target;
     bindUnit = -1;
-//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     texture = device->getVRAM()->alloc(VRAM_Texture);
 
     {
-        s32 index = getFreeTextureUnitIndex();
-        this->bind(index);
+        this->bind(device->getState());
         {
             // npotでは GL_CLAMP_TO_EDGE を指定する必要がある
             glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -99,6 +92,7 @@ TextureImage::~TextureImage() {
 }
 
 s32 TextureImage::getFreeTextureUnitIndex() {
+    assert(state);
     return state->getFreeTextureUnitIndex(jctrue);
 }
 
@@ -213,7 +207,12 @@ jcboolean TextureImage::isPowerOfTwoTexture() {
     }
 }
 
-s32 TextureImage::bind() {
+s32 TextureImage::bind(MGLState state) {
+    assert(state);
+
+    // 制御下のステートを変更する
+    resetState(state);
+
     if (bindUnit >= 0) {
         assert(bindUnit >= 0 && bindUnit < GPUCapacity::getMaxTextureUnits());
 
@@ -228,15 +227,19 @@ s32 TextureImage::bind() {
 
     s32 unitIndex = getFreeTextureUnitIndex();
 //    unitIndex = 0;
-    this->bind(unitIndex);
+    this->bind(unitIndex, state);
     return unitIndex;
 }
 
 /**
  * テクスチャをindex番のユニットに関連付ける
  */
-void TextureImage::bind(s32 index) {
+void TextureImage::bind(s32 index, MGLState state) {
+    assert(state);
     assert(index >= 0 && index < GPUCapacity::getMaxTextureUnits());
+
+    // 制御下のステートを変更する
+    resetState(state);
 
     if (bindUnit == index) {
         if (state->isBindedTexture(bindUnit, target, texture.get())) {
@@ -257,6 +260,7 @@ void TextureImage::bind(s32 index) {
 void TextureImage::unbind() {
     this->state->unbindTexture(texture.get());
     bindUnit = -1;
+    state.reset();
 }
 
 /**
@@ -362,7 +366,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             }
 
             // テクスチャ用メモリを確保する
-            result->bind();
+            result->bind(device->getState());
             result->allocPixelMemory(pixelFormat, 0);
 
             // glTexImage2D用にパッキングを行う
@@ -419,7 +423,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
                 assert(LOAD_HEIGHT > 0);
                 assert((pixel_y + LOAD_HEIGHT) <= origin_height);
 
-                result->bind();
+                result->bind(device->getState());
                 result->copyPixelLine(pixelBuffer->getPixelHeader(), pixelFormat, 0, pixel_y, LOAD_HEIGHT);
                 // テクスチャロードはfinish待ちを行う
                 glFinish();
@@ -457,7 +461,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
                 }
 
                 jclog("gen mipmap");
-                result->bind();
+                result->bind(device->getState());
                 result->genMipmaps();
                 result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
                 result->setMagFilter(GL_LINEAR);
@@ -515,7 +519,7 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoa
         DeviceLock lock(device, jctrue);
 
         MTextureImage result(new TextureImage(width, height, device));
-        result->bind();
+        result->bind(device->getState());
         {
             u32 length = 0;
             jc_sa<u8> temp = InputStream::toByteArray(is, &length);

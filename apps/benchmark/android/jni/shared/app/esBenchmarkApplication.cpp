@@ -130,7 +130,6 @@ void BenchmarkApplication::onAppMainRendering() {
         spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
 
         if (texture) {
-            texture->resetDevice(getWindowDevice());
             spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
 
             static float rotate = 0;
