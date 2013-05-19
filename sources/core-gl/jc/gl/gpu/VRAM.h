@@ -113,47 +113,6 @@ typedef Handle<GLuint> vram_handle;
  * 共有可能なものは共有し、それ以外は独自でハンドル管理する
  */
 class SharedVRAM: public Object {
-
-    /**
-     * コンテキスト共有が可能なテーブル
-     */
-    struct {
-        /**
-         * テクスチャテーブル
-         */
-        jc_sp<vram_table> textures;
-
-        /**
-         * IBO
-         */
-        jc_sp<vram_table> indexbuffers;
-
-        /**
-         * VBO
-         */
-        jc_sp<vram_table> vertexbuffers;
-    }shared;
-
-    /**
-     * 固有オブジェクトテーブル
-     */
-    struct {
-        /**
-         * 頂点シェーダ
-         */
-        jc_sp<vram_table> vert_shader;
-
-        /**
-         * フラグメントシェーダー
-         */
-        jc_sp<vram_table> frag_shader;
-
-        /**
-         * シェーダープログラム
-         */
-        jc_sp<vram_table> programs;
-    }non_shared;
-
     /**
      * VRAMのアクセス用テーブル
      */
