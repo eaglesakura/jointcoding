@@ -446,11 +446,11 @@ public:
     /**
      * masterの配列を共有し、次からその数の割り当てを行う
      */
-    inline void sharedFrom( const jc_sp<ArrayHandle> master) {
+    inline void sharedFrom( const jc_sp<ArrayHandle<value_type> > master) {
         assert(master);
 
         this->ref = master->ref;
-        this->pRef = master.get();
+        this->pRef = this->ref.get();
     }
 
     /**

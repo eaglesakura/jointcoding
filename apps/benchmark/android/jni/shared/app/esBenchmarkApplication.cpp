@@ -177,6 +177,8 @@ void BenchmarkApplication::onAppResume() {
  */
 void BenchmarkApplication::onAppDestroy() {
     jclogf("destroy %x", this);
+
+    texture.reset();
 }
 
 }

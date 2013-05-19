@@ -32,6 +32,10 @@ NDKPlatformContext::NDKPlatformContext(jc_sp<JointApplicationRenderer> renderer)
 }
 
 NDKPlatformContext::~NDKPlatformContext() {
+    windowDeviceManager->dispose();
+    windowDeviceManager.reset();
+
+    windowDevice.reset();
 
 }
 
@@ -54,6 +58,9 @@ MDevice NDKPlatformContext::createSlaveDevice() const {
         CALL_JNIENV();
         env->DeleteLocalRef(jDeviceManager);
     }
+
+    // デバイスの隷属を行う
+    device->getVRAM()->sharedFrom(device->getVRAM());
 
     // 残ったデバイスを返す
     return device;

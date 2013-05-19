@@ -181,6 +181,27 @@ SharedVRAM::SharedVRAM() {
 SharedVRAM::~SharedVRAM() {
 
 }
+/**
+ * マスターVRAMのスレイブとして動作させる
+ * 共有可能なオブジェクトはメモリ空間を共有される。
+ * ステート情報は共有されないことに注意すること
+ */
+void SharedVRAM::sharedFrom(jc_sp<SharedVRAM> master) {
+    const VRAM_e shared_obj[] = {
+        // テクスチャ
+        VRAM_Texture,
+        // インデックスバッファ
+        VRAM_Indices,
+        // 頂点バッファ
+        VRAM_VertexBufferObject,
+    };
+
+    // 隷属を宣言する
+    for( s32 i = 0; i < (sizeof(shared_obj) / sizeof(VRAM_e)); ++i) {
+        const VRAM_e type = shared_obj[i];
+        vram_tables[type]->sharedFrom( master->vram_tables[type]);
+    }
+}
 
 /**
  * 領域確保を行う

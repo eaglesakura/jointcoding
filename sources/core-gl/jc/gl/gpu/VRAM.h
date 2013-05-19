@@ -123,6 +123,13 @@ public:
     virtual ~SharedVRAM();
 
     /**
+     * マスターVRAMのスレイブとして動作させる
+     * 共有可能なオブジェクトはメモリ空間を共有される。
+     * ステート情報は共有されないことに注意すること
+     */
+    void sharedFrom( jc_sp<SharedVRAM> master);
+
+    /**
      * 領域確保を行う
      */
     vram_handle alloc(const VRAM_e type);

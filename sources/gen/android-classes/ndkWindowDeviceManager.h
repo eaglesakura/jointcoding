@@ -23,6 +23,8 @@ public:
     static jobject getEGLWrapper_unsafe_(jobject _this);
     virtual jobject createSlaveDevice_unsafe();
     static jobject createSlaveDevice_unsafe_(jobject _this);
+    virtual void dispose();
+    static void dispose_(jobject _this);
     virtual jobject getNativePointer_unsafe(jint key);
     static jobject getNativePointer_unsafe_(jobject _this, jint key);
     virtual void onNativeEndOperation();
