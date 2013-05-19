@@ -111,38 +111,25 @@ void vramtable_program_callback(const HandleCallback_e callback, void* pHandleTa
 }
 
 SharedVRAM::SharedVRAM() {
-    {
 
-        shared.textures.reset(new vram_table());
-        shared.indexbuffers.reset(new vram_table());
-        shared.vertexbuffers.reset(new vram_table());
+    const handletable_callback callback_functions[] = {
+    // textures
+            (handletable_callback) vramtable_texture_callback,
+            // indices
+            (handletable_callback) vramtable_indices_callback,
+            // vbo
+            (handletable_callback) vramtable_vbo_callback,
+            // vert shader
+            (handletable_callback) vramtable_vertshader_callback,
+            // frag shader
+            (handletable_callback) vramtable_fragshader_callback,
+            // program
+            (handletable_callback) vramtable_program_callback, };
 
-        non_shared.vert_shader.reset(new vram_table());
-        non_shared.frag_shader.reset(new vram_table());
-        non_shared.programs.reset(new vram_table());
-
-        // 確保用のオブジェクトのテーブルを作成する
-        vram_tables[VRAM_Texture] = shared.textures;
-        vram_tables[VRAM_Indices] = shared.indexbuffers;
-        vram_tables[VRAM_VertexBufferObject] = shared.vertexbuffers;
-        vram_tables[VRAM_VertexShader] = non_shared.vert_shader;
-        vram_tables[VRAM_FragmentShader] = non_shared.frag_shader;
-        vram_tables[VRAM_ShaderProgram] = non_shared.programs;
+    for (int i = 0; i < VRAM_e_num; ++i) {
+        vram_tables[i].reset(new vram_table());
+        vram_tables[i]->setCallback(callback_functions[i]);
     }
-
-    // コールバック設定を行う
-    {
-        // 共有オブジェクト
-        shared.textures->setCallback((handletable_callback) vramtable_texture_callback);
-        shared.indexbuffers->setCallback((handletable_callback) vramtable_indices_callback);
-        shared.vertexbuffers->setCallback((handletable_callback) vramtable_vbo_callback);
-
-        // 非共有オブジェクト
-        non_shared.vert_shader->setCallback((handletable_callback) vramtable_vertshader_callback);
-        non_shared.frag_shader->setCallback((handletable_callback) vramtable_fragshader_callback);
-        non_shared.programs->setCallback((handletable_callback) vramtable_program_callback);
-    }
-
 }
 
 SharedVRAM::~SharedVRAM() {
