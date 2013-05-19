@@ -227,7 +227,6 @@ public class EGLWrapper {
                 egl.eglTerminate(eglDisplay);
                 eglDisplay = null;
             }
-
             egl = null;
         }
     }

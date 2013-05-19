@@ -10,10 +10,10 @@ const ::jc::s32 WindowDeviceManager::KEY_MAINCONTEXT = 0;
 
 static jclass class_WindowDeviceManager = NULL;
 
-#define methods_WindowDeviceManager_LENGTH 9
+#define methods_WindowDeviceManager_LENGTH 10
 
 #if methods_WindowDeviceManager_LENGTH
-static jmethodID methods_WindowDeviceManager[9];
+static jmethodID methods_WindowDeviceManager[10];
 #endif
 
 static void initialize_WindowDeviceManager() {
@@ -35,11 +35,12 @@ static void initialize_WindowDeviceManager() {
         methods_WindowDeviceManager[1] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "setNativePointer", "(ILcom/eaglesakura/jc/jni/Pointer;)V", false);
         methods_WindowDeviceManager[2] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "getEGLWrapper", "()Lcom/eaglesakura/jc/egl/EGLWrapper;", false);
         methods_WindowDeviceManager[3] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "createSlaveDevice", "()Lcom/eaglesakura/jc/egl/DeviceManager;", false);
-        methods_WindowDeviceManager[4] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
-        methods_WindowDeviceManager[5] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "onNativeEndOperation", "()V", false);
-        methods_WindowDeviceManager[6] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "onNativeBeginOperation", "()V", false);
-        methods_WindowDeviceManager[7] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "createNative", "()V", false);
-        methods_WindowDeviceManager[8] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "getEGLSurfaceWrapper", "()Lcom/eaglesakura/jc/egl/EGLSurfaceWrapper;", false);
+        methods_WindowDeviceManager[4] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "dispose", "()V", false);
+        methods_WindowDeviceManager[5] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
+        methods_WindowDeviceManager[6] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "onNativeEndOperation", "()V", false);
+        methods_WindowDeviceManager[7] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "onNativeBeginOperation", "()V", false);
+        methods_WindowDeviceManager[8] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "createNative", "()V", false);
+        methods_WindowDeviceManager[9] = ::ndk::JniWrapper::loadMethod(class_WindowDeviceManager, "getEGLSurfaceWrapper", "()Lcom/eaglesakura/jc/egl/EGLSurfaceWrapper;", false);
 
     }
 }
@@ -92,20 +93,31 @@ jobject WindowDeviceManager::createSlaveDevice_unsafe_(jobject _this) {
     return (jobject) env->CallObjectMethod(_this, methods_WindowDeviceManager[3]);
 }
 
+void WindowDeviceManager::dispose() {
+    CALL_JNIENV();
+    env->CallVoidMethod(this->getObject(), methods_WindowDeviceManager[4]);
+}
+
+void WindowDeviceManager::dispose_(jobject _this) {
+    CALL_JNIENV();
+    initialize_WindowDeviceManager();
+    env->CallVoidMethod(_this, methods_WindowDeviceManager[4]);
+}
+
 jobject WindowDeviceManager::getNativePointer_unsafe(jint key) {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_WindowDeviceManager[4], key);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_WindowDeviceManager[5], key);
 }
 
 jobject WindowDeviceManager::getNativePointer_unsafe_(jobject _this, jint key) {
     CALL_JNIENV();
     initialize_WindowDeviceManager();
-    return (jobject) env->CallObjectMethod(_this, methods_WindowDeviceManager[4], key);
+    return (jobject) env->CallObjectMethod(_this, methods_WindowDeviceManager[5], key);
 }
 
 void WindowDeviceManager::onNativeEndOperation() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_WindowDeviceManager[5]);
+    env->CallVoidMethod(this->getObject(), methods_WindowDeviceManager[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -132,7 +144,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_WindowDeviceManager_onNativeE
 void WindowDeviceManager::onNativeEndOperation_(jobject _this) {
     CALL_JNIENV();
     initialize_WindowDeviceManager();
-    env->CallVoidMethod(_this, methods_WindowDeviceManager[5]);
+    env->CallVoidMethod(_this, methods_WindowDeviceManager[6]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -158,7 +170,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_WindowDeviceManager_onNativeE
 
 void WindowDeviceManager::onNativeBeginOperation() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_WindowDeviceManager[6]);
+    env->CallVoidMethod(this->getObject(), methods_WindowDeviceManager[7]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -185,7 +197,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_WindowDeviceManager_onNativeB
 void WindowDeviceManager::onNativeBeginOperation_(jobject _this) {
     CALL_JNIENV();
     initialize_WindowDeviceManager();
-    env->CallVoidMethod(_this, methods_WindowDeviceManager[6]);
+    env->CallVoidMethod(_this, methods_WindowDeviceManager[7]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -211,7 +223,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_WindowDeviceManager_onNativeB
 
 void WindowDeviceManager::createNative() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_WindowDeviceManager[7]);
+    env->CallVoidMethod(this->getObject(), methods_WindowDeviceManager[8]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -238,7 +250,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_WindowDeviceManager_createNat
 void WindowDeviceManager::createNative_(jobject _this) {
     CALL_JNIENV();
     initialize_WindowDeviceManager();
-    env->CallVoidMethod(_this, methods_WindowDeviceManager[7]);
+    env->CallVoidMethod(_this, methods_WindowDeviceManager[8]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -264,13 +276,13 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_egl_WindowDeviceManager_createNat
 
 jobject WindowDeviceManager::getEGLSurfaceWrapper_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_WindowDeviceManager[8]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_WindowDeviceManager[9]);
 }
 
 jobject WindowDeviceManager::getEGLSurfaceWrapper_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_WindowDeviceManager();
-    return (jobject) env->CallObjectMethod(_this, methods_WindowDeviceManager[8]);
+    return (jobject) env->CallObjectMethod(_this, methods_WindowDeviceManager[9]);
 }
 
 jc_sp<WindowDeviceManager> WindowDeviceManager::wrap(jobject obj) {

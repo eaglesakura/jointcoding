@@ -183,6 +183,7 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
         onSurfaceDestroyed();
     }
 
+    @JCMethod
     @Override
     public void dispose() {
         synchronized (lock) {
