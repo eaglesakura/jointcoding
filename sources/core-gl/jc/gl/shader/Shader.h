@@ -37,21 +37,26 @@ protected:
     /**
      * ビルドしたシェーダー
      */
-    SharedResource shader;
+    vram_handle shader;
 
-    Shader(const SharedResource &shaderResource);
+    /**
+     * タイプ
+     */
+    ShaderType_e type;
+
+    Shader(const ShaderType_e type, const vram_handle &shader_handle);
 public:
     virtual ~Shader();
 
     /**
      * シェーダーオブジェクトを取得する。
      */
-    virtual SharedResource& getShader() {
+    virtual vram_handle& getShader() {
         return shader;
     }
 
     virtual ShaderType_e getType() {
-        return shader.type() == VRAM_VertexShader ? ShaderType_Vertex : ShaderType_Fragment;
+        return type;
     }
 
     /**

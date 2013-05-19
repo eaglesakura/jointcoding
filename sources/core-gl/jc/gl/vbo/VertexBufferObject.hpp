@@ -20,7 +20,7 @@ class VertexBufferObject: public Object {
     /**
      * 確保したVBO
      */
-    SharedResource vertices;
+    vram_handle vertices;
 
     /**
      * バッファ
@@ -29,7 +29,7 @@ class VertexBufferObject: public Object {
 public:
     VertexBufferObject(MDevice device) {
         this->state = device->getState();
-        vertices.alloc(device->getVRAM(), VRAM_VertexBufferObject);
+        vertices = device->getVRAM()->alloc(VRAM_VertexBufferObject);
     }
 
     virtual ~VertexBufferObject() {
@@ -67,7 +67,7 @@ public:
      */
     virtual void dispose() {
         unbind();
-        vertices.release();
+        vertices.reset();
     }
 };
 

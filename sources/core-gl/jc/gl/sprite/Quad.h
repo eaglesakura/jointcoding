@@ -59,7 +59,7 @@ class Quad: public Object {
     /**
      * 頂点バッファ
      */
-    SharedResource vertices;
+    vram_handle vertices;
 
     struct {
         /**

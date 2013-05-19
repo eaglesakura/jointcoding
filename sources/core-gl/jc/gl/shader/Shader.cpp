@@ -14,10 +14,9 @@
 namespace jc {
 namespace gl {
 
-Shader::Shader(const SharedResource &shaderResource) {
-    jclogf("vram2vram = 0x%x", shaderResource.get());
-    this->shader = shaderResource;
-    jclogf("vram2vram finish = 0x%x", shaderResource.get());
+Shader::Shader(const ShaderType_e type, const vram_handle &shader_handle) {
+    this->type = type;
+    this->shader = shader_handle;
 }
 
 Shader::~Shader() {
@@ -25,7 +24,7 @@ Shader::~Shader() {
 }
 
 void Shader::dispose() {
-    shader.release();
+    shader.reset();
 }
 
 /**
@@ -40,12 +39,9 @@ MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const
 
     try {
         String fileText = InputStream::toText(is);
-//        return result;
         jclog("------ shader source ------");
         jclogf("%s", fileText.c_str());
         jclog("------ shader source ------");
-        /*
-         * */
         return compile(type, vram, fileText.c_str());
     } catch (const Exception &e) {
         jcloge(e);
@@ -58,8 +54,7 @@ MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const
  */
 MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charactor* sourceCode) {
     // シェーダオブジェクトを作成
-    SharedResource shader;
-    shader.alloc(vram, type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader);
+    vram_handle shader = vram->alloc(type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader);
 
     // シェーダソースを設定
     const s32 src_length = strlen(sourceCode);
@@ -68,15 +63,16 @@ MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charac
     // コンパイル
     glCompileShader(shader.get());
     assert_gl();
+
     // エラーチェック
     if (GLState::printShaderError(shader.get(), GL_COMPILE_STATUS)) {
-        shader.release();
+        shader.reset();
         jclogf("shader(%s) comple error!!", type == ShaderType_Fragment ? "FRAGMENT" : "VERTEX");
         return MGLShader();
     }
 
     // エラーが発生していないから、オブジェクトを生成して返す
-    Shader *result = new Shader(shader);
+    Shader *result = new Shader(type, shader);
     return MGLShader(result);
 }
 

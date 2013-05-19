@@ -12,7 +12,7 @@
 namespace jc {
 namespace gl {
 
-ShaderProgram::ShaderProgram(const SharedResource &program, const MGLState state, const MGLShader vertexShader, const MGLShader fragmentShader) {
+ShaderProgram::ShaderProgram(const vram_handle &program, const MGLState state, const MGLShader vertexShader, const MGLShader fragmentShader) {
     this->program = program;
     this->state = state;
     glGetProgramiv(program.get(), GL_ACTIVE_ATTRIBUTES, (GLint*) &attributes);
@@ -49,7 +49,7 @@ void ShaderProgram::dispose() {
     if (program.exist()) {
         unbind();
         // 各々のシェーダーのデタッチと削除を行う
-        program.release();
+        program.reset();
     }
 
     vertexShader.reset();
@@ -141,21 +141,16 @@ MGLShaderProgram ShaderProgram::buildFromSource(MDevice device, const charactor 
  * 実行用にシェーダーをリンクさせる。
  */ //
 jc_sp<ShaderProgram> ShaderProgram::link(MDevice device, const MGLShader vertexShader, const MGLShader fragmentShader) {
-    if( !vertexShader || !fragmentShader ) {
-        jcalertf("vertexShader(%x) || fragmentShader(%x)", vertexShader.get(), fragmentShader.get());
-        return MGLShaderProgram();
-    }
+    assert(vertexShader);
+    assert(vertexShader->getType() == ShaderType_Vertex);
+    assert(fragmentShader);
+    assert(fragmentShader->getType() == ShaderType_Fragment);
 
-    jclogf("vertex(%d :: %d)", vertexShader->getShader().get(), vertexShader->getType());
-    jclogf("fragment(%d :: %d)", fragmentShader->getShader().get(), fragmentShader->getType());
-    if (vertexShader->getType() == fragmentShader->getType()) {
-        jcalertf("vertexShader->getType(%x) == fragmentShader->getType(%x)", vertexShader->getType(), fragmentShader->getType());
-        return MGLShaderProgram();
-    }
 
     const MGLState state = device->getState();
-    SharedResource program;
-    program.alloc(device->getVRAM(), VRAM_ShaderProgram);
+
+    vram_handle program = device->getVRAM()->alloc(VRAM_ShaderProgram);
+
     // 頂点シェーダを対応付ける
     glAttachShader(program.get(), vertexShader->getShader().get());
     // フラグメントシェーダを対応付ける
@@ -166,7 +161,7 @@ jc_sp<ShaderProgram> ShaderProgram::link(MDevice device, const MGLShader vertexS
 
     if (GLState::printProgramError(program.get(), GL_LINK_STATUS)) {
         // リンクに失敗したからエラーを返す
-        program.release();
+        program.reset();
         return MGLShaderProgram();
     }
 

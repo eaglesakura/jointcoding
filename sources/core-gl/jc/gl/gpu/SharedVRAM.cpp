@@ -163,7 +163,14 @@ vram_handle SharedVRAM::alloc(const VRAM_e type) {
  * 不要なオブジェクトの掃除を行う
  */
 void SharedVRAM::gc(const u32 gc_flags) {
+    // FIXME GC処理を追加する
+}
 
+/**
+ * 資源の完全な解放を行う
+ */
+void SharedVRAM::dispose() {
+    // FIXME 廃棄処理を追加する
 }
 
 }
