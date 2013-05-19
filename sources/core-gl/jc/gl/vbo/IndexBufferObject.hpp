@@ -15,6 +15,12 @@
 namespace jc {
 namespace gl {
 
+/**
+ * インデックスバッファを管理する
+ *
+ * 生成は内部で行うが、廃棄はVRAMクラスのgcに任せる。
+ * Context間を移動する場合は必ずunbindを行い、ステートの残骸を残さないよう注意すること
+ */
 class IndexBufferObject: public Object {
     /**
      * 確保したインデックスバッファ
@@ -26,49 +32,36 @@ class IndexBufferObject: public Object {
      */
     u32 indices_length;
 
-    /**
-     * GLのステート管理
-     */
-    MGLState state;
 public:
     IndexBufferObject(MDevice device) {
-        assert(device.get() != NULL);
+        assert(device);
 
-        this->state = device->getState();
         indices = device->getVRAM()->alloc(VRAM_Indices);
         this->indices_length = 0;
     }
 
     virtual ~IndexBufferObject() {
-        dispose();
     }
 
     /**
      * GLへ関連付ける
      */
-    virtual void bind() {
+    virtual void bind(MGLState state) {
         state->bindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices.get());
     }
 
     /**
      * GLとの関連付けを解除する
      */
-    virtual void unbind() {
+    virtual void unbind(MGLState state) {
         if (state->isBindedBuffer(GL_ELEMENT_ARRAY_BUFFER, indices.get())) {
             state->bindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         }
     }
 
     /**
-     * 解放を行う
-     */
-    virtual void dispose() {
-        unbind();
-        indices.reset();
-    }
-
-    /**
      * データを転送する
+     * bind()を行なってから呼び出すこと。
      * @param data 転送元のデータ
      * @param size 転送するバイト数
      * @param suage GL_STATIC_DRAW | GL_STREAM_DRAW | GL_DYNAMIC_DRAW
@@ -81,9 +74,10 @@ public:
 
     /**
      * レンダリングを行う
+     * @param mode レンダリングモードを指定する デフォルトはGL_TRIANGLES
      */
-    virtual void rendering() {
-        glDrawElements(GL_TRIANGLES, indices_length, GL_UNSIGNED_SHORT, NULL);
+    virtual void rendering(const GLenum mode) {
+        glDrawElements(mode, indices_length, GL_UNSIGNED_SHORT, NULL);
         assert_gl();
     }
 };

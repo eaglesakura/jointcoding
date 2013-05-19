@@ -15,6 +15,12 @@
 namespace jc {
 namespace gl {
 
+/**
+ * 頂点バッファオブジェクトを管理する
+ *
+ * 生成は内部的に行うが、廃棄はVRAMのgcに任せる
+ * Context間を移動する際は必ずunbind()を行い、stateから外すこと。
+ */
 template<typename VertexType>
 class VertexBufferObject: public Object {
     /**
@@ -22,10 +28,6 @@ class VertexBufferObject: public Object {
      */
     vram_handle vertices;
 
-    /**
-     * バッファ
-     */
-    MGLState state;
 public:
     VertexBufferObject(MDevice device) {
         this->state = device->getState();
@@ -33,7 +35,6 @@ public:
     }
 
     virtual ~VertexBufferObject() {
-        dispose();
     }
     /**
      * バッファにデータを転送する。
@@ -49,25 +50,17 @@ public:
     /**
      * GLのステートへと関連付ける
      */
-    virtual void bind() {
+    virtual void bind(MGLState state) {
         state->bindBuffer(GL_ARRAY_BUFFER, vertices.get());
     }
 
     /**
      * GLのステートから関連を外す
      */
-    virtual void unbind() {
+    virtual void unbind(MGLState state) {
         if (state->isBindedBuffer(GL_ARRAY_BUFFER, vertices.get())) {
             state->bindBuffer(GL_ARRAY_BUFFER, 0);
         }
-    }
-
-    /**
-     * 解放を行う
-     */
-    virtual void dispose() {
-        unbind();
-        vertices.reset();
     }
 };
 

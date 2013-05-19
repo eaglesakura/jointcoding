@@ -34,8 +34,8 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
         for (u32 ctx = 0; ctx < context_num; ++ctx) {
             GLFigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx).get();
 
-            pContext->vertices->bind();
-            pContext->indices->bind();
+            pContext->vertices->bind(device->getState());
+            pContext->indices->bind(device->getState());
 
             // position
             {
@@ -95,7 +95,7 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
                 }
             }
             // rendering!
-            pContext->indices->rendering();
+            pContext->indices->rendering(GL_TRIANGLES);
         }
     }
 }
