@@ -22,7 +22,7 @@ static u32 PIXEL_TYPES[] = {
         };
 static u32 PIXEL_FORMATS[] = {
 //
-#ifdef BUILD_Android
+#ifdef GL_BGRA_EXT
         GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_BGRA_EXT,
 #else
         GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_RGBA,
@@ -40,7 +40,7 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     bindUnit = -1;
 //    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    texture.alloc(device->getVRAM(), VRAM_Texture);
+    texture = device->getVRAM()->alloc(VRAM_Texture);
 
     {
         s32 index = getFreeTextureUnitIndex();
@@ -71,7 +71,7 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     this->target = target;
     bindUnit = -1;
 //    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    texture.alloc(device->getVRAM(), VRAM_Texture);
+    texture = device->getVRAM()->alloc(VRAM_Texture);
 
     {
         s32 index = getFreeTextureUnitIndex();
@@ -278,7 +278,7 @@ jcboolean TextureImage::isBinded(s32 *resultIndex) {
 void TextureImage::dispose() {
     if (texture.exist()) {
         this->unbind();
-        texture.release();
+        texture.reset();
     }
 }
 

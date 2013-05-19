@@ -55,7 +55,7 @@ const static QuadVertex g_vertices[] = {
  */
 Quad::Quad(MDevice device) {
     this->state = device->getState();
-    this->vertices.alloc(device->getVRAM(), VRAM_VertexBufferObject);
+    this->vertices = device->getVRAM()->alloc(VRAM_VertexBufferObject);
     this->primitiveType = GL_TRIANGLE_FAN;
     this->initialize();
 

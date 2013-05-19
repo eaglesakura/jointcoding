@@ -3,7 +3,7 @@
  *
  *  Created on: 2012/09/25
  */
-
+#if 0
 #include    "jc/gl/GL.h"
 #include    "jc/gl/gpu/VRAM.h"
 #include    "jc/gl/context/State.h"
@@ -283,3 +283,4 @@ _VRAM::Infomation _VRAM::getInfo(const VRAM_e vramType) {
 }
 }
 
+#endif

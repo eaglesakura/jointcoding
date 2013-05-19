@@ -19,7 +19,7 @@ class IndexBufferObject: public Object {
     /**
      * 確保したインデックスバッファ
      */
-    SharedResource indices;
+    vram_handle indices;
 
     /**
      * インデックスバッファの配列長
@@ -35,7 +35,7 @@ public:
         assert(device.get() != NULL);
 
         this->state = device->getState();
-        this->indices.alloc(device->getVRAM(), VRAM_Indices);
+        indices = device->getVRAM()->alloc(VRAM_Indices);
         this->indices_length = 0;
     }
 
@@ -64,7 +64,7 @@ public:
      */
     virtual void dispose() {
         unbind();
-        indices.release();
+        indices.reset();
     }
 
     /**

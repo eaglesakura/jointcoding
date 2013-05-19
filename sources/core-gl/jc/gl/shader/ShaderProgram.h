@@ -51,9 +51,9 @@ protected:
     /**
      * Fragment/VertexShaderをまとめているシェーダプログラム
      */
-    SharedResource program;
+    vram_handle program;
 
-    ShaderProgram(const SharedResource &program, const MGLState state, const MGLShader vertexShader, const MGLShader fragmentShader);
+    ShaderProgram(const vram_handle &program, const MGLState state, const MGLShader vertexShader, const MGLShader fragmentShader);
 public:
     virtual ~ShaderProgram();
 
@@ -61,13 +61,13 @@ public:
      * 管理しているリソースの解放を行う
      */
     virtual void dispose();
-
-    /**
-     * プログラムオブジェクトを取得する。
-     */
-    virtual SharedResource& getProgram() {
-        return program;
-    }
+//
+//    /**
+//     * プログラムオブジェクトを取得する。
+//     */
+//    virtual SharedResource& getProgram() {
+//        return program;
+//    }
 
     /**
      * プログラム属性変数のロケーションを取得する

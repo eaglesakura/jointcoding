@@ -172,7 +172,19 @@ public:
      * 不要なオブジェクトの掃除を行う
      */
     void gc(const u32 gc_flags = VRAM_GC_default);
+
+    /**
+     * 管理しているオブジェクトの完全な廃棄を行う
+     */
+    void dispose();
 };
+
+/**
+ * managed
+ */
+typedef jc_sp<SharedVRAM> VRAM;
+
+#if 0
 
 /**
  * VRAM資源を管理する。
@@ -410,6 +422,7 @@ public:
         return vram_is_exist(vid);
     }
 };
+#endif
 
 }
 }

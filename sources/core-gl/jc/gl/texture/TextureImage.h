@@ -129,7 +129,7 @@ class TextureImage: public Object {
     /**
      * テクスチャユニット本体
      */
-    SharedResource texture;
+    vram_handle texture;
 
     /**
      * GLのステート保持
@@ -303,17 +303,13 @@ public:
     virtual jcboolean isBinded(s32 *resultIndex);
 
     /**
-     * VRAMの情報を取得する
-     */
-    virtual vram_id getVramId() const {
-        return texture.getId();
-    }
-
-    /**
      * テクスチャ名を取得する
      * 名称は一意の32bit整数になる。
      */
     virtual u32 getName() const {
+        if(!texture.exist()) {
+            return 0;
+        }
         return texture.get();
     }
 

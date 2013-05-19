@@ -29,7 +29,7 @@ public:
         this->eglContext = eglContext;
 
         state.reset(new GLState());
-        vram.reset(new _VRAM());
+        vram.reset(new SharedVRAM());
     }
 
     virtual ~SdkEGLContextWrapper() {
