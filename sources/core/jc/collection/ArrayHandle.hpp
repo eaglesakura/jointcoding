@@ -58,6 +58,11 @@ enum HandleCallback_e {
     HandleCallback_Allocated,
 
     /**
+     * 利用を開始する
+     */
+    HandleCallback_Use,
+
+    /**
      * オブジェクトの全参照が廃棄された
      */
     HandleCallback_Released,
@@ -229,14 +234,17 @@ public:
         if (handle.index < 0) {
             return handle;
         }
-
-        // 有効なオブジェクト数を数える
-        if (!pMetaTable[handle.index].refs) {
-            ++exist_objects;
-        }
-
         // メタ情報を取得する
         handle_meta &meta = pMetaTable[handle.index];
+
+        // 有効なオブジェクト数を数える
+        if (!meta.refs) {
+            ++exist_objects;
+            // 利用を開始する
+            if (callback) {
+                (*callback)(HandleCallback_Use, (void*) this, (void*) (&pValues[handle.index]), &meta, 1);
+            }
+        }
 
         // メタテーブルを書き換える
         ++meta.refs;
@@ -377,6 +385,33 @@ public:
     inline void setCallback(const handletable_callback call) {
         this->callback = call;
     }
+
+    /**
+     * 全オブジェクトに対して、定形のコールバックを行う
+     */
+    inline void executeExistOrUnused(s32 *result_unused = NULL) {
+        assert(callback);
+
+        s32 unused = 0;
+        for (int i = 0; i < alloc_index; ++i) {
+            // 未使用のマークをつける
+            HandleCallback_e type = HandleCallback_Unused;
+            if (pMetaTable[i].refs) {
+                // 参照つきなら切り替える
+                type = HandleCallback_Exist;
+            } else {
+                ++unused;
+            }
+
+            // コール
+            (*callback)(type, (void*) this, (void*) (pValues + i), pMetaTable + i, 1);
+        }
+
+        if (result_unused) {
+            *result_unused = unused;
+        }
+    }
+
 };
 
 /**
