@@ -9,9 +9,10 @@
 
 #include    "jc/system/Macro.h"
 #include    "jc/mem/SmartPtr.h"
-#include    "jc/collection/OrderAccessList.h"
+#include    "jc/collection/ArrayHandle.hpp"
 #include    <vector>
 #include    <list>
+#include    "jc/gl/GL.h"
 
 namespace jc {
 namespace gl {
@@ -61,6 +62,116 @@ enum VRAM_e {
      * 無効
      */
     VRAM_e_NULL,
+};
+
+/**
+ * gc()を行う際の挙動を設定する。
+ */
+enum VRAM_GC_e {
+    /**
+     * テクスチャ資源を解放する
+     */
+    VRAM_GC_Texture = 0x1 << VRAM_Texture,
+
+    /**
+     * インデックスバッファ資源を解放する
+     */
+    VRAM_GC_Indices = 0x1 << VRAM_Indices,
+
+    /**
+     * VBOを解放する
+     */
+    VRAM_GC_VertexBufferObjct = 0x1 << VRAM_VertexBufferObject,
+
+    /**
+     * シェーダを解放する
+     */
+    VRAM_GC_VertexShader = 0x1 << VRAM_VertexShader,
+
+    /**
+     * シェーダを解放する
+     */
+    VRAM_GC_FragmentShader = 0x1 << VRAM_FragmentShader,
+
+    /**
+     * リンクされたシェーダーを解放する
+     */
+    VRAM_GC_ShaderProgram = 0x1 << VRAM_ShaderProgram,
+
+    /**
+     * デフォルトの挙動（全資源一括解放）を行う。
+     */
+    VRAM_GC_default = 0xFFFFFFFF,
+};
+
+typedef ArrayHandle<GLuint> vram_table;
+
+typedef Handle<GLuint> vram_handle;
+
+/**
+ * Shared Contextを前提としたVRAMクラス
+ * 共有可能なものは共有し、それ以外は独自でハンドル管理する
+ */
+class SharedVRAM: public Object {
+
+    /**
+     * コンテキスト共有が可能なテーブル
+     */
+    struct {
+        /**
+         * テクスチャテーブル
+         */
+        jc_sp<vram_table> textures;
+
+        /**
+         * IBO
+         */
+        jc_sp<vram_table> indexbuffers;
+
+        /**
+         * VBO
+         */
+        jc_sp<vram_table> vertexbuffers;
+    }shared;
+
+    /**
+     * 固有オブジェクトテーブル
+     */
+    struct {
+        /**
+         * 頂点シェーダ
+         */
+        jc_sp<vram_table> vert_shader;
+
+        /**
+         * フラグメントシェーダー
+         */
+        jc_sp<vram_table> frag_shader;
+
+        /**
+         * シェーダープログラム
+         */
+        jc_sp<vram_table> programs;
+    }non_shared;
+
+    /**
+     * VRAMのアクセス用テーブル
+     */
+    jc_sp<vram_table> vram_tables[VRAM_e_num];
+public:
+    SharedVRAM();
+
+    virtual ~SharedVRAM();
+
+    /**
+     * 領域確保を行う
+     */
+    vram_handle alloc(const VRAM_e type);
+
+    /**
+     * 不要なオブジェクトの掃除を行う
+     */
+    void gc(const u32 gc_flags = VRAM_GC_default);
 };
 
 /**
@@ -117,46 +228,6 @@ inline const jcboolean vram_is_exist(const vram_id vid) {
 }
 
 #undef __IS_NULL
-
-/**
- * gc()を行う際の挙動を設定する。
- */
-enum VRAM_GC_e {
-    /**
-     * テクスチャ資源を解放する
-     */
-    VRAM_GC_Texture = 0x1 << VRAM_Texture,
-
-    /**
-     * インデックスバッファ資源を解放する
-     */
-    VRAM_GC_Indices = 0x1 << VRAM_Indices,
-
-    /**
-     * VBOを解放する
-     */
-    VRAM_GC_VertexBufferObjct = 0x1 << VRAM_VertexBufferObject,
-
-    /**
-     * シェーダを解放する
-     */
-    VRAM_GC_VertexShader = 0x1 << VRAM_VertexShader,
-
-    /**
-     * シェーダを解放する
-     */
-    VRAM_GC_FragmentShader = 0x1 << VRAM_FragmentShader,
-
-    /**
-     * リンクされたシェーダーを解放する
-     */
-    VRAM_GC_ShaderProgram = 0x1 << VRAM_ShaderProgram,
-
-    /**
-     * デフォルトの挙動（全資源一括解放）を行う。
-     */
-    VRAM_GC_default = 0xFFFFFFFF,
-};
 
 /**
  * VRAM上のオブジェクトalloc/ref/releaseを管理する。
