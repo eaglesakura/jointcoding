@@ -207,6 +207,8 @@ void SharedVRAM::sharedFrom(jc_sp<SharedVRAM> master) {
  * 領域確保を行う
  */
 vram_handle SharedVRAM::alloc(const VRAM_e type) {
+    MutexLock lock(mtx);
+
     vram_handle result;
     result.reset(vram_tables[type]);
     result.alloc();
@@ -217,6 +219,8 @@ vram_handle SharedVRAM::alloc(const VRAM_e type) {
  * 不要なオブジェクトの掃除を行う
  */
 void SharedVRAM::gc(const u32 gc_flags) {
+    MutexLock lock(mtx);
+
     for (s32 i = 0; i < VRAM_e_num; ++i) {
         if (gc_flags & (0x1 << i)) {
             s32 unused = 0;
@@ -230,6 +234,8 @@ void SharedVRAM::gc(const u32 gc_flags) {
  * 資源の完全な解放を行う
  */
 void SharedVRAM::dispose() {
+    MutexLock lock(mtx);
+
     for (s32 i = 0; i < VRAM_e_num; ++i) {
         jclogf("vram dispose(%d)", vram_tables[i]->getTable()->getExistValueNum());
         vram_tables[i].reset();
