@@ -1,4 +1,3 @@
-APP_MODULES := jcapp
 # 例外・RTTI対応版のSTLを利用する
 APP_STL:=gnustl_static
 # ARM-v7命令.

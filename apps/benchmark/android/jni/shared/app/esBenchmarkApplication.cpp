@@ -5,10 +5,37 @@
  */
 
 #include    "esBenchmarkApplication.h"
+#include    "jc/collection/ArrayHandle.hpp"
+
+typedef jc_sp< ArrayHandle<GLuint> > vram_array;
+typedef Handle<GLuint> vram_handle;
 
 namespace es {
 
 BenchmarkApplication::BenchmarkApplication() {
+    vram_array vram(new ArrayHandle<GLuint>);
+
+    {
+        vram_handle handle;
+        handle.reset(vram);
+        handle.alloc();
+
+        assert(vram->getTable()->getTableNum() == 1);
+        assert(vram->getTable()->getAllocatedHandleNum() == 1);
+
+        *handle = 10;
+        assert(handle.get() == 10);
+    }
+    assert(vram->getTable()->getExistValueNum() == 0);
+    {
+        vram_handle handle;
+        handle.reset(vram);
+        handle.alloc_back();
+
+        assert(vram->getTable()->getTableNum() == 2);
+        assert(vram->getTable()->getAllocatedHandleNum() == 2);
+        assert(vram->getTable()->getExistValueNum() == 1);
+    }
 }
 
 BenchmarkApplication::~BenchmarkApplication() {

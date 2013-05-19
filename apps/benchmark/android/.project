@@ -68,6 +68,11 @@
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/platform-android</locationURI>
 		</link>
 		<link>
+			<name>jni/stlport</name>
+			<type>2</type>
+			<locationURI>$%7BANDROID_NDK_HOME%7D/sources/cxx-stl/stlport/stlport</locationURI>
+		</link>
+		<link>
 			<name>jni/core-gen/gen</name>
 			<type>2</type>
 			<locationURI>$%7BJOINTCODING_HOME%7D/sources/gen</locationURI>

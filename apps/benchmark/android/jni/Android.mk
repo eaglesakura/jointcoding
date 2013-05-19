@@ -5,7 +5,6 @@ LOCAL_PATH := $(call my-dir)
 #################################################################################
 ## start build
 include $(CLEAR_VARS)
-
 ## setup
 RELATIVITY_JC_PATH := $(shell ${JOINTCODING_HOME}/bin/abspath2rel.sh ${JOINTCODING_HOME})
 ############################       app flags       ###########################
@@ -15,6 +14,9 @@ RELATIVITY_JC_PATH := $(shell ${JOINTCODING_HOME}/bin/abspath2rel.sh ${JOINTCODI
 # LOCAL_CPPFLAGS += -DNO_GL_ASSERT
 # LOCAL_CPPFLAGS += -DEGL_TRIPLEBUFFER_MODE
 # LOCAL_CPPFLAGS += -DRENDERING_VIEWAREA
+
+APP_STL:=gnustl_static
+APP_ABI := armeabi-v7a
 
 ############################       build core sources       ###########################
 # gen sources

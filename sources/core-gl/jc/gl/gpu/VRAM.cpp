@@ -8,14 +8,10 @@
 #include    "jc/gl/gpu/VRAM.h"
 #include    "jc/gl/context/State.h"
 
-#include    "jc/collection/ArrayHandle.hpp"
-
 //     #define PRINT_VRAM
 
 namespace jc {
 
-static ArrayHandle<u32> textures;
-static Handle<u32> self_handle;
 
 namespace gl {
 
