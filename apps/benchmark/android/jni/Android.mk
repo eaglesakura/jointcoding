@@ -55,10 +55,17 @@ LOCAL_CPPFLAGS   += -fexceptions
 LOCAL_CPPFLAGS   += -pthread
 # RTTIを有効
 LOCAL_CPPFLAGS   += -frtti
-# 警告無効？
+# 警告無効
 LOCAL_CFLAGS     += -Wno-psabi
 # マクロ定義
 LOCAL_CPPFLAGS   += -D__ARM_V7__ 
+
+# NEON
+LOCAL_CPPFLAGS += -mfpu=neon
+LOCAL_CPPFLAGS += -mfloat-abi=softfp
+LOCAL_CFLAGS += -mfpu=neon
+LOCAL_CFLAGS += -mfloat-abi=softfp
+
 ############################ import libs   ###########################
 LOCAL_LDLIBS 			+= -lGLESv2
 LOCAL_LDLIBS 			+= -lEGL

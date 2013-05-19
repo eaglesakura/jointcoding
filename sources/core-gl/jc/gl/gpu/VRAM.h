@@ -111,12 +111,19 @@ typedef Handle<GLuint> vram_handle;
 /**
  * Shared Contextを前提としたVRAMクラス
  * 共有可能なものは共有し、それ以外は独自でハンドル管理する
+ *
+ * 複数スレッドからアクセスされる危険性があるため、生成時・廃棄時にはmutexを使った排他処理を行う
  */
 class SharedVRAM: public Object {
     /**
      * VRAMのアクセス用テーブル
      */
     jc_sp<vram_table> vram_tables[VRAM_e_num];
+
+    /**
+     * 生成時のミューテックス
+     */
+    jcmutex mtx;
 public:
     SharedVRAM();
 
