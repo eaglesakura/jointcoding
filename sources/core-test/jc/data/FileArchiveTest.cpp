@@ -45,6 +45,52 @@ static std::vector<File> listFiles() {
     return result;
 }
 
+/**
+ * ファイルのアーカイブを行う
+ */
+void makeFileArchive(const String &dst) {
+    std::vector<File> src_files = listFiles();
+
+    jcboolean completed;
+    {
+        MOutputStream stream(new FileOutputStream(dst.c_str(), &completed));
+        _assertTrue(completed);
+
+        MFileArchiveOutputStream archive(new FileArchiveOutputStream(stream));
+
+        for (u32 i = 0; i < src_files.size(); ++i) {
+            File file = src_files[i];
+
+            MInputStream input(new FileInputStream(file.getName(), &completed));
+            _assertTrue(completed);
+
+            u32 file_length;
+            jc_sa<u8> file_array = InputStream::toByteArray(input, &file_length);
+
+            archive->beginFile(file.getName());
+            archive->write(file_array.get(), file_length);
+            archive->endFile();
+
+            jclogf(" file[%s] size(%d)", file.getName().c_str(), file_length);
+        }
+
+        archive->close();
+    }
+
+    {
+        MInputStream stream(new FileInputStream(dst.c_str(), &completed));
+        _assertTrue(completed);
+
+        MFileArchiveImporter importer(new FileArchiveImporter());
+        importer->initialize(stream);
+
+        jclogf("archive files[%d]", importer->getFileCount());
+        jclogf("enum files[%d]", src_files.size());
+        _assertEquals(src_files.size(), importer->getFileCount());
+
+    }
+}
+
 TESTFUNCTION void test_makeFileArchive() {
     std::vector<File> src_files = listFiles();
 
@@ -81,8 +127,8 @@ TESTFUNCTION void test_makeFileArchive() {
         MFileArchiveImporter importer(new FileArchiveImporter());
         importer->initialize(stream);
 
-        jclogf( "archive files[%d]", importer->getFileCount());
-        jclogf( "enum files[%d]", src_files.size());
+        jclogf("archive files[%d]", importer->getFileCount());
+        jclogf("enum files[%d]", src_files.size());
         _assertEquals(src_files.size(), importer->getFileCount());
 
     }

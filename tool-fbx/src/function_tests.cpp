@@ -19,7 +19,7 @@ void testFunction() {
 
     // インポート
     {
-        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("skin-anim.fbx");
+        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("susa_pose.FBX");
 //        jc_sp<FbxImportManager> manager = FbxImportManager::createInstance("pipe.fbx");
 
         try {

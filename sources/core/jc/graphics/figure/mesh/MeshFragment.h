@@ -14,6 +14,9 @@ namespace jc {
 
 /**
  * メッシュの断片を構築する。
+ * メッシュは複数のフラグメントで構築される。
+ * １フラグメントにつき、１つのマテリアルを持つ。
+ * ボーン数が限界を超えると、フラグメントは複数のフラグメントコンテキストに分割され、コンテキスト毎に描画を行う。
  * Mesh( 1 object )
  *   L MeshFragment( change material )
  *      L FragmentContext ( 1 draw call <= 32 bones )
