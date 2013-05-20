@@ -16,6 +16,7 @@
 *.class
 bin/
 armeabi*/
+R.java
 
 # Local configuration file (sdk path, etc)
 local.properties

@@ -3,7 +3,6 @@ package com.eaglesakura.jc.android.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
 import android.view.KeyEvent;
 
 import com.eaglesakura.jc.protocol.KeyEventProtocol;
@@ -18,7 +17,6 @@ public class NativeKeyEvent implements KeyEventProtocol {
      * key:Androidキーコード
      * value:JCキーコード
      */
-    @SuppressLint("UseSparseArrays")
     private static final Map<Integer, Integer> codeMaps = new HashMap<Integer, Integer>();
 
     static {

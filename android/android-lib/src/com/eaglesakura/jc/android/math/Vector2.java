@@ -1,12 +1,9 @@
 package com.eaglesakura.jc.android.math;
 
-import android.annotation.SuppressLint;
-
 /**
  * 
  * 
  */
-@SuppressLint("FloatMath")
 public final class Vector2 {
     /**
      * X成分。
