@@ -5,7 +5,7 @@
  */
 
 #include    "jointcoding-testsupport.h"
-#include    "jc/system/String.h"
+#include    "jc/system/jcString.h"
 #include    "jc/system/StringUtil.h"
 #include    <map>
 

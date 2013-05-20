@@ -174,6 +174,14 @@ inline T abs(const T v) {
     return v < 0 ? -v : v;
 }
 
+inline u32 abs(const u32 v) {
+    return v;
+}
+
+inline u8 abs(const u8 v) {
+    return v;
+}
+
 /**
  * 2つの浮動小数の同一性をそれなりにチェックする。
  * 演算誤差をある程度考慮する。

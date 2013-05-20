@@ -53,6 +53,10 @@ void Node::retisterDefaultTake(KFbxNode *node) {
         {
 //            FbxDouble3 v = node->LclScaling.Get();
             FbxDouble4 v = node->EvaluateLocalScaling();
+            // FIXME 拡大率が反転しているため、正常化する
+            v[0] = jc::abs(v[0]);
+            v[1] = jc::abs(v[1]);
+            v[2] = jc::abs(v[2]);
             transform.scale.set((float) v[0], (float) v[1], (float) v[2]);
             jclogf("   node[%s] scale(%f, %f, %f) + (%f)", name.c_str(), v[0], v[1], v[2], v[3]);
         }
@@ -127,7 +131,7 @@ void Node::registerAnimations() {
         s32 startFrame = (s32) (start.Get() / period.Get());
         s32 endFrame = (s32) (end.Get() / period.Get());
 
-        // FIXME!! モーション時間を限定
+        // MEMO モーション時間を限定
 //         startFrame = 1;
 //         endFrame = jc::min(120, endFrame);
         /*

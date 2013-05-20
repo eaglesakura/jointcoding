@@ -33,10 +33,11 @@ void createPolygonList(std::vector<ConvertedPolygon> *result, KFbxMesh *mesh);
 Mesh::Mesh(KFbxNode *meshNode, s32 nodeNumber) :
         Node(meshNode, nodeNumber) {
     jclogf("Mesh(NodeNumber %d)", nodeNumber);
-
     if (!meshNode->GetMesh()) {
         throw create_exception_t(FbxException, FbxException_NoMesh);
     }
+
+    this->skinning = jcfalse;
 
     // まずは頂点情報をまとめあげる
     {
@@ -86,9 +87,12 @@ void Mesh::serialize(FbxExportManager *exportManager) {
         // マテリアルごとのコンテキスト数
         for (int i = 0; i < getFragmentCount(); ++i) {
             MFigureMeshFragment fragment = fragments[i];
-
             stream->writeS8(fragment->getDrawingContextCount());
         }
+
+        // TODO スキニング有無によって描画時のシェーダーを選択する
+        // スキニングの有無を出力
+        stream->writeS8(skinning);
     }
 
     // メッシュ情報を出力
@@ -220,7 +224,7 @@ void Mesh::serialize(FbxExportManager *exportManager) {
                         if (bone_number >= boneNodeNumbers.size()) {
                             throw create_exception(ArrayIndexBoundsException,"bone_number >= boneNodeNumbers.size()" );
                         }
-                        const u16 using_bone_number = (u16)boneNodeNumbers[bone_number];
+                        const u16 using_bone_number = (u16) boneNodeNumbers[bone_number];
 
                         // 実際に使用するボーン番号を直接吐き出す
                         stream->writeU16(using_bone_number);
@@ -253,23 +257,31 @@ void Mesh::registerBones() {
     KFbxMesh *mesh = fbxNode->GetMesh();
     KFbxSkin *skin = (KFbxSkin*) mesh->GetDeformer(0, KFbxDeformer::eSkin);
 
-    const s32 clusterCount = skin->GetClusterCount();
-    jclogf("  clusters(%d)", clusterCount);
+    if (skin) {
+        this->skinning = jctrue;
+        const s32 clusterCount = skin->GetClusterCount();
+        jclogf("  clusters(%d)", clusterCount);
 
-    //! クラスタ（ボーン）を取得する
-    for (int boneIndex = 0; boneIndex < clusterCount; ++boneIndex) {
-        KFbxCluster *cluster = skin->GetCluster(boneIndex);
+        //! クラスタ（ボーン）を取得する
+        for (int boneIndex = 0; boneIndex < clusterCount; ++boneIndex) {
+            KFbxCluster *cluster = skin->GetCluster(boneIndex);
 
-        // クラスタのIDが存在することを確認する
-        const u64 linkNodeId = cluster->GetLink()->GetUniqueID();
+            // クラスタのIDが存在することを確認する
+            const u64 linkNodeId = cluster->GetLink()->GetUniqueID();
 
-        Node *linkedNode = NULL;
-        if ((linkedNode = findNodeFromFbxUniqueId(linkNodeId)) == NULL) {
-            throw create_exception(RuntimeException, "Link Object is null...");
+            Node *linkedNode = NULL;
+            if ((linkedNode = findNodeFromFbxUniqueId(linkNodeId)) == NULL) {
+                throw create_exception(RuntimeException, "Link Object is null...");
+            }
+
+            jclogf(" bone[%d] linked node(%d)", boneIndex, linkedNode->getNodeNumber());
+            boneNodeNumbers.push_back(linkedNode->getNodeNumber());
         }
-
-        jclogf(" bone[%d] linked node(%d)", boneIndex, linkedNode->getNodeNumber());
-        boneNodeNumbers.push_back(linkedNode->getNodeNumber());
+    } else {
+        // スキンメッシュでなければ特に何も処理しない
+        // スキンが存在しない、リンククラスタが存在しなければ、そのまま描画を行う。
+        jclogf("  non cluster(%s)", this->getName().c_str());
+        this->skinning = jcfalse;
     }
 
     // 子も行う

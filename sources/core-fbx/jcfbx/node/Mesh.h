@@ -33,6 +33,11 @@ protected:
      */
     std::vector<s32> boneNodeNumbers;
 
+    /**
+     * スキニングが有効な場合、trueが設定される
+     */
+    jcboolean skinning;
+
     Mesh(KFbxNode *meshNode, s32 nodeNumber);
 public:
     virtual ~Mesh();
@@ -62,7 +67,6 @@ public:
      * ボーンのリンクを再構築する
      */
     virtual void registerBones();
-
 
     /**
      * 出力を行う

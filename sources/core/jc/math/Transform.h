@@ -73,7 +73,7 @@ public:
 
     Transform() {
         scale.set(1, 1, 1);
-        rotateType = TransformRotateOrder_XYZ;
+        rotateType = TransformRotateOrder_XZY;
     }
 
     virtual ~Transform() {
@@ -83,6 +83,9 @@ public:
      * thisを構築する行列を作成する
      */
     Matrix4x4* getMatrix(Matrix4x4 *result) const {
+        // 現状でサポートしているのは3ds MaxのXZY形式のみ
+        assert(rotateType == TransformRotateOrder_XZY);
+
         Matrix4x4 scale_m;
         Matrix4x4 rotateX;
         Matrix4x4 rotateY;

@@ -9,11 +9,28 @@
 #include "jointcoding.h"
 #include "jctest/cdt/CdtTestRunner.h"
 
+using namespace jc;
+
 //#define RUN_TEST
 
 int main(int argv, char *args[]) {
+
+//    if (argv < 3) {
+//        jclog("arg < 2");
+//        return 1;
+//    }
+
     jclog("hello fbx-tool!!");
 
+    if (argv >= 3) {
+
+        jclogf("Convert (%s) -> (%s)", args[0], args[1]);
+
+        extern void fbx2binary(const String &fbx3ds_file, const String &dst_file);
+        fbx2binary(args[1], args[2]);
+    }
+
+#if 0
     jc::CdtTestRunner::initialize(argv, args);
     {
 
@@ -34,6 +51,7 @@ int main(int argv, char *args[]) {
 #endif
     }
     jc::CdtTestRunner::run();
+#endif
 
 //    testFunction();
     return 0;
