@@ -18,15 +18,21 @@ namespace jc {
  */
 template<typename value_type>
 struct safe_array {
+private:
     /**
      * コピーコンストラクタはサポートしない
      */
     safe_array(const safe_array& cpy);
-private:
+
+    /**
+     * コピーをサポートしない
+     */
+    safe_array& operator=(const safe_array &cpy);
+public:
     /**
      * 配列本体
      */
-    value_type *values;
+    value_type *ptr;
 
     s32 length;
 
@@ -36,12 +42,12 @@ private:
     inline void alloc(const s32 newLength) {
         assert(newLength > 0);
 
-        value_type *pOldValues = values;
-        values = new value_type[newLength];
+        value_type *pOldValues = ptr;
+        ptr = new value_type[newLength];
 
         // 古い配列が存在するならコピーする
         if (pOldValues) {
-            memcpy(values, pOldValues, sizeof(value_type) * jc::min(length, newLength));
+            memcpy(ptr, pOldValues, sizeof(value_type) * jc::min(length, newLength));
 
             // 古い配列を削除する
             SAFE_DELETE_ARRAY(pOldValues);
@@ -58,15 +64,15 @@ private:
     inline void reserve(const s32 newLength) {
         assert(newLength > 0);
 
-        value_type *pOldValues = values;
-        values = new value_type[newLength];
+        value_type *pOldValues = ptr;
+        ptr = new value_type[newLength];
 
         // 古い配列が存在するならコピーする
         if (pOldValues) {
             const s32 min_length = jc::min(length, newLength);
 
             for (s32 i = 0; i < min_length; ++i) {
-                values[i] = pOldValues[i];
+                ptr[i] = pOldValues[i];
             }
 
             // 古い配列を削除する
@@ -84,7 +90,7 @@ private:
     inline void memcopyFrom(const value_type *origin, const s32 num) {
         // 正常な長さを持たなければならない
         assert(length >= num);
-        memcpy(values, origin, sizeof(value_type) * num);
+        memcpy(ptr, origin, sizeof(value_type) * num);
     }
 
     /**
@@ -97,23 +103,23 @@ private:
         assert(length >= num);
 
         for (s32 i = 0; i < num; ++i) {
-            values[i] = origin[i];
+            ptr[i] = origin[i];
         }
     }
 
     safe_array() {
-        values = NULL;
+        ptr = NULL;
         length = 0;
     }
 
     safe_array(const s32 length) {
-        values = NULL;
+        ptr = NULL;
         length = 0;
         alloc(length);
     }
 
     ~safe_array() {
-        SAFE_DELETE_ARRAY(values);
+        SAFE_DELETE_ARRAY(ptr);
     }
 
     /**
@@ -121,7 +127,7 @@ private:
      */
     inline value_type& operator[](const s32 index) {
         assert(index < length);
-        return values[index];
+        return ptr[index];
     }
 
     /**
@@ -129,7 +135,7 @@ private:
      */
     inline const value_type& operator[](const s32 index) const {
         assert(index < length);
-        return values[index];
+        return ptr[index];
     }
 };
 

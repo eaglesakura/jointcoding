@@ -97,35 +97,37 @@ enum HandleCallback_e {
 typedef void (*handletable_callback)(const HandleCallback_e callback_type, void* pHandleTable_this, void* pValues, handle_meta *pMetaHeader, const u32 objects);
 
 /**
+ * ハンドルのメモリ管理の種類
+ */
+enum HandleType_e {
+    /**
+     * プリミティブ型、ポインタ型のハンドル
+     * memcpyが使え、高速に動作させられる
+     */
+    HandleType_Primitive,
+
+    /**
+     * Class等の特殊な管理下にある型のハンドル
+     * operator=が必要なため、低速なコピーメソッドで動作する
+     */
+    HandleType_Managed,
+};
+
+/**
  * データカプセル
  * 実体を指し示す
  */
 template<typename value_type>
 class handle_table {
     /**
-     * 最終的に参照する実体データ
+     * 参照する実体データ配列
      */
-    std::vector<value_type> values;
+    safe_array<value_type> values;
 
     /**
      * 各データの参照数管理テーブル
      */
-    std::vector<handle_meta> metas;
-
-    /**
-     * 実体データテーブル
-     */
-    value_type *pValues;
-
-    /**
-     * メタデータテーブル
-     */
-    handle_meta *pMetaTable;
-
-    /**
-     * データテーブルの長さ
-     */
-    s32 table_length;
+    safe_array<handle_meta> metas;
 
     /**
      * 次の割り当てインデックス
@@ -136,6 +138,11 @@ class handle_table {
      * 有効なオブジェクト数
      */
     s32 exist_objects;
+
+    /**
+     * ハンドルタイプ
+     */
+    HandleType_e type;
 
     /**
      * 指定位置のハンドルを取得する
@@ -160,38 +167,37 @@ class handle_table {
     handletable_callback callback;
 
     /**
-     * 配列の拡張が行われた
+     * 一度の拡張で行う最低拡張単位
      */
-    void onExpansion(const s32 length) {
-        // 先頭ポインタを取り出す
-        pValues = &(values[0]);
-        pMetaTable = &(metas[0]);
-
-        assert(pValues);
-        assert(pMetaTable);
-
-        // コールバックを行う
-        if (callback) {
-            const s32 added = (length - table_length);
-            (*callback)(HandleCallback_Allocated, (void*) this, (void*) (pValues + table_length), (pMetaTable + table_length), added);
-        }
-
-        // テーブルの長さを更新する
-        table_length = length;
-    }
+    s32 expansion_num;
 
 public:
     handle_table() {
-        alloc_index = table_length = exist_objects = 0;
-        pValues = NULL;
-        pMetaTable = NULL;
+        alloc_index = exist_objects = 0;
+        type = HandleType_Primitive;
+        expansion_num = 1;
         callback = NULL;
     }
 
     ~handle_table() {
         if (callback) {
-            (*callback)(HandleCallback_Destroy, (void*) this, (void*) pValues, pMetaTable, table_length);
+            (*callback)(HandleCallback_Destroy, (void*) this, (void*) values.ptr, metas.ptr, values.length);
         }
+    }
+
+    /**
+     * 一度の領域拡張で拡張する最小単位を指定する
+     * デフォルトは１個単位で拡張する
+     */
+    void setExpansionNum(const s32 num) {
+        expansion_num = num;
+    }
+
+    /**
+     * ハンドルの管理タイプを指定する
+     */
+    void setType(const HandleType_e type) {
+        this->type = type;
     }
 
     /**
@@ -201,29 +207,31 @@ public:
      *
      * コールバックには全オブジェクトが呼び出される
      */
-    inline void reserve(const s32 length) {
-        assert(length > table_length);
+    inline void reserve(const s32 _length) {
+        assert(_length > values.length);
 
+        s32 request_length = values.length;
+        // 拡張数を指定する
+        while (request_length < _length) {
+            request_length += expansion_num;
+        }
+
+        // 古いポインタのサイズ
+        const s32 old_length = values.length;
         // 各配列をリサイズする
-        values.reserve(length);
-        metas.reserve(length);
+        if (type == HandleType_Primitive) {
+            values.alloc(request_length);
+        } else {
+            values.reserve(request_length);
+        }
+        // メタデータは常にmemcpyで問題ない型を利用する
+        metas.alloc(request_length);
 
-        onExpansion(length);
-    }
-
-    /**
-     * リサイズを行う。
-     * 一括取得等を行う
-     * 常に長くしなければならない
-     */
-    inline void resize(const s32 length) {
-        assert(length > table_length);
-//        jcalertf("resize(%d)", length);
-        // 各配列をリサイズする
-        values.resize(length);
-        metas.resize(length);
-
-        onExpansion(length);
+        // コールバックを呼び出す
+        if (callback) {
+            const s32 added = (request_length - old_length);
+            (*callback)(HandleCallback_Allocated, (void*) this, (void*) (values.ptr + old_length), (metas.ptr + old_length), added);
+        }
     }
 
     /**
@@ -231,7 +239,7 @@ public:
      * この数までは高速にハンドル割り当てができ、それを超えると自動的に拡張を行う
      */
     inline s32 getTableNum() const {
-        return table_length;
+        return values.length;
     }
 
     /**
@@ -251,12 +259,12 @@ public:
     /**
      * ハンドルが有効な場合true
      */
-    inline jcboolean exist(const handle_data &handle) {
+    inline jcboolean exist(const handle_data &handle) const {
         if (handle.index < 0) {
             return jcfalse;
         }
 
-        if (pMetaTable[handle.index].refs == 0) {
+        if (metas[handle.index].refs == 0) {
             return jcfalse;
         }
 
@@ -272,14 +280,14 @@ public:
             return handle;
         }
         // メタ情報を取得する
-        handle_meta &meta = pMetaTable[handle.index];
+        handle_meta &meta = metas[handle.index];
 
         // 有効なオブジェクト数を数える
         if (!meta.refs) {
             ++exist_objects;
             // 利用を開始する
             if (callback) {
-                (*callback)(HandleCallback_Use, (void*) this, (void*) (&pValues[handle.index]), &meta, 1);
+                (*callback)(HandleCallback_Use, (void*) this, (void*) (&values.ptr[handle.index]), &meta, 1);
             }
         }
 
@@ -302,7 +310,7 @@ public:
         assert((metas[handle.index].refs) > 0);
 
         // メタ情報を取得する
-        handle_meta &meta = pMetaTable[handle.index];
+        handle_meta &meta = metas[handle.index];
         // 参照数を減らす
         --meta.refs;
 
@@ -310,7 +318,7 @@ public:
         if (!meta.refs) {
             // 無効になったらコールバック
             if (callback) {
-                (*callback)(HandleCallback_Released, (void*) this, (void*) (&pValues[handle.index]), &pMetaTable[handle.index], 1);
+                (*callback)(HandleCallback_Released, (void*) this, (void*) (&values[handle.index]), &metas[handle.index], 1);
             }
 
             // 有効なオブジェクト数を減らす
@@ -330,14 +338,14 @@ public:
      * 値を取得する
      */
     inline value_type& get(const handle_data &handle) {
-        return pValues[handle.index];
+        return values[handle.index];
     }
 
     /**
      * 値を取得する
      */
     inline const value_type& get(const handle_data &handle) const {
-        return pValues[handle.index];
+        return values[handle.index];
     }
 
     /**
@@ -345,9 +353,9 @@ public:
      */
     inline void allocHandles(handle_data *result, const s32 request_num) {
         // 数が足りていないならチェックする
-        if ((alloc_index + request_num) > table_length) {
+        if ((alloc_index + request_num) > getTableNum()) {
             // 再度数を確保する
-            resize(getTableNum() + request_num);
+            reserve(getTableNum() + request_num);
         }
 
         // ハンドル位置を確保する
@@ -363,13 +371,13 @@ public:
      */
     inline s32 findFreeHandles(const s32 length) const {
         // 全領域からlength数を引いた数（配列がはみ出さないように）をチェック
-        for (s32 i = 0; i < (table_length - length); ++i) {
+        for (s32 i = 0; i < (getTableNum() - length); ++i) {
 
             jcboolean finded = jctrue;
             // 連続領域をチェック
             for (s32 k = 0; k < length; ++i) {
                 // 参照数が存在する場合は次へ進む
-                if (pMetaTable[i + k].refs) {
+                if (metas[i + k].refs) {
                     finded = jcfalse;
                     break;
                 }
@@ -433,7 +441,7 @@ public:
         for (int i = 0; i < alloc_index; ++i) {
             // 未使用のマークをつける
             HandleCallback_e type = HandleCallback_Unused;
-            if (pMetaTable[i].refs) {
+            if (metas[i].refs) {
                 // 参照つきなら切り替える
                 type = HandleCallback_Exist;
             } else {
@@ -441,7 +449,7 @@ public:
             }
 
             // コール
-            (*callback)(type, (void*) this, (void*) (pValues + i), pMetaTable + i, 1);
+            (*callback)(type, (void*) this, (void*) (values.ptr + i), metas.ptr + i, 1);
         }
 
         if (result_unused) {
