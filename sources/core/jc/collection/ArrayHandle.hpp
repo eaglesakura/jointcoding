@@ -63,7 +63,7 @@ enum HandleCallback_e {
     HandleCallback_Use,
 
     /**
-     * オブジェクトの全参照が廃棄された
+     * オブジェクトの参照数が0に戻された
      */
     HandleCallback_Released,
 
@@ -78,6 +78,11 @@ enum HandleCallback_e {
      * 無効なオブジェクト
      */
     HandleCallback_Unused,
+
+    /**
+     * デストラクタが起動された
+     */
+    HandleCallback_Destroy,
 };
 
 /**
@@ -88,7 +93,7 @@ enum HandleCallback_e {
  * @param pMetaHeader ハンドルのメタデータへのポインタ
  * @param objects 生成されたオブジェクト数
  */
-typedef void (*handletable_callback)(const HandleCallback_e callback, void* pHandleTable_this, void* pValues, handle_meta *pMetaHeader, const u32 objects);
+typedef void (*handletable_callback)(const HandleCallback_e callback_type, void* pHandleTable_this, void* pValues, handle_meta *pMetaHeader, const u32 objects);
 
 /**
  * データカプセル
@@ -152,12 +157,57 @@ class handle_table {
      * コールバック関数ポインタ
      */
     handletable_callback callback;
+
+    /**
+     * 配列の拡張が行われた
+     */
+    void onExpansion(const s32 length) {
+        // 先頭ポインタを取り出す
+        pValues = &(values[0]);
+        pMetaTable = &(metas[0]);
+
+        assert(pValues);
+        assert(pMetaTable);
+
+        // コールバックを行う
+        if (callback) {
+            const s32 added = (length - table_length);
+            (*callback)(HandleCallback_Allocated, (void*) this, (void*) (pValues + table_length), (pMetaTable + table_length), added);
+        }
+
+        // テーブルの長さを更新する
+        table_length = length;
+    }
+
 public:
     handle_table() {
         alloc_index = table_length = exist_objects = 0;
         pValues = NULL;
         pMetaTable = NULL;
         callback = NULL;
+    }
+
+    ~handle_table() {
+        if (callback) {
+            (*callback)(HandleCallback_Destroy, (void*) this, (void*) pValues, pMetaTable, table_length);
+        }
+    }
+
+    /**
+     * 配列の個数予約を行う
+     * 事前に個数がわかっている場合はこのメソッドを呼び出すことでメモリの最確保を抑えることが出来る
+     * 効率的に扱うため、呼び出すことを推奨する。
+     *
+     * コールバックには全オブジェクトが呼び出される
+     */
+    inline void reserve(const s32 length) {
+        assert(length > table_length);
+
+        // 各配列をリサイズする
+        values.reserve(length);
+        metas.reserve(length);
+
+        onExpansion(length);
     }
 
     /**
@@ -172,21 +222,7 @@ public:
         values.resize(length);
         metas.resize(length);
 
-        // 先頭ポインタを取り出す
-        pValues = &(values[0]);
-        pMetaTable = &(metas[0]);
-
-        assert(pValues);
-        assert(pMetaTable);
-
-        // コールバックを行う
-        if (callback) {
-            const s32 added = (length - table_length);
-            (*callback)(HandleCallback_Allocated, (void*) this, (void*) (pValues + table_length), (pMetaTable + table_length), added);
-        }
-
-        // 長さを更新する
-        table_length = length;
+        onExpansion(length);
     }
 
     /**

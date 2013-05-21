@@ -193,21 +193,24 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
     data.type = type;
     switch (type) {
         case MeshDataType_Indices: {
+            // インデックスバッファを読み込む
             data.data_length = stream->readU16();
 
             u16 *ptr = (u16*) malloc(data.data_length * sizeof(u16));
-            data.data.reset((void*) ptr, free);
+            data.data.reset((u8*) ptr, free);
 
             for (u32 i = 0; i < data.data_length; ++i) {
                 ptr[i] = stream->readU16();
             }
         }
             break;
+
         case MeshDataType_Positions: {
+            // 位置情報を読み込む
             data.data_length = stream->readU16();
 
             Vector3f *ptr = (Vector3f*) malloc(data.data_length * sizeof(Vector3f));
-            data.data.reset((void*) ptr, free);
+            data.data.reset((u8*) ptr, free);
 
             for (u32 i = 0; i < data.data_length; ++i) {
                 ptr[i].x = stream->readFixed32();
@@ -218,10 +221,11 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
         }
             break;
         case MeshDataType_Coords: {
+            // UV情報を読み込む
             data.data_length = stream->readU16();
 
             Vector2f *ptr = (Vector2f*) malloc(data.data_length * sizeof(Vector2f));
-            data.data.reset((void*) ptr, free);
+            data.data.reset((u8*) ptr, free);
 
             for (u32 i = 0; i < data.data_length; ++i) {
                 ptr[i].x = stream->readFixed32();
@@ -231,10 +235,11 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
 
             break;
         case MeshDataType_Normals: {
+            // 法線情報を読み込む
             data.data_length = stream->readU16();
 
             Vector3f *ptr = (Vector3f*) malloc(data.data_length * sizeof(Vector3f));
-            data.data.reset((void*) ptr, free);
+            data.data.reset((u8*) ptr, free);
 
             for (u32 i = 0; i < data.data_length; ++i) {
                 ptr[i].x = stream->readFixed32();
@@ -250,7 +255,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             const int weight_num = stream->readU8();
 
             u8 *ptr = (u8*) malloc(data.data_length * weight_num);
-            data.data.reset((void*) ptr, free);
+            data.data.reset((u8*) ptr, free);
 
             for (u32 i = 0; i < (data.data_length * weight_num); ++i) {
                 ptr[i] = stream->readU8();
@@ -265,7 +270,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             const int weight_num = stream->readU8();
 
             float *ptr = (float*) malloc(data.data_length * weight_num * sizeof(float));
-            data.data.reset((void*) ptr, free);
+            data.data.reset((u8*) ptr, free);
 
             for (u32 i = 0; i < (data.data_length); ++i) {
                 float weight_sum = 0;
@@ -287,7 +292,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             data.data_length = stream->readU16();
 
             u16 *ptr = (u16*) malloc(data.data_length * sizeof(u16));
-            data.data.reset((void*) ptr, free);
+            data.data.reset((u8*) ptr, free);
 
             for (u32 i = 0; i < (data.data_length); ++i) {
                 ptr[i] = stream->readU16();
@@ -297,7 +302,9 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             break;
 
         default:
-            throw create_exception(UnsupportedOperationException, "data type not support...");
+            // 無効なメッシュ情報を読み込もうとした
+            assert(false);
+            return;
     }
 
     onMeshDataLoadComplete(nodeInfo, meshInfo, material_num, context_num, data);
