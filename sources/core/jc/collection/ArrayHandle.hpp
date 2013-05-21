@@ -9,6 +9,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/collection/BitFlags.hpp"
+#include    "jc/collection/SafeArray.hpp"
 #include    <vector>
 
 namespace jc {
