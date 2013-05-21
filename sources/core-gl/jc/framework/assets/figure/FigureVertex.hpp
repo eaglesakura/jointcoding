@@ -14,7 +14,7 @@
 #include    "jc/gl/GL.h"
 
 namespace jc {
-namespace gl {
+namespace fw {
 
 /**
  * スキニング情報を含んだ頂点バッファ

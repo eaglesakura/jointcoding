@@ -11,7 +11,7 @@
 #include    "jc/graphics/figure/data/FigureDataLoader.h"
 
 namespace jc {
-namespace gl {
+namespace fw {
 
 /**
  * フィギュアデータの生成を行う
@@ -20,7 +20,7 @@ class FigureLoader: public jc::FigureDataLoader {
     /**
      * 頂点バッファキャッシュ
      */
-    jc_sp<u8> cacheVertices;
+    jc_sa<u8> cacheVertices;
 
     /**
      * 読み込み対象のコンテキスト

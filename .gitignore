@@ -41,6 +41,5 @@ android/release
 doc/
 
 *.gch
-
 *.archive
 assets/

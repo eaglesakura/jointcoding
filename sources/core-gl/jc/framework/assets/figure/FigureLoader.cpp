@@ -7,7 +7,7 @@
 #include    "jc/framework/assets/figure/FigureAsset.hpp"
 
 namespace jc {
-namespace gl {
+namespace fw {
 
 FigureLoader::FigureLoader(MDevice device, MFigureDataFactory factory) :
         FigureDataLoader(factory) {
@@ -35,22 +35,23 @@ void FigureLoader::createVerticesCache(const s32 vertices_num) {
  * サブクラスではノード数分のメモリ確保等を行う。
  */
 void FigureLoader::onFigureInfoLoadComplete(const FigureInfo &figureInfo) {
-    jclogf("figure nodes(%d)", figureInfo.node_num);
+    jclogf("onFigureInfoLoadComplete (%d nodes)", figureInfo.node_num);
 }
 
 /**
  * ノード情報を読み込んだ場合に呼び出される
  */
 void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &nodeInfo) {
+    jclogf("  onNodeLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 }
 
 /**
- * onNodeLoaded()完了後、メッシュ情報を読み込んだ後に呼び出される
+ * onNodeLoadComplete()完了後、メッシュ情報を読み込んだ後に呼び出される
  *
  * @param load_request 読み込みを行うデータのリクエストを行う
  */
 void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &nodeInfo, const jc::FigureDataLoader::MeshInfo &meshInfo, jc::FigureDataLoader::MeshDataRequest *load_request) {
-
+    jclogf("  onMeshInfoLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 }
 
 /**
@@ -58,6 +59,7 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
  * サブクラスではVBO転送を期待する。
  */
 void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num) {
+    jclogf("  onMeshMaterialContextLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 }
 
 /**
@@ -69,13 +71,14 @@ void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, c
  * @param loaded_data 読み込みを行ったデータ
  */
 void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &nodeInfo, const FigureDataLoader::MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const FigureDataLoader::MeshData &loaded) {
+    jclogf("  onMeshDataLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 }
 
 /**
  * 読み込むべきフィギュアデータの読み込みが完了した
  */
 void FigureLoader::onLoadCompleted() {
-
+    jclog("  onLoadCompleted");
 }
 
 }

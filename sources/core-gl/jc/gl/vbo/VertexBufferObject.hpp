@@ -30,21 +30,23 @@ class VertexBufferObject: public Object {
 
 public:
     VertexBufferObject(MDevice device) {
-        this->state = device->getState();
+        assert(device);
         vertices = device->getVRAM()->alloc(VRAM_VertexBufferObject);
     }
 
     virtual ~VertexBufferObject() {
     }
+
     /**
      * バッファにデータを転送する。
      * 必ずbind()済みの状態で呼び出すこと
      * @param source 転送元のデータポインタ
+     * @param sizeof_vertex ソースの頂点サイズ
      * @param length ソースの頂点数
      * @param suage GL_STATIC_DRAW | GL_STREAM_DRAW | GL_DYNAMIC_DRAW
      */
-    virtual void bufferData(const VertexType *vertices, const u32 vertices_length, const GLenum usage) {
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexType) * vertices_length, (GLvoid*) vertices, usage);
+    virtual void bufferData(const void *vertices, const s32 sizeof_vertex, const u32 vertices_length, const GLenum usage) {
+        glBufferData(GL_ARRAY_BUFFER, sizeof_vertex * vertices_length, (GLvoid*) vertices, usage);
     }
 
     /**

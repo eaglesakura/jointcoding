@@ -7,7 +7,12 @@
 #include    "esBenchmarkApplication.h"
 #include    "jc/collection/ArrayHandle.hpp"
 
+#include    "jc/framework/assets/figure/FigureAsset.hpp"
+#include    "jc/graphics/figure/data/ArchiveFigureDataFactory.h"
+
+using namespace jc::fw;
 namespace es {
+
 
 BenchmarkApplication::BenchmarkApplication() {
 }
@@ -36,8 +41,17 @@ void BenchmarkApplication::onAppInitialize() {
     getWindowDevice()->getState()->blendEnable(jctrue);
     getWindowDevice()->getState()->blendFunc(GLBlendType_Alpha);
 
-    // テクスチャロードを開始する
-    startNewtask(BenchmarkTask_LoadTexture, 0);
+    {
+        // フィギュアロード
+        jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
+        factory->initialize(Uri::fromAssets("susanow.archive"));
+
+        jc_sp<FigureLoader> loader(new FigureLoader(getWindowDevice(), factory));
+        loader->load();
+    }
+
+//    // テクスチャロードを開始する
+//    startNewtask(BenchmarkTask_LoadTexture, 0);
 }
 
 void BenchmarkApplication::loadTexture(MDevice subDevice) {
