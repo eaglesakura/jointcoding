@@ -45,7 +45,10 @@ MBinaryInputStream ArchiveFigureDataFactory::makeStream(const String &name) {
     }
 
 //    jclogf("archive load(%s) %d -> %d", info.file_name, info.file_head, info.file_length);
-    return MBinaryInputStream(new BinaryInputStream(MInputStream(new ByteArrayInputStream(raw_archive.buffer, info.file_head, info.file_length))));
+
+    MInputStream byteArrayInputStream(new ByteArrayInputStream(raw_archive.buffer, info.file_head, info.file_length));
+
+    return MBinaryInputStream(new BinaryInputStream(byteArrayInputStream));
 }
 
 /**

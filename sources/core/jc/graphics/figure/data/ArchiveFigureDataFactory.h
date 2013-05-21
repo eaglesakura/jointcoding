@@ -16,7 +16,7 @@ namespace jc {
 class ArchiveFigureDataFactory: public FigureDataFactory {
     struct {
         /**
-         * アーカイブを解答した
+         * アーカイブを解答したデータ
          */
         jc_sa<u8> buffer;
 

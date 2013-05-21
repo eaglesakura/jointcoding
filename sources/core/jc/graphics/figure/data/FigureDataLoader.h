@@ -4,8 +4,8 @@
  *  Created on: 2012/12/26
  */
 
-#ifndef FIGURELOADER_H_
-#define FIGURELOADER_H_
+#ifndef FIGUREDATALOADER_H_
+#define FIGUREDATALOADER_H_
 
 #include    "jointcoding.h"
 #include    "jc/data/BinaryInputStream.h"
@@ -104,7 +104,7 @@ public:
 
                 /**
                  * w情報
-                 * オイラー角の場合、Wは常に0となる。
+                 * オイラー角の場合、wは常に0となる。
                  * クォータニオンを利用している場合のみ利用する。
                  */
                 float w;
@@ -210,7 +210,7 @@ public:
          * 読み込んだデータ。
          * fixed -> float以外は基本的に無加工
          */
-        jc_sp<void> data;
+        jc_sa<u8> data;
 
         /**
          * データの配列数。

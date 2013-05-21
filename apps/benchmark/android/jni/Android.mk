@@ -61,10 +61,10 @@ LOCAL_CFLAGS     += -Wno-psabi
 LOCAL_CPPFLAGS   += -D__ARM_V7__ 
 
 # NEON
-LOCAL_CPPFLAGS += -mfpu=neon
-LOCAL_CPPFLAGS += -mfloat-abi=softfp
-LOCAL_CFLAGS += -mfpu=neon
-LOCAL_CFLAGS += -mfloat-abi=softfp
+# LOCAL_CPPFLAGS += -mfpu=neon
+# LOCAL_CPPFLAGS += -mfloat-abi=softfp
+# LOCAL_CFLAGS += -mfpu=neon
+# LOCAL_CFLAGS += -mfloat-abi=softfp
 
 ############################ import libs   ###########################
 LOCAL_LDLIBS 			+= -lGLESv2
