@@ -4,7 +4,11 @@
  *  Created on: 2013/05/21
  */
 
+#ifndef  SAFE_ARRAY_HPP_
+#define  SAFE_ARRAY_HPP_
+
 #include    "jointcoding.h"
+#include    "jc/math/Math.h"
 
 namespace jc {
 
@@ -24,35 +28,87 @@ private:
      */
     value_type *values;
 
-    s32 values_length;
+    s32 length;
 
     /**
-     * 指定した長さの配列を確保する
+     * 指定した長さの配列を確保し、古い配列をmemcpyする
      */
-    inline void alloc(const s32 length) {
-        assert(length > 0);
+    inline void alloc(const s32 newLength) {
+        assert(newLength > 0);
 
-        SAFE_DELETE_ARRAY(values);
-        values = new value_type[length];
-        values_length = length;
+        value_type *pOldValues = values;
+        values = new value_type[newLength];
+
+        // 古い配列が存在するならコピーする
+        if (pOldValues) {
+            memcpy(values, pOldValues, sizeof(value_type) * jc::min(length, newLength));
+
+            // 古い配列を削除する
+            SAFE_DELETE_ARRAY(pOldValues);
+        }
+
+        // 長さを保存する
+        length = newLength;
+    }
+
+    /**
+     * 指定した長さの配列を確保し、要素をコピーする
+     * operator=の起動が必要なシーンで利用する
+     */
+    inline void reserve(const s32 newLength) {
+        assert(newLength > 0);
+
+        value_type *pOldValues = values;
+        values = new value_type[newLength];
+
+        // 古い配列が存在するならコピーする
+        if (pOldValues) {
+            const s32 min_length = jc::min(length, newLength);
+
+            for (s32 i = 0; i < min_length; ++i) {
+                values[i] = pOldValues[i];
+            }
+
+            // 古い配列を削除する
+            SAFE_DELETE_ARRAY(pOldValues);
+        }
+
+        // 長さを保存する
+        length = newLength;
     }
 
     /**
      * メモリ領域を高速コピーする
+     * operatorが不要な場合に利用する
      */
-    inline void memcpy(const value_type *origin, const s32 num) {
+    inline void memcopyFrom(const value_type *origin, const s32 num) {
         // 正常な長さを持たなければならない
-        assert(values_length >= num);
+        assert(length >= num);
         memcpy(values, origin, sizeof(value_type) * num);
+    }
+
+    /**
+     * メモリ領域を一つ一つコピーする
+     * operatorが必要な場合に利用する
+     * memcpyFromに比べて低速になる
+     */
+    inline void copyFrom(const value_type *origin, const s32 num) {
+        // 正常な長さを持たなければならない
+        assert(length >= num);
+
+        for (s32 i = 0; i < num; ++i) {
+            values[i] = origin[i];
+        }
     }
 
     safe_array() {
         values = NULL;
-        values_length = 0;
+        length = 0;
     }
 
     safe_array(const s32 length) {
         values = NULL;
+        length = 0;
         alloc(length);
     }
 
@@ -64,7 +120,7 @@ private:
      * オペレータアクセスを提供する
      */
     inline value_type& operator[](const s32 index) {
-        assert(index < values_length);
+        assert(index < length);
         return values[index];
     }
 
@@ -72,10 +128,11 @@ private:
      * オペレータアクセスを提供する
      */
     inline const value_type& operator[](const s32 index) const {
-        assert(index < values_length);
+        assert(index < length);
         return values[index];
     }
 };
 
 }
 
+#endif
