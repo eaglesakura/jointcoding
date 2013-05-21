@@ -456,83 +456,6 @@ public:
             *result_unused = unused;
         }
     }
-
-};
-
-/**
- * 直列的な配列をハンドルを利用して管理する
- * 実体インスタンスの切り替えやポインタの生存を一元管理するようにする
- *
- * VRAM等の管理に利用する
- */
-template<typename value_type>
-class ArrayHandle {
-private:
-    /**
-     * 配列実体を保持する
-     */
-    jc_sp< handle_table<value_type> > ref;
-
-    /**
-     * 実アクセス用のポインタ
-     * 高速アクセスのため、実際はこちらを利用する
-     */
-    handle_table<value_type> *pRef;
-
-public:
-    ArrayHandle() {
-        ref.reset(new handle_table<value_type>);
-        pRef = ref.get();
-    }
-
-    ~ArrayHandle() {
-    }
-
-    /**
-     * masterの配列を共有し、次からその数の割り当てを行う
-     */
-    inline void sharedFrom( const jc_sp<ArrayHandle<value_type> > master) {
-        assert(master);
-        assert(master->ref);
-
-        this->ref = master->ref;
-        this->pRef = this->ref.get();
-    }
-
-    /**
-     * 実体テーブルへのポインタを取得する
-     */
-    inline const handle_table<value_type>* getTable() const {
-        return pRef;
-    }
-
-    /**
-     * 実体テーブルへのポインタを取得する
-     */
-    inline handle_table<value_type>* getTable() {
-        return pRef;
-    }
-
-    /**
-     * 値の取得を行う
-     */
-    inline const value_type& get(const handle_data &handle) const {
-        return pRef->get(handle);
-    }
-
-    /**
-     * 値の取得を行う
-     */
-    inline value_type& get(const handle_data &handle) {
-        return pRef->get(handle);
-    }
-
-    /**
-     * コールバック関数を設定する
-     */
-    inline void setCallback(const handletable_callback callback) {
-        pRef->setCallback(callback);
-    }
 };
 
 /**
@@ -544,13 +467,13 @@ class Handle {
     /**
      * マスターデータ
      */
-    jc_sp<ArrayHandle<value_type> > master;
+    jc_sp<handle_table<value_type> > master;
 
     /**
      * マスターデータへのポインタ
      * 高速アクセスのため、実体アクセスはこちらを利用する
      */
-    ArrayHandle<value_type> *pMaster;
+    handle_table<value_type> *pMaster;
 
     /**
      * 自身のハンドルデータ
@@ -582,7 +505,7 @@ public:
             return jcfalse;
         }
 
-        if(master->getTable()->exist(self)) {
+        if(master->exist(self)) {
             return jctrue;
         } else {
             return jcfalse;
@@ -595,9 +518,9 @@ public:
     void alloc( ) {
         assert(pMaster);
         // 古いハンドルを廃棄する
-        pMaster->getTable()->release(self);
+        pMaster->release(self);
         // 新たなハンドルを取得する
-        pMaster->getTable()->allocFreeOrNewHandle( &self, 1);
+        pMaster->allocFreeOrNewHandle( &self, 1);
     }
 
     /**
@@ -607,9 +530,9 @@ public:
     jcboolean falloc( ) {
         assert(pMaster);
         // 古いハンドルを廃棄する
-        pMaster->getTable()->release(self);
+        pMaster->release(self);
         // 新たなハンドルを取得する
-        return pMaster->getTable()->allocFreeHandle( &self, 1);
+        return pMaster->allocFreeHandle( &self, 1);
     }
 
     /**
@@ -618,17 +541,17 @@ public:
     void alloc_back( ) {
         assert(pMaster);
         // 古いハンドルを廃棄する
-        pMaster->getTable()->release(self);
+        pMaster->release(self);
         // 新たなハンドルを取得する
-        pMaster->getTable()->allocHandles( &self, 1);
+        pMaster->allocHandles( &self, 1);
     }
 
     /**
      * ハンドルをリセットする
      */
-    void reset( const handle_data &handle, const jc_sp<ArrayHandle<value_type> > master) {
+    void reset( const handle_data &handle, const jc_sp<handle_table<value_type> > master) {
         if(pMaster) {
-            pMaster->getTable()->release(self);
+            pMaster->release(self);
         }
 
         // マスターデータとハンドルを書き換える
@@ -640,14 +563,14 @@ public:
         }
         // ハンドルが有効ならretainする
         if(pMaster) {
-            pMaster->getTable()->retain(self);
+            pMaster->retain(self);
         }
     }
 
     /**
      * ハンドルリセットを行い、無効化する
      */
-    void reset(const jc_sp<ArrayHandle<value_type> > master) {
+    void reset(const jc_sp<handle_table<value_type> > master) {
         reset(handle_data(), master);
     }
 
@@ -655,7 +578,7 @@ public:
      * ハンドルリセットを行い、無効化する
      */
     void reset() {
-        reset(handle_data(), jc_sp<ArrayHandle<value_type> >());
+        reset(handle_data(), jc_sp<handle_table<value_type> >());
     }
 
     /**

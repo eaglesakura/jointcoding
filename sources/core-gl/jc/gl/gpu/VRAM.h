@@ -104,7 +104,7 @@ enum VRAM_GC_e {
     VRAM_GC_default = 0xFFFFFFFF,
 };
 
-typedef ArrayHandle<GLuint> vram_table;
+typedef handle_table<GLuint> vram_table;
 
 typedef Handle<GLuint> vram_handle;
 
