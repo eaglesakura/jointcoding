@@ -41,3 +41,5 @@ android/release
 doc/
 
 *.gch
+
+*.archive

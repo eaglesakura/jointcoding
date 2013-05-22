@@ -8,6 +8,7 @@
 
 namespace jc {
 
+
 KeyDetector::KeyDetector(SKeyListener listener) {
     this->listener = listener;
     this->keyKeepingMessageTime = 0;

@@ -18,9 +18,31 @@ class KeyEventExtension: public Object {
      * Nativeから発行されたタッチイベント
      */
     jc_sp<KeyEventProtocol> event;
+
+    class KeyEventPool: public KeyEventProtocol {
+        s32 eventType;
+        s32 keyCode;
+    public:
+        KeyEventPool(KeyEventProtocol *protocol) {
+            this->eventType = protocol->getEventType();
+            this->keyCode = protocol->getKeyCode();
+        }
+
+        virtual ~KeyEventPool() {
+
+        }
+
+        virtual s32 getEventType() {
+            return eventType;
+        }
+        virtual s32 getKeyCode() {
+            return keyCode;
+        }
+    };
 public:
     KeyEventExtension(const jc_sp<KeyEventProtocol> event) {
-        this->event = event;
+//        this->event = event;
+        this->event.reset(new KeyEventPool(event.get()));
     }
 
     virtual ~KeyEventExtension() {

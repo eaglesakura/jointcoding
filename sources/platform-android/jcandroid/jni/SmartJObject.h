@@ -95,11 +95,46 @@ protected:
         this->clazz = NULL;
     }
 
+
+    SmartJObject<T>& reset(const T jobj, jcboolean globalRef) {
+        reset(jobj);
+
+        if(globalRef) {
+            addGlobalRef();
+        }
+        return (*this);
+    }
+
+
+    SmartJObject<T>& reset( const T jobj ) {
+        this->release();
+
+        globalRef = jcfalse;
+        this->obj = jobj;
+
+        // クラスの取得
+        if(jobj) {
+            CALL_JNIENV();
+            clazz = env->GetObjectClass(getObject());
+            // 基本メソッドの生成
+            {
+                method_toString = env->GetMethodID(clazz, "toString", "()Ljava/lang/String;");
+                method_hashCode = env->GetMethodID(clazz, "hashCode", "()I");
+                method_equals = env->GetMethodID(clazz, "equals", "(Ljava/lang/Object;)Z");
+            }
+        } else {
+            method_equals = NULL;
+            method_hashCode = NULL;
+            method_toString = NULL;
+        }
+        return (*this);
+    }
 public:
     /**
      *
      */
-    SmartJObject(T jobj = NULL) {
+    SmartJObject(const T jobj) {
+        assert(jobj);
         method_toString = NULL;
         method_hashCode = NULL;
         globalRef = jcfalse;
@@ -109,23 +144,23 @@ public:
 
         this->reset(jobj);
     }
-
-    /**
-     *
-     */
-    SmartJObject(const SmartJObject<T> &cpy) {
-        method_toString = NULL;
-        method_hashCode = NULL;
-        globalRef = jcfalse;
-        method_equals = NULL;
-        clazz = NULL;
-        obj = NULL;
-
-        this->reset(cpy.obj);
-        if (cpy.globalRef) {
-            this->addGlobalRef();
-        }
-    }
+//
+//    /**
+//     *
+//     */
+//    SmartJObject(const SmartJObject<T> &cpy) {
+//        method_toString = NULL;
+//        method_hashCode = NULL;
+//        globalRef = jcfalse;
+//        method_equals = NULL;
+//        clazz = NULL;
+//        obj = NULL;
+//
+//        this->reset(cpy.obj);
+//        if (cpy.globalRef) {
+//            this->addGlobalRef();
+//        }
+//    }
 
     /**
      * 保持しているオブジェクトの廃棄を行う
@@ -183,6 +218,8 @@ public:
      * グローバル参照として管理を行う。
      */
     virtual SmartJObject<T>* addGlobalRef() {
+        assert(!globalRef);
+
         if (!globalRef) {
             CALL_JNIENV();
             obj = (T)change_globalref( env, obj );
@@ -195,6 +232,7 @@ public:
         return this;
     }
 
+#if 0
     SmartJObject<T>& operator=(const SmartJObject<T> &cpy) {
         reset(cpy.obj);
 
@@ -210,40 +248,7 @@ public:
         reset(obj);
         return (*this);
     }
-
-    SmartJObject<T>& reset( const T jobj ) {
-        this->release();
-
-        globalRef = jcfalse;
-        this->obj = jobj;
-
-        // クラスの取得
-        if(jobj) {
-            CALL_JNIENV();
-            clazz = env->GetObjectClass(getObject());
-            // 基本メソッドの生成
-            {
-                method_toString = env->GetMethodID(clazz, "toString", "()Ljava/lang/String;");
-                method_hashCode = env->GetMethodID(clazz, "hashCode", "()I");
-                method_equals = env->GetMethodID(clazz, "equals", "(Ljava/lang/Object;)Z");
-            }
-        } else {
-            method_equals = NULL;
-            method_hashCode = NULL;
-            method_toString = NULL;
-        }
-        return (*this);
-    }
-
-    SmartJObject<T>& reset(const T jobj, jcboolean globalRef) {
-        reset(jobj);
-
-        if(globalRef) {
-            addGlobalRef();
-        }
-        return (*this);
-    }
-
+#endif
     /**
      * 拡張データを取得する
      */
