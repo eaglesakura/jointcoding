@@ -46,26 +46,6 @@ protected:
     jc_selp<Object> extra;
 
     /**
-     * 読み込み用のクラス
-     */
-    jclass clazz;
-
-    /**
-     * Object#toString()用のメソッド
-     */
-    jmethodID method_toString;
-
-    /**
-     * Object#hashcode()用のメソッド
-     */
-    jmethodID method_hashCode;
-
-    /**
-     * Object#equals()用のメソッド
-     */
-    jmethodID method_equals;
-
-    /**
      * このオブジェクトをグローバル参照していたらtrue
      */
     jcboolean globalRef;
@@ -80,21 +60,13 @@ protected:
             jclogf("delete globalRef(%x)", obj);
 #endif
             env->DeleteGlobalRef(obj);
-            env->DeleteGlobalRef(clazz);
             globalRef = jcfalse;
         } else {
-            if(obj) {
-                env->DeleteLocalRef(obj);
-            }
-            if( clazz ) {
-                env->DeleteLocalRef(clazz);
-            }
+            env->DeleteLocalRef(obj);
         }
 
         this->obj = NULL;
-        this->clazz = NULL;
     }
-
 
     SmartJObject<T>& reset(const T jobj, jcboolean globalRef) {
         reset(jobj);
@@ -105,28 +77,12 @@ protected:
         return (*this);
     }
 
-
     SmartJObject<T>& reset( const T jobj ) {
         this->release();
 
         globalRef = jcfalse;
         this->obj = jobj;
 
-        // クラスの取得
-        if(jobj) {
-            CALL_JNIENV();
-            clazz = env->GetObjectClass(getObject());
-            // 基本メソッドの生成
-            {
-                method_toString = env->GetMethodID(clazz, "toString", "()Ljava/lang/String;");
-                method_hashCode = env->GetMethodID(clazz, "hashCode", "()I");
-                method_equals = env->GetMethodID(clazz, "equals", "(Ljava/lang/Object;)Z");
-            }
-        } else {
-            method_equals = NULL;
-            method_hashCode = NULL;
-            method_toString = NULL;
-        }
         return (*this);
     }
 public:
@@ -135,11 +91,7 @@ public:
      */
     SmartJObject(const T jobj) {
         assert(jobj);
-        method_toString = NULL;
-        method_hashCode = NULL;
         globalRef = jcfalse;
-        method_equals = NULL;
-        clazz = NULL;
         obj = NULL;
 
         this->reset(jobj);
@@ -170,41 +122,10 @@ public:
     }
 
     /**
-     * クラスを取得する
-     */
-    inline jclass getClass() const {
-        return clazz;
-    }
-
-    /**
      * 管理しているオブジェクトを取得する
      */
     inline jobject getObject() const {
         return obj;
-    }
-
-    /**
-     * 文字列に変換する
-     */
-    virtual jstring toString() const {
-        CALL_JNIENV();
-        return (jstring) env->CallObjectMethod(getObject(), method_toString, NULL);
-    }
-
-    /**
-     * ハッシュコードを計算する
-     */
-    virtual s32 hashcode() const {
-        CALL_JNIENV();
-        return env->CallIntMethod(getObject(), method_toString, NULL);
-    }
-
-    /**
-     * 同一性を検証する
-     */
-    virtual jcboolean equals(jobject other) const {
-        CALL_JNIENV();
-        return env->CallBooleanMethod(obj, method_equals, other);
     }
 
     /**
@@ -223,7 +144,6 @@ public:
         if (!globalRef) {
             CALL_JNIENV();
             obj = (T)change_globalref( env, obj );
-            clazz = (jclass) change_globalref(env,(jobject) clazz);
             globalRef = true;
 #ifdef JOBJECT_LOG_OUT
             jclogf("add globalRef(%x)", obj);
