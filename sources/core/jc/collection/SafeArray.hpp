@@ -9,6 +9,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/math/Math.h"
+#include    "jc/mem/MemoryUtil.h"
 
 namespace jc {
 
@@ -107,6 +108,13 @@ public:
         }
     }
 
+    /**
+     * 内部で持っているメモリをゼロ埋めする
+     */
+    inline void zeromemory() {
+        ::jc::zeromemory(ptr, sizeof(value_type) * length);
+    }
+
     safe_array() {
         ptr = NULL;
         length = 0;
@@ -138,6 +146,16 @@ public:
         return ptr[index];
     }
 };
+
+/**
+ * 個々の要素に対してSAFE_DELETEをかける
+ */
+template<typename value_type>
+inline void safe_delete(safe_array<value_type> &values) {
+    for (s32 i = 0; i < values.length; ++i) {
+        SAFE_DELETE(values.ptr[i]);
+    }
+}
 
 }
 
