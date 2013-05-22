@@ -117,7 +117,7 @@ enum HandleType_e {
  * データカプセル
  * 実体を指し示す
  */
-template<typename value_type>
+template<typename value_type, typename user_data = void*>
 class handle_table {
     /**
      * 参照する実体データ配列
@@ -143,6 +143,11 @@ class handle_table {
      * ハンドルタイプ
      */
     HandleType_e type;
+
+    /**
+     * ユーザーの拡張データ
+     */
+    user_data user;
 
     /**
      * 指定位置のハンドルを取得する
@@ -177,6 +182,7 @@ public:
         type = HandleType_Primitive;
         expansion_num = 1;
         callback = NULL;
+        user = NULL;
     }
 
     ~handle_table() {
@@ -232,6 +238,20 @@ public:
             const s32 added = (request_length - old_length);
             (*callback)(HandleCallback_Allocated, (void*) this, (void*) (values.ptr + old_length), (metas.ptr + old_length), added);
         }
+    }
+    /**
+     * ユーザーデータを取得する
+     */
+    inline user_data getUserdata() const {
+        return user;
+    }
+
+    /**
+     * ユーザーデータを指定する。
+     * 通常はポインタ型で指定される
+     */
+    void setUserdata(const user_data &ptr) {
+        user = ptr;
     }
 
     /**
@@ -332,6 +352,14 @@ public:
         handle.index = -1;
 
         return meta.refs;
+    }
+
+    /**
+     * 指定したハンドルの値を書き換える
+     * 同一のハンドルを指しているクラスの参照先も変更される。
+     */
+    inline void set(const handle_data &handle, const value_type &value) {
+        values[handle.index] = value;
     }
 
     /**

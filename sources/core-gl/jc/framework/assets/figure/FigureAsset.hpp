@@ -11,6 +11,7 @@
 #include    "jc/math/Vec2.h"
 #include    "jc/math/Vec3.h"
 #include    "jc/math/Vec4.h"
+#include    "jc/math/Matrix.h"
 #include    "jc/collection/ArrayHandle.hpp"
 #include    "jc/collection/SafeArray.hpp"
 
@@ -32,7 +33,13 @@ using namespace jc::gl;
 // フィギュアを簡単に扱うためのフレームワーク
 // カスタマイズした頂点やシェーダーを扱いたい場合は適宜拡張を行う
 #include    "jc/framework/assets/figure/FigureVertex.hpp"
-#include    "jc/framework/assets/figure/FigureBuffer.hpp"
+
+// メッシュ
+#include    "jc/framework/assets/figure/MeshContext.hpp"
+#include    "jc/framework/assets/figure/NodeFragment.hpp"
+#include    "jc/framework/assets/figure/FigureNode.h"
+
+
 #include    "jc/framework/assets/figure/FigureLoader.h"
 
 #endif /* FIGUREASSET_HPP_ */
