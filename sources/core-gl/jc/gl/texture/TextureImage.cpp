@@ -194,6 +194,7 @@ void TextureImage::setWrapT(GLint wrap) {
  */
 void TextureImage::genMipmaps() {
     if (!isPowerOfTwoTexture()) {
+        // mipmapが生成できなくても表示上は問題ないため、npotログだけ吐き出して終了
         jclogf("texture is non power of two %d x %d", size.tex_width, size.tex_height);
         return;
     }
@@ -215,7 +216,10 @@ jcboolean TextureImage::isPowerOfTwoTexture() {
 s32 TextureImage::bind() {
     if (bindUnit >= 0) {
         assert(bindUnit >= 0 && bindUnit < GPUCapacity::getMaxTextureUnits());
+
+        // バインドキャッシュがある場合は、まだバインドが有効かをチェックする
         if (state->isBindedTexture(bindUnit, target, texture.get())) {
+            // まだバインドされていたらactiveへ切り替える
             state->activeTexture(bindUnit);
             return bindUnit;
         }
@@ -376,7 +380,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             }
 
             // テクスチャロードを開始する
-            glFlush();
+            glFinish();
         } catch (Exception &e) {
             jcloge(e);
         }
@@ -415,7 +419,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
                 result->bind();
                 result->copyPixelLine(pixelBuffer->getPixelHeader(), pixelFormat, 0, pixel_y, LOAD_HEIGHT);
                 // テクスチャロードはfinish待ちを行う
-                glFlush();
+                glFinish();
 
                 if (option) {
                     option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);

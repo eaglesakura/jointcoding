@@ -108,7 +108,7 @@ public:
         bytesParPixel = Pixel::getPixelBytes(newFormat);
         jc_sa<u8> newBuffer = Pixel::createPixelBuffer(newFormat, width * height);
 
-        // 旧フォーマットから新フォーマットに変換する
+        // 旧フォーマットをチェックし、新フォーマットに変換する
         switch(pixelFormat) {
             case PixelFormat_RGBA8888:
             Pixel::copyRGBA8888Pixels(header, newFormat, newBuffer.get(), width * height);
