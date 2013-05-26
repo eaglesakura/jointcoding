@@ -15,9 +15,6 @@ RELATIVITY_JC_PATH := $(shell ${JOINTCODING_HOME}/bin/abspath2rel.sh ${JOINTCODI
 # LOCAL_CPPFLAGS += -DEGL_TRIPLEBUFFER_MODE
 # LOCAL_CPPFLAGS += -DRENDERING_VIEWAREA
 
-APP_STL:=gnustl_static
-APP_ABI := armeabi-v7a
-
 ############################       build core sources       ###########################
 # gen sources
 LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/gen/ -name '*.cpp')

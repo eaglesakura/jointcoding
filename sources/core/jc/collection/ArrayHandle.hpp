@@ -363,14 +363,14 @@ public:
     }
 
     /**
-     * 値を取得する
+     * 値を直接取得する
      */
     inline value_type& get(const handle_data &handle) {
         return values[handle.index];
     }
 
     /**
-     * 値を取得する
+     * 値を直接取得する
      */
     inline const value_type& get(const handle_data &handle) const {
         return values[handle.index];
@@ -509,8 +509,20 @@ class Handle {
     handle_data self;
 
 public:
+    /**
+     * 無効なハンドルを生成する
+     */
     Handle() {
         pMaster = NULL;
+    }
+
+    /**
+     * 有効なハンドルを自動的に生成する
+     */
+    Handle(const jc_sp<handle_table<value_type> > master) {
+        pMaster = NULL;
+        this->reset(master);
+        this->alloc();
     }
 
     /**
@@ -542,6 +554,7 @@ public:
 
     /**
      * 新規にハンドルを割り当てる
+     * 既に割り当てているハンドルがいっぱいの場合、拡張を行う
      */
     void alloc( ) {
         assert(pMaster);
@@ -610,6 +623,13 @@ public:
     }
 
     /**
+     * ハンドル番号を再度指定する
+     */
+    void reset(const handle_data &handle) {
+        reset(handle, this->master);
+    }
+
+    /**
      * 値を取得する
      */
     const value_type& get() const {
@@ -656,6 +676,20 @@ public:
     value_type& operator*() {
         assert(self.index >= 0);
         return get();
+    }
+
+    /**
+     * 有効なハンドルの場合、trueを返す
+     */
+    operator bool() const {
+        return self.index >= 0;
+    }
+
+    /**
+     * 無効なハンドルの場合、trueを返す
+     */
+    bool operator!() const {
+        return self.index < 0;
     }
 
     /**

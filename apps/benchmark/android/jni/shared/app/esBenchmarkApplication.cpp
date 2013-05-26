@@ -13,8 +13,8 @@
 using namespace jc::fw;
 namespace es {
 
-
 BenchmarkApplication::BenchmarkApplication() {
+    rotate = 0;
 }
 
 BenchmarkApplication::~BenchmarkApplication() {
@@ -42,12 +42,28 @@ void BenchmarkApplication::onAppInitialize() {
     getWindowDevice()->getState()->blendFunc(GLBlendType_Alpha);
 
     {
+
+        figure.reset(new Figure());
+
         // フィギュアロード
         jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
         factory->initialize(Uri::fromAssets("susanow.archive"));
 
         jc_sp<FigureLoader> loader(new FigureLoader(getWindowDevice(), factory));
+
+        // 読み込み対象を指定する
+        loader->setLoadTarget(figure);
+
+        // 読込を行う
         loader->load();
+    }
+
+    {
+        // シェーダー読込
+        shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vshader"), Uri::fromAssets("basic.fshader"));
+        assert(shader);
+
+        unif_wlp.setLocation(shader, "unif_wlp");
     }
 
 //    // テクスチャロードを開始する
@@ -95,20 +111,85 @@ void BenchmarkApplication::onAppMainUpdate() {
 void BenchmarkApplication::onAppMainRendering() {
     MGLState state = getWindowDevice()->getState();
     {
-        state->clearColorf(0, 0, (float) (rand() % 0xFF) / 255.0f, 0);
-//        state->clearColorf(0, 1, 1, 1);
+//        state->clearColorf(0, 0, (float) (rand() % 0xFF) / 255.0f, 0);
+        state->clearColorf(0, 1, 1, 1);
         state->clearSurface();
     }
 
+//    {
+//        MSpriteManager spriteManager = getSpriteManager();
+//        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
+//
+//        if (texture) {
+//            spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
+//
+//            static float rotate = 0;
+//            spriteManager->renderingImage(texture, createRectFromXYWH<float>(256, 256, texture->getWidth(), texture->getHeight()), rotate += 1, Color::fromRGBAf(1, 1, 1, 0.5f));
+//        }
+//    }
+
+// rendering 3d
     {
-        MSpriteManager spriteManager = getSpriteManager();
-        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
+        MGLState state = getWindowDevice()->getState();
+        shader->bind();
+        state->depthTestEnable(jctrue);
+        Matrix4x4 world;
+        Matrix4x4 look;
+        Matrix4x4 prj;
+        {
+            world.rotateY(rotate += 1);
+            rotate = jc::normalizeDegree(rotate);
+            look.lookAt(Vector3f(100, 25, 150), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+            prj.projection(1.0f, 1000.0f, 45.0f, getWindowDevice()->getSurfaceAspect());
+        }
 
-        if (texture) {
-            spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
+        // world loop projection行列を生成する
+        Matrix4x4 wlp;
+        multiply(world, look, &wlp);
+        multiply(wlp, prj, &wlp);
 
-            static float rotate = 0;
-            spriteManager->renderingImage(texture, createRectFromXYWH<float>(256, 256, texture->getWidth(), texture->getHeight()), rotate += 1, Color::fromRGBAf(1, 1, 1, 0.5f));
+        // アップロードする
+        unif_wlp.upload(wlp);
+
+        GLint attr_pos = shader->getAttribLocation("attr_pos");
+        GLint attr_uv = shader->getAttribLocation("attr_uv");
+        GLint attr_normal = shader->getAttribLocation("attr_normal");
+
+        assert(attr_pos != ATTRIBUTE_DISABLE_INDEX);
+
+        for (s32 i = 0; i < figure->getNodeNum(); ++i) {
+            FigureNodeHandle node = figure->getNodeHandle(i);
+            for (s32 k = 0; k < node->getFragmentNum(); ++k) {
+                NodeFragment *fragment = node->getFragment(k);
+                for (s32 c = 0; c < fragment->getContextNum(); ++c) {
+                    MeshContext *context = fragment->getContext(c);
+
+                    // 各種バッファを取り出す
+                    VertexBufferObject<void> *vbo = context->getVertexBuffer();
+                    IndexBufferObject *ibo = context->getIndicesBuffer();
+
+                    // 属性を設定する
+                    vbo->bind(state);
+                    ibo->bind(state);
+                    {
+                        state->enableVertexAttribArray(attr_pos);
+                        state->enableVertexAttribArray(attr_uv);
+                        state->enableVertexAttribArray(attr_normal);
+
+                        state->vertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, 0);
+                        if (attr_uv >= 0) {
+                            state->vertexAttribPointer(attr_uv, 2, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f));
+                        }
+                        if (attr_normal >= 0) {
+                            state->vertexAttribPointer(attr_normal, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f) + sizeof(Vector2f));
+                        }
+
+                        ibo->rendering(GL_TRIANGLES);
+                    }
+                    vbo->unbind(state);
+                    ibo->unbind(state);
+                }
+            }
         }
     }
 

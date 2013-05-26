@@ -17,11 +17,9 @@ namespace jc {
 namespace fw {
 
 /**
- * スキニング情報を含んだ頂点バッファ
- *
- * ボーンウェイトはシェーダーに転送するときにNORMALIZEをかけることでfloat化する。
+ * Figureを構築するためのシンプルな頂点情報
  */
-struct SkinVertex {
+struct BasicVertex {
     /**
      * 位置情報
      */
@@ -36,7 +34,14 @@ struct SkinVertex {
      * 法線
      */
     Vector3f normal;
+};
 
+/**
+ * スキニング用拡張頂点
+ *
+ * ボーンウェイトはシェーダーに転送するときにNORMALIZEをかけることでfloat化する。
+ */
+struct SkinningVertex {
     /**
      * ボーンのインデックス
      */
@@ -47,6 +52,7 @@ struct SkinVertex {
      */
     GLubyte bone_weights[4];
 };
+
 
 }
 }

@@ -188,7 +188,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
     MBinaryInputStream stream = factory->openMeshData(type, nodeInfo.number, material_num, context_num);
     MeshData data;
 
-    jclogf("loadMeshData(%d-%d)", material_num, context_num);
+//    jclogf("loadMeshData(%d-%d)", material_num, context_num);
 
     data.type = type;
     switch (type) {

@@ -8,12 +8,15 @@
 #define BENCHMARK_HPP_
 
 #include    "jointcoding.h"
-#include    "jc/framework/app/JointApplicationBase.h"
 
+// frameworks
+#include    "jc/framework/app/JointApplicationBase.h"
+#include    "jc/framework/assets/figure/FigureAsset.hpp"
 
 using namespace jc;
 using namespace jc::gl;
 using namespace jc::view;
+using namespace jc::fw;
 
 // app
 #include    "esBenchmarkApplication.h"
