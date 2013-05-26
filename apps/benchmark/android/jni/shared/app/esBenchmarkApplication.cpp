@@ -140,7 +140,7 @@ void BenchmarkApplication::onAppMainRendering() {
             world.rotateY(rotate += 1);
             rotate = jc::normalizeDegree(rotate);
             look.lookAt(Vector3f(100, 25, 150), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
-            prj.projection(1.0f, 1000.0f, 45.0f, getWindowDevice()->getSurfaceAspect());
+            prj.projection(50.0f, 500.0f, 45.0f, getWindowDevice()->getSurfaceAspect());
         }
 
         // world loop projection行列を生成する
@@ -151,11 +151,16 @@ void BenchmarkApplication::onAppMainRendering() {
         // アップロードする
         unif_wlp.upload(wlp);
 
-        GLint attr_pos = shader->getAttribLocation("attr_pos");
-        GLint attr_uv = shader->getAttribLocation("attr_uv");
-        GLint attr_normal = shader->getAttribLocation("attr_normal");
+        Attribute pos;
+        pos.setLocation(shader, "attr_pos");
 
-        assert(attr_pos != ATTRIBUTE_DISABLE_INDEX);
+        Attribute uv;
+        uv.setLocation(shader, "attr_uv");
+
+        Attribute normal;
+        normal.setLocation(shader, "attr_normal");
+
+        assert(pos.valid());
 
         for (s32 i = 0; i < figure->getNodeNum(); ++i) {
             FigureNodeHandle node = figure->getNodeHandle(i);
@@ -172,17 +177,9 @@ void BenchmarkApplication::onAppMainRendering() {
                     vbo->bind(state);
                     ibo->bind(state);
                     {
-                        state->enableVertexAttribArray(attr_pos);
-                        state->enableVertexAttribArray(attr_uv);
-                        state->enableVertexAttribArray(attr_normal);
-
-                        state->vertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, 0);
-                        if (attr_uv >= 0) {
-                            state->vertexAttribPointer(attr_uv, 2, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f));
-                        }
-                        if (attr_normal >= 0) {
-                            state->vertexAttribPointer(attr_normal, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f) + sizeof(Vector2f));
-                        }
+                        pos.attribute(state, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, 0);
+                        uv.attribute(state, 2, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f));
+                        normal.attribute(state, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f) + sizeof(Vector2f));
 
                         ibo->rendering(GL_TRIANGLES);
                     }
@@ -234,6 +231,8 @@ void BenchmarkApplication::onAppDestroy() {
     jclogf("destroy %x", this);
 
     texture.reset();
+    figure.reset();
+    shader.reset();
 }
 
 }

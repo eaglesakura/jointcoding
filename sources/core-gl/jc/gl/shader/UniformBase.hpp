@@ -39,7 +39,7 @@ public:
      */
     void setLocation(const GLint location) {
         // disable indexか0以上のロケーション設定が必要になる
-        assert(location == UNIFORM_DISABLE_INDEX || location > 0);
+        assert(location == UNIFORM_DISABLE_INDEX || location >= 0);
 
         this->location = location;
     }

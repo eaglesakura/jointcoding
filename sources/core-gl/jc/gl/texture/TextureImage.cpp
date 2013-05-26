@@ -258,6 +258,10 @@ void TextureImage::bind(s32 index, MGLState state) {
  * テクスチャをユニットから切り離す
  */
 void TextureImage::unbind() {
+    if(!state) {
+        return;
+    }
+
     this->state->unbindTexture(texture.get());
     bindUnit = -1;
     state.reset();

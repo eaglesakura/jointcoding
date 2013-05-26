@@ -130,6 +130,13 @@ public:
     /**
      * デフォルトの姿勢行列を取得する
      */
+    inline const Matrix4x4* getDefaultTransform() const {
+        return &def_transform;
+    }
+
+    /**
+     * デフォルトの姿勢行列を取得する
+     */
     inline Matrix4x4* getDefaultTransform() {
         return &def_transform;
     }
