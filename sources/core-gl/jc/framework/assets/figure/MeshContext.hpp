@@ -7,7 +7,7 @@
 #ifndef MESHFCONTEXT_HPP_
 #define MESHFCONTEXT_HPP_
 
-#include    "jc/framework/assets/figure/FigureAsset.hpp"
+#include    "jc/framework/assets/FigureAsset.hpp"
 
 namespace jc {
 namespace fw {
@@ -17,10 +17,10 @@ typedef VertexBufferObject<void> FigureVertices;
 /**
  * メッシュの断片を構築する
  *
- * MeshContextは1つ以上組み合わせて１つのマテリアル部位を構築し、それらを組み合わせて１つのメッシュを構築する。
+ * MeshFragmentは1つ以上組み合わせて１つのマテリアル部位を構築し、それらを組み合わせて１つのメッシュを構築する。
  * スキニングのボーン数制限を回避するため、このクラスが描画の最小単位となる。
  */
-class MeshContext: public Object {
+class MeshFragment: public Object {
 protected:
     struct {
         /**
@@ -34,10 +34,10 @@ protected:
         jc_sp<IndexBufferObject> indices;
     }buffers;
 public:
-    MeshContext() {
+    MeshFragment() {
     }
 
-    virtual ~MeshContext() {
+    virtual ~MeshFragment() {
         jclogf("delete MeshContext(0x%x)", this);
     }
 

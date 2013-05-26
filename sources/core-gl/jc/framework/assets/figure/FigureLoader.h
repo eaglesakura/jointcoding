@@ -7,7 +7,7 @@
 #ifndef FIGURELOADER_H_
 #define FIGURELOADER_H_
 
-#include    "jc/framework/assets/figure/FigureAsset.hpp"
+#include    "jc/framework/assets/FigureAsset.hpp"
 #include    "jc/graphics/figure/data/FigureDataLoader.h"
 
 namespace jc {

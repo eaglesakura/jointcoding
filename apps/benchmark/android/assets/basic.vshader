@@ -18,7 +18,7 @@ void main() {
     gl_Position = unif_wlp * attr_pos;
     
     // normal
-    vr_normal = attr_normal;
+    vr_normal = (attr_normal / 2.0) + vec3(0.5, 0.5, 0.5);
     
     // uv
     vr_coords = attr_uv;

@@ -7,7 +7,7 @@
 #include    "esBenchmarkApplication.h"
 #include    "jc/collection/ArrayHandle.hpp"
 
-#include    "jc/framework/assets/figure/FigureAsset.hpp"
+#include    "jc/framework/assets/FigureAsset.hpp"
 #include    "jc/graphics/figure/data/ArchiveFigureDataFactory.h"
 
 using namespace jc::fw;
@@ -165,9 +165,9 @@ void BenchmarkApplication::onAppMainRendering() {
         for (s32 i = 0; i < figure->getNodeNum(); ++i) {
             FigureNodeHandle node = figure->getNodeHandle(i);
             for (s32 k = 0; k < node->getFragmentNum(); ++k) {
-                NodeFragment *fragment = node->getFragment(k);
+                MeshGroup *fragment = node->getFragment(k);
                 for (s32 c = 0; c < fragment->getContextNum(); ++c) {
-                    MeshContext *context = fragment->getContext(c);
+                    MeshFragment *context = fragment->getContext(c);
 
                     // 各種バッファを取り出す
                     VertexBufferObject<void> *vbo = context->getVertexBuffer();

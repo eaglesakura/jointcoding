@@ -4,7 +4,7 @@
  *  Created on: 2013/05/20
  */
 
-#include    "jc/framework/assets/figure/FigureAsset.hpp"
+#include    "jc/framework/assets/FigureAsset.hpp"
 
 namespace jc {
 namespace fw {
@@ -41,7 +41,7 @@ class FigureNode {
      * マテリアルごとのフラグメント情報
      * １マテリアルにつき1フラグメントを描画する
      */
-    safe_array<NodeFragment*> fragments;
+    safe_array<MeshGroup*> fragments;
 protected:
     /**
      * ノード名
@@ -61,8 +61,8 @@ protected:
     /**
      * フラグメントを生成する
      */
-    virtual NodeFragment* createFragment(const s32 material) {
-        return new NodeFragment();
+    virtual MeshGroup* createFragment(const s32 material) {
+        return new MeshGroup();
     }
 
     /**
@@ -116,7 +116,7 @@ public:
     /**
      * マテリアルごとのメッシュ断片を取得する
      */
-    virtual NodeFragment* getFragment(const s32 index) const {
+    virtual MeshGroup* getFragment(const s32 index) const {
         return fragments[index];
     }
 

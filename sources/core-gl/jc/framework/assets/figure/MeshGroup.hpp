@@ -7,33 +7,34 @@
 #ifndef NODEFRAGMENT_HPP_
 #define NODEFRAGMENT_HPP_
 
-#include    "jc/framework/assets/figure/FigureAsset.hpp"
+#include    "jc/framework/assets/FigureAsset.hpp"
 
 namespace jc {
 namespace fw {
 
 /**
  * ノードの一部分を定義する
- * NodeFragmentに対して１つのマテリアルが割り当てられ、MeshContextは同一マテリアルとして描画される。
+ * 3Dツール上の１マテリアルに対して１つのMeshGroupが割り当てられ、複数分割描画が必要な場合はFragmentに分割される。
+ * MeshGroupは同一シェーダー・同一条件で描画されることを想定する。
  */
-class NodeFragment: public Object {
+class MeshGroup: public Object {
     /**
      * Nodeの断片を構築するためのコンテキストグループ
      */
-    safe_array<MeshContext*> fragment;
+    safe_array<MeshFragment*> fragment;
 
 protected:
 
-    virtual MeshContext* createMeshContext(MDevice device, const u32 index) {
-        return new MeshContext();
+    virtual MeshFragment* createMeshContext(MDevice device, const u32 index) {
+        return new MeshFragment();
     }
 
 public:
-    NodeFragment() {
+    MeshGroup() {
         safe_delete(fragment);
     }
 
-    virtual ~NodeFragment() {
+    virtual ~MeshGroup() {
         safe_delete(fragment);
         jclogf("delete NodeFragment(0x%x)", this);
     }
@@ -41,7 +42,7 @@ public:
     /**
      * レンダリングコンテキストを取得する
      */
-    virtual MeshContext* getContext(const s32 index) const {
+    virtual MeshFragment* getContext(const s32 index) const {
         return fragment[index];
     }
 
