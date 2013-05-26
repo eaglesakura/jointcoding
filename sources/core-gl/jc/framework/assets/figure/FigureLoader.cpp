@@ -4,7 +4,7 @@
  *  Created on: 2013/05/20
  */
 
-#include    "jc/framework/assets/figure/FigureAsset.hpp"
+#include    "jc/framework/assets/FigureAsset.hpp"
 
 namespace jc {
 namespace fw {
@@ -97,7 +97,7 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
         jclogf("      context(%d)", meshInfo.context_num[i]);
 
         // 指定コンテキスト数を確保する
-        NodeFragment *fragment = node->getFragment(i);
+        MeshGroup *fragment = node->getFragment(i);
         fragment->initializeContexts(device, meshInfo.context_num[i]);
     }
 
@@ -120,8 +120,8 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 
     FigureNodeHandle node = loadTarget->getNodeHandle(nodeInfo.number);
 
-    NodeFragment *fragment = node->getFragment(material_num);
-    MeshContext *context = fragment->getContext(context_num);
+    MeshGroup *fragment = node->getFragment(material_num);
+    MeshFragment *context = fragment->getContext(context_num);
     // データによって処理を分ける
     switch (loaded.type) {
         case MeshDataType_Positions: {
@@ -193,8 +193,8 @@ void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, c
 
     FigureNodeHandle node = loadTarget->getNodeHandle(nodeInfo.number);
 
-    NodeFragment *fragment = node->getFragment(material_num);
-    MeshContext *context = fragment->getContext(context_num);
+    MeshGroup *fragment = node->getFragment(material_num);
+    MeshFragment *context = fragment->getContext(context_num);
 
     // 基本データをバッファへ転送する
     {

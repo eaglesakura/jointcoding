@@ -7,7 +7,7 @@
 #ifndef JCFWFIGURE_H_
 #define JCFWFIGURE_H_
 
-#include    "jc/framework/assets/figure/FigureAsset.hpp"
+#include    "jc/framework/assets/FigureAsset.hpp"
 
 namespace jc {
 namespace fw {
