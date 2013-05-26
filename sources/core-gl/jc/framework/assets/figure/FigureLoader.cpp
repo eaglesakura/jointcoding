@@ -63,7 +63,19 @@ void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &node
         node->setChildrenNum(&handles[0], handles.size());
     }
 
-    // FIXME ノードのデフォルト行列を設定する
+    // ノードのデフォルト行列と逆行列を設定する
+    {
+        Transform trans;
+        trans.scale = nodeInfo.def_transform.translate;
+        trans.rotate.set(nodeInfo.def_transform.rotate.x, nodeInfo.def_transform.rotate.y, nodeInfo.def_transform.rotate.z, nodeInfo.def_transform.rotate.w);
+        trans.translate = nodeInfo.def_transform.translate;
+
+        // デフォルト行列の計算
+        trans.getMatrix(node->getDefaultTransform());
+
+        // 逆行列の計算
+        node->calcInvertTransform();
+    }
 }
 
 /**
