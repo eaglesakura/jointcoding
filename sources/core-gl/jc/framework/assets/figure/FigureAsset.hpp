@@ -38,7 +38,7 @@ using namespace jc::gl;
 #include    "jc/framework/assets/figure/MeshContext.hpp"
 #include    "jc/framework/assets/figure/NodeFragment.hpp"
 #include    "jc/framework/assets/figure/FigureNode.h"
-
+#include    "jc/framework/assets/figure/Figure.h"
 
 #include    "jc/framework/assets/figure/FigureLoader.h"
 

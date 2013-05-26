@@ -38,6 +38,7 @@ public:
     }
 
     virtual ~MeshContext() {
+        jclogf("delete MeshContext(0x%x)", this);
     }
 
     /**

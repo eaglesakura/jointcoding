@@ -9,6 +9,17 @@
 namespace jc {
 namespace fw {
 
+class FigureNode;
+
+/**
+ * フィギュアノードのポインタを管理するテーブル
+ */
+typedef handle_table<FigureNode*> FigureNodeTable;
+
+/**
+ * ノードへのハンドル
+ */
+typedef Handle<FigureNode*> FigureNodeHandle;
 /**
  * １フィギュアを構築するノード情報
  *
@@ -24,7 +35,7 @@ class FigureNode {
      * 子ノード配列
      * 実体のメモリ管理（ptr delete）は別箇所で行う。
      */
-    safe_array<handle_data> children;
+    safe_array<FigureNodeHandle> children;
 
     /**
      * マテリアルごとのフラグメント情報
@@ -32,6 +43,11 @@ class FigureNode {
      */
     safe_array<NodeFragment*> fragments;
 protected:
+    /**
+     * ノード名
+     */
+    String name;
+
     /**
      * デフォルト行列
      */
@@ -54,12 +70,27 @@ protected:
      */
     s32 number;
 public:
-    FigureNode() {
-        number = -1;
+    FigureNode(const s32 nodeNumber) {
+        number = nodeNumber;
     }
 
     virtual ~FigureNode() {
         safe_delete(fragments);
+        jclogf("delete FigureNode(0x%x)", this);
+    }
+
+    /**
+     * ノード名を取得する
+     */
+    virtual const String& getName() const {
+        return name;
+    }
+
+    /**
+     * ノード名を設定する
+     */
+    virtual void setName(const String &set) {
+        this->name = set;
     }
 
     /**
@@ -69,11 +100,7 @@ public:
      * @param materials このノードで描画すべきマテリアル数
      *                  0の場合、ノードは描画ではなくアンカー等の用途として使われることを想定する。
      */
-    virtual void initialize(MDevice device, const s32 selfNodeNumber, const u32 materials) {
-        assert(selfNodeNumber >= 0);
-        this->number = selfNodeNumber;
-
-
+    virtual void initialize(MDevice device, const u32 materials) {
         if (!materials) {
             return;
         }
@@ -89,8 +116,15 @@ public:
     /**
      * マテリアルごとのメッシュ断片を取得する
      */
-    virtual NodeFragment* getFragment(const s32 index) {
+    virtual NodeFragment* getFragment(const s32 index) const {
         return fragments[index];
+    }
+
+    /**
+     * フラグメント数を取得する
+     */
+    virtual u32 getFragmentNum() const {
+        return fragments.length;
     }
 
     /**
@@ -109,21 +143,18 @@ public:
 
     /**
      * 子の数を指定する。
-     * 子の数はモデリング時に固定されるため、一度だけ設定可能
-     *
-     * children_indicesの内容は内部的にコピーされ、ポインタは内部で残さない。
-     * children_handles[0 - (num-1)]は既にretain済みであることを想定する。
+     * 子の数はモデリング時に固定されるため、一度だけ設定を行えば問題ない
      */
-    void setChildrenNum(const handle_data *children_handles, const s32 num) {
-        children.alloc(num);
-        children.copyFrom(children_handles, num);
+    void setChildrenNum(const FigureNodeHandle *handels, const s32 num) {
+        children.reserve(num);
+        children.copyFrom(handels, num);
     }
 
     /**
      * 子ノードをテーブルからピックアップする
      */
-    FigureNode* getChildNode(const handle_table<FigureNode*> &table, const s32 index) const {
-        return table.get(children[index]);
+    FigureNode* getChildNode(const s32 index) const {
+        return children[index].get();
     }
 };
 

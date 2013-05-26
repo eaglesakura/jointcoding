@@ -30,10 +30,26 @@ protected:
 
 public:
     NodeFragment() {
+        safe_delete(fragment);
     }
 
     virtual ~NodeFragment() {
         safe_delete(fragment);
+        jclogf("delete NodeFragment(0x%x)", this);
+    }
+
+    /**
+     * レンダリングコンテキストを取得する
+     */
+    virtual MeshContext* getContext(const s32 index) const {
+        return fragment[index];
+    }
+
+    /**
+     * コンテキスト数を取得する
+     */
+    virtual u32 getContextNum() const {
+        return fragment.length;
     }
 
     /**

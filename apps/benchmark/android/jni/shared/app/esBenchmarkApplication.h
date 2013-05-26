@@ -21,6 +21,24 @@ class BenchmarkApplication: public JointApplicationBase {
         BenchmarkTask_LoadTexture,
     };
 
+    /**
+     * 3Dレンダリングフィギュア
+     */
+    jc_sp<fw::Figure> figure;
+
+    /**
+     * レンダリング用シェーダー
+     */
+    MGLShaderProgram shader;
+
+    /**
+     * matrix
+     * world loop projection
+     */
+    MatrixUniform unif_wlp;
+
+    float rotate;
+
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();

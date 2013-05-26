@@ -18,21 +18,26 @@ namespace fw {
  */
 class FigureLoader: public jc::FigureDataLoader {
     /**
-     * 頂点バッファキャッシュ
+     * 読み込み対象デバイス情報
      */
-    jc_sa<u8> cacheVertices;
+    MDevice device;
 
     /**
-     * 読み込み対象のコンテキスト
+     * 読み込み対象のフィギュア
      */
-    MGLState state;
-
-    /**
-     * 生成元のVRAM
-     */
-    VRAM vram;
+    jc_selp<Figure> loadTarget;
 
 protected:
+    /**
+     * 基本頂点情報
+     */
+    safe_array<BasicVertex> cacheBasicVertices;
+
+    /**
+     * 拡張用スキニング頂点
+     */
+    safe_array<SkinningVertex> cacheSkinningVertices;
+
     /**
      * 頂点バッファキャッシュを生成する
      * キャッシュは一括してVertexBufferへ転送する
@@ -46,11 +51,23 @@ public:
 
     virtual ~FigureLoader();
 
-protected:
     /**
-     * 読み込むべきフィギュアデータの読み込みが完了した
+     * 読み込み対象フィギュアを設定する
      */
-    virtual void onLoadCompleted();
+    virtual void setLoadTarget(jc_selp<Figure> loadTarget) {
+        this->loadTarget = loadTarget;
+    }
+
+    /**
+     * 読み込みを行う。
+     * ファイル名等の初期化は継承したサブクラスで行う。
+     */
+    virtual void load() {
+        // 読み込み対象が存在しなければならない
+        assert(loadTarget);
+        FigureDataLoader::load();
+    }
+protected:
 
     /**
      * フィギュアの基本情報を読み込んだ後に呼び出される
@@ -85,6 +102,12 @@ protected:
      * @param loaded_data 読み込みを行ったデータ
      */
     virtual void onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &nodeInfo, const FigureDataLoader::MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const FigureDataLoader::MeshData &loaded);
+
+    /**
+     * 読み込むべきフィギュアデータの読み込みが完了した
+     */
+    virtual void onLoadCompleted();
+
 };
 
 }

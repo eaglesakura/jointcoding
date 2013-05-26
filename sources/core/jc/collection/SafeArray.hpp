@@ -41,10 +41,14 @@ public:
      * 指定した長さの配列を確保し、古い配列をmemcpyする
      */
     inline void alloc(const s32 newLength) {
-        assert(newLength > 0);
+        assert(newLength >= 0);
 
         value_type *pOldValues = ptr;
-        ptr = new value_type[newLength];
+        if (newLength > 0) {
+            ptr = new value_type[newLength];
+        } else {
+            ptr = NULL;
+        }
 
         // 古い配列が存在するならコピーする
         if (pOldValues) {
@@ -63,10 +67,14 @@ public:
      * operator=の起動が必要なシーンで利用する
      */
     inline void reserve(const s32 newLength) {
-        assert(newLength > 0);
+        assert(newLength >= 0);
 
         value_type *pOldValues = ptr;
-        ptr = new value_type[newLength];
+        if (newLength > 0) {
+            ptr = new value_type[newLength];
+        } else {
+            ptr = NULL;
+        }
 
         // 古い配列が存在するならコピーする
         if (pOldValues) {
