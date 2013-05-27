@@ -237,7 +237,8 @@ void SharedVRAM::dispose() {
     MutexLock lock(mtx);
 
     for (s32 i = 0; i < VRAM_e_num; ++i) {
-        jclogf("vram dispose(%d)", vram_tables[i]->getExistValueNum());
+        jclogf("vram dispose type(%d) obj(%d)", i, vram_tables[i]->getExistValueNum());
+        vram_tables[i]->unuse();
         vram_tables[i].reset();
     }
 
