@@ -176,6 +176,10 @@ class handle_table {
      */
     s32 expansion_num;
 
+    /**
+     * 廃棄済み
+     */
+    jcboolean unused;
 public:
     handle_table() {
         alloc_index = exist_objects = 0;
@@ -183,12 +187,27 @@ public:
         expansion_num = 1;
         callback = NULL;
         user = NULL;
+        unused = jcfalse;
     }
 
     ~handle_table() {
         if (callback) {
             (*callback)(HandleCallback_Destroy, (void*) this, (void*) values.ptr, metas.ptr, values.length);
         }
+    }
+
+    /**
+     * ハンドルテーブル全体を無効化する
+     */
+    void unuse() {
+        unused = jctrue;
+    }
+
+    /**
+     * 無効済みの場合はtrueを返す
+     */
+    jcboolean isUnused() const {
+        return unused;
     }
 
     /**
@@ -281,6 +300,11 @@ public:
      */
     inline jcboolean exist(const handle_data &handle) const {
         if (handle.index < 0) {
+            return jcfalse;
+        }
+
+        // 無効フラグが設定されている場合は強制的に無効である
+        if (unused) {
             return jcfalse;
         }
 
@@ -541,11 +565,11 @@ public:
      * ハンドルが有効な場合true
      */
     jcboolean exist( ) const {
-        if(!master) {
+        if(!pMaster) {
             return jcfalse;
         }
 
-        if(master->exist(self)) {
+        if(pMaster->exist(self)) {
             return jctrue;
         } else {
             return jcfalse;
@@ -682,14 +706,14 @@ public:
      * 有効なハンドルの場合、trueを返す
      */
     operator bool() const {
-        return self.index >= 0;
+        return exist();
     }
 
     /**
      * 無効なハンドルの場合、trueを返す
      */
     bool operator!() const {
-        return self.index < 0;
+        return !exist();
     }
 
     /**

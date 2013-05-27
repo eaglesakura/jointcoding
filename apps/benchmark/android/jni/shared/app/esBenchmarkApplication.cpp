@@ -60,14 +60,14 @@ void BenchmarkApplication::onAppInitialize() {
 
     {
         // シェーダー読込
-        shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vshader"), Uri::fromAssets("basic.fshader"));
+        shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
         assert(shader);
 
         unif_wlp.setLocation(shader, "unif_wlp");
     }
 
 //    // テクスチャロードを開始する
-//    startNewtask(BenchmarkTask_LoadTexture, 0);
+    startNewtask(BenchmarkTask_LoadTexture, 0);
 }
 
 void BenchmarkApplication::loadTexture(MDevice subDevice) {
@@ -81,8 +81,9 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
         texture->unbind();
 
         Thread::sleep(500);
-        jclog("load finish");
+        subDevice->getVRAM()->gc();
 
+        jclog("load finish");
     } catch (Exception &e) {
         jcloge(e);
     }
@@ -116,17 +117,18 @@ void BenchmarkApplication::onAppMainRendering() {
         state->clearSurface();
     }
 
-//    {
-//        MSpriteManager spriteManager = getSpriteManager();
-//        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
-//
-//        if (texture) {
-//            spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
-//
-//            static float rotate = 0;
-//            spriteManager->renderingImage(texture, createRectFromXYWH<float>(256, 256, texture->getWidth(), texture->getHeight()), rotate += 1, Color::fromRGBAf(1, 1, 1, 0.5f));
-//        }
-//    }
+    {
+        state->depthTestEnable(jcfalse);
+        MSpriteManager spriteManager = getSpriteManager();
+        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
+
+        if (texture) {
+            spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
+
+            static float rotate = 0;
+            spriteManager->renderingImage(texture, createRectFromXYWH<float>(256, 256, texture->getWidth(), texture->getHeight()), rotate += 1, Color::fromRGBAf(1, 1, 1, 0.5f));
+        }
+    }
 
 // rendering 3d
     {

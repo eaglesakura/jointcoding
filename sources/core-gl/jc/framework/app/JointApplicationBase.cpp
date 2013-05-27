@@ -236,7 +236,8 @@ void JointApplicationBase::dispatchDestroy() {
 
         {
             MDevice windowDevice = getWindowDevice();
-            windowDevice->getVRAM()->gc();
+            // VRAMを一括解放する
+            windowDevice->getVRAM()->dispose();
         }
     }
 }
