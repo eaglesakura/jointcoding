@@ -36,7 +36,7 @@ public:
 
     virtual ~MeshGroup() {
         safe_delete(fragment);
-        jclogf("delete NodeFragment(0x%x)", this);
+        jclogf("delete MeshGroup(0x%x)", this);
     }
 
     /**

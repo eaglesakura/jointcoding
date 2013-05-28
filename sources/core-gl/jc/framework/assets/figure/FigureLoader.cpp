@@ -46,21 +46,21 @@ void FigureLoader::onFigureInfoLoadComplete(const FigureInfo &figureInfo) {
 void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &nodeInfo) {
     jclogf("  onNodeLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 
-    FigureNodeHandle node = loadTarget->getNodeHandle(nodeInfo.number);
-    assert(node);
+    FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
+    assert(pNode);
 
     // ノードに名前を指定する
-    node->setName(nodeInfo.name);
+    pNode->setName(nodeInfo.name);
 
     // ノードの階層情報を設定する
     {
-        std::vector<FigureNodeHandle> handles;
+        std::vector<FigureNode*> nodes;
         for (s32 i = 0; i < nodeInfo.children_num; ++i) {
-            handles.push_back(loadTarget->getNodeHandle(nodeInfo.children[i]));
+            nodes.push_back(loadTarget->getNode(nodeInfo.children[i]));
         }
 
-        jclogf("    children(%d)", handles.size());
-        node->setChildrenNum(&handles[0], handles.size());
+        jclogf("    children(%d)", nodes.size());
+        pNode->setChildrenNum(&nodes[0], nodes.size());
     }
 
     // ノードのデフォルト行列と逆行列を設定する
@@ -71,10 +71,10 @@ void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &node
         trans.translate = nodeInfo.def_transform.translate;
 
         // デフォルト行列の計算
-        trans.getMatrix(node->getDefaultTransform());
+        trans.getMatrix(pNode->getDefaultTransform());
 
         // 逆行列の計算
-        node->calcInvertTransform();
+        pNode->calcInvertTransform();
     }
 }
 
@@ -86,18 +86,18 @@ void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &node
 void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &nodeInfo, const jc::FigureDataLoader::MeshInfo &meshInfo, jc::FigureDataLoader::MeshDataRequest *load_request) {
     jclogf("  onMeshInfoLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 
-    FigureNodeHandle node = loadTarget->getNodeHandle(nodeInfo.number);
-    assert(node);
+    FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
+    assert(pNode);
 
     jclogf("    fragments(%d)", meshInfo.material_num);
     // マテリアル数を確保する
-    node->initialize(device, meshInfo.material_num);
+    pNode->initialize(device, meshInfo.material_num);
     // 各フラグメントごとのコンテキストを生成する
     for (s32 i = 0; i < meshInfo.material_num; ++i) {
         jclogf("      context(%d)", meshInfo.context_num[i]);
 
         // 指定コンテキスト数を確保する
-        MeshGroup *group = node->getMeshGroup(i);
+        MeshGroup *group = pNode->getMeshGroup(i);
         group->initializeFragments(device, meshInfo.context_num[i]);
     }
 
@@ -118,9 +118,10 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
 void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &nodeInfo, const FigureDataLoader::MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const FigureDataLoader::MeshData &loaded) {
     jclogf("  onMeshDataLoadComplete node(%d) name(%s) type(%d)", nodeInfo.children_num, nodeInfo.name.c_str(), loaded.type);
 
-    FigureNodeHandle node = loadTarget->getNodeHandle(nodeInfo.number);
+    FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
+    assert(pNode);
 
-    MeshGroup *fragment = node->getMeshGroup(material_num);
+    MeshGroup *fragment = pNode->getMeshGroup(material_num);
     MeshFragment *context = fragment->getFragment(context_num);
     // データによって処理を分ける
     switch (loaded.type) {
@@ -191,14 +192,15 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num) {
     jclogf("  onMeshMaterialContextLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 
-    FigureNodeHandle node = loadTarget->getNodeHandle(nodeInfo.number);
+    FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
+    assert(pNode);
 
-    MeshGroup *fragment = node->getMeshGroup(material_num);
-    MeshFragment *context = fragment->getFragment(context_num);
+    MeshGroup *pGroup = pNode->getMeshGroup(material_num);
+    MeshFragment *pFragment = pGroup->getFragment(context_num);
 
     // 基本データをバッファへ転送する
     {
-        VertexBufferObject<void> *basic_vbo = context->getVertexBuffer();
+        VertexBufferObject<void> *basic_vbo = pFragment->getVertexBuffer();
         basic_vbo->bind(device->getState());
         {
             basic_vbo->bufferData((void*) cacheBasicVertices.ptr, sizeof(BasicVertex), cacheBasicVertices.length, GL_STATIC_DRAW);

@@ -165,9 +165,9 @@ void BenchmarkApplication::onAppMainRendering() {
         assert(pos.valid());
 
         for (s32 i = 0; i < figure->getNodeNum(); ++i) {
-            FigureNodeHandle node = figure->getNodeHandle(i);
-            for (s32 k = 0; k < node->getMeshGroupNum(); ++k) {
-                MeshGroup *fragment = node->getMeshGroup(k);
+            FigureNode *pNode = figure->getNode(i);
+            for (s32 k = 0; k < pNode->getMeshGroupNum(); ++k) {
+                MeshGroup *fragment = pNode->getMeshGroup(k);
                 for (s32 c = 0; c < fragment->getFragmentNum(); ++c) {
                     MeshFragment *context = fragment->getFragment(c);
 

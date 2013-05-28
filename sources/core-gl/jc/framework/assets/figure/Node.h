@@ -12,15 +12,6 @@ namespace fw {
 class FigureNode;
 
 /**
- * フィギュアノードのポインタを管理するテーブル
- */
-typedef handle_table<FigureNode*> FigureNodeTable;
-
-/**
- * ノードへのハンドル
- */
-typedef Handle<FigureNode*> FigureNodeHandle;
-/**
  * １フィギュアを構築するノード情報
  *
  * １ノードは最大１メッシュを構築できる
@@ -35,7 +26,7 @@ class FigureNode {
      * 子ノード配列
      * 実体のメモリ管理（ptr delete）は別箇所で行う。
      */
-    safe_array<FigureNodeHandle> children;
+    safe_array<FigureNode*> children;
 
     /**
      * マテリアルごとのグループ情報
@@ -76,7 +67,7 @@ public:
 
     virtual ~FigureNode() {
         safe_delete(groups);
-        jclogf("delete FigureNode(0x%x)", this);
+        jclogf("delete FigureNode[%d] (0x%x) (%s)", number, this, name.c_str());
     }
 
     /**
@@ -152,16 +143,16 @@ public:
      * 子の数を指定する。
      * 子の数はモデリング時に固定されるため、一度だけ設定を行えば問題ない
      */
-    void setChildrenNum(const FigureNodeHandle *handels, const s32 num) {
+    void setChildrenNum(FigureNode* const *ppChildren, const s32 num) {
         children.reserve(num);
-        children.copyFrom(handels, num);
+        children.memcopyFrom(ppChildren, num);
     }
 
     /**
      * 子ノードをテーブルからピックアップする
      */
     FigureNode* getChildNode(const s32 index) const {
-        return children[index].get();
+        return children[index];
     }
 };
 
