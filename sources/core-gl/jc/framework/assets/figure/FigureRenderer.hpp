@@ -31,7 +31,7 @@ public:
     /**
      * レンダリング用インスタンスパラメータを生成する
      */
-    virtual FigureInstanceState* createInstanceState() = 0;
+    virtual FigureInstanceState* createInstanceState(const jc_selp<Figure> figure) = 0;
 };
 
     /**
@@ -64,10 +64,10 @@ public:
         const FigureInstanceState *pInstance = instance.get();
 
         for (s32 n = 0; n < figure->getNodeNum(); ++n) {
-            const FigureNodeHandle node = pFigure->getNodeHandle(n);
+            const FigureNode *pNode = pFigure->getNode(n);
 
-            for (s32 g = 0; g < node->getMeshGroupNum(); ++g) {
-                const MeshGroup *pGroup = node->getMeshGroup(g);
+            for (s32 g = 0; g < pNode->getMeshGroupNum(); ++g) {
+                const MeshGroup *pGroup = pNode->getMeshGroup(g);
                 const MeshMaterial *pMaterial = NULL;
 
                 for (s32 f = 0; f < pGroup->getFragmentNum(); ++f) {
@@ -75,6 +75,13 @@ public:
                 }
             }
         }
+    }
+
+    /**
+     * レンダリング用インスタンスパラメータを生成する
+     */
+    virtual FigureInstanceState* createInstanceState(const jc_selp<Figure> figure) {
+        return new FigureInstanceState(figure);
     }
 };
 
