@@ -40,23 +40,23 @@ public:
     }
 
     /**
-     * レンダリングコンテキストを取得する
+     * フラグメントを取得する
      */
-    virtual MeshFragment* getContext(const s32 index) const {
+    virtual MeshFragment* getFragment(const s32 index) const {
         return fragment[index];
     }
 
     /**
      * コンテキスト数を取得する
      */
-    virtual u32 getContextNum() const {
+    virtual u32 getFragmentNum() const {
         return fragment.length;
     }
 
     /**
      * コンテキスト初期化を行う
      */
-    virtual void initializeContexts(MDevice device, const u32 contexts) {
+    virtual void initializeFragments(MDevice device, const u32 contexts) {
         fragment.alloc(contexts);
         for (u32 i = 0; i < contexts; ++i) {
             fragment[i] = createMeshContext(device, i);

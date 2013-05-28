@@ -38,10 +38,10 @@ class FigureNode {
     safe_array<FigureNodeHandle> children;
 
     /**
-     * マテリアルごとのフラグメント情報
-     * １マテリアルにつき1フラグメントを描画する
+     * マテリアルごとのグループ情報
+     * １マテリアルにつき1グループ（複数フラグメント）を描画する
      */
-    safe_array<MeshGroup*> fragments;
+    safe_array<MeshGroup*> groups;
 protected:
     /**
      * ノード名
@@ -75,7 +75,7 @@ public:
     }
 
     virtual ~FigureNode() {
-        safe_delete(fragments);
+        safe_delete(groups);
         jclogf("delete FigureNode(0x%x)", this);
     }
 
@@ -106,25 +106,25 @@ public:
         }
 
         // マテリアル数だけ確保を行う
-        fragments.alloc(materials);
+        groups.alloc(materials);
 
         for (u32 i = 0; i < materials; ++i) {
-            fragments[i] = createFragment(i);
+            groups[i] = createFragment(i);
         }
     }
 
     /**
      * マテリアルごとのメッシュ断片を取得する
      */
-    virtual MeshGroup* getFragment(const s32 index) const {
-        return fragments[index];
+    virtual MeshGroup* getMeshGroup(const s32 index) const {
+        return groups[index];
     }
 
     /**
      * フラグメント数を取得する
      */
-    virtual u32 getFragmentNum() const {
-        return fragments.length;
+    virtual u32 getMeshGroupNum() const {
+        return groups.length;
     }
 
     /**

@@ -97,8 +97,8 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
         jclogf("      context(%d)", meshInfo.context_num[i]);
 
         // 指定コンテキスト数を確保する
-        MeshGroup *fragment = node->getFragment(i);
-        fragment->initializeContexts(device, meshInfo.context_num[i]);
+        MeshGroup *group = node->getMeshGroup(i);
+        group->initializeFragments(device, meshInfo.context_num[i]);
     }
 
     // 各種拡張データのリクエストも行う
@@ -120,8 +120,8 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 
     FigureNodeHandle node = loadTarget->getNodeHandle(nodeInfo.number);
 
-    MeshGroup *fragment = node->getFragment(material_num);
-    MeshFragment *context = fragment->getContext(context_num);
+    MeshGroup *fragment = node->getMeshGroup(material_num);
+    MeshFragment *context = fragment->getFragment(context_num);
     // データによって処理を分ける
     switch (loaded.type) {
         case MeshDataType_Positions: {
@@ -193,8 +193,8 @@ void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, c
 
     FigureNodeHandle node = loadTarget->getNodeHandle(nodeInfo.number);
 
-    MeshGroup *fragment = node->getFragment(material_num);
-    MeshFragment *context = fragment->getContext(context_num);
+    MeshGroup *fragment = node->getMeshGroup(material_num);
+    MeshFragment *context = fragment->getFragment(context_num);
 
     // 基本データをバッファへ転送する
     {
