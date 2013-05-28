@@ -151,6 +151,23 @@ String String::substring(const s32 begin, const s32 end) const {
     jc::split((*this), String(sep), &result);
     return result;
 }
+/**
+ * 文字列のハッシュコードを求める
+ */
+s32 String::hashCode() const {
+    if (empty()) {
+        return 0;
+    }
+
+    const charactor *str = c_str();
+
+    s32 result = 0;
+    const s32 str_length = length();
+    for (s32 i = 0; i < str_length; i++) {
+        result = (result * 31 + str[i]);
+    }
+    return result;
+}
 
 /**
  * 文字列として取得する

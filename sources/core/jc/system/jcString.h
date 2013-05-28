@@ -107,6 +107,11 @@ public:
     std::vector<String> split(const charactor *sep) const;
 
     /**
+     * 文字列のハッシュコードを求める
+     */
+    s32 hashCode() const;
+
+    /**
      * ネイティブクラスに変換して取得する
      * 変換は必ずJC_NATIVE_STRINGを利用しなければならない。
      */

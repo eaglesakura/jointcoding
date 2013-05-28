@@ -166,10 +166,10 @@ void BenchmarkApplication::onAppMainRendering() {
 
         for (s32 i = 0; i < figure->getNodeNum(); ++i) {
             FigureNodeHandle node = figure->getNodeHandle(i);
-            for (s32 k = 0; k < node->getFragmentNum(); ++k) {
-                MeshGroup *fragment = node->getFragment(k);
-                for (s32 c = 0; c < fragment->getContextNum(); ++c) {
-                    MeshFragment *context = fragment->getContext(c);
+            for (s32 k = 0; k < node->getMeshGroupNum(); ++k) {
+                MeshGroup *fragment = node->getMeshGroup(k);
+                for (s32 c = 0; c < fragment->getFragmentNum(); ++c) {
+                    MeshFragment *context = fragment->getFragment(c);
 
                     // 各種バッファを取り出す
                     VertexBufferObject<void> *vbo = context->getVertexBuffer();

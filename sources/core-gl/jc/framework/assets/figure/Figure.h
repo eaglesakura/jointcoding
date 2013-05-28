@@ -106,6 +106,15 @@ public:
         result.reset(handle_data((s32)index), nodes);
         return result;
     }
+
+    /**
+     * ハンドルを取得する
+     */
+    virtual const FigureNodeHandle getNodeHandle(const u32 index) const {
+        FigureNodeHandle result;
+        result.reset(handle_data((s32)index), nodes);
+        return result;
+    }
 };
 
 }
