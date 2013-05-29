@@ -14,6 +14,37 @@
 namespace jc {
 
 /**
+ * safe_arrayから一部を切り取ったクラス
+ * ポインタの削除は行わないため、利用する箇所に注意すること
+ */
+template<typename value_type>
+struct unsafe_array {
+    value_type *ptr;
+    s32 length;
+
+    unsafe_array() {
+        ptr = NULL;
+        length = 0;
+    }
+
+    /**
+     * オペレータアクセスを提供する
+     */
+    inline value_type& operator[](const s32 index) {
+        assert(index < length);
+        return ptr[index];
+    }
+
+    /**
+     * オペレータアクセスを提供する
+     */
+    inline const value_type& operator[](const s32 index) const {
+        assert(index < length);
+        return ptr[index];
+    }
+};
+
+/**
  * 配列のポインタと長さを安全に保持する
  * 単純な配列のみをサポートし、軽量に動作することを第一とする
  */
@@ -152,6 +183,26 @@ public:
     inline const value_type& operator[](const s32 index) const {
         assert(index < length);
         return ptr[index];
+    }
+
+    /**
+     * 配列の一部を切り取ったunmanaged配列を生成する
+     */
+    inline unsafe_array<value_type> slice(const s32 index, const s32 length) const {
+        assert(index >= 0);
+        assert((index + length) < this->length);
+
+        unsafe_array<value_type> result;
+        result.ptr = (ptr + index);
+        result.length = length;
+        return result;
+    }
+
+    /**
+     * 配列の一部を切り取ったunmanaged配列を生成する
+     */
+    inline unsafe_array<value_type> slice(const s32 index) const {
+        return slice(index, length - index);
     }
 };
 
