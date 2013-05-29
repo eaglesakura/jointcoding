@@ -190,7 +190,7 @@ public:
      */
     inline unsafe_array<value_type> slice(const s32 index, const s32 length) const {
         assert(index >= 0);
-        assert((index + length) < this->length);
+        assert((index + length) <= this->length);
 
         unsafe_array<value_type> result;
         result.ptr = (ptr + index);

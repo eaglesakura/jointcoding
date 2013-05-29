@@ -25,9 +25,10 @@ FigureLoader::~FigureLoader() {
  * 頂点バッファキャッシュを生成する
  * キャッシュは一括してVertexBufferへ転送する
  */
-void FigureLoader::createVerticesCache(const s32 vertices_num) {
-    cacheBasicVertices.reserve(vertices_num);
-    cacheSkinningVertices.reserve(vertices_num);
+void FigureLoader::createCacheBuffer(const s32 vertices_num, const s32 indices_num) {
+    buffer.vertices.alloc(vertices_num);
+    buffer.skinnings.alloc(vertices_num);
+    buffer.indices.alloc(indices_num);
 }
 /**
  * フィギュアの基本情報を読み込んだ後に呼び出される
@@ -38,6 +39,9 @@ void FigureLoader::onFigureInfoLoadComplete(const FigureInfo &figureInfo) {
 
     // 指定されたノード数を確保する
     loadTarget->initializeNodes(device, figureInfo.node_num);
+
+    // 必要な頂点数・インデックス数を確保する
+    createCacheBuffer(figureInfo.vertex_num, figureInfo.index_num);
 }
 
 /**
@@ -123,37 +127,41 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 
     MeshGroup *fragment = pNode->getMeshGroup(material_num);
     MeshFragment *context = fragment->getFragment(context_num);
+
+    // 操作対象の各種ポインタを取り出す
+    unsafe_array<BasicVertex> vertices = getCurrentVertices();
+    unsafe_array<SkinningVertex> skinnings = getCurrentSkinnings();
+    unsafe_array<u16> indices = getCurrentIndices();
+
     // データによって処理を分ける
     switch (loaded.type) {
         case MeshDataType_Positions: {
-            // 頂点キャッシュを生成する
-            createVerticesCache(loaded.data_length);
-
-            Vector3f *positions = (Vector3f*) loaded.data.get();
+            // 頂点数を保存しておく
+            currentFragment.vertices = loaded.data_length;
 
             // データコピー
+            Vector3f *positions = (Vector3f*) loaded.data.get();
             for (s32 i = 0; i < loaded.data_length; ++i) {
-                cacheBasicVertices[i].position = positions[i];
+                vertices[i].position = positions[i];
             }
         }
             break;
         case MeshDataType_Coords: {
 
-            Vector2f *coords = (Vector2f*) loaded.data.get();
-
             // データコピー
+            Vector2f *coords = (Vector2f*) loaded.data.get();
             for (s32 i = 0; i < loaded.data_length; ++i) {
-                cacheBasicVertices[i].coord = coords[i];
+                vertices[i].coord = coords[i];
             }
 
         }
             break;
         case MeshDataType_Normals: {
-            Vector3f *normals = (Vector3f*) loaded.data.get();
 
             // データコピー
+            Vector3f *normals = (Vector3f*) loaded.data.get();
             for (s32 i = 0; i < loaded.data_length; ++i) {
-                cacheBasicVertices[i].normal = normals[i];
+                vertices[i].normal = normals[i];
             }
         }
             break;
@@ -170,16 +178,26 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
         }
             break;
         case MeshDataType_Indices: {
-            // インデックスバッファはキャッシュせずに直接転送する
-            u16 *indices = (u16*) loaded.data.get();
-            const s32 length = loaded.data_length;
+            // インデックス数を保存しておく
+            currentFragment.indices = loaded.data_length;
 
-            IndexBufferObject *ibo = context->getIndicesBuffer();
-            ibo->bind(device->getState());
-            {
-                ibo->bufferData(indices, length, GL_STATIC_DRAW);
+            // インデックスバッファはキャッシュせずに直接転送する
+            u16 *pIndices = (u16*) loaded.data.get();
+            s32 length = loaded.data_length;
+
+            // 頂点ヘッダ分だけ、インデックスをずらす必要がある
+            const u16 vert_head = (u16) (buffer.vertex_header);
+
+            // 頂点ヘッダ分だけずらしながら保存する
+
+            u16 *pWriter = indices.ptr;
+            while(length) {
+                *pWriter = (vert_head + *pIndices);
+                ++pWriter;
+                ++pIndices;
+                --length;
             }
-            ibo->unbind(device->getState());
+
         }
             break;
     }
@@ -187,16 +205,20 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 
 /**
  * 指定したコンテキストが全て読み込み終わった。
- * サブクラスではVBO転送を期待する。
+ * 次のグループを読み込む準備を行う
  */
 void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num) {
     jclogf("  onMeshMaterialContextLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
-
     FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
     assert(pNode);
 
     MeshGroup *pGroup = pNode->getMeshGroup(material_num);
     MeshFragment *pFragment = pGroup->getFragment(context_num);
+
+    // インデックスバッファの範囲を指定する
+    pFragment->setIndicesRange(buffer.index_header, currentFragment.indices);
+    onGroupLoadComplete();
+#if 0
 
     // 基本データをバッファへ転送する
     {
@@ -207,13 +229,32 @@ void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, c
         }
         basic_vbo->unbind(device->getState());
     }
+#endif
 }
 
 /**
  * 読み込むべきフィギュアデータの読み込みが完了した
+ * バッファへ一括コピーを行う
  */
 void FigureLoader::onLoadCompleted() {
     jclog("  onLoadCompleted");
+
+    MMeshResource resource = loadTarget->getResource();
+
+    FigureVertices *pVertices = resource->getVertices().get();
+    IndexBufferObject *pIndices = resource->getIndices().get();
+
+    pVertices->bind(device->getState());
+    {
+        pVertices->bufferData(buffer.vertices.ptr, sizeof(BasicVertex), buffer.vertices.length, GL_STATIC_DRAW);
+    }
+    pVertices->unbind(device->getState());
+
+    pIndices->bind(device->getState());
+    {
+        pIndices->bufferData(buffer.indices.ptr, buffer.indices.length, GL_STATIC_DRAW);
+    }
+    pIndices->unbind(device->getState());
 }
 
 }
