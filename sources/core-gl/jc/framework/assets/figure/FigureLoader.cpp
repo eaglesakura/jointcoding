@@ -34,7 +34,7 @@ void FigureLoader::createVerticesCache(const s32 vertices_num) {
  * サブクラスではノード数分のメモリ確保等を行う。
  */
 void FigureLoader::onFigureInfoLoadComplete(const FigureInfo &figureInfo) {
-    jclogf("onFigureInfoLoadComplete (%d nodes)", figureInfo.node_num);
+    jclogf("onFigureInfoLoadComplete nodes(%d) vert(%d) idx(%d) mtl(%d)", figureInfo.node_num, figureInfo.vertex_num, figureInfo.index_num, figureInfo.material_num);
 
     // 指定されたノード数を確保する
     loadTarget->initializeNodes(device, figureInfo.node_num);
