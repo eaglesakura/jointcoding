@@ -79,6 +79,7 @@ public:
 
     /**
      * レンダリング用インスタンスパラメータを生成する
+     * レンダラーとはセットで運用され、このレンダラーから生成されたインスタンス以外の描画を保証しない。
      */
     virtual FigureInstanceState* createInstanceState(const jc_selp<Figure> figure) {
         return new FigureInstanceState(figure);
