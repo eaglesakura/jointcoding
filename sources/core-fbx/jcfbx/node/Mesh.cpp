@@ -288,6 +288,83 @@ void Mesh::registerBones() {
     Node::registerBones();
 }
 
+/**
+ * 再帰的に管理しているマテリアルを列挙する
+ */
+void Mesh::getAllMaterials(std::map<String, MFigureMaterial> *result) {
+    {
+        std::vector<MFigureMeshFragment>::iterator itr = fragments.begin(), end = fragments.end();
+
+        while (itr != end) {
+            MFigureMaterial material = (*itr)->getMaterial();
+            String name = material->name;
+
+            result->insert(std::map<String, MFigureMaterial>::value_type(name, material));
+
+            ++itr;
+        }
+    }
+    Node::getAllMaterials(result);
+}
+
+/**
+ * 再帰的に管理している頂点数を数える
+ */
+u32 Mesh::getAllVertexNum() const {
+
+    u32 result = 0;
+    {
+        std::vector<MFigureMeshFragment>::const_iterator itr = fragments.begin(), end = fragments.end();
+
+        while (itr != end) {
+            const u32 context_num = (*itr)->getDrawingContextCount();
+            for (u32 i = 0; i < context_num; ++i) {
+                jc_sp<FigureMeshFragment::DrawingContext> ctx =(*itr)->getDrawingContext(i);
+
+                result += ctx->vertices_length;
+            }
+
+            ++itr;
+        }
+    }
+
+
+    for (u32 i = 0; i < childs.size(); ++i) {
+        result += childs[i]->getAllVertexNum();
+    }
+
+    return result;
+}
+
+/**
+ * 再帰的に管理しているインデックス数を数える
+ */
+u32 Mesh::getAllIndicesNum() const {
+
+    u32 result = 0;
+    {
+        std::vector<MFigureMeshFragment>::const_iterator itr = fragments.begin(), end = fragments.end();
+
+        while (itr != end) {
+            const u32 context_num = (*itr)->getDrawingContextCount();
+            for (u32 i = 0; i < context_num; ++i) {
+                jc_sp<FigureMeshFragment::DrawingContext> ctx =(*itr)->getDrawingContext(i);
+
+                result += ctx->indices_length;
+            }
+
+            ++itr;
+        }
+    }
+
+    for (u32 i = 0; i < childs.size(); ++i) {
+        result += childs[i]->getAllIndicesNum();
+    }
+
+    return result;
+}
+
+
 MMesh Mesh::createInstance(KFbxNode *node, MNode parent, FbxImportManager *importManager) {
 
     MMesh result(new Mesh(node, importManager->nextNodeId()));

@@ -12,7 +12,7 @@
 #include    "jc/graphics/figure/Figure.h"
 #include    "jc/graphics/figure/animator/Animator.h"
 #include    <vector>
-
+#include    <map>
 #include    "jcfbx/output/FbxExportManager.h"
 
 namespace jc {
@@ -30,6 +30,7 @@ typedef jc_sp<Node> MNode;
  *   L Bone
  */
 class Node {
+protected:
     /**
      * 子ノード
      */
@@ -161,6 +162,21 @@ public:
      * thisを持つため、>=1は必ず返却されることになる。
      */
     virtual u32 getAllNodeCount() const;
+
+    /**
+     * 再帰的に管理しているマテリアルを列挙する
+     */
+    virtual void getAllMaterials(std::map<String, MFigureMaterial> *result);
+
+    /**
+     * 再帰的に管理している頂点数を数える
+     */
+    virtual u32 getAllVertexNum() const;
+
+    /**
+     * 再帰的に管理しているインデックス数を数える
+     */
+    virtual u32 getAllIndicesNum() const;
 
     /**
      * 出力を行う

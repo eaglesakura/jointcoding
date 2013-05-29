@@ -64,6 +64,21 @@ public:
     }
 
     /**
+     * 再帰的に管理しているマテリアルを列挙する
+     */
+    virtual void getAllMaterials(std::map<String, MFigureMaterial> *result);
+
+    /**
+     * 再帰的に管理している頂点数を数える
+     */
+    virtual u32 getAllVertexNum() const;
+
+    /**
+     * 再帰的に管理しているインデックス数を数える
+     */
+    virtual u32 getAllIndicesNum() const;
+
+    /**
      * ボーンのリンクを再構築する
      */
     virtual void registerBones();

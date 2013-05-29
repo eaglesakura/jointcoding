@@ -45,15 +45,42 @@ MFigureDataOutputStream FbxExportManager::createOutputStream(Node *current, cons
  */
 void FbxExportManager::serialize(MNode rootNode) {
 
+    // 事前検証
+    {
+        // 頂点数がunsigned shortの範囲を超えたら、エラーとして扱う
+        if (rootNode->getAllVertexNum() > (u32) 0xFFFF) {
+            jclogf("over vertex num(unsigned short) vertices(%d)", rootNode->getAllVertexNum());
+            return;
+        }
+    }
+
     {
         // figure info
         MFigureDataOutputStream stream = createOutputStream(rootNode.get(), "figure.info");
 
-        u32 allNode = rootNode->getAllNodeCount();
-        jclogf("all nodes(%d)", allNode);
-
         // ノード数
         stream->writeU32(rootNode->getAllNodeCount());
+        jclogf("all nodes(%d)", rootNode->getAllNodeCount());
+
+        // 頂点数
+        stream->writeU32(rootNode->getAllVertexNum());
+        jclogf("all vertices(%d)", rootNode->getAllVertexNum());
+
+        // インデックス数
+        stream->writeU32(rootNode->getAllIndicesNum());
+        jclogf("all indices(%d)", rootNode->getAllIndicesNum());
+
+        // マテリアル数を数える
+        {
+            std::map<String, MFigureMaterial> materials;
+            rootNode->getAllMaterials(&materials);
+
+            jclogf("all materials(%d)", materials.size());
+
+            // マテリアル数
+            stream->writeU32(materials.size());
+        }
+
     }
 
     // 全体をシリアライズする

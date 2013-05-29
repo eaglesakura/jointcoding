@@ -304,15 +304,18 @@ MNode Node::createInstance(KFbxNode *node, MNode parent, FbxImportManager *impor
             case KFbxNodeAttribute::eNull:
             case KFbxNodeAttribute::eSkeleton:
                 //
-                jclogf("NodeType(%d = DefaultNode)", type);
+                jclogf("NodeType(%d = DefaultNode)", type)
+                ;
                 result.reset(new Node(node, importManager->nextNodeId()));
                 break;
             case KFbxNodeAttribute::eMesh:
-                jclogf("NodeType(%d = eMesh)", type);
+                jclogf("NodeType(%d = eMesh)", type)
+                ;
                 result = Mesh::createInstance(node, parent, importManager);
                 break;
             default:
-                jclogf("Not Support NodeType(%d)", type);
+                jclogf("Not Support NodeType(%d)", type)
+                ;
                 result.reset(new Node(node, importManager->nextNodeId()));
                 break;
         }
@@ -339,6 +342,41 @@ u32 Node::getAllNodeCount() const {
 
     for (u32 i = 0; i < childs.size(); ++i) {
         result += childs[i]->getAllNodeCount();
+    }
+
+    return result;
+}
+
+/**
+ * 再帰的に管理しているマテリアル数を列挙する
+ */
+void Node::getAllMaterials(std::map<String, MFigureMaterial> *result) {
+    for (u32 i = 0; i < childs.size(); ++i) {
+        childs[i]->getAllMaterials(result);
+    }
+}
+
+/**
+ * 再帰的に管理しているインデックス数を数える
+ */
+u32 Node::getAllIndicesNum() const {
+    u32 result = 0;
+
+    for (u32 i = 0; i < childs.size(); ++i) {
+        result += childs[i]->getAllIndicesNum();
+    }
+
+    return result;
+}
+
+/**
+ * 再帰的に管理している頂点数を数える
+ */
+u32 Node::getAllVertexNum() const {
+    u32 result = 0;
+
+    for (u32 i = 0; i < childs.size(); ++i) {
+        result += childs[i]->getAllVertexNum();
     }
 
     return result;
