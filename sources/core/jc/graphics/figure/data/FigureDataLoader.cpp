@@ -27,6 +27,9 @@ void FigureDataLoader::load() {
         MBinaryInputStream stream = factory->openFigureInfo();
         FigureInfo figure;
         figure.node_num = stream->readU32();
+        figure.vertex_num = stream->readU32();
+        figure.index_num = stream->readU32();
+        figure.material_num = stream->readU32();
 
         onFigureInfoLoadComplete(figure);
     }

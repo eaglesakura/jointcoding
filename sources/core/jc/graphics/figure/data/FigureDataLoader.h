@@ -18,7 +18,6 @@
 
 namespace jc {
 
-
 /**
  * フィギュアのデータを読み込む。
  */
@@ -34,8 +33,23 @@ public:
          */
         u32 node_num;
 
+        /**
+         * 頂点数
+         */
+        u32 vertex_num;
+
+        /**
+         * インデックス数
+         */
+        u32 index_num;
+
+        /**
+         * マテリアル数
+         */
+        u32 material_num;
+
         FigureInfo() {
-            node_num = 0;
+            vertex_num = index_num = material_num = node_num = 0;
         }
     };
 
