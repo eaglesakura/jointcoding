@@ -80,6 +80,16 @@ public:
         glDrawElements(mode, indices_length, GL_UNSIGNED_SHORT, NULL);
         assert_gl();
     }
+
+    /**
+     * 指定した範囲のレンダリングを行う
+     * @param mode レンダリングモードを指定する デフォルトはGL_TRIANGLES
+     * @param indices_header indices[indices_header]からレンダリングを開始する
+     * @param indices_length 指定した数のインデックスバッファを描画する
+     */
+    virtual void rendering(const GLenum mode, const GLsizei indices_header, const GLsizei indices) {
+        glDrawElements(mode, indices, GL_UNSIGNED_SHORT, (GLvoid*) (sizeof(u16) * indices_header));
+    }
 };
 
 /**

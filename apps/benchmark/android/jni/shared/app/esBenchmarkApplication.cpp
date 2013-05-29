@@ -164,6 +164,18 @@ void BenchmarkApplication::onAppMainRendering() {
 
         assert(pos.valid());
 
+        MMeshResource resource = figure->getResource();
+        MDevice device = getWindowDevice();
+
+        jc_sp<FigureVertices> vertices = resource->getVertices();
+        jc_sp<IndexBufferObject> indices = resource->getIndices();
+
+        vertices->bind(device->getState());
+        indices->bind(device->getState());
+        pos.attribute(state, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, 0);
+        uv.attribute(state, 2, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f));
+        normal.attribute(state, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f) + sizeof(Vector2f));
+
         for (s32 i = 0; i < figure->getNodeNum(); ++i) {
             FigureNode *pNode = figure->getNode(i);
             for (s32 k = 0; k < pNode->getMeshGroupNum(); ++k) {
@@ -171,25 +183,17 @@ void BenchmarkApplication::onAppMainRendering() {
                 for (s32 c = 0; c < fragment->getFragmentNum(); ++c) {
                     MeshFragment *context = fragment->getFragment(c);
 
-                    // 各種バッファを取り出す
-                    VertexBufferObject<void> *vbo = context->getVertexBuffer();
-                    IndexBufferObject *ibo = context->getIndicesBuffer();
+                    s32 start = 0;
+                    s32 length = 0;
+                    context->getIndicesRange(&start, &length);
 
-                    // 属性を設定する
-                    vbo->bind(state);
-                    ibo->bind(state);
-                    {
-                        pos.attribute(state, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, 0);
-                        uv.attribute(state, 2, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f));
-                        normal.attribute(state, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f) + sizeof(Vector2f));
-
-                        ibo->rendering(GL_TRIANGLES);
-                    }
-                    vbo->unbind(state);
-                    ibo->unbind(state);
+                    indices->rendering(GL_TRIANGLES, start, length);
+//                    indices->rendering(GL_TRIANGLES);
                 }
             }
         }
+        vertices->unbind(device->getState());
+        indices->unbind(device->getState());
     }
 
     getWindowDevice()->postFrontBuffer();

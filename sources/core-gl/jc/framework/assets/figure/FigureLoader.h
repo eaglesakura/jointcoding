@@ -28,24 +28,93 @@ class FigureLoader: public jc::FigureDataLoader {
     jc_selp<Figure> loadTarget;
 
 protected:
-    /**
-     * 基本頂点情報
-     */
-    safe_array<BasicVertex> cacheBasicVertices;
 
     /**
-     * 拡張用スキニング頂点
+     * 現在の描画フラグメント情報
      */
-    safe_array<SkinningVertex> cacheSkinningVertices;
+    struct CurrentFragment {
+        s32 vertices;
+        s32 indices;
+
+        CurrentFragment() {
+            vertices = indices = 0;
+        }
+    }currentFragment;
 
     /**
-     * 頂点バッファキャッシュを生成する
+     * キャッシュしてあるバッファ
+     * 全部の読み込み完了後、一括転送を行う
+     */
+    struct Buffer {
+        /**
+         * 基本頂点
+         */
+        safe_array<BasicVertex> vertices;
+
+        /**
+         * 拡張用スキニング頂点
+         */
+        safe_array<SkinningVertex> skinnings;
+
+        /**
+         * インデックスバッファ
+         */
+        safe_array<u16> indices;
+
+        /**
+         * 現在の頂点のヘッダ
+         */
+        s32 vertex_header;
+
+        /**
+         * 現在のインデックスバッファヘッダ
+         */
+        s32 index_header;
+
+        Buffer() {
+            index_header = vertex_header = 0;
+        }
+    }buffer;
+
+    /**
+     * キャッシュ用の一時メモリを作成する
      * キャッシュは一括してVertexBufferへ転送する
      *
      * @param vertices_num 頂点数
+     * @param indices_num インデックス数
      */
-    virtual void createVerticesCache(const s32 vertices_num);
+    virtual void createCacheBuffer(const s32 vertices_num, const s32 indices_num);
 
+    /**
+     * 現在の操作対象位置のバッファを取得する
+     */
+    virtual unsafe_array<BasicVertex> getCurrentVertices() const {
+        return buffer.vertices.slice(buffer.vertex_header);
+    }
+
+    /**
+     * 現在の操作対象位置のバッファを取得する
+     */
+    virtual unsafe_array<SkinningVertex> getCurrentSkinnings() const {
+        return buffer.skinnings.slice(buffer.vertex_header);
+    }
+
+    /**
+     * 現在の操作対象位置のインデックスバッファを取得する
+     */
+    virtual unsafe_array<u16> getCurrentIndices() const {
+        return buffer.indices.slice(buffer.index_header);
+    }
+
+    /**
+     * 一つのメッシュグループ読み込みが完了した
+     */
+    virtual void onGroupLoadComplete() {
+        buffer.vertex_header += currentFragment.vertices;
+        buffer.index_header += currentFragment.indices;
+
+        currentFragment = CurrentFragment();
+    }
 public:
     FigureLoader(MDevice device, MFigureDataFactory factory);
 

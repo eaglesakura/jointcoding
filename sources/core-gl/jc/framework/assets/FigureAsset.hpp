@@ -41,8 +41,8 @@ using namespace jc::gl;
 #include    "jc/framework/assets/figure/MeshMaterial.hpp"
 #include    "jc/framework/assets/figure/Node.h"
 #include    "jc/framework/assets/figure/Figure.h"
-#include    "jc/framework/assets/figure/FigureInstanceState.hpp"
-#include    "jc/framework/assets/figure/FigureRenderer.hpp"
+//#include    "jc/framework/assets/figure/FigureInstanceState.hpp"
+//#include    "jc/framework/assets/figure/FigureRenderer.hpp"
 
 #include    "jc/framework/assets/figure/FigureLoader.h"
 

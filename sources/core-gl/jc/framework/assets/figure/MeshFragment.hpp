@@ -22,17 +22,15 @@ typedef VertexBufferObject<void> FigureVertices;
  */
 class MeshFragment: public Object {
 protected:
-    struct {
-        /**
-         * 頂点オブジェクト
-         */
-        jc_sp<FigureVertices> vertices;
+    struct Range {
+        s32 header;
+        s32 length;
 
-        /**
-         * インデックスオブジェクト
-         */
-        jc_sp<IndexBufferObject> indices;
-    }buffers;
+        Range() {
+            header = length = 0;
+        }
+    } range;
+
 public:
     MeshFragment() {
     }
@@ -42,25 +40,32 @@ public:
     }
 
     /**
-     * バッファの初期化を行う
+     * 初期化の必要があるならば適宜行う
      */
     virtual void initialize(MDevice device) {
-        buffers.vertices.reset(new FigureVertices(device));
-        buffers.indices.reset(new IndexBufferObject(device));
+
     }
 
     /**
-     * 頂点バッファオブジェクトを取得する
+     * 描画用のインデックスバッファのレンジを設定する
+     * インデックスバッファはFigure用に１つだけ生成されており、そのレンジを指定する形になる。
      */
-    virtual FigureVertices* getVertexBuffer() const {
-        return buffers.vertices.get();
+    virtual void setIndicesRange(const s32 header, const s32 length) {
+        range.header = header;
+        range.length = length;
     }
 
     /**
-     * インデックスバッファオブジェクトを取得する
+     * 描画用インデックスバッファのレンジを取得する
+     *
+     * ポインタは常にどちらも!=NULLでなければならない。
      */
-    virtual IndexBufferObject* getIndicesBuffer() const {
-        return buffers.indices.get();
+    virtual void getIndicesRange(s32 *result_header, s32 *result_length) {
+        assert(result_header);
+        assert(result_length);
+
+        *result_header = range.header;
+        *result_length = range.length;
     }
 };
 
