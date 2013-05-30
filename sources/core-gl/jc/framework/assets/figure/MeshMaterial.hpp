@@ -25,9 +25,14 @@ class MeshMaterial: public Object {
      * 拡散反射用テクスチャ
      */
     MTextureImage diffuse;
+
+    /**
+     * 識別用の一意なID
+     */
+    u32 uniqueId;
 public:
     MeshMaterial() {
-
+        uniqueId = 0;
     }
 
     virtual ~MeshMaterial() {
@@ -35,11 +40,34 @@ public:
     }
 
     /**
+     * マテリアル名を持っていたらtrueを返す
+     */
+    virtual jcboolean hasName() const {
+        return uniqueId != 0;
+    }
+
+    /**
+     * マテリアル名を取得する
+     */
+    virtual String getName() const {
+        return name;
+    }
+
+    /**
+     * マテリアル名を設定する
+     * 名前のハッシュに寄って一意を決定しているため、uniqueIdも更新される。
+     */
+    virtual void setName(const String &name) {
+        this->name = name;
+        uniqueId = name.hashCode();
+    }
+
+    /**
      * マテリアルを示す一意のIDを返す。
      * 通常はマテリアル名のhashCodeがあれば十分。
      */
     virtual u32 getUniqueId() const {
-        return (u32) name.hashCode();
+        return uniqueId;
     }
 
     /**

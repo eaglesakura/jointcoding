@@ -52,7 +52,7 @@ protected:
     /**
      * フラグメントを生成する
      */
-    virtual MeshGroup* createFragment(const s32 material) {
+    virtual MeshGroup* createGroup(const s32 material) {
         return new MeshGroup();
     }
 
@@ -100,7 +100,7 @@ public:
         groups.alloc(materials);
 
         for (u32 i = 0; i < materials; ++i) {
-            groups[i] = createFragment(i);
+            groups[i] = createGroup(i);
         }
     }
 
