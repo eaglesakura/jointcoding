@@ -38,7 +38,7 @@ void FigureLoader::onFigureInfoLoadComplete(const FigureInfo &figureInfo) {
     jclogf("onFigureInfoLoadComplete nodes(%d) vert(%d) idx(%d) mtl(%d)", figureInfo.node_num, figureInfo.vertex_num, figureInfo.index_num, figureInfo.material_num);
 
     // 指定されたノード数を確保する
-    loadTarget->initializeNodes(device, figureInfo.node_num);
+    loadTarget->initialize(device, figureInfo.node_num, figureInfo.material_num);
 
     // 必要な頂点数・インデックス数を確保する
     createCacheBuffer(figureInfo.vertex_num, figureInfo.index_num);
@@ -94,15 +94,28 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
     assert(pNode);
 
     jclogf("    fragments(%d)", meshInfo.material_num);
-    // マテリアル数を確保する
+    // グループに必要なマテリアル数を確保する
     pNode->initialize(device, meshInfo.material_num);
+
+
     // 各フラグメントごとのコンテキストを生成する
     for (s32 i = 0; i < meshInfo.material_num; ++i) {
         jclogf("      context(%d)", meshInfo.context_num[i]);
 
         // 指定コンテキスト数を確保する
         MeshGroup *group = pNode->getMeshGroup(i);
-        group->initializeFragments(device, meshInfo.context_num[i]);
+        group->initialize(device, meshInfo.context_num[i]);
+
+        // マテリアルの設定を行う
+        {
+            const MaterialInfo &material = meshInfo.materials[i];
+
+            MeshMaterial *pMaterial = loadTarget->getResource()->getMaterialOrFree(material.name);
+            assert(pMaterial);
+
+            // マテリアルを関連付ける
+            group->setMaterial(pMaterial);
+        }
     }
 
     // 各種拡張データのリクエストも行う
@@ -191,7 +204,7 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
             // 頂点ヘッダ分だけずらしながら保存する
 
             u16 *pWriter = indices.ptr;
-            while(length) {
+            while (length) {
                 *pWriter = (vert_head + *pIndices);
                 ++pWriter;
                 ++pIndices;
@@ -204,7 +217,7 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 }
 
 /**
- * 指定したコンテキストが全て読み込み終わった。
+ * 指定したグループが全て読み込み終わった。
  * 次のグループを読み込む準備を行う
  */
 void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num) {
@@ -217,6 +230,8 @@ void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, c
 
     // インデックスバッファの範囲を指定する
     pFragment->setIndicesRange(buffer.index_header, currentFragment.indices);
+
+    // グループ読込完了を通知
     onGroupLoadComplete();
 #if 0
 

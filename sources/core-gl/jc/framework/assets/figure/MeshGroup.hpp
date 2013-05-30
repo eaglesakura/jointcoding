@@ -13,6 +13,11 @@ namespace jc {
 namespace fw {
 
 /**
+ *
+ */
+class MeshMaterial;
+
+/**
  * ノードの一部分を定義する
  * 3Dツール上の１マテリアルに対して１つのMeshGroupが割り当てられ、複数分割描画が必要な場合はFragmentに分割される。
  * MeshGroupは同一シェーダー・同一条件で描画されることを想定する。
@@ -23,6 +28,11 @@ class MeshGroup: public Object {
      */
     safe_array<MeshFragment*> fragment;
 
+    /**
+     * マテリアルを設定する
+     * ポインタの解放はMeshResourceで行うため、このクラスでは絶対に行わないこと。
+     */
+    MeshMaterial *pMaterial;
 protected:
 
     virtual MeshFragment* createMeshContext(MDevice device, const u32 index) {
@@ -32,6 +42,7 @@ protected:
 public:
     MeshGroup() {
         safe_delete(fragment);
+        pMaterial = NULL;
     }
 
     virtual ~MeshGroup() {
@@ -56,12 +67,20 @@ public:
     /**
      * コンテキスト初期化を行う
      */
-    virtual void initializeFragments(MDevice device, const u32 contexts) {
+    virtual void initialize(MDevice device, const u32 contexts) {
         fragment.alloc(contexts);
         for (u32 i = 0; i < contexts; ++i) {
             fragment[i] = createMeshContext(device, i);
             fragment[i]->initialize(device);
         }
+    }
+
+    /**
+     * マテリアルを設定する
+     * 解放はMeshResourceクラスで行うため、このクラスでは感知しないこと。
+     */
+    virtual void setMaterial(MeshMaterial *pMaterial) {
+        this->pMaterial = pMaterial;
     }
 };
 
