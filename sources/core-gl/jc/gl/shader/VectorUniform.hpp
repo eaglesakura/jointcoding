@@ -163,7 +163,7 @@ public:
     /**
      * 44行列を直接転送する
      */
-    jcboolean upload(const float *pMatrix) {
+    jcboolean upload(const float *pMatrix, const GLboolean transpose = GL_FALSE) {
         assert(vector_length >= 16);
         assert(pMatrix != NULL);
 
@@ -186,22 +186,24 @@ public:
         }
 
         // 行列の数だけ転送する
-        glUniformMatrix4fv(location, vector_length / 16, GL_FALSE, pMatrix);
+        glUniformMatrix4fv(location, vector_length / 16, transpose, pMatrix);
         assert_gl();
 
         return jctrue;
     }
 
+#if 0
     /**
      * 圧縮状態で行列を転送することを許可する
      * 4x4行列のうち、3x4部分のみを使用している場合、4x3に転地してvec4[3]状態にすることでベクトルユニットを節約できる
      * 大量に行列を扱う必要が有る場合に有用だが、頂点シェーダーの負荷が増すため利用シーンには注意すること
      *
-     * FIXME 未実装で、将来的な変更に対応しておく
+     * MEMO 速度は実用的でないレベルまで落ちる
      */
     jcboolean uploadCompless(const float *pMatrix) {
         return upload(pMatrix);
     }
+#endif
 
     /**
      * 44行列を転送する
