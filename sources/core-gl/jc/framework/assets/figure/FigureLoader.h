@@ -25,7 +25,7 @@ class FigureLoader: public jc::FigureDataLoader {
     /**
      * 読み込み対象のフィギュア
      */
-    jc_selp<Figure> loadTarget;
+    jc_selp<Figure> figure;
 
 protected:
 
@@ -124,7 +124,7 @@ public:
      * 読み込み対象フィギュアを設定する
      */
     virtual void setLoadTarget(jc_selp<Figure> loadTarget) {
-        this->loadTarget = loadTarget;
+        this->figure = loadTarget;
     }
 
     /**
@@ -133,7 +133,7 @@ public:
      */
     virtual void load() {
         // 読み込み対象が存在しなければならない
-        assert(loadTarget);
+        assert(figure);
         FigureDataLoader::load();
     }
 protected:

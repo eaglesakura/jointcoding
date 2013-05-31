@@ -38,7 +38,7 @@ void FigureLoader::onFigureInfoLoadComplete(const FigureInfo &figureInfo) {
     jclogf("onFigureInfoLoadComplete nodes(%d) vert(%d) idx(%d) mtl(%d)", figureInfo.node_num, figureInfo.vertex_num, figureInfo.index_num, figureInfo.material_num);
 
     // 指定されたノード数を確保する
-    loadTarget->initialize(device, figureInfo.node_num, figureInfo.material_num);
+    figure->initialize(device, figureInfo.node_num, figureInfo.material_num);
 
     // 必要な頂点数・インデックス数を確保する
     createCacheBuffer(figureInfo.vertex_num, figureInfo.index_num);
@@ -50,7 +50,7 @@ void FigureLoader::onFigureInfoLoadComplete(const FigureInfo &figureInfo) {
 void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &nodeInfo) {
     jclogf("  onNodeLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 
-    FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
+    FigureNode *pNode = figure->getNode(nodeInfo.number);
     assert(pNode);
 
     // ノードに名前を指定する
@@ -60,7 +60,7 @@ void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &node
     {
         std::vector<FigureNode*> nodes;
         for (s32 i = 0; i < nodeInfo.children_num; ++i) {
-            nodes.push_back(loadTarget->getNode(nodeInfo.children[i]));
+            nodes.push_back(figure->getNode(nodeInfo.children[i]));
         }
 
         jclogf("    children(%d)", nodes.size());
@@ -90,7 +90,7 @@ void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &node
 void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &nodeInfo, const jc::FigureDataLoader::MeshInfo &meshInfo, jc::FigureDataLoader::MeshDataRequest *load_request) {
     jclogf("  onMeshInfoLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
 
-    FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
+    FigureNode *pNode = figure->getNode(nodeInfo.number);
     assert(pNode);
 
     jclogf("    fragments(%d)", meshInfo.material_num);
@@ -110,7 +110,7 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
         {
             const MaterialInfo &material = meshInfo.materials[i];
 
-            MeshMaterial *pMaterial = loadTarget->getResource()->getMaterialOrFree(material.name);
+            MeshMaterial *pMaterial = figure->getResource()->getMaterialOrFree(material.name);
             assert(pMaterial);
 
             // マテリアルを関連付ける
@@ -135,7 +135,7 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
 void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &nodeInfo, const FigureDataLoader::MeshInfo &meshInfo, const s32 material_num, const s32 context_num, const FigureDataLoader::MeshData &loaded) {
     jclogf("  onMeshDataLoadComplete node(%d) name(%s) type(%d)", nodeInfo.children_num, nodeInfo.name.c_str(), loaded.type);
 
-    FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
+    FigureNode *pNode = figure->getNode(nodeInfo.number);
     assert(pNode);
 
     MeshGroup *fragment = pNode->getMeshGroup(material_num);
@@ -222,7 +222,7 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
  */
 void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, const MeshInfo &meshInfo, const s32 material_num, const s32 context_num) {
     jclogf("  onMeshMaterialContextLoadComplete node(%d) name(%s)", nodeInfo.children_num, nodeInfo.name.c_str());
-    FigureNode *pNode = loadTarget->getNode(nodeInfo.number);
+    FigureNode *pNode = figure->getNode(nodeInfo.number);
     assert(pNode);
 
     MeshGroup *pGroup = pNode->getMeshGroup(material_num);
@@ -254,7 +254,7 @@ void FigureLoader::onMeshMaterialContextLoadComplete(const NodeInfo &nodeInfo, c
 void FigureLoader::onLoadCompleted() {
     jclog("  onLoadCompleted");
 
-    MMeshResource resource = loadTarget->getResource();
+    MMeshResource resource = figure->getResource();
 
     FigureVertices *pVertices = resource->getVertices().get();
     IndexBufferObject *pIndices = resource->getIndices().get();
