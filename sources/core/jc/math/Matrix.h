@@ -243,10 +243,12 @@ struct Matrix {
         for (int r = 0; r < ROW; ++r) {
             switch (COLM) {
                 case 3:
-                    jclogf("  %d | %05.3f, %05.3f, %05.3f", r, m[r][0], m[r][1], m[r][2]);
+                    jclogf("  %d | %05.3f, %05.3f, %05.3f", r, m[r][0], m[r][1], m[r][2])
+                    ;
                     break;
                 case 4:
-                    jclogf("  %d | %05.3f, %05.3f, %05.3f, %05.3f", r, m[r][0], m[r][1], m[r][2], m[r][3]);
+                    jclogf("  %d | %05.3f, %05.3f, %05.3f, %05.3f", r, m[r][0], m[r][1], m[r][2], m[r][3])
+                    ;
                     break;
             }
         }
@@ -353,6 +355,24 @@ struct Matrix {
                 m[r][c] = origin.m[r][c];
             }
         }
+    }
+
+    /**
+     * 行列の内容を転置する
+     * 正方形行列のみに対応する
+     */
+    inline void transpose() {
+        assert(ROW == COLM);
+
+        float temp[4][4] = { };
+
+        for (int r = 0; r < ROW; ++r) {
+            for (int c = 0; c < COLM; ++c) {
+                temp[r][c] = m[c][r];
+            }
+        }
+
+        memcpy(m, temp, sizeof(float) * (ROW * COLM));
     }
 
 private:
