@@ -18,6 +18,9 @@ namespace gl {
 /**
  * ベクトル型のUniformをサポートする
  * 無効なUniform値（コンパイラ最適化で削除された等）の場合はアップロードを無視する
+ *
+ * 転送されるとき、シェーダーのユニットはvec4単位で確保されるため、効率的に利用する場合はシェーダー側で適当に配置を考えてやる必要がある。
+ * 上手いことスキマに配置してくれるハズだが、ユニット数の残量には気をつけること。
  */
 template<typename vector_type, u32 vector_length>
 class VectorUniform: public UniformBase {
@@ -158,7 +161,7 @@ public:
     }
 
     /**
-     * 44行列を転送する
+     * 44行列を直接転送する
      */
     jcboolean upload(const float *pMatrix) {
         assert(vector_length >= 16);
@@ -170,7 +173,7 @@ public:
 
         jcboolean upload = jcfalse;
         // 転送チェック
-        for (int i = 0; i < 16; ++i) {
+        for (int i = 0; i < vector_length; ++i) {
             if (vec[i] != pMatrix[i]) {
                 vec[i] = pMatrix[i];
                 upload = jctrue;
@@ -182,10 +185,22 @@ public:
             return jcfalse;
         }
 
-        glUniformMatrix4fv(location, 1, GL_FALSE, pMatrix);
+        // 行列の数だけ転送する
+        glUniformMatrix4fv(location, vector_length / 16, GL_FALSE, pMatrix);
         assert_gl();
 
         return jctrue;
+    }
+
+    /**
+     * 圧縮状態で行列を転送することを許可する
+     * 4x4行列のうち、3x4部分のみを使用している場合、4x3に転地してvec4[3]状態にすることでベクトルユニットを節約できる
+     * 大量に行列を扱う必要が有る場合に有用だが、頂点シェーダーの負荷が増すため利用シーンには注意すること
+     *
+     * FIXME 未実装で、将来的な変更に対応しておく
+     */
+    jcboolean uploadCompless(const float *pMatrix) {
+        return upload(pMatrix);
     }
 
     /**

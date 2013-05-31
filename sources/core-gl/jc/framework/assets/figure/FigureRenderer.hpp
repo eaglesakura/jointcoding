@@ -35,22 +35,49 @@ public:
 };
 
     /**
-     * 基本的な描画を行わせるフィギュアレンダラーの基礎
+     * 基本的な描画を行わせるシンプルなフィギュアレンダラー
      */
-class BasicFigureRendererBase: public FigureRenderer {
+class BasicFigureRenderer: public FigureRenderer {
 
 protected:
 
     /**
+     * 位置属性
+     */
+    Attribute attr_position;
+
+    /**
+     * UV
+     */
+    Attribute attr_coord;
+
+    /**
+     * 法線
+     */
+    Attribute attr_normal;
+
+    /**
+     * WLP行列
+     */
+    MatrixUniform unif_worldlookprojection;
+
+    /**
+     * レンダリング用シェーダー
+     */
+    MGLShaderProgram shader;
+
+    /**
      * フラグメント自体の描画を行わせる
      */
-    virtual void onRenderingFragment(const Figure *pFigure, const u32 nodeIndex, const u32 meshIndex, const MeshMaterial *pMaterial, const u32 fragmentIndex, const MeshFragment *pFragment) = 0;
+    virtual void onRenderingFragment(const Figure *pFigure, const u32 nodeIndex, const u32 meshIndex, const MeshMaterial *pMaterial, const u32 fragmentIndex, const MeshFragment *pFragment) {
 
-public:
-    BasicFigureRendererBase() {
     }
 
-    virtual ~BasicFigureRendererBase() {
+public:
+    BasicFigureRenderer() {
+    }
+
+    virtual ~BasicFigureRenderer() {
     }
 
     /**
