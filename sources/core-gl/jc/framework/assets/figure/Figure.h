@@ -66,6 +66,13 @@ public:
     }
 
     /**
+     * マテリアル数を取得する
+     */
+    virtual u32 getMaterialNum() const {
+        return materials.length;
+    }
+
+    /**
      * 名前の無いマテリアルを取得する
      */
     virtual MeshMaterial* getFreeMaterial() const {
@@ -88,6 +95,13 @@ public:
             }
         }
         return NULL;
+    }
+
+    /**
+     * マテリアルを番号指定で取り出す
+     */
+    virtual MeshMaterial* getMaterial(const u32 index) const {
+        return materials[index];
     }
 
     /**
@@ -116,8 +130,8 @@ public:
      */
     virtual MeshMaterial* getMaterialFast(const String &name) const {
         const u32 uniqueId = name.hashCode();
-        for(s32 i = 0; i < materials.length; ++i) {
-            if(materials[i] && materials[i]->getUniqueId() == uniqueId) {
+        for (s32 i = 0; i < materials.length; ++i) {
+            if (materials[i] && materials[i]->getUniqueId() == uniqueId) {
                 return materials[i];
             }
         }
@@ -136,8 +150,8 @@ public:
      */
     virtual jc_sp<IndexBufferObject> getIndices() const {
         return indices;
-    }
-};
+    }}
+;
 
 /**
  * managed

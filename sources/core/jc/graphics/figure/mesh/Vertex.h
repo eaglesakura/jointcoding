@@ -46,14 +46,13 @@ public:
             return false;
         }
 
-        if (normal != v1.normal) {
-            return false;
-        }
-
         if (uv != v1.uv) {
             return false;
         }
 
+        if (normal != v1.normal) {
+            return false;
+        }
         for (s32 i = 0; i < WEIGHT_NUM; ++i) {
             if (weight.indices[i] != v1.weight.indices[i]) {
                 return false;
@@ -86,7 +85,7 @@ inline s32 registerVertex(std::vector<FigureVertex> *result, const FigureVertex 
     while (itr != end) {
         if (vertex.equals(*itr)) {
             //! 頂点が一致した
-            //            jclogf("    vertex cached(%d)", i);
+//            jclogf("    vertex cached(%d)", index);
             return index;
         }
         ++index;

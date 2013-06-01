@@ -201,12 +201,12 @@ void Mesh::serialize(FbxExportManager *exportManager) {
                     // 1頂点に含まれるウェイト数
                     stream->writeU8(SIMPLE_BONE_NUM);
 
-                    // ウェイトインデックスリストを書き出す
+                    // ウェイト情報を書き出す
                     for (u32 vert_index = 0; vert_index < pContext->vertices_length; ++vert_index) {
                         for (int weight_index = 0; weight_index < SIMPLE_BONE_NUM; ++weight_index) {
                             const float weight = pContext->vertices[vert_index].weight.weights[weight_index];
 //                            jclogf("  weight(%f)", weight);
-                            stream->writeFixed32(weight);
+                            stream->writeU8((u8) (weight * 255));
                         }
                     }
                 }
@@ -328,7 +328,6 @@ u32 Mesh::getAllVertexNum() const {
         }
     }
 
-
     for (u32 i = 0; i < childs.size(); ++i) {
         result += childs[i]->getAllVertexNum();
     }
@@ -363,7 +362,6 @@ u32 Mesh::getAllIndicesNum() const {
 
     return result;
 }
-
 
 MMesh Mesh::createInstance(KFbxNode *node, MNode parent, FbxImportManager *importManager) {
 

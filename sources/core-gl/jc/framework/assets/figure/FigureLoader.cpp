@@ -5,6 +5,7 @@
  */
 
 #include    "jc/framework/assets/FigureAsset.hpp"
+#include    "jc/framework/assets/figure/FigureLoader.h"
 
 namespace jc {
 namespace fw {
@@ -96,7 +97,6 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
     jclogf("    fragments(%d)", meshInfo.material_num);
     // グループに必要なマテリアル数を確保する
     pNode->initialize(device, meshInfo.material_num);
-
 
     // 各フラグメントごとのコンテキストを生成する
     for (s32 i = 0; i < meshInfo.material_num; ++i) {
@@ -267,6 +267,29 @@ void FigureLoader::onLoadCompleted() {
 
     pIndices->bind(device->getState());
     {
+#if 0
+        // MEMO ベリファイを行う
+        for (int i = 0; i < buffer.indices.length; ++i) {
+            // インデックスを捕捉する
+            const u16 vertex_index = buffer.indices[i];
+
+            // 頂点を取り出す
+            BasicVertex v = buffer.vertices[vertex_index];
+
+            // 仕組み上、必ずuniqueになるはずなので、vertex_index未満のインデックスには頂点がヒットしないはずである
+            for (int k = 0; k < vertex_index; ++k) {
+                BasicVertex temp = buffer.vertices[k];
+
+                if (temp.position == v.position) {
+                    jclogf("hit vertex index[%d] -> temp[%d]", vertex_index, k);
+                    // インデックスを書き換えてやる
+                    buffer.indices[i] = k;
+//                    assert(false);
+                }
+            }
+        }
+#endif
+
         pIndices->bufferData(buffer.indices.ptr, buffer.indices.length, GL_STATIC_DRAW);
     }
     pIndices->unbind(device->getState());

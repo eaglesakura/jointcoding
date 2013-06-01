@@ -60,7 +60,7 @@ public:
      *
      * ポインタは常にどちらも!=NULLでなければならない。
      */
-    virtual void getIndicesRange(s32 *result_header, s32 *result_length) {
+    virtual void getIndicesRange(s32 *result_header, s32 *result_length) const {
         assert(result_header);
         assert(result_length);
 
