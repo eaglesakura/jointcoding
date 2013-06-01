@@ -9,6 +9,7 @@
 
 #include    "jointcoding.h"
 #include    <vector>
+#include    "jc/collection/SafeArray.hpp"
 
 namespace jc {
 

@@ -47,33 +47,54 @@ class FigureInstanceState: public Object {
      * デフォルトで管理されるフラグ
      */
     BitFlags<FigureInstanceFlag_Num> flags;
-public:
 
+    /**
+     * 対象のフィギュア情報
+     */
+    jc_selp<Figure> figure;
+public:
     /**
      *
      */
-    FigureInstanceState(const jc_selp<Figure> figure) {
-        wlpMatrices.reserve(figure->getNodeNum());
+    FigureInstanceState() {
     }
 
     virtual ~FigureInstanceState() {
     }
 
-    const Matrix4x4& getRootMatrix() const {
+    /**
+     * 初期化を行う
+     */
+    virtual void initialize(const jc_selp<Figure> figure) {
+        this->figure = figure;
+        wlpMatrices.reserve(figure->getNodeNum());
+    }
+
+    /**
+     * このインスタンスのWLP行列を取得する
+     */
+    const Matrix4x4& getWorldLookProjection() const {
         return wlp;
     }
 
     /**
-     * 全行列のポインタを取得する
+     * このインスタンスのWLP行列を取得する
      */
-    Matrix4x4* getMatrices() {
+    Matrix4x4& getWorldLookProjection() {
+        return wlp;
+    }
+
+    /**
+     * ノードごと全行列のポインタを取得する
+     */
+    Matrix4x4* getNodeMatrices() {
         return wlpMatrices.ptr;
     }
 
     /**
      * ノード番号を指定してポインタを取得する
      */
-    Matrix4x4& getMatrix(const u32 node_nubmer) {
+    Matrix4x4& getNodeMatrix(const u32 node_nubmer) {
         return wlpMatrices[node_nubmer];
     }
 };

@@ -82,6 +82,14 @@ public:
     virtual void setMaterial(MeshMaterial *pMaterial) {
         this->pMaterial = pMaterial;
     }
+
+    /**
+     * マテリアルを取得する
+     * 実体はMeshResourceクラスで管理されているため、オブジェクトの明示的な解放は行わないこと。
+     */
+    virtual MeshMaterial* getMaterial() const {
+        return pMaterial;
+    }
 };
 
 }

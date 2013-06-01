@@ -272,22 +272,22 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             // １頂点に含まれるbone weightの数
             const int weight_num = stream->readU8();
 
-            float *ptr = (float*) malloc(data.data_length * weight_num * sizeof(float));
+            u8 *ptr = (u8*) malloc(data.data_length * weight_num * sizeof(u8));
             data.data.reset((u8*) ptr, free);
 
             for (u32 i = 0; i < (data.data_length); ++i) {
-                float weight_sum = 0;
+                s32 weight_sum = 0;
                 for (int k = 0; k < weight_num; ++k) {
-                    ptr[i * weight_num + k] = stream->readFixed32();
+                    ptr[i * weight_num + k] = stream->readU8();
 
                     // 合計値を計算する
                     if (k) {
-                        weight_sum += ptr[i * weight_num + k];
+                        weight_sum += (s32) ptr[i * weight_num + k];
                     }
                 }
 
                 // index0のウェイト＝最も重みが強いウェイトに、ウェイトの誤差が集中するようにする
-                ptr[i * weight_num + 0] = 1.0f - weight_sum;
+                ptr[i * weight_num + 0] = (u8) ((s32) (0xFF) - weight_sum);
             }
         }
             break;

@@ -156,6 +156,10 @@ typedef _Vector2<s32> Vector2i;
  */
 typedef _Vector2<float> Vector2f;
 
+inline jcboolean equals(const Vector2f &v0, const Vector2f &v1) {
+    return jc::equals(v0.x, v1.x) && jc::equals(v0.y, v1.y);
+}
+
 /**
  * ２ベクトルを線形補間する
  * 0.0 = before

@@ -202,6 +202,11 @@ typedef _Vector3<s32> Vector3i;
  */
 typedef _Vector3<float> Vector3f;
 
+inline jcboolean equals(const Vector3f &v0, const Vector3f &v1) {
+    return jc::equals(v0.x, v1.x) && jc::equals(v0.y, v1.y) && jc::equals(v0.z, v1.z);
+}
+
+
 /**
  * ２ベクトルを線形補間する
  */

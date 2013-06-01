@@ -10,6 +10,8 @@
 #include    "jc/framework/assets/FigureAsset.hpp"
 #include    "jc/graphics/figure/data/ArchiveFigureDataFactory.h"
 
+#include    "jc/framework/assets/figure/FigureLoader.h"
+
 using namespace jc::fw;
 namespace es {
 
@@ -132,9 +134,14 @@ void BenchmarkApplication::onAppMainRendering() {
 
 // rendering 3d
     {
-        MGLState state = getWindowDevice()->getState();
-        shader->bind();
-        state->depthTestEnable(jctrue);
+        MDevice device = getWindowDevice();
+        MGLState state = device->getState();
+
+        // レンダラーを作成する
+        BasicFigureRenderer render;
+        render.initialize(device, shader);
+        jc_sp<FigureInstanceState> instance(render.createInstanceState(figure));
+
         Matrix4x4 world;
         Matrix4x4 look;
         Matrix4x4 prj;
@@ -148,52 +155,9 @@ void BenchmarkApplication::onAppMainRendering() {
         // world loop projection行列を生成する
         Matrix4x4 wlp;
         multiply(world, look, &wlp);
-        multiply(wlp, prj, &wlp);
+        multiply(wlp, prj, &instance->getWorldLookProjection());
 
-        // アップロードする
-        unif_wlp.upload(wlp);
-
-        Attribute pos;
-        pos.setLocation(shader, "attr_pos");
-
-        Attribute uv;
-        uv.setLocation(shader, "attr_uv");
-
-        Attribute normal;
-        normal.setLocation(shader, "attr_normal");
-
-        assert(pos.valid());
-
-        MMeshResource resource = figure->getResource();
-        MDevice device = getWindowDevice();
-
-        jc_sp<FigureVertices> vertices = resource->getVertices();
-        jc_sp<IndexBufferObject> indices = resource->getIndices();
-
-        vertices->bind(device->getState());
-        indices->bind(device->getState());
-        pos.attribute(state, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, 0);
-        uv.attribute(state, 2, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f));
-        normal.attribute(state, 3, GL_FLOAT, GL_FALSE, sizeof(BasicVertex), NULL, sizeof(Vector3f) + sizeof(Vector2f));
-
-        for (s32 i = 0; i < figure->getNodeNum(); ++i) {
-            FigureNode *pNode = figure->getNode(i);
-            for (s32 k = 0; k < pNode->getMeshGroupNum(); ++k) {
-                MeshGroup *fragment = pNode->getMeshGroup(k);
-                for (s32 c = 0; c < fragment->getFragmentNum(); ++c) {
-                    MeshFragment *context = fragment->getFragment(c);
-
-                    s32 start = 0;
-                    s32 length = 0;
-                    context->getIndicesRange(&start, &length);
-
-                    indices->rendering(GL_TRIANGLES, start, length);
-//                    indices->rendering(GL_TRIANGLES);
-                }
-            }
-        }
-        vertices->unbind(device->getState());
-        indices->unbind(device->getState());
+        render.rendering(device, figure, instance);
     }
 
     getWindowDevice()->postFrontBuffer();

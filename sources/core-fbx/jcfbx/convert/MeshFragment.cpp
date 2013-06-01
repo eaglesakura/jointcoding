@@ -15,7 +15,7 @@ namespace fbx {
 MeshFragmentConverter::MeshFragmentConverter() {
     contexts.push_back(MFragmentContext(new FragmentContext()));
     // 最大で利用できるボーン数
-    maxBones = 28;
+    maxBones = Config_MaxBones;
 }
 
 /**
@@ -162,6 +162,108 @@ static u8 boneIndex2pickIndex(u8 *pBonePickTable, const u8 boneIndex) {
 }
 
 /**
+ * トライアングルリスト用構造体
+ */
+struct TrianglesIndices {
+    /**
+     * インデックス
+     */
+    u16 index[3];
+
+    /**
+     * マーク済みフラグ
+     */
+    jcboolean marked;
+};
+
+/**
+ * index[0]がindex0で、index[1]がindex1の頂点、かつまだマークされていない三角形を探す
+ */
+static s32 findNextStrip(const u16 index0, const u16 index1, const safe_array<TrianglesIndices> &triangles) {
+    for (s32 i = 0; i < triangles.length; ++i) {
+        const TrianglesIndices *check = &triangles[i];
+
+        if (!check->marked) {
+            // まだチェックされていなくて、インデックスの[0][1]がそれぞれ合致していればストリップ化出来るポリゴンである
+
+//            jclogf("check i0[%d] i1[%d] i2[%d] :: ci0[%d] ci1[%d]", check->index[0], check->index[1], check->index[2], index0, index1);
+            if (check->index[0] == index0 && check->index[1] == index1) {
+                return i;
+            }
+        }
+
+    }
+
+    return -1;
+}
+
+/**
+ * 次の未マーク三角形を探す
+ */
+static s32 nextFreeTriangle(const safe_array<TrianglesIndices> &triangles) {
+    for (s32 i = 0; i < triangles.length; ++i) {
+        if (!triangles[i].marked) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void triangles2stlip(const u16 *pTriangleIndices, const u32 pTriangleIndices_length, safe_array<u16> *result_strinp) {
+    jclogf("start triangles(%d)", pTriangleIndices_length);
+    assert((pTriangleIndices_length % 3) == 0);
+
+    safe_array<TrianglesIndices> triangles;
+
+    // 頂点リストを一度整理する
+    {
+        triangles.alloc(pTriangleIndices_length / 3);
+        for (int i = 0; i < triangles.length; ++i) {
+            for (int k = 0; k < 3; ++k) {
+                triangles[i].index[k] = pTriangleIndices[i * 3 + k];
+            }
+            triangles[i].marked = jcfalse;
+        }
+
+        jclogf("num triangles(%d)", triangles.length);
+    }
+
+    // 三角形が1つ以下であれば、そもそもリスト化とか必要ない
+    if (triangles.length <= 1) {
+        return;
+    }
+
+    // 一時的にストリップ構造をキャッシュしておく
+    std::vector<u16> cacheTriangleStrip;
+
+    s32 nextTriangle = -1;
+    // まだ登録されていない三角形があるならチェックする
+    while ((nextTriangle = nextFreeTriangle(triangles)) >= 0) {
+        // 三角形を取り出す
+        TrianglesIndices *current = &triangles[nextTriangle];
+        // マーク済みにする
+        current->marked = jctrue;
+
+        // 先頭ストリップの場所を入れてあげる
+        for (int i = 0; i < 3; ++i) {
+            cacheTriangleStrip.push_back(current->index[i]);
+        }
+
+        // 接続されているポリゴンを探し続ける
+        while ((nextTriangle = findNextStrip(current->index[1], current->index[2], triangles)) >= 0) {
+            current = &triangles[nextTriangle];
+            // マーク済みにする
+            current->marked = jctrue;
+
+            // 最後の1頂点を追加することで、接続される
+            cacheTriangleStrip.push_back(current->index[2]);
+        }
+    }
+
+    jclogf("converted strip(%d)", cacheTriangleStrip.size());
+}
+
+/**
  * 共通のFigureFragmentに変換する
  */
 MFigureMeshFragment MeshFragmentConverter::createFigureFragment() const {
@@ -223,6 +325,14 @@ MFigureMeshFragment MeshFragmentConverter::createFigureFragment() const {
 
             context->indices_length = indices_length;
             context->indices.reset(pIndices);
+
+#if 0
+            // FIXME 試しにトライアングルリストをトライアングルストリップに変換してみる
+            {
+                safe_array<u16> strip;
+                triangles2stlip(context->indices.get(), context->indices_length, &strip);
+            }
+#endif
         }
 
         result->addDrawingContext(context);
