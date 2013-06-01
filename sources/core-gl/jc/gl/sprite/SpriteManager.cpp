@@ -38,7 +38,6 @@ void SpriteManager::initialize(MDevice device) {
 
         {
             uniform.texture.setLocation(shader, "tex");
-            uniform.texture.setState(windowDevice->getState());
         }
         uniform.color.setLocation(shader, "blendColor");
         uniform.aspect.setLocation(shader, "aspect");
@@ -146,7 +145,7 @@ void SpriteManager::renderingImage(MTextureImage image, const float srcX, const 
 // シェーダーを切り替える
     shader->bind();
     // テクスチャを転送する
-    uniform.texture.upload(image);
+    uniform.texture.upload(windowDevice->getState(), image);
     // ブレンド色を設定する
     uniform.color.upload(rgba);
     // ポリゴン回転を設定する
