@@ -100,16 +100,16 @@ void BasicFigureRenderer::renderingFragment(MDevice device, const Figure *pFigur
 void BasicFigureRenderer::rendering(MDevice device, const jc_selp<Figure> figure, const jc_selp<FigureInstanceState> instance) {
 
     /**
-     * 描画対象が存在しなければならない
-     */
-    assert(figure);
-    assert(instance);
-
-    /**
      * 描画対象を取り出す
      */
     const Figure *pFigure = figure.get();
     FigureInstanceState *pInstance = instance.get();
+
+    /**
+     * 描画対象が存在しなければならない
+     */
+    assert(pFigure);
+    assert(pInstance);
 
     /**
      * マテリアル数だけ繰り返す
@@ -119,11 +119,24 @@ void BasicFigureRenderer::rendering(MDevice device, const jc_selp<Figure> figure
 
     const u32 materialNum = pResource->getMaterialNum();
 
+    MGLState state = device->getState();
     /**
      * インデックスバッファと頂点バッファの関連付けを行う
      */
-    pResource->getVertices()->bind(device->getState());
-    pResource->getIndices()->bind(device->getState());
+    pResource->getVertices()->bind(state);
+    pResource->getIndices()->bind(state);
+
+    /**
+     * フィギュア全体で有効になるステートを切り替える
+     */
+    {
+        if(pInstance->isEnableFlag(FigureInstanceFlag_NotCullface)) {
+            state->cullFaceEnable(jcfalse);
+        } else {
+            state->cullFaceEnable(jctrue);
+            state->frontface(GL_CCW);
+        }
+    }
 
     /**
      * 全メッシュ・マテリアルを巡回して描画を行わせる

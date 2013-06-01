@@ -123,6 +123,26 @@ class GLState: public Object {
     } maskContext;
 
     /**
+     * ポリゴン方向を指定する
+     */
+    struct CullFaceContext {
+        /**
+         * カリングモード（前面、背面）
+         */
+        GLenum mode;
+
+        /**
+         * 有効・無効
+         */
+        GLboolean enabled;
+
+        /**
+         * 時計回り・反時計回り
+         */
+        GLenum frontface;
+    } cullfaceContext;
+
+    /**
      * glVertexAttributePointerに指定するデータ
      */
     struct VertexAttributePointerData {
@@ -688,6 +708,52 @@ public:
             glDisableVertexAttribArray(index);
             assert_gl();
             return jcfalse;
+        }
+        return jcfalse;
+    }
+
+    /**
+     * ポリゴンカリング方向を設定する
+     * GL_BACK
+     * GL_FRONT
+     * GL_FRONT_AND_BACK
+     */
+    inline jcboolean cullFace(const GLenum mode) {
+        if (mode != cullfaceContext.mode) {
+            glCullFace(mode);
+            cullfaceContext.mode = mode;
+            return jctrue;
+        }
+        return jcfalse;
+    }
+
+    /**
+     * カリングを設定する
+     */
+    inline jcboolean cullFaceEnable(const jcboolean enable) {
+        if (enable != cullfaceContext.enabled) {
+            cullfaceContext.enabled = enable;
+            if (enable) {
+                glEnable(GL_CULL_FACE);
+            } else {
+                glDisable (GL_CULL_FACE);
+            }
+            return jctrue;
+        }
+        return jcfalse;
+    }
+
+    /**
+     * 前面ポリゴンの方向を設定する
+     *
+     * GL_CCW デフォルト
+     * GL_CW 反転
+     */
+    inline jcboolean frontface(const GLenum mode) {
+        if (mode != cullfaceContext.frontface) {
+            cullfaceContext.frontface = mode;
+            glFrontFace(mode);
+            return jctrue;
         }
         return jcfalse;
     }

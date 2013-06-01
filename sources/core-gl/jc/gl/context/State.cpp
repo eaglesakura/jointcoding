@@ -82,6 +82,12 @@ GLState::GLState() {
         frameBufferContext.frameBuffer = 0;
         frameBufferContext.renderBuffer = 0;
     }
+    // cullface
+    {
+        cullfaceContext.enabled = jcfalse;
+        cullfaceContext.mode = GL_BACK;
+        cullfaceContext.frontface = GL_CCW;
+    }
 }
 
 GLState::~GLState() {
@@ -181,6 +187,12 @@ void GLState::syncContext() {
         glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*) &shaderProgramContext.usingProgram);
         assert_gl();
     }
+    // カリング設定を問い合わせる
+    {
+        cullfaceContext.enabled = glIsEnabled(GL_CULL_FACE);
+        glGetIntegerv(GL_CULL_FACE_MODE, (GLint*)cullfaceContext.mode);
+        glGetIntegerv(GL_FRONT_FACE, (GLint*)cullfaceContext.frontface);
+    }
     // バッファを問い合わせる
     {
         glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &bindBufferContext.buffers[0]);
@@ -189,7 +201,7 @@ void GLState::syncContext() {
         assert_gl();
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*) &frameBufferContext.frameBuffer);
         assert_gl();
-        glGetIntegerv(GL_RENDERBUFFER_BINDING, (GLint*)&frameBufferContext.renderBuffer);
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, (GLint*) &frameBufferContext.renderBuffer);
         assert_gl();
     }
     // マスクを問い合わせる
@@ -225,7 +237,7 @@ void GLState::syncContext() {
                 assert_gl();
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_STRIDE, (GLint*) &attr->stride);
                 assert_gl();
-                glGetVertexAttribPointerv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER, (GLvoid**)&attr->ptr);
+                glGetVertexAttribPointerv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER, (GLvoid**) &attr->ptr);
                 assert_gl();
             }
 
@@ -246,7 +258,7 @@ void GLState::print(const charactor* file, const s32 line) const {
     jclog("-------------------------  OpenGL ES Context ----------------------");
     // 描画色を取得する
     {
-        jclogf("glClearColor RGBA(%d, %d, %d, %d)", (s32) clearContext.clearColor.r(), (s32) clearContext.clearColor.g(), (s32) clearContext.clearColor.b(), (s32) clearContext.clearColor.a());
+        jclogf("glClearColor RGBA(%d, %d, %d, %d)", (s32 ) clearContext.clearColor.r(), (s32 ) clearContext.clearColor.g(), (s32 ) clearContext.clearColor.b(), (s32 ) clearContext.clearColor.a());
     }
     // viewportを取得する
     {
@@ -314,11 +326,16 @@ void GLState::printGLError(const charactor* file, const s32 line) {
 jcboolean GLState::printGLError(const charactor* file, const s32 line, GLenum error) {
 #define LOG_GL( error_enum )    case error_enum: ::jc::__logDebugF(error_enum != GL_NO_ERROR ? LogType_Alert : LogType_Debug, ::jc::__getFileName(file), "L %d | %s", line, #error_enum); return error != GL_NO_ERROR ? jctrue : jcfalse;
     switch (error) {
-        LOG_GL(GL_INVALID_ENUM);
-        LOG_GL(GL_INVALID_VALUE);
-        LOG_GL(GL_INVALID_OPERATION);
-        LOG_GL(GL_OUT_OF_MEMORY);
-        LOG_GL(GL_NO_ERROR);
+        LOG_GL(GL_INVALID_ENUM)
+            ;
+        LOG_GL(GL_INVALID_VALUE)
+            ;
+        LOG_GL(GL_INVALID_OPERATION)
+            ;
+        LOG_GL(GL_OUT_OF_MEMORY)
+            ;
+        LOG_GL(GL_NO_ERROR)
+            ;
 //        LOG_GL(GL_STACK_OVERFLOW);
 //        LOG_GL(GL_STACK_UNDERFLOW);
 //        LOG_GL(GL_TABLE_TOO_LARGE);
