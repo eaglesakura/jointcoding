@@ -10,15 +10,18 @@
 
 #include    "jc/framework/assets/ImageAsset.hpp"
 
-// カスタマイズした頂点やシェーダーを扱いたい場合は適宜拡張を行う
+// コンテナ
 #include    "jc/framework/assets/figure/FigureVertex.hpp"
-
-// メッシュ
 #include    "jc/framework/assets/figure/MeshFragment.hpp"
 #include    "jc/framework/assets/figure/MeshGroup.hpp"
 #include    "jc/framework/assets/figure/MeshMaterial.hpp"
 #include    "jc/framework/assets/figure/Node.h"
 #include    "jc/framework/assets/figure/Figure.h"
+
+// レンダリング情報
+#include    "jc/framework/assets/figure/Camera.hpp"
+#include    "jc/framework/assets/figure/Light.hpp"
+#include    "jc/framework/assets/figure/EnvironmentInstanceState.hpp"
 #include    "jc/framework/assets/figure/FigureInstanceState.hpp"
 #include    "jc/framework/assets/figure/FigureRenderer.hpp"
 #include    "jc/framework/assets/figure/BasicFigureRenderer.h"

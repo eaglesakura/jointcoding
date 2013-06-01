@@ -20,9 +20,9 @@ namespace jc {
 /**
  * 4x4のOpenGL ES 2.0に最適化された行列クラスを扱う。
  * 3D利用の場合
- *     ROW    = 4
- *     COLMN >= 3
- *
+ * ROW 3 x COLMN 3
+ * ROW 4 x COLMN 3
+ * ROW 4 x COLMN 4
  *               → colmn
  *         1 0 0 0
  *         0 1 0 0
@@ -364,7 +364,7 @@ struct Matrix {
     inline void transpose() {
         assert(ROW == COLM);
 
-        float temp[4][4] = { };
+        float temp[ROW][COLM] = { };
 
         for (int r = 0; r < ROW; ++r) {
             for (int c = 0; c < COLM; ++c) {
@@ -377,6 +377,50 @@ struct Matrix {
 
 private:
     /*!
+     * http://www.slis.tsukuba.ac.jp/~fujisawa.makoto.fu/cgi-bin/wiki/index.php?4x4%A4%DE%A4%C7%A4%CE%B5%D5%B9%D4%CE%F3%A4%CE%C4%BE%C0%DC%B2%F2%CB%A1
+     * 3x3行列の行列式の計算
+     *  | m[0] m[1] m[2] |
+     *  | m[3] m[4] m[5] |
+     *  | m[6] m[7] m[8] |
+     * @param[in] m 元の行列
+     * @return 行列式の値
+     */
+    template<typename ORIGIN_TYPE>
+    static inline double calDetMat3x3(const ORIGIN_TYPE* m) {
+        // a11a22a33+a21a32a13+a31a12a23-a11a32a23-a31a22a13-a21a12a33
+        return m[0] * m[4] * m[8] + m[3] * m[7] * m[2] + m[6] * m[1] * m[5] - m[0] * m[7] * m[5] - m[6] * m[4] * m[2] - m[3] * m[1] * m[8];
+    }
+
+    /*!
+     * http://www.slis.tsukuba.ac.jp/~fujisawa.makoto.fu/cgi-bin/wiki/index.php?4x4%A4%DE%A4%C7%A4%CE%B5%D5%B9%D4%CE%F3%A4%CE%C4%BE%C0%DC%B2%F2%CB%A1
+     * 3x3行列の逆行列の計算
+     *  | m[0] m[1] m[2] |
+     *  | m[3] m[4] m[5] |
+     *  | m[6] m[7] m[8] |
+     * @param[in] m 元の行列
+     * @param[out] invm 逆行列
+     * @return 逆行列の存在
+     */
+    template<typename ORIGIN_TYPE>
+    inline void _invert3(const ORIGIN_TYPE *m, T *invm) const {
+        double det = calDetMat3x3(m);
+        double inv_det = 1.0 / det;
+
+        invm[0] = inv_det * (m[4] * m[8] - m[5] * m[7]);
+        invm[1] = inv_det * (m[2] * m[7] - m[1] * m[8]);
+        invm[2] = inv_det * (m[1] * m[5] - m[2] * m[4]);
+
+        invm[3] = inv_det * (m[5] * m[6] - m[3] * m[8]);
+        invm[4] = inv_det * (m[0] * m[8] - m[2] * m[6]);
+        invm[5] = inv_det * (m[2] * m[3] - m[0] * m[5]);
+
+        invm[6] = inv_det * (m[3] * m[7] - m[4] * m[6]);
+        invm[7] = inv_det * (m[1] * m[6] - m[0] * m[7]);
+        invm[8] = inv_det * (m[0] * m[4] - m[1] * m[3]);
+    }
+
+    /*!
+     * http://www.slis.tsukuba.ac.jp/~fujisawa.makoto.fu/cgi-bin/wiki/index.php?4x4%A4%DE%A4%C7%A4%CE%B5%D5%B9%D4%CE%F3%A4%CE%C4%BE%C0%DC%B2%F2%CB%A1
      * 4x4行列の行列式の計算
      *  | m[0]  m[1]  m[2]  m[3]  |
      *  | m[4]  m[5]  m[6]  m[7]  |
@@ -392,6 +436,7 @@ private:
     }
 
     /*!
+     * http://www.slis.tsukuba.ac.jp/~fujisawa.makoto.fu/cgi-bin/wiki/index.php?4x4%A4%DE%A4%C7%A4%CE%B5%D5%B9%D4%CE%F3%A4%CE%C4%BE%C0%DC%B2%F2%CB%A1
      * 4x4行列の行列式の計算.
      * inputされる行列は必ず4x4としてコピーされた状態で作成される。
      *  | m[0]  m[1]  m[2]  m[3]  |
@@ -403,7 +448,7 @@ private:
      * @return 逆行列の存在
      */
     template<typename ORIGIN_TYPE>
-    inline void _invert(const ORIGIN_TYPE *m, T *invm) const {
+    inline void _invert4(const ORIGIN_TYPE *m, T *invm) const {
         double det = calcDetMat4x4<ORIGIN_TYPE>(m);
 
         double inv_det = 1.0 / det;
@@ -495,16 +540,31 @@ public:
 
     /**
      * 逆行列を計算し、resultに格納する
+     *
+     * 4x3, 4x4, 3x3に対応している
      */
     inline void invert(Matrix<ROW, COLM> *result) const {
-        Matrix<4, 4> temp;
-        for (int i = 0; i < ROW; ++i) {
-            for (int k = 0; k < COLM; ++k) {
-                temp.m[i][k] = m[i][k];
-            }
-        }
 
-        _invert<float>((const float*) temp.m, (float*) result->m);
+        if (ROW == 4) {
+            Matrix<4, 4> temp;
+            for (int i = 0; i < ROW; ++i) {
+                for (int k = 0; k < COLM; ++k) {
+                    temp.m[i][k] = m[i][k];
+                }
+            }
+
+            _invert4<float>((const float*) temp.m, (float*) result->m);
+        } else if (ROW == 3) {
+            Matrix<3, 3> temp;
+            for (int i = 0; i < ROW; ++i) {
+                for (int k = 0; k < COLM; ++k) {
+                    temp.m[i][k] = m[i][k];
+                }
+            }
+            _invert3<float>((const float*) temp.m, (float*) result->m);
+        } else {
+            assert(false);
+        }
 
     }
 
@@ -523,6 +583,20 @@ public:
 
 typedef Matrix<4, 3> Matrix4x3;
 typedef Matrix<4, 4> Matrix4x4;
+typedef Matrix<3, 3> Matrix3x3;
+
+/**
+ * 4xN行列を3x3行列へコピーする
+ */
+template<typename T>
+inline static Matrix3x3* copyMatrix(const T &origin, Matrix3x3 *result) {
+    for (s32 r = 0; r < 3; ++r) {
+        for (s32 c = 0; c < 3; ++c) {
+            result->m[r][c] = origin.m[r][c];
+        }
+    }
+    return result;
+}
 
 /**
  * 行列乗算を行う
