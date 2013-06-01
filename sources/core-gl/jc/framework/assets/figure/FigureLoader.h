@@ -27,6 +27,17 @@ class FigureLoader: public jc::FigureDataLoader {
      */
     jc_selp<Figure> figure;
 
+    /**
+     * ファクトリクラス
+     */
+    jc_sp<TextureFactory> textureFactory;
+
+    /**
+     * テクスチャのファイル名対応を行なっておく
+     *
+     * for diffse texture
+     */
+    std::map<MeshMaterial*, String> diffuses;
 protected:
 
     /**
@@ -116,7 +127,7 @@ protected:
         currentFragment = CurrentFragment();
     }
 public:
-    FigureLoader(MDevice device, MFigureDataFactory factory);
+    FigureLoader(MDevice device, MFigureDataFactory factory, MTextureFactory texFactory);
 
     virtual ~FigureLoader();
 

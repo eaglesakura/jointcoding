@@ -10,12 +10,13 @@
 namespace jc {
 namespace fw {
 
-FigureLoader::FigureLoader(MDevice device, MFigureDataFactory factory) :
+FigureLoader::FigureLoader(MDevice device, MFigureDataFactory factory, MTextureFactory texFactory) :
         FigureDataLoader(factory) {
     assert(device);
     assert(factory);
 
     this->device = device;
+    this->textureFactory = texFactory;
 }
 
 FigureLoader::~FigureLoader() {
@@ -115,6 +116,11 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
 
             // マテリアルを関連付ける
             group->setMaterial(pMaterial);
+
+            // テクスチャ名を保存しておく
+            {
+                diffuses.insert(std::map<MeshMaterial*, String>::value_type(pMaterial, material.texture_name));
+            }
         }
     }
 
@@ -266,6 +272,27 @@ void FigureLoader::onLoadCompleted() {
     pVertices->unbind(device->getState());
 
     pIndices->bind(device->getState());
+
+    // テクスチャ読込を行う
+    if (textureFactory) {
+        std::map<MeshMaterial*, String>::iterator itr = diffuses.begin(), end = diffuses.end();
+
+        while (itr != end) {
+
+            MeshMaterial *pMaterial = itr->first;
+            String fileName = itr->second;
+            jclogf(" texture(%s)", fileName.c_str());
+
+            // 実際の読込を行う
+            {
+                MTextureImage texture = textureFactory->load(device, fileName);
+                pMaterial->setDiffuse(texture);
+            }
+
+            ++itr;
+        }
+    }
+
     {
 #if 0
         // MEMO ベリファイを行う

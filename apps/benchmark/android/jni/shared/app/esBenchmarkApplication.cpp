@@ -49,9 +49,13 @@ void BenchmarkApplication::onAppInitialize() {
 
         // フィギュアロード
         jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
+        jc_sp<UriTextureFactory> texFactory(new UriTextureFactory());
+        texFactory->fromAssets("");
+        texFactory->setFilenameExt(".png");
+
         factory->initialize(Uri::fromAssets("susanow.archive"));
 
-        jc_sp<FigureLoader> loader(new FigureLoader(getWindowDevice(), factory));
+        jc_sp<FigureLoader> loader(new FigureLoader(getWindowDevice(), factory, texFactory));
 
         // 読み込み対象を指定する
         loader->setLoadTarget(figure);
