@@ -18,11 +18,6 @@ namespace gl {
  */
 class TextureUniform: public UniformBase {
     u32 bindUnit;
-
-    /**
-     * アップロード対象のコンテキスト
-     */
-    MGLState state;
 public:
     TextureUniform() {
         bindUnit = -1;
@@ -38,18 +33,10 @@ public:
     }
 
     /**
-     * アップロード対象のコンテキストを指定する
-     */
-    void setState(MGLState state) {
-        this->state = state;
-        bindUnit = -1;
-    }
-
-    /**
      * GPUにアップロードを行う
      */
-    jcboolean upload(MTextureImage tex) {
-        assert(tex.get() != NULL);
+    jcboolean upload(MGLState state, MTextureImage tex) {
+        assert(tex);
 
         if (!valid()) {
             return jcfalse;

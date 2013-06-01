@@ -55,6 +55,11 @@ protected:
     MatrixUniform unif_worldlookprojection;
 
     /**
+     * 拡散反射光テクスチャ
+     */
+    TextureUniform unif_diffseTexture;
+
+    /**
      * レンダリング用シェーダー
      */
     MGLShaderProgram shader;

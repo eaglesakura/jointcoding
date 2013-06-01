@@ -285,7 +285,8 @@ void FigureLoader::onLoadCompleted() {
 
             // 実際の読込を行う
             {
-                MTextureImage texture = textureFactory->load(device, fileName);
+                PixelFormat_e pixelFormat = PixelFormat_NativeRGBA;
+                MTextureImage texture = textureFactory->load(device, fileName, pixelFormat);
                 pMaterial->setDiffuse(texture);
             }
 

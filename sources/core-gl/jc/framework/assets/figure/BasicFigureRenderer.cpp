@@ -21,15 +21,23 @@ BasicFigureRenderer::~BasicFigureRenderer() {
 void BasicFigureRenderer::initialize(MDevice device, MGLShaderProgram shader) {
     this->shader = shader;
 
-    attr_position.setLocation(shader, "attr_pos");
-    // 最低限、位置情報は持っていなければならない
-    assert(attr_position.valid());
+    // attribute
+    {
+        attr_position.setLocation(shader, "attr_pos");
+        // 最低限、位置情報は持っていなければならない
+        assert(attr_position.valid());
 
-    attr_coord.setLocation(shader, "attr_uv");
-    attr_normal.setLocation(shader, "attr_normal");
+        attr_coord.setLocation(shader, "attr_uv");
+        attr_normal.setLocation(shader, "attr_normal");
+    }
 
-    // world loop projection行列
-    unif_worldlookprojection.setLocation(shader, "unif_wlp");
+    // uniform
+    {
+        // world loop projection行列
+        unif_worldlookprojection.setLocation(shader, "unif_wlp");
+
+        unif_diffseTexture.setLocation(shader, "unif_diffuse");
+    }
 }
 
 /**
@@ -56,6 +64,14 @@ void BasicFigureRenderer::bindMaterial(MDevice device, const Figure *pFigure, co
     // uniformのアップロードを行う
     {
         unif_worldlookprojection.upload(pInstance->getWorldLookProjection());
+    }
+
+    // テクスチャのバインドを行う
+    {
+        MTextureImage diffuse = pMaterial->getDiffuse();
+        if (diffuse) {
+            unif_diffseTexture.upload(state, diffuse);
+        }
     }
 }
 
