@@ -25,6 +25,11 @@ enum FigureInstanceFlag_e {
      * フラグ数管理
      */
     FigureInstanceFlag_Num,
+
+    /**
+     * カリングを行わない
+     */
+    FigureInstanceFlag_NotCullface,
 };
 
 /**
@@ -96,6 +101,27 @@ public:
      */
     Matrix4x4& getNodeMatrix(const u32 node_nubmer) {
         return wlpMatrices[node_nubmer];
+    }
+
+    /**
+     * フラグを有効化する
+     */
+    void enableFlag(const FigureInstanceFlag_e flag) {
+        flags.enable(flag);
+    }
+
+    /**
+     * フラグを無効化する
+     */
+    void disableFlag(const FigureInstanceFlag_e flag) {
+        flags.disable(flag);
+    }
+
+    /**
+     * フラグが有効であればtrueを返す
+     */
+    jcboolean isEnableFlag(const FigureInstanceFlag_e flag) const {
+        return flags.isEnable(flag);
     }
 };
 
