@@ -42,7 +42,11 @@ public:
             return jcfalse;
         }
 
-        const u32 texUnit = tex->bind(state);
+        s32 texUnit = -1;
+        // バインドされていなければ、テクスチャをバインドする
+        if (!tex->isBinded(&texUnit)) {
+            texUnit = tex->bind(state);
+        }
         if (bindUnit != texUnit) {
             glUniform1i(location, texUnit);
             assert_gl();
