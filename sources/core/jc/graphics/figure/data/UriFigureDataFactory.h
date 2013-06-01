@@ -20,7 +20,6 @@ class UriFigureDataFactory: public FigureDataFactory {
      * ベースURL
      */
     Uri baseUri;
-
 public:
     UriFigureDataFactory(const Uri &baseUri) {
         this->baseUri = baseUri;

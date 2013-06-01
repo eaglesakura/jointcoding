@@ -42,6 +42,48 @@ struct unsafe_array {
         assert(index < length);
         return ptr[index];
     }
+
+    /**
+     * ポインタを次へ移動する
+     */
+    inline unsafe_array<value_type>& operator++() {
+        ++ptr;
+        --length;
+        if (!length) {
+            ptr = NULL;
+        }
+        return *this;
+    }
+
+    /**
+     * アロー演算子を提供する
+     */
+    inline value_type* operator->() const {
+        assert(ptr);
+        return ptr;
+    }
+
+    /**
+     * 参照を提供する
+     */
+    inline value_type& operator*() const {
+        assert(ptr);
+        return *ptr;
+    }
+
+    /**
+     * 有効な場合はtrueを返す
+     */
+    operator bool() const {
+        return ptr != NULL;
+    }
+
+    /**
+     * 無効な場合はtrueを返す
+     */
+    bool operator!() const {
+        return ptr == NULL;
+    }
 };
 
 /**
@@ -203,6 +245,27 @@ public:
      */
     inline unsafe_array<value_type> slice(const s32 index) const {
         return slice(index, length - index);
+    }
+
+    /**
+     * イテレータアクセス用のunmanaged配列を生成する
+     */
+    inline unsafe_array<value_type> iterator() const {
+        return slice(0, length);
+    }
+
+    /**
+     * 有効な場合はtrueを返す
+     */
+    operator bool() const {
+        return ptr != NULL;
+    }
+
+    /**
+     * 無効な場合はtrueを返す
+     */
+    bool operator!() const {
+        return ptr == NULL;
     }
 };
 

@@ -66,6 +66,14 @@ public:
     }
 
     /**
+     * メッシュアクセス用のイテレータを返す
+     * 高速にfor-eachを行いたい場合に利用する
+     */
+    virtual unsafe_array<MeshMaterial*> meshIterator() const {
+        return materials.iterator();
+    }
+
+    /**
      * マテリアル数を取得する
      */
     virtual u32 getMaterialNum() const {
