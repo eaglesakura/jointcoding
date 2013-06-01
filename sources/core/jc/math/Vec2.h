@@ -160,6 +160,10 @@ inline jcboolean equals(const Vector2f &v0, const Vector2f &v1) {
     return jc::equals(v0.x, v1.x) && jc::equals(v0.y, v1.y);
 }
 
+inline jcboolean equals(const Vector2f &v0, const Vector2f &v1, const float _check) {
+    return jc::equals(v0.x, v1.x, _check) && jc::equals(v0.y, v1.y, _check);
+}
+
 /**
  * ２ベクトルを線形補間する
  * 0.0 = before

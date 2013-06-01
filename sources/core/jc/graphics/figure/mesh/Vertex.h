@@ -42,22 +42,24 @@ public:
      * 同一頂点である場合はtrueを返す
      */
     bool equals(const _SimpleVertex<WEIGHT_NUM> &v1) const {
-        if (position != v1.position) {
+        if (!jc::equals(position, v1.position, 0.01f)) {
             return false;
         }
 
-        if (uv != v1.uv) {
+        if (!jc::equals(uv, v1.uv, 0.001f)) {
             return false;
         }
 
-        if (normal != v1.normal) {
+        if (!jc::equals(normal, v1.normal, 0.01f)) {
             return false;
         }
+
         for (s32 i = 0; i < WEIGHT_NUM; ++i) {
             if (weight.indices[i] != v1.weight.indices[i]) {
                 return false;
             }
-            if (weight.weights[i] != v1.weight.weights[i]) {
+
+            if (!jc::equals(weight.weights[i], v1.weight.weights[i], 0.001f)) {
                 return false;
             }
         }
