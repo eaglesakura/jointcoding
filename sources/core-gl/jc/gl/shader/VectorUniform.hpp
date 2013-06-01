@@ -163,9 +163,10 @@ public:
     /**
      * 44行列を直接転送する
      */
-    jcboolean upload(const float *pMatrix, const GLboolean transpose = GL_FALSE) {
-        assert(vector_length >= 16);
-        assert(pMatrix != NULL);
+    template<u32 mat_size>
+    jcboolean upload(const float *pMatrix, const u32 matrix_num, const GLboolean transpose = GL_FALSE) {
+        assert(vector_length >= (mat_size * mat_size * matrix_num));
+        assert(pMatrix);
 
         if (!valid()) {
             return jcfalse;
@@ -186,30 +187,32 @@ public:
         }
 
         // 行列の数だけ転送する
-        glUniformMatrix4fv(location, vector_length / 16, transpose, pMatrix);
+        if (mat_size == 4) {
+            glUniformMatrix4fv(location, vector_length / 16, transpose, pMatrix);
+        } else if (mat_size == 3) {
+            glUniformMatrix3fv(location, vector_length / 9, transpose, pMatrix);
+        } else if (mat_size == 2) {
+            glUniformMatrix2fv(location, vector_length / 4, transpose, pMatrix);
+        } else {
+            assert(false);
+        }
         assert_gl();
 
         return jctrue;
     }
 
-#if 0
-    /**
-     * 圧縮状態で行列を転送することを許可する
-     * 4x4行列のうち、3x4部分のみを使用している場合、4x3に転地してvec4[3]状態にすることでベクトルユニットを節約できる
-     * 大量に行列を扱う必要が有る場合に有用だが、頂点シェーダーの負荷が増すため利用シーンには注意すること
-     *
-     * MEMO 速度は実用的でないレベルまで落ちる
-     */
-    jcboolean uploadCompless(const float *pMatrix) {
-        return upload(pMatrix);
-    }
-#endif
-
     /**
      * 44行列を転送する
      */
-    jcboolean upload(const Matrix4x4 &m) {
-        return upload((const float*) (&m));
+    jcboolean upload(const Matrix4x4 &m, const GLboolean transpose = GL_FALSE) {
+        return upload<4>((const float*) (&m), 1, transpose);
+    }
+
+    /**
+     * 33行列を転送する
+     */
+    jcboolean upload(const Matrix3x3 &m, const GLboolean transpose = GL_FALSE) {
+        return upload<3>((const float*) (&m), 1, transpose);
     }
 };
 
@@ -239,7 +242,12 @@ typedef VectorUniform<float, 4> Vector4fUniofrm;
 /**
  * uniform mat4
  */
-typedef VectorUniform<float, 16> MatrixUniform;
+typedef VectorUniform<float, 3 * 3> Matrix3Uniform;
+
+/**
+ * uniform mat4
+ */
+typedef VectorUniform<float, 4 * 4> Matrix4Uniform;
 }
 }
 

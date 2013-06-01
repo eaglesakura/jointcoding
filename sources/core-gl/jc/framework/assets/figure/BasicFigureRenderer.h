@@ -52,12 +52,24 @@ protected:
     /**
      * WLP行列
      */
-    MatrixUniform unif_worldlookprojection;
+    Matrix4Uniform unif_worldlookprojection;
 
     /**
      * 拡散反射光テクスチャ
      */
     TextureUniform unif_diffseTexture;
+
+    /**
+     * シャドウ用ライトの方向
+     * メインライトとして利用する
+     */
+    Vector3fUniform unif_mainlightdirection;
+
+    /**
+     * WLP行列の逆行列を転置した行列
+     * 法線計算に利用する
+     */
+    Matrix3Uniform   unif_normalmatrix;
 
     /**
      * レンダリング用シェーダー

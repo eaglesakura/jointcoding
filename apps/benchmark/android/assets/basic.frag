@@ -1,5 +1,10 @@
+#version 100
+
 // texture
 uniform sampler2D unif_diffuse;
+
+// shadow light
+uniform mediump vec3 unif_mainlightdir;
 
 //  normal
 varying mediump vec3 vr_normal;
@@ -7,10 +12,10 @@ varying mediump vec3 vr_normal;
 //  coord
 varying mediump vec2 vr_coords;
 
+// ライトと頂点法線の内積
+varying mediump float vr_lightdot;
 
 void main() {
-
-    // 法線色で染める
-    gl_FragColor = texture2D(unif_diffuse, vr_coords);
-//    gl_FragColor = vec4(vr_normal.r, vr_normal.g, vr_normal.b, 1.0);
+    // テクスチャ色とライト係数で色を求める
+    gl_FragColor = texture2D(unif_diffuse, vr_coords) * vec4(vr_lightdot, vr_lightdot, vr_lightdot, 1.0);
 }

@@ -49,6 +49,12 @@ class FigureInstanceState: public Object {
     Matrix4x4 wlp;
 
     /**
+     * モデルビュー（World）行列
+     * ライト計算のために逆行列を作ったりする等で利用する
+     */
+    Matrix4x4 modelview;
+
+    /**
      * デフォルトで管理されるフラグ
      */
     BitFlags<FigureInstanceFlag_Num> flags;
@@ -57,6 +63,11 @@ class FigureInstanceState: public Object {
      * 対象のフィギュア情報
      */
     jc_selp<Figure> figure;
+
+    /**
+     * 環境ステート
+     */
+    jc_selp<EnvironmentInstanceState> env;
 public:
     /**
      *
@@ -73,6 +84,20 @@ public:
     virtual void initialize(const jc_selp<Figure> figure) {
         this->figure = figure;
         wlpMatrices.reserve(figure->getNodeNum());
+    }
+
+    /**
+     * モデルビュー行列を取得する
+     */
+    const Matrix4x4& getModelview() const {
+        return modelview;
+    }
+
+    /**
+     * モデルビュー行列を取得する
+     */
+    Matrix4x4& getModelview() {
+        return modelview;
     }
 
     /**
@@ -122,6 +147,20 @@ public:
      */
     jcboolean isEnableFlag(const FigureInstanceFlag_e flag) const {
         return flags.isEnable(flag);
+    }
+
+    /**
+     * 環境ステータスを設定する
+     */
+    void setEnvironmentState(const jc_selp<EnvironmentInstanceState> set) {
+        this->env = set;
+    }
+
+    /**
+     * 環境ステータスを取得する
+     */
+    EnvironmentInstanceState* getEnvironmentState() const {
+        return env.get();
     }
 };
 

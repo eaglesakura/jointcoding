@@ -4,16 +4,13 @@
  *  Created on: 2013/01/18
  */
 
-#ifndef CAMERA_H_
-#define CAMERA_H_
+#ifndef CAMERAASSET_H_
+#define CAMERAASSET_H_
 
-#include    "jointcoding.h"
-#include    "jc/math/Vec3.h"
-#include    "jc/math/Matrix.h"
+#include    "jc/framework/assets/FigureAsset.hpp"
 
 namespace jc {
-namespace gl {
-
+namespace fw {
 
 class Camera: public Object {
     /**
@@ -104,4 +101,4 @@ typedef jc_sp<Camera> MCamera;
 }
 }
 
-#endif /* CAMERA_H_ */
+#endif /* CAMERAASSET_H_ */

@@ -36,7 +36,12 @@ void BasicFigureRenderer::initialize(MDevice device, MGLShaderProgram shader) {
         // world loop projection行列
         unif_worldlookprojection.setLocation(shader, "unif_wlp");
 
+        // diffuseテクスチャ
         unif_diffseTexture.setLocation(shader, "unif_diffuse");
+
+        // メインの陰影用ライト
+        unif_mainlightdirection.setLocation(shader, "unif_mainlightdir");
+        unif_normalmatrix.setLocation(shader, "unif_normalm");
     }
 }
 
@@ -64,6 +69,18 @@ void BasicFigureRenderer::bindMaterial(MDevice device, const Figure *pFigure, co
     // uniformのアップロードを行う
     {
         unif_worldlookprojection.upload(pInstance->getWorldLookProjection());
+
+        EnvironmentInstanceState *env = pInstance->getEnvironmentState();
+        // 環境ステータスが設定されている場合、環境情報をセットアップする
+        if (env) {
+            MLight light = env->getShadowLight();
+            unif_mainlightdirection.upload(light->getDirection());
+
+            Matrix3x3 m;
+            copyMatrix(pInstance->getModelview(), &m)->invert();
+            m.transpose();
+            unif_normalmatrix.upload(m, GL_FALSE);
+        }
     }
 
     // テクスチャのバインドを行う

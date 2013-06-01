@@ -35,7 +35,7 @@ class BenchmarkApplication: public JointApplicationBase {
      * matrix
      * world loop projection
      */
-    MatrixUniform unif_wlp;
+    Matrix4Uniform unif_wlp;
 
     float rotate;
 

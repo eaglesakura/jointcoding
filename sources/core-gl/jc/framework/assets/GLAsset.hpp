@@ -12,6 +12,7 @@
 #include    "jc/math/Vec3.h"
 #include    "jc/math/Vec4.h"
 #include    "jc/math/Matrix.h"
+#include    "jc/graphics/Color.h"
 #include    "jc/collection/ArrayHandle.hpp"
 #include    "jc/collection/SafeArray.hpp"
 

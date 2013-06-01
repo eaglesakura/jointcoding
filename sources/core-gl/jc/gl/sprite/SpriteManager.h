@@ -86,7 +86,7 @@ protected:
         /**
          * テクスチャ行列
          */
-        MatrixUniform texture_matrix;
+        Matrix4Uniform texture_matrix;
     } uniform;
 
     /**
