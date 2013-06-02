@@ -60,6 +60,18 @@ public:
         if (state->isBindedFramebuffer(fbo.get())) {
             state->bindFramebuffer(GL_FRAMEBUFFER, 0);
         }
+
+        if (color) {
+            color->unbind(state);
+        }
+
+        if (depth) {
+            depth->unbind(state);
+        }
+
+        if (stencil) {
+            stencil->unbind(state);
+        }
     }
 
     /**
@@ -70,7 +82,7 @@ public:
         bind(state);
         renderbuffer->bind(state);
 
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachiment, renderbuffer->getName());
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachiment, GL_RENDERBUFFER, renderbuffer->getName());
         assert_gl();
 
         // アタッチメントの種類によって保存先を変更する
@@ -94,11 +106,19 @@ public:
         return (bool) color;
     }
 
+    virtual MRenderBufferObject getColorBuffer() const {
+        return color;
+    }
+
     /**
      * 深度アタッチメントを持っているならtrue
      */
     virtual jcboolean hasDepthAttachiment() const {
         return (bool) depth;
+    }
+
+    virtual MRenderBufferObject getDepthBuffer() const {
+        return depth;
     }
 
     /**
@@ -108,6 +128,30 @@ public:
         return (bool) stencil;
     }
 
+    virtual MRenderBufferObject getStencilBuffer() const {
+        return stencil;
+    }
+
+    /**
+     * フレームバッファの2Dサイズをリサイズする
+     * アタッチされていないバッファについては何もしない
+     */
+    virtual void resize(MGLState state, const u32 width, const u32 height) {
+        assert(state);
+
+        if (color) {
+            color->resize(state, width, height);
+        }
+
+        if (depth) {
+            depth->resize(state, width, height);
+        }
+
+        if (stencil) {
+            stencil->resize(state, width, height);
+        }
+    }
+
     /**
      * カラーレンダリングバッファを確保する
      */
@@ -115,7 +159,7 @@ public:
         assert(pixelFormat != PixelFormat_BGRA8888);
 
         // カラーフォーマットテーブルを用意しておく
-        const GLenum formats[] = {
+        GLenum formats[] = {
         //
                 GL_RGB565,
                 //
@@ -152,10 +196,13 @@ public:
         GLenum internalformat = 0;
         if (bits >= 32 && GPUCapacity::isSupport(GPUExtension_Renderbuffer_Depth32)) {
             internalformat = GL_DEPTH_COMPONENT32_OES;
+            jclogf("alloc depth req(%d) -> D(32bit)", bits);
         } else if (bits >= 24 && GPUCapacity::isSupport(GPUExtension_Renderbuffer_Depth24)) {
             internalformat = GL_DEPTH_COMPONENT24_OES;
+            jclogf("alloc depth req(%d) -> D(24bit)", bits);
         } else {
             internalformat = GL_DEPTH_COMPONENT16;
+            jclogf("alloc depth req(%d) -> D(16bit)", bits);
         }
 
         // 深度バッファを生成する
@@ -193,7 +240,24 @@ public:
         }
     }
 
+    /**
+     * フレームバッファが正常にであることを検証する
+     */
+    virtual void checkFramebufferStatus() {
+#ifdef DEBUG
+        GLint check = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (check != GL_FRAMEBUFFER_COMPLETE) {
+            jclogf("glCheckFramebufferStatus(0x%x)", check);
+        }
+        assert(check == GL_FRAMEBUFFER_COMPLETE);
+#endif
+    }
 };
+
+/**
+ * managed
+ */
+typedef jc_sp<FrameBufferObject> MFrameBufferObject;
 
 }
 }

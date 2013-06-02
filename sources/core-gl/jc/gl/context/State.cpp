@@ -190,8 +190,8 @@ void GLState::syncContext() {
     // カリング設定を問い合わせる
     {
         cullfaceContext.enabled = glIsEnabled(GL_CULL_FACE);
-        glGetIntegerv(GL_CULL_FACE_MODE, (GLint*)cullfaceContext.mode);
-        glGetIntegerv(GL_FRONT_FACE, (GLint*)cullfaceContext.frontface);
+        glGetIntegerv(GL_CULL_FACE_MODE, (GLint*) cullfaceContext.mode);
+        glGetIntegerv(GL_FRONT_FACE, (GLint*) cullfaceContext.frontface);
     }
     // バッファを問い合わせる
     {
@@ -333,6 +333,8 @@ jcboolean GLState::printGLError(const charactor* file, const s32 line, GLenum er
         LOG_GL(GL_INVALID_OPERATION)
             ;
         LOG_GL(GL_OUT_OF_MEMORY)
+            ;
+        LOG_GL(GL_INVALID_FRAMEBUFFER_OPERATION)
             ;
         LOG_GL(GL_NO_ERROR)
             ;

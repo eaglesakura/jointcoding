@@ -8,6 +8,8 @@
 #define ESBENCHMARKAPPLICATION_H_
 
 #include    "benchmark.hpp"
+#include    "jc/gl/render/RenderBufferObject.hpp"
+#include    "jc/gl/render/FrameBufferObject.hpp"
 
 namespace es {
 
@@ -52,6 +54,11 @@ class BenchmarkApplication: public JointApplicationBase {
      * フィギュア情報
      */
     MFigureInstanceState figure1;
+
+    /**
+     * オフスクリーンターゲット
+     */
+    MFrameBufferObject offscreen;
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();
