@@ -87,12 +87,19 @@ void BenchmarkApplication::onAppInitialize() {
     // オフスクリーンターゲットを生成
     {
         MDevice device = getWindowDevice();
+
+        const s32 width = 512;
+        const s32 height = 512;
         offscreen.reset(new FrameBufferObject(device));
         offscreen->allocColorRenderbuffer(device, PixelFormat_RGB888);
-        offscreen->allocDepthRenderbuffer(device, 24);
+        offscreen->allocDepthRenderbuffer(device, 24, width, height, jcfalse);
 
         // オフスクリーンのリサイズを行う
-        offscreen->resize(device->getState(), 512, 512);
+        offscreen->resize(device->getState(), width, height);
+
+        // オフスクリーンテクスチャの確保を行う
+        offscreen->allocColorRenderTexture(device, PixelFormat_RGB888);
+        offscreen->allocDepthRenderTexture(device);
 
         offscreen->checkFramebufferStatus();
         offscreen->unbind(device->getState());
@@ -147,6 +154,7 @@ void BenchmarkApplication::onAppMainRendering() {
 //        state->clearColorf(0, 0, (float) (rand() % 0xFF) / 255.0f, 0);
         state->clearColorf(0, 1, 1, 1);
         state->clearSurface();
+        state->viewport(0, 0, getWindowSize().x, getWindowSize().y);
     }
 
     {
@@ -206,8 +214,20 @@ void BenchmarkApplication::onAppMainRendering() {
 //            multiply(figure0->getModelview(), worldEnv->getMainCamera()->getLookProjectionMatrix(), &figure0->getWorldLookProjection());
         }
 
-        renderer->rendering(device, figure, figure0);
-        renderer->rendering(device, figure, figure1);
+        offscreen->bind(state);
+        {
+            state->clear();
+            state->viewport(0, 0, 512, 512);
+            renderer->rendering(device, figure, figure0);
+            renderer->rendering(device, figure, figure1);
+        }
+        offscreen->unbind(state);
+
+        {
+            MSpriteManager spriteManager = getSpriteManager();
+            spriteManager->renderingImage(offscreen->getDepthTexture(), 0, 0);
+            offscreen->getDepthTexture()->unbind();
+        }
     }
 
     getWindowDevice()->postFrontBuffer();
