@@ -31,14 +31,27 @@ class BenchmarkApplication: public JointApplicationBase {
      */
     MGLShaderProgram shader;
 
-    /**
-     * matrix
-     * world loop projection
-     */
-    Matrix4Uniform unif_wlp;
-
     float rotate;
 
+    /**
+     * 環境
+     */
+    MEnvironmentInstanceState worldEnv;
+
+    /**
+     * フィギュア用のレンダラ
+     */
+    jc_sp<BasicFigureRenderer> renderer;
+
+    /**
+     * フィギュア情報
+     */
+    MFigureInstanceState figure0;
+
+    /**
+     * フィギュア情報
+     */
+    MFigureInstanceState figure1;
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();

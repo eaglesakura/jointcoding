@@ -51,11 +51,6 @@ public:
     }
 
     /**
-     * 内部で管理している行列情報を更新する
-     */
-    virtual void updateMatrices();
-
-    /**
      * WLP行列を計算する
      */
     virtual Matrix4x4* calcWorldLoopProjection(const Matrix4x4 &modelview, Matrix4x4 *pResult) const;
