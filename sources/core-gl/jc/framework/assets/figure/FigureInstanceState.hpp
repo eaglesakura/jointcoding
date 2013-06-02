@@ -164,6 +164,11 @@ public:
     }
 };
 
+/**
+ * managed
+ */
+typedef jc_sp<FigureInstanceState> MFigureInstanceState;
+
 }
 }
 

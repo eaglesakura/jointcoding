@@ -42,7 +42,7 @@ enum TransformRotateOrder_e {
     /**
      * Ex.クォータニオンとして作成する
      */
-    TransformRotateOrder_Quaternion = -1,
+    TransformRotateOrder_Quaternion,
 
 };
 

@@ -68,8 +68,20 @@ void BenchmarkApplication::onAppInitialize() {
         // シェーダー読込
         shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
         assert(shader);
+    }
 
-        unif_wlp.setLocation(shader, "unif_wlp");
+    // フィギュアのインスタンスを確保する
+    {
+        renderer.reset(new BasicFigureRenderer());
+        renderer->initialize(getWindowDevice(), shader);
+
+        worldEnv.reset(new EnvironmentInstanceState());
+
+        figure0.reset(renderer->createInstanceState(figure));
+        figure0->setEnvironmentState(worldEnv);
+
+        figure1.reset(renderer->createInstanceState(figure));
+        figure1->setEnvironmentState(worldEnv);
     }
 
 //    // テクスチャロードを開始する
@@ -144,9 +156,6 @@ void BenchmarkApplication::onAppMainRendering() {
         MGLState state = device->getState();
 
         // レンダラーを作成する
-        BasicFigureRenderer render;
-        render.initialize(device, shader);
-        jc_sp<EnvironmentInstanceState> env(new EnvironmentInstanceState());
         // レンダリングの環境設定
         {
             Vector3f basicLightPos(0, 1, 1);
@@ -154,31 +163,24 @@ void BenchmarkApplication::onAppMainRendering() {
             m.rotateY(rotate);
             m.rotateX(rotate);
             m.multiply(basicLightPos, &basicLightPos);
-            env->getShadowLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
+            worldEnv->getShadowLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
         }
-        jc_sp<FigureInstanceState> instance(render.createInstanceState(figure));
-        instance->setEnvironmentState(env);
 
-        Matrix4x4 look;
-        Matrix4x4 prj;
         {
-            // modelview
-//            instance->getModelview().rotateY(rotate += 1);
-
-// look
-            look.lookAt(Vector3f(0, 5, 150), Vector3f(0, -5, 0), Vector3f(0, 1, 0));
-
-            // projection
-            prj.projection(50.0f, 500.0f, 45.0f, getWindowDevice()->getSurfaceAspect());
+            Vector3f camPos(0, 5, 150);
+            Matrix4x4 m;
+            m.rotateY(rotate);
+            m.multiply(camPos, &camPos);
+            worldEnv->getMainCamera()->lookAt(camPos, Vector3f(0, -5, 0), Vector3f(0, 1, 0));
         }
+        worldEnv->getMainCamera()->projection(50.0f, 500.0f, 45.0f, getWindowDevice()->getSurfaceAspect());
 
-        // world loop projection行列を生成する
         {
-            multiply(instance->getModelview(), look, &instance->getWorldLookProjection());
-            multiply(instance->getWorldLookProjection(), prj, &instance->getWorldLookProjection());
+            multiply(figure0->getModelview(), worldEnv->getMainCamera()->getLookProjectionMatrix(), &figure0->getWorldLookProjection());
+//            multiply(figure0->getModelview(), worldEnv->getMainCamera()->getLookProjectionMatrix(), &figure0->getWorldLookProjection());
         }
 
-        render.rendering(device, figure, instance);
+        renderer->rendering(device, figure, figure0);
     }
 
     getWindowDevice()->postFrontBuffer();

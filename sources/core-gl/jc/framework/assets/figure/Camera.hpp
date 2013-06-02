@@ -167,6 +167,15 @@ public:
     }
 
     /**
+     * 視線情報を一度に登録する
+     */
+    virtual void lookAt(const Vector3f &pos, const Vector3f &look, const Vector3f &up) {
+        setPosition(pos);
+        setLook(look);
+        setUp(up);
+    }
+
+    /**
      * 画角を指定する
      */
     virtual void setFovY(const float set) {
@@ -182,6 +191,14 @@ public:
         this->far = far;
         this->aspect = aspect;
         lookMatrix.old = jctrue;
+    }
+
+    /**
+     * 射影情報を一度に登録する
+     */
+    virtual void projection(const float near, const float far, const float fovY, const float aspect) {
+        this->fovY = fovY;
+        setProjection(near, far, aspect);
     }
 };
 

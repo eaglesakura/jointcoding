@@ -18,16 +18,6 @@ EnvironmentInstanceState::~EnvironmentInstanceState() {
 }
 
 /**
- * 内部で管理している行列情報を更新する
- */
-void EnvironmentInstanceState::updateMatrices() {
-    // メインカメラ情報を更新する
-    {
-
-    }
-}
-
-/**
  * WLP行列を計算する
  */
 Matrix4x4* EnvironmentInstanceState::calcWorldLoopProjection(const Matrix4x4 &modelview, Matrix4x4 *pResult) const {
