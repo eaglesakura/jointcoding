@@ -162,6 +162,8 @@ void GPUCapacity::initialize() {
                 { EXTENSION_NAME(GL_OES_EGL_image_external), GPUExtension_OES_EGL_image_external },
                 //  深度テクスチャ
                 { EXTENSION_NAME(GL_OES_depth_texture), GPUExtension_Texture_Depth },
+                //  half float
+                { EXTENSION_NAME(GL_OES_texture_half_float), GPUExtension_Texture_HalfFloat },
                 //  フレームバッファの無効化
                 { EXTENSION_NAME(GL_EXT_discard_framebuffer), GPUExtension_TileBasedDeferredRendering },
                 //  レンダリングバッファにRGB/RGBA8が可能

@@ -288,6 +288,13 @@ public:
     virtual void allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel);
 
     /**
+     * 外部要因でallocを行った（拡張機能とか）場合に呼び出す
+     */
+    virtual void onAllocated() {
+        alloced = jctrue;
+    }
+
+    /**
      * テクスチャをindex番のユニットに関連付ける
      */
     virtual void bind(s32 index, MGLState state);

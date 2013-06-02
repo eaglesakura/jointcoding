@@ -77,6 +77,20 @@ public:
         size.x = width;
         size.y = height;
     }
+
+    /**
+     * 幅を取得する
+     */
+    virtual u32 getWidth() const {
+        return (u32) size.x;
+    }
+
+    /**
+     * 高さを取得する
+     */
+    virtual u32 getHeight() const {
+        return (u32) size.y;
+    }
 };
 
 /**
