@@ -353,8 +353,8 @@ public:
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getName(), 0);
             assert_gl();
         } else if (GPUCapacity::isSupport(GPUExtension_Texture_HalfFloat)) {
-            // colorと両立は出来ない
-            assert(!color);
+            // colorのテクスチャバインドと両立は出来ない
+            assert(!colorTexture);
 
             jclog("not support depthtexture | support halffloat");
             // 深度テクスチャがサポートされていないため、カラー情報として擬似的に関連付ける
