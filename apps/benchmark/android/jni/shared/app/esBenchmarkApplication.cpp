@@ -88,10 +88,10 @@ void BenchmarkApplication::onAppInitialize() {
     {
         MDevice device = getWindowDevice();
 
-        const s32 width = 512;
-        const s32 height = 512;
+        const s32 width = 480;
+        const s32 height = 640;
         offscreen.reset(new FrameBufferObject(device));
-        offscreen->allocColorRenderbuffer(device, PixelFormat_RGBA8888);
+//        offscreen->allocColorRenderbuffer(device, PixelFormat_RGBA8888);
         offscreen->allocDepthRenderbuffer(device, 24);
 
         // オフスクリーンのリサイズを行う
@@ -171,6 +171,8 @@ void BenchmarkApplication::onAppMainRendering() {
     }
 
 // rendering 3d
+
+    offscreen->bind(state);
     {
         rotate = jc::normalizeDegree(rotate += 1.0f);
 
@@ -194,7 +196,7 @@ void BenchmarkApplication::onAppMainRendering() {
             m.rotateY(rotate);
             m.multiply(camPos, &camPos);
             worldEnv->getMainCamera()->lookAt(camPos, Vector3f(0, -5, 0), Vector3f(0, 1, 0));
-            worldEnv->getMainCamera()->projection(50.0f, 500.0f, 45.0f, getWindowDevice()->getSurfaceAspect());
+            worldEnv->getMainCamera()->projection(50.0f, 500.0f, 45.0f, offscreen->getAspect());
         }
         {
             jc::Transform trans;
@@ -209,21 +211,24 @@ void BenchmarkApplication::onAppMainRendering() {
             figure1->setTransform(&trans);
         }
 
-        offscreen->bind(state);
         {
+            state->clearColorf(1, 0, 0, 0);
             state->clear();
-            state->viewport(0, 0, 512, 512);
+            state->viewport(0, 0, offscreen->getWidth(), offscreen->getHeight());
             renderer->rendering(device, figure, figure0);
             renderer->rendering(device, figure, figure1);
         }
-        offscreen->unbind(state);
-
-        {
-            MSpriteManager spriteManager = getSpriteManager();
-            spriteManager->renderingImage(offscreen->getDepthTexture(), 0, 0);
-        }
     }
+    offscreen->unbind(state);
 
+    {
+        state->viewport(0, 0, getWindowSize().x, getWindowSize().y);
+        MSpriteManager spriteManager = getSpriteManager();
+        MTextureImage texture = offscreen->getDepthTexture();
+
+        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, texture->getWidth(), texture->getHeight());
+//        spriteManager->renderingImage(texture, texture->getWidth(), texture->getHeight(), -texture->getWidth(), -texture->getHeight());
+    }
     getWindowDevice()->postFrontBuffer();
 }
 
