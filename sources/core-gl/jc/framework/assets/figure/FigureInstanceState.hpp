@@ -82,8 +82,27 @@ public:
      * 初期化を行う
      */
     virtual void initialize(const jc_selp<Figure> figure) {
+        assert(figure.exist());
+
         this->figure = figure;
         wlpMatrices.reserve(figure->getNodeNum());
+    }
+
+    /**
+     * 内部管理行列を計算・設定する
+     * pTransformは内部的に保持されない。
+     * WLP行列はこの時点でのLP行列で初期化されるため、事前にセットアップしておくこと。
+     *
+     * TODO WLP行列の階層計算を追加する
+     */
+    void setTransform( const Transform *pTransform) {
+        assert(env);
+
+        // transformが更新されている場合、行列を更新する
+        if(pTransform) {
+            pTransform->getMatrix(&modelview);
+        }
+        multiply(modelview, env->getMainCamera()->getLookProjectionMatrix(), &wlp);
     }
 
     /**
@@ -96,8 +115,8 @@ public:
     /**
      * モデルビュー行列を取得する
      */
-    Matrix4x4& getModelview() {
-        return modelview;
+    Matrix4x4* getModelviewPtr() {
+        return &modelview;
     }
 
     /**
@@ -110,21 +129,21 @@ public:
     /**
      * このインスタンスのWLP行列を取得する
      */
-    Matrix4x4& getWorldLookProjection() {
-        return wlp;
+    Matrix4x4* getWorldLookProjectionPtr() {
+        return &wlp;
     }
 
     /**
      * ノードごと全行列のポインタを取得する
      */
-    Matrix4x4* getNodeMatrices() {
+    const Matrix4x4* getNodeMatrices() const {
         return wlpMatrices.ptr;
     }
 
     /**
      * ノード番号を指定してポインタを取得する
      */
-    Matrix4x4& getNodeMatrix(const u32 node_nubmer) {
+    const Matrix4x4& getNodeMatrix(const u32 node_nubmer) const {
         return wlpMatrices[node_nubmer];
     }
 

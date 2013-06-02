@@ -167,20 +167,33 @@ void BenchmarkApplication::onAppMainRendering() {
         }
 
         {
-            Vector3f camPos(0, 5, 150);
+            Vector3f camPos(0, 5, 200);
             Matrix4x4 m;
             m.rotateY(rotate);
             m.multiply(camPos, &camPos);
             worldEnv->getMainCamera()->lookAt(camPos, Vector3f(0, -5, 0), Vector3f(0, 1, 0));
+            worldEnv->getMainCamera()->projection(50.0f, 500.0f, 45.0f, getWindowDevice()->getSurfaceAspect());
         }
-        worldEnv->getMainCamera()->projection(50.0f, 500.0f, 45.0f, getWindowDevice()->getSurfaceAspect());
+        {
+            jc::Transform trans;
+            trans.translate.x = 15;
+            figure0->setTransform(&trans);
+        }
+        {
+            jc::Transform trans;
+            trans.translate.x = -15;
+            trans.rotate.y = -45;
+            trans.scale.set(0.5f, 0.5f, 0.5f);
+            figure1->setTransform(&trans);
+        }
 
         {
-            multiply(figure0->getModelview(), worldEnv->getMainCamera()->getLookProjectionMatrix(), &figure0->getWorldLookProjection());
+//            multiply(*figure0->getModelviewPtr(), worldEnv->getMainCamera()->getLookProjectionMatrix(), figure0->getWorldLookProjectionPtr());
 //            multiply(figure0->getModelview(), worldEnv->getMainCamera()->getLookProjectionMatrix(), &figure0->getWorldLookProjection());
         }
 
         renderer->rendering(device, figure, figure0);
+        renderer->rendering(device, figure, figure1);
     }
 
     getWindowDevice()->postFrontBuffer();
