@@ -31,13 +31,8 @@ class EnvironmentInstanceState: public Object {
      */
     MLight shadowLight;
 public:
-    EnvironmentInstanceState() {
-        mainCamera.reset(new Camera());
-        shadowLight.reset(new Light());
-    }
-
-    virtual ~EnvironmentInstanceState() {
-    }
+    EnvironmentInstanceState();
+    virtual ~EnvironmentInstanceState();
 
     /**
      * 最終レンダリングに利用するディスプレイ用カメラを取得する
@@ -54,6 +49,16 @@ public:
         assert(shadowLight);
         return shadowLight;
     }
+
+    /**
+     * 内部で管理している行列情報を更新する
+     */
+    virtual void updateMatrices();
+
+    /**
+     * WLP行列を計算する
+     */
+    virtual Matrix4x4* calcWorldLoopProjection(const Matrix4x4 &modelview, Matrix4x4 *pResult) const;
 };
 
 /**

@@ -21,7 +21,7 @@
 // レンダリング情報
 #include    "jc/framework/assets/figure/Camera.hpp"
 #include    "jc/framework/assets/figure/Light.hpp"
-#include    "jc/framework/assets/figure/EnvironmentInstanceState.hpp"
+#include    "jc/framework/assets/figure/EnvironmentInstanceState.h"
 #include    "jc/framework/assets/figure/FigureInstanceState.hpp"
 #include    "jc/framework/assets/figure/FigureRenderer.hpp"
 #include    "jc/framework/assets/figure/BasicFigureRenderer.h"
