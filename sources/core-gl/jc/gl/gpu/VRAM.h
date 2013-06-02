@@ -54,6 +54,16 @@ enum VRAM_e {
     VRAM_ShaderProgram,
 
     /**
+     * フレームバッファオブジェクト
+     */
+    VRAM_FrameBuffer,
+
+    /**
+     * レンダリングバッファオブジェクト
+     */
+    VRAM_RenderBuffer,
+
+    /**
      * カウンタ用
      */
     VRAM_e_num,
@@ -97,6 +107,16 @@ enum VRAM_GC_e {
      * リンクされたシェーダーを解放する
      */
     VRAM_GC_ShaderProgram = 0x1 << VRAM_ShaderProgram,
+
+
+    /**
+     * リンクされたシェーダーを解放する
+     */
+    VRAM_GC_FrameBuffer = 0x1 << VRAM_FrameBuffer,
+    /**
+     * リンクされたシェーダーを解放する
+     */
+    VRAM_GC_RenderBuffer = 0x1 << VRAM_RenderBuffer,
 
     /**
      * デフォルトの挙動（全資源一括解放）を行う。
