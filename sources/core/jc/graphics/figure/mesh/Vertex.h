@@ -42,7 +42,7 @@ public:
      * 同一頂点である場合はtrueを返す
      */
     bool equals(const _SimpleVertex<WEIGHT_NUM> &v1) const {
-        if (!jc::equals(position, v1.position, 0.01f)) {
+        if (!jc::equals(position, v1.position, 0.001f)) {
             return false;
         }
 

@@ -10,6 +10,9 @@
 
 #include    "jc/framework/assets/ImageAsset.hpp"
 
+// 行列設定
+#include    "jc/math/Transform.h"
+
 // コンテナ
 #include    "jc/framework/assets/figure/FigureVertex.hpp"
 #include    "jc/framework/assets/figure/MeshFragment.hpp"
