@@ -69,6 +69,30 @@ enum GPUExtension_e {
     GPUExtension_Texture_HalfFloat,
 
     /**
+     * レンダリングバッファにRGB8/RGBA8を利用する
+     * 利用ができなかった場合、RGB565/RGB5_A1に丸められる
+     */
+    GPUExtension_Renderbuffer_RGB8_RGBA8,
+
+    /**
+     * レンダリングバッファの深度ステンシルでD24bit/S8bitのパックが可能
+     * 利用ができなかった場合、各々に確保される
+     */
+    GPUExtension_Renderbuffer_PackedDepth24Stencil8,
+
+    /**
+     * レンダリングバッファのD24bitが利用可能
+     * 利用ができなかった場合、16bitで確保される
+     */
+    GPUExtension_Renderbuffer_Depth24,
+
+    /**
+     * レンダリングバッファのD32bitが利用可能
+     * 利用ができなかった場合、16bitで確保される
+     */
+    GPUExtension_Renderbuffer_Depth32,
+
+    /**
      * num flags
      */
     GPUExtension_Num,

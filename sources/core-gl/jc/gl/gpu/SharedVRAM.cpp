@@ -43,7 +43,7 @@ void vramtable_indices_callback(const HandleCallback_e callback, void* pHandleTa
             assert_gl();
         }
             break;
-        case HandleCallback_Released: {
+        case HandleCallback_Unused: {
             // 廃棄を行う
             glDeleteBuffers(objects, pValues);
             assert_gl();
@@ -65,7 +65,7 @@ void vramtable_vbo_callback(const HandleCallback_e callback, void* pHandleTable_
             assert_gl();
         }
             break;
-        case HandleCallback_Released: {
+        case HandleCallback_Unused: {
             // 廃棄を行う
             glDeleteBuffers(objects, pValues);
             assert_gl();
@@ -89,7 +89,7 @@ void vramtable_vertshader_callback(const HandleCallback_e callback, void* pHandl
             assert_gl();
         }
             break;
-        case HandleCallback_Released: {
+        case HandleCallback_Unused: {
             // 廃棄を行う
             for (int i = 0; i < objects; ++i) {
                 glDeleteShader(pValues[i]);
@@ -116,7 +116,7 @@ void vramtable_fragshader_callback(const HandleCallback_e callback, void* pHandl
             assert_gl();
         }
             break;
-        case HandleCallback_Released: {
+        case HandleCallback_Unused: {
             // 廃棄を行う
             for (int i = 0; i < objects; ++i) {
                 glDeleteShader(pValues[i]);
@@ -142,11 +142,55 @@ void vramtable_program_callback(const HandleCallback_e callback, void* pHandleTa
             }
         }
             break;
-        case HandleCallback_Released: {
+        case HandleCallback_Unused: {
             // 廃棄を行う
             for (int i = 0; i < objects; ++i) {
                 glDeleteProgram(pValues[i]);
             }
+            assert_gl();
+            zeromemory(pValues, sizeof(GLuint) * objects);
+
+            jclogf("vram delete  %d objects", objects);
+        }
+            break;
+    }
+}
+
+/**
+ * フレームバッファ用コールバック関数
+ */
+void vramtable_framebuffer_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
+    switch (callback) {
+        case HandleCallback_Allocated: {
+            // 生成を行う
+            glGenFramebuffers(objects, pValues);
+        }
+            break;
+        case HandleCallback_Unused: {
+            // 廃棄を行う
+            glDeleteFramebuffers(objects, pValues);
+            assert_gl();
+            zeromemory(pValues, sizeof(GLuint) * objects);
+
+            jclogf("vram delete  %d objects", objects);
+        }
+            break;
+    }
+}
+
+/**
+ * レンダリングバッファ用コールバック関数
+ */
+void vramtable_renderbuffer_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
+    switch (callback) {
+        case HandleCallback_Allocated: {
+            // 生成を行う
+            glGenRenderbuffers(objects, pValues);
+        }
+            break;
+        case HandleCallback_Unused: {
+            // 廃棄を行う
+            glDeleteRenderbuffers(objects, pValues);
             assert_gl();
             zeromemory(pValues, sizeof(GLuint) * objects);
 
@@ -170,7 +214,11 @@ SharedVRAM::SharedVRAM() {
             // frag shader
             (handletable_callback) vramtable_fragshader_callback,
             // program
-            (handletable_callback) vramtable_program_callback, };
+            (handletable_callback) vramtable_program_callback,
+            // framebuffer
+            (handletable_callback) vramtable_framebuffer_callback,
+            // renderbufffer
+            (handletable_callback) vramtable_renderbuffer_callback, };
 
     for (int i = 0; i < VRAM_e_num; ++i) {
         vram_tables[i].reset(new vram_table());

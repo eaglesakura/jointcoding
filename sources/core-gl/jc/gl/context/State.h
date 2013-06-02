@@ -709,7 +709,7 @@ public:
             if (enable) {
                 glEnable(GL_CULL_FACE);
             } else {
-                glDisable (GL_CULL_FACE);
+                glDisable(GL_CULL_FACE);
             }
             return jctrue;
         }
@@ -917,6 +917,20 @@ public:
         {
             colorMask(back_context.r, back_context.g, back_context.b, back_context.a);
         }
+    }
+
+    /**
+     * 指定したバッファがバインドされていたらtrueを返す
+     */
+    inline jcboolean isBindedRenderbuffer(const GLuint renderbuffer) {
+        return frameBufferContext.renderBuffer == renderbuffer;
+    }
+
+    /**
+     * 指定されたバッファがバインドされていたらtrueを返す
+     */
+    inline jcboolean isBindedFramebuffer(const GLuint framebuffer) {
+        return frameBufferContext.frameBuffer = framebuffer;
     }
 
 public:

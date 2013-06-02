@@ -131,26 +131,59 @@ void GPUCapacity::initialize() {
         const charactor *pExtensions = (const charactor*) glGetString(GL_EXTENSIONS);
         split(pExtensions, " ", &extensions);
 
+        struct ExtensionFlag {
+            /**
+             * エクステンション名
+             */
+            const charactor *name;
+
+            /**
+             * 利用可能になる拡張フラグ
+             */
+            const GPUExtension_e extension;
+        };
+
 #define EXTENSION_NAME(def) #def
-        const charactor* EXTENSION_NAMES[] = {
+
+        const ExtensionFlag EXTENSIONS[] = {
+        //  ETC1(Android)
+                { EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture), GPUExtension_Texture_ETC1 },
+                //  PVRTC(PowerVR)
+                { EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), GPUExtension_Texture_PVRTC },
+                //  s3tc texture(Tegra)
+                { "GL_EXT_texture_compression_s3tc", GPUExtension_Texture_S3TC },
+                //  s3tc texture(Tegra)
+                { EXTENSION_NAME(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT), GPUExtension_Texture_S3TC },
+                //  s3tc texture(Tegra)
+                { EXTENSION_NAME(GL_COMPRESSED_RGB_S3TC_DXT1_EXT), GPUExtension_Texture_S3TC },
+                //   BGRA(Android)
+                { EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), GPUExtension_Texture_BGRA8888 },
+                //  SurfaceTexture(Android)
+                { EXTENSION_NAME(GL_OES_EGL_image_external), GPUExtension_OES_EGL_image_external },
+                //  深度テクスチャ
+                { EXTENSION_NAME(GL_OES_depth_texture), GPUExtension_Texture_Depth },
+                //  フレームバッファの無効化
+                { EXTENSION_NAME(GL_EXT_discard_framebuffer), GPUExtension_TileBasedDeferredRendering },
+                //  レンダリングバッファにRGB/RGBA8が可能
+                { EXTENSION_NAME(GL_OES_rgb8_rgba8), GPUExtension_Renderbuffer_RGB8_RGBA8 },
+                //  深度ステンシルパックが可能
+                { EXTENSION_NAME(GL_OES_packed_depth_stencil), GPUExtension_Renderbuffer_PackedDepth24Stencil8 },
+                //  深度ステンシルパックが可能
+                { EXTENSION_NAME(GL_OES_depth24), GPUExtension_Renderbuffer_Depth24 },
+                //  深度ステンシルパックが可能
+                { EXTENSION_NAME(GL_OES_depth32), GPUExtension_Renderbuffer_Depth32 },
         //
-        EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture),// ETC1(Android)
-        EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), // PVRTC(PowerVR)
-                "GL_EXT_texture_compression_s3tc", // s3tc texture(Tegra)
-                EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), // BGRA(Android)
-                EXTENSION_NAME(GL_OES_EGL_image_external), // SurfaceTexture(Android)
-                EXTENSION_NAME(GL_OES_depth_texture), // 深度テクスチャ
-                EXTENSION_NAME(GL_EXT_discard_framebuffer), // フレームバッファの無効化
                 };
 
         // 対応している拡張機能を調べる
-        for (int i = 0; i < (sizeof(EXTENSION_NAMES) / sizeof(charactor*)); ++i) {
-            if (strstr(pExtensions, EXTENSION_NAMES[i])) {
+        for (int i = 0; i < (sizeof(EXTENSIONS) / sizeof(ExtensionFlag)); ++i) {
+            // 拡張機能名がヒットした場合、フラグを有効にする
+            if (strstr(pExtensions, EXTENSIONS[i].name)) {
                 // check index
-                extension_flags.enable(i);
-                jclogf("supported extension(%s)", EXTENSION_NAMES[i]);
+                extension_flags.enable(EXTENSIONS[i].extension);
+                jclogf("supported extension(%s)", EXTENSIONS[i].name);
 
-                assert(GPUCapacity::isSupport((GPUExtension_e)i));
+                assert(GPUCapacity::isSupport((GPUExtension_e )EXTENSIONS[i].extension));
             }
         }
 #undef  EXTENSION_NAME
@@ -163,13 +196,13 @@ void GPUCapacity::initialize() {
 #ifdef GL_MAX_VERTEX_UNIFORM_VECTORS
     glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, (GLint*) &maxUniformVectorsVs);
 #else
-    maxUniformVectorsVs = 128;
+    maxUniformVectorsVs = 250;
 #endif
 
 #ifdef GL_MAX_FRAGMENT_UNIFORM_VECTORS
     glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, (GLint*) &maxUniformVectorsFs);
 #else
-    maxUniformVectorsFs = 128;
+    maxUniformVectorsFs = 250;
 #endif
 
     jclog("------------ GPU ------------");
@@ -186,7 +219,7 @@ void GPUCapacity::initialize() {
                 if ((*itr).length()) {
                     jclogf("GL_EXTENSIONS = %s", (*itr).c_str());
                     ++itr;
-                }else {
+                } else {
                     itr = extensions.erase(itr);
                     end = extensions.end();
                 }
