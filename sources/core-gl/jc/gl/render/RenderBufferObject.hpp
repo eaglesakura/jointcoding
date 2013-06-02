@@ -81,15 +81,15 @@ public:
     /**
      * 幅を取得する
      */
-    virtual u32 getWidth() const {
-        return (u32) size.x;
+    virtual s32 getWidth() const {
+        return size.x;
     }
 
     /**
      * 高さを取得する
      */
-    virtual u32 getHeight() const {
-        return (u32) size.y;
+    virtual s32 getHeight() const {
+        return size.y;
     }
 };
 

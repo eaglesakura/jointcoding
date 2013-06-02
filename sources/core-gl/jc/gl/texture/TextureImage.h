@@ -206,31 +206,45 @@ public:
     /**
      * 画像としての幅を取得する。
      */
-    virtual u32 getWidth() const {
-        return size.img_width;
+    virtual s32 getWidth() const {
+        return (s32)size.img_width;
     }
 
     /**
      * 画像としての高さを取得する
      */
-    virtual u32 getHeight() const {
-        return size.img_height;
+    virtual s32 getHeight() const {
+        return (s32)size.img_height;
+    }
+
+    /**
+     * 画像としてのアスペクト比を取得する
+     */
+    virtual float getAspect() const {
+        return (float) getWidth() / (float) getHeight();
     }
 
     /**
      * テクスチャとしての幅を取得する。
      * POT変換を行う場合がある。
      */
-    virtual u32 getTextureWidth() const {
-        return size.tex_width;
+    virtual s32 getTextureWidth() const {
+        return (s32)size.tex_width;
     }
 
     /**
      * テクスチャとしての高さを取得する。
      * POT変換を行う場合がある。
      */
-    virtual u32 getTextureHeight() const {
-        return size.tex_height;
+    virtual s32 getTextureHeight() const {
+        return (s32)size.tex_height;
+    }
+
+    /**
+     * テクスチャとしてのアスペクト比を取得する
+     */
+    virtual float getTextureAspect() const {
+        return (float) getTextureWidth() / (float) getTextureHeight();
     }
 
     /**

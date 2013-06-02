@@ -271,7 +271,7 @@ public:
     /**
      * レンダリングターゲットの幅を取得する
      */
-    virtual u32 getWidth() const {
+    virtual s32 getWidth() const {
         if (color) {
             return color->getWidth();
         } else if (depth) {
@@ -286,7 +286,7 @@ public:
     /**
      * レンダリングターゲットの幅を取得する
      */
-    virtual u32 getHeight() const {
+    virtual s32 getHeight() const {
         if (color) {
             return color->getHeight();
         } else if (depth) {
@@ -296,6 +296,13 @@ public:
         }
         assert(false);
         return 0;
+    }
+
+    /**
+     * レンダリングターゲットのアスペクト比を取得する
+     */
+    virtual float getAspect() const {
+        return (float) getWidth() / (float) getHeight();
     }
 
     /**
@@ -320,6 +327,11 @@ public:
     /**
      * レンダリングターゲット用の深度テクスチャを生成する
      * テクスチャとしてバインドするターゲットを指定する
+     *
+     * 注）
+     * 現行機ではDepthTextureがサポートされていない端末が存在する(Tegra系）
+     * そのため、GL_LUMINANCE/GL_HALF_FLOAT_OESによる輝度テクスチャで代用を行なっている。
+     * 現状、ColorとDepthの両方に対して同時にレンダリングするのは端末によっては出来ないのでその点に注意してコーディングする必要がある。
      */
     virtual void allocDepthRenderTexture(MDevice device) {
         assert(depth);
@@ -341,6 +353,9 @@ public:
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getName(), 0);
             assert_gl();
         } else if (GPUCapacity::isSupport(GPUExtension_Texture_HalfFloat)) {
+            // colorと両立は出来ない
+            assert(color);
+
             jclog("not support depthtexture | support halffloat");
             // 深度テクスチャがサポートされていないため、カラー情報として擬似的に関連付ける
             glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_HALF_FLOAT_OES, NULL);
