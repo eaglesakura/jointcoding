@@ -91,14 +91,14 @@ void BenchmarkApplication::onAppInitialize() {
         const s32 width = 512;
         const s32 height = 512;
         offscreen.reset(new FrameBufferObject(device));
-        offscreen->allocColorRenderbuffer(device, PixelFormat_RGB888);
-        offscreen->allocDepthRenderbuffer(device, 24, width, height, jcfalse);
+        offscreen->allocColorRenderbuffer(device, PixelFormat_RGBA8888);
+        offscreen->allocDepthRenderbuffer(device, 24);
 
         // オフスクリーンのリサイズを行う
         offscreen->resize(device->getState(), width, height);
 
         // オフスクリーンテクスチャの確保を行う
-        offscreen->allocColorRenderTexture(device, PixelFormat_RGB888);
+//        offscreen->allocColorRenderTexture(device, PixelFormat_RGB888);
         offscreen->allocDepthRenderTexture(device);
 
         offscreen->checkFramebufferStatus();
@@ -209,11 +209,6 @@ void BenchmarkApplication::onAppMainRendering() {
             figure1->setTransform(&trans);
         }
 
-        {
-//            multiply(*figure0->getModelviewPtr(), worldEnv->getMainCamera()->getLookProjectionMatrix(), figure0->getWorldLookProjectionPtr());
-//            multiply(figure0->getModelview(), worldEnv->getMainCamera()->getLookProjectionMatrix(), &figure0->getWorldLookProjection());
-        }
-
         offscreen->bind(state);
         {
             state->clear();
@@ -226,7 +221,6 @@ void BenchmarkApplication::onAppMainRendering() {
         {
             MSpriteManager spriteManager = getSpriteManager();
             spriteManager->renderingImage(offscreen->getDepthTexture(), 0, 0);
-            offscreen->getDepthTexture()->unbind();
         }
     }
 
