@@ -354,7 +354,7 @@ public:
             assert_gl();
         } else if (GPUCapacity::isSupport(GPUExtension_Texture_HalfFloat)) {
             // colorと両立は出来ない
-            assert(color);
+            assert(!color);
 
             jclog("not support depthtexture | support halffloat");
             // 深度テクスチャがサポートされていないため、カラー情報として擬似的に関連付ける
