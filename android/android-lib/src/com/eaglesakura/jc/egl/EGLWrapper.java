@@ -104,18 +104,20 @@ public class EGLWrapper {
      * @return
      */
     public EGLContextWrapper createSharedContext(EGLContextWrapper primary) {
-        EGLContext eglContext = egl.eglCreateContext(eglDisplay, eglConfig, primary.eglContext,
-        // attributes
-                new int[] {
-                        0x3098 /* EGL_CONTEXT_CLIENT_VERSION */, 2,
+        synchronized (lock) {
+            EGLContext eglContext = egl.eglCreateContext(eglDisplay, eglConfig, primary.eglContext,
+            // attributes
+                    new int[] {
+                            0x3098 /* EGL_CONTEXT_CLIENT_VERSION */, 2,
 
-                        EGL_NONE
-                });
-        if (eglContext == EGL10.EGL_NO_CONTEXT) {
-            throw new RuntimeException("eglCreateContext");
+                            EGL_NONE
+                    });
+            if (eglContext == EGL10.EGL_NO_CONTEXT) {
+                throw new RuntimeException("eglCreateContext");
+            }
+
+            return new EGLContextWrapper(this, eglContext);
         }
-
-        return new EGLContextWrapper(this, eglContext);
     }
 
     /**
