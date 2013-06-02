@@ -207,7 +207,14 @@ public class WindowDeviceManager extends DeviceManager implements TextureView.Su
      */
     @JCMethod
     public DeviceManager createSlaveDevice() {
-        return new DeviceManager(this);
+        DeviceManager result;
+        beginOperation();
+        {
+            result = new DeviceManager(this);
+        }
+        endOperation();
+
+        return result;
     }
 
     /**
