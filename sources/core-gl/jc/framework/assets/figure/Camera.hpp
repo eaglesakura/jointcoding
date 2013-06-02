@@ -12,6 +12,25 @@
 namespace jc {
 namespace fw {
 
+/**
+ * 行列の処理キャッシュを管理する構造体
+ */
+struct MatrixCache {
+    /**
+     * 行列本体
+     */
+    Matrix4x4 m;
+
+    /**
+     * この行列が古い場合はtrue
+     */
+    jcboolean old;
+
+    MatrixCache() {
+        old = jctrue;
+    }
+};
+
 class Camera: public Object {
     /**
      * 現在位置
@@ -47,6 +66,21 @@ class Camera: public Object {
      * カメラアスペクト
      */
     float aspect;
+
+    /**
+     * 視線行列
+     */
+    mutable MatrixCache lookMatrix;
+
+    /**
+     * 射影行列
+     */
+    mutable MatrixCache prjMatrix;
+
+    /**
+     * ブレンド済みカメラ行列
+     */
+    mutable Matrix4x4 lookprojection;
 public:
     Camera() {
         position.set(0, 1, 1);
@@ -62,37 +96,92 @@ public:
     }
 
     /**
-     * カメラ用行列を取得する。
+     * カメラ行列を取得する
      */
-    Matrix4x4* getMatrix(Matrix4x4 *result) const {
-        result->identity();
-        result->lookAt(position, look, up);
-
-        {
-            Matrix4x4 prj;
-            prj.projection(near, far, fovY, aspect);
-            multiply(*result, prj, result);
+    const Matrix4x4& getLookProjectionMatrix() const {
+        // 行列の更新フラグ
+        // trueになった場合はlookprjも更新する
+        jcboolean materix_update = jcfalse;
+        // 各行列を更新する
+        if (lookMatrix.old) {
+            lookMatrix.m.lookAt(position, look, up);
+            lookMatrix.old = jcfalse;
+            materix_update = jctrue;
+        }
+        if (prjMatrix.old) {
+            prjMatrix.m.projection(near, far, fovY, aspect);
+            prjMatrix.old = jcfalse;
+            materix_update = jctrue;
         }
 
-        return result;
+        if (materix_update) {
+            multiply(lookMatrix.m, prjMatrix.m, &lookprojection);
+        }
+        return lookprojection;
     }
 
+    /**
+     * 上方ベクトルを設定する
+     */
+    virtual void setUp(const float x, const float y, const float z) {
+        up.set(x, y, z);
+        up.normalize();
+        lookMatrix.old = jctrue;
+    }
+
+    /**
+     * 上方ベクトルを設定する
+     */
+    virtual void setUp(const Vector3f &v) {
+        setUp(v.x, v.y, v.z);
+    }
+
+    /**
+     * カメラ位置を設定する
+     */
     virtual void setPosition(const float x, const float y, const float z) {
         position.set(x, y, z);
+        lookMatrix.old = jctrue;
     }
 
+    /**
+     * カメラ位置を設定する
+     */
+    virtual void setPosition(const Vector3f &v) {
+        setPosition(v.x, v.y, v.z);
+    }
+
+    /**
+     * カメラ注視点を設定する
+     */
     virtual void setLook(const float x, const float y, const float z) {
         look.set(x, y, z);
+        lookMatrix.old = jctrue;
     }
 
+    /**
+     * カメラ注視点を設定する
+     */
+    virtual void setLook(const Vector3f &v) {
+        setLook(v.x, v.y, v.z);
+    }
+
+    /**
+     * 画角を指定する
+     */
     virtual void setFovY(const float set) {
         this->fovY = set;
+        lookMatrix.old = jctrue;
     }
 
+    /**
+     * 射影情報を指定する
+     */
     virtual void setProjection(const float near, const float far, const float aspect) {
         this->near = near;
         this->far = far;
         this->aspect = aspect;
+        lookMatrix.old = jctrue;
     }
 };
 

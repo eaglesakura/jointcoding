@@ -67,7 +67,6 @@ public:
         //! 全情報合致
         return true;
     }
-
 };
 
 /**
