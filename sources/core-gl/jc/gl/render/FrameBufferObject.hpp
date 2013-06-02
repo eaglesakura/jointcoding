@@ -114,6 +114,9 @@ public:
             case GL_STENCIL_ATTACHMENT:
                 this->stencil = renderbuffer;
                 break;
+            default:
+                assert(false);
+                break;
         }
     }
 
@@ -217,7 +220,7 @@ public:
      *
      * @param bits 確保したい深度ビット数 32/24/16で指定する。それ以外は必ず16bitで指定される。拡張機能が利用できない場合、16bitで指定される。
      */
-    virtual void allocDepthRenderbuffer(MDevice device, const s32 bits, const s32 width, const s32 height, const jcboolean withTexture) {
+    virtual void allocDepthRenderbuffer(MDevice device, const s32 bits) {
 
         GLenum internalformat = 0;
         if (bits >= 32 && GPUCapacity::isSupport(GPUExtension_Renderbuffer_Depth32)) {
@@ -233,35 +236,6 @@ public:
 
         // 深度バッファを生成する
         MRenderBufferObject render(new RenderBufferObject(device, internalformat));
-        render->resize(device->getState(), width, height);
-
-        if (withTexture) {
-            render->bind(device->getState());
-
-            depthTexture.reset(new TextureImage(GL_TEXTURE_2D, width, height, device));
-            depthTexture->bind(device->getState());
-            if (GPUCapacity::isSupport(GPUExtension_Texture_Depth)) {
-                jclog("support depthtexture");
-                // 深度テクスチャの有無によってランタイムで切り分ける
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, NULL);
-                assert_gl();
-            } else if (GPUCapacity::isSupport(GPUExtension_Texture_HalfFloat)) {
-                jclog("not support depthtexture | support halffloat");
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_HALF_FLOAT_OES, NULL);
-                assert_gl();
-            } else {
-                jclog("not support depthtexture | not support halffloat");
-                // 何らかの復帰手段が必要
-                assert(false);
-            }
-
-            depthTexture->onAllocated();
-            {
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getName(), 0);
-                assert_gl();
-            }
-            depthTexture->unbind();
-        }
         attach(device->getState(), GL_DEPTH_ATTACHMENT, render);
     }
 
@@ -279,7 +253,7 @@ public:
      * パックが可能な場合、パッキングしたバッファを取得する。
      * パックが出来ない場合は個々にバッファを確保する。その場合、両者の互換性を保つためにD24bitを要求する。
      */
-    virtual void allocDepthAndStencil(MDevice device, const s32 width, const s32 height, const jcboolean withTexture) {
+    virtual void allocDepthAndStencil(MDevice device) {
 
         if (GPUCapacity::isSupport(GPUExtension_Renderbuffer_PackedDepth24Stencil8)) {
             // パックが可能なので、同一バッファを割り当てる
@@ -289,7 +263,7 @@ public:
             attach(device->getState(), GL_STENCIL_ATTACHMENT, render);
         } else {
             // パックが出来ないので、各自に確保する
-            allocDepthRenderbuffer(device, 24, width, height, withTexture);
+            allocDepthRenderbuffer(device, 24);
             allocStencilRenderbuffer(device);
         }
     }
@@ -337,10 +311,8 @@ public:
         colorTexture->bind(device->getState());
         colorTexture->allocPixelMemory(texturePixelFormat, 0);
         {
-            color->bind(device->getState());
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture->getName(), 0);
             assert_gl();
-            color->unbind(device->getState());
         }
         colorTexture->unbind();
     }
@@ -354,32 +326,36 @@ public:
 
         bind(device->getState());
 
-        depthTexture.reset(new TextureImage(GL_TEXTURE_2D, (s32) depth->getWidth(), (s32) depth->getHeight(), device));
+        const s32 width = depth->getWidth();
+        const s32 height = depth->getHeight();
+
+        depthTexture.reset(new TextureImage(GL_TEXTURE_2D, width, height, device));
         depthTexture->bind(device->getState());
         if (GPUCapacity::isSupport(GPUExtension_Texture_Depth)) {
             jclog("support depthtexture");
-            // 深度テクスチャの有無によってランタイムで切り分ける
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, depth->getWidth(), depth->getHeight(), 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, NULL);
+            // 深度テクスチャがサポートされているため、深度として直接関連付けられる
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, NULL);
+            assert_gl();
+
+            // 深度設定
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getName(), 0);
             assert_gl();
         } else if (GPUCapacity::isSupport(GPUExtension_Texture_HalfFloat)) {
             jclog("not support depthtexture | support halffloat");
-            // FIXME for Tegra3
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, depth->getWidth(), depth->getHeight(), 0, GL_LUMINANCE, GL_HALF_FLOAT_OES, NULL);
+            // 深度テクスチャがサポートされていないため、カラー情報として擬似的に関連付ける
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_HALF_FLOAT_OES, NULL);
+            assert_gl();
+
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, depthTexture->getName(), 0);
             assert_gl();
         } else {
-            jclog("not support depthtexture | not support halffloat");
+            jclog("abort depth !! not support depthtexture & not support halffloat");
             depthTexture->unbind();
             depthTexture.reset();
             return;
         }
 
         depthTexture->onAllocated();
-        {
-            depth->bind(device->getState());
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getName(), 0);
-            assert_gl();
-            depth->unbind(device->getState());
-        }
         depthTexture->unbind();
     }
 
