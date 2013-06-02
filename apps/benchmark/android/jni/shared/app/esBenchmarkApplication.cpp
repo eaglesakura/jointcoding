@@ -84,6 +84,20 @@ void BenchmarkApplication::onAppInitialize() {
         figure1->setEnvironmentState(worldEnv);
     }
 
+    // オフスクリーンターゲットを生成
+    {
+        MDevice device = getWindowDevice();
+        offscreen.reset(new FrameBufferObject(device));
+        offscreen->allocColorRenderbuffer(device, PixelFormat_RGB888);
+        offscreen->allocDepthRenderbuffer(device, 24);
+
+        // オフスクリーンのリサイズを行う
+        offscreen->resize(device->getState(), 512, 512);
+
+        offscreen->checkFramebufferStatus();
+        offscreen->unbind(device->getState());
+    }
+
 //    // テクスチャロードを開始する
     startNewtask(BenchmarkTask_LoadTexture, 0);
 }
