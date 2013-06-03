@@ -37,13 +37,8 @@ static void initialize_JointApplicationRenderer() {
         methods_JointApplicationRenderer[3] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "onNativeNewtask", "(II)V", false);
         methods_JointApplicationRenderer[4] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "queryParams", "(II[I)Z", false);
         methods_JointApplicationRenderer[5] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "onNativeInitialize", "()V", false);
-<<<<<<< HEAD
         methods_JointApplicationRenderer[6] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
         methods_JointApplicationRenderer[7] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "postParams", "(II[I)Z", false);
-=======
-        methods_JointApplicationRenderer[6] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "postParams", "(II[I)Z", false);
-        methods_JointApplicationRenderer[7] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
->>>>>>> スレッドの開始を共通化
         methods_JointApplicationRenderer[8] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getWindowDevice", "()Lcom/eaglesakura/jc/egl/DeviceManager;", false);
         methods_JointApplicationRenderer[9] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "startNewtask", "(II)V", false);
 
@@ -288,7 +283,6 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 #endif
 
 
-<<<<<<< HEAD
 jobject JointApplicationRenderer::getNativePointer_unsafe(jint key) {
     CALL_JNIENV();
     return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[6], key);
@@ -303,11 +297,6 @@ jobject JointApplicationRenderer::getNativePointer_unsafe_(jobject _this, jint k
 jboolean JointApplicationRenderer::postParams(jint int_0, jint int_1, jintArray int_array_2) {
     CALL_JNIENV();
     return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[7], int_0, int_1, int_array_2);
-=======
-jboolean JointApplicationRenderer::postParams(jint int_0, jint int_1, jintArray int_array_2) {
-    CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[6], int_0, int_1, int_array_2);
->>>>>>> スレッドの開始を共通化
 }
 #if 0
 #include "jointcoding-android.h"
@@ -334,11 +323,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 jboolean JointApplicationRenderer::postParams_(jobject _this, jint int_0, jint int_1, jintArray int_array_2) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-<<<<<<< HEAD
     return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[7], int_0, int_1, int_array_2);
-=======
-    return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[6], int_0, int_1, int_array_2);
->>>>>>> スレッドの開始を共通化
 }
 #if 0
 #include "jointcoding-android.h"
@@ -362,20 +347,6 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 #endif
 
 
-<<<<<<< HEAD
-=======
-jobject JointApplicationRenderer::getNativePointer_unsafe(jint key) {
-    CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[7], key);
-}
-
-jobject JointApplicationRenderer::getNativePointer_unsafe_(jobject _this, jint key) {
-    CALL_JNIENV();
-    initialize_JointApplicationRenderer();
-    return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[7], key);
-}
-
->>>>>>> スレッドの開始を共通化
 jobject JointApplicationRenderer::getWindowDevice_unsafe() {
     CALL_JNIENV();
     return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[8]);
