@@ -463,7 +463,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
                 result->setMagFilter(GL_LINEAR);
 
                 // テクスチャロードはfinish待ちを行う
-                glFlush();
+                glFinish();
                 if (option) {
                     option->result.teximage_time_ms += Timer::lapseTimeMs(lock_time);
                 }
