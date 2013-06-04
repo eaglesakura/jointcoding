@@ -204,6 +204,24 @@ typedef jc_sp<PlatformContext> MPlatformContext;
  * マルチプラットフォーム共通アプリのベースクラス
  */
 class JointApplicationBase: public Object, public WindowEventHandler {
+protected:
+    enum ApplicationStateFlag_e {
+        /**
+         * 初期化済みフラグ
+         */
+        ApplicationStateFlag_Initialized,
+
+        /**
+         * 廃棄済みフラグ
+         */
+        ApplicationStateFlag_Destroyed,
+
+        /**
+         * 数の管理フラグ
+         */
+        ApplicationStateFlag_Num,
+    };
+private:
     /**
      * アプリのステート
      */
@@ -214,17 +232,7 @@ class JointApplicationBase: public Object, public WindowEventHandler {
      */
     s32 pendingState;
 
-    struct {
-        /**
-         * 初期化済みであればtrue
-         */
-        jcboolean initialized;
-
-        /**
-         * 廃棄済みであればtrue
-         */
-        jcboolean destroyed;
-    } flags;
+    BitFlags<ApplicationStateFlag_Num> flags;
 
 protected:
     /**
@@ -301,7 +309,7 @@ public:
      * 初期化中の場合はtrue
      */
     virtual jcboolean isStateInitializing() const {
-        return (!flags.initialized) || appState == JointApplicationProtocol::State_Initializing;
+        return (flags.isDisable(ApplicationStateFlag_Initialized)) || appState == JointApplicationProtocol::State_Initializing;
     }
 
     /**

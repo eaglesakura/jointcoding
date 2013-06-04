@@ -7,12 +7,10 @@
 #include    "jc/framework/app/JointApplicationBase.h"
 #include    "protocol/jcSurfacePixelFormatProtocol.h"
 
-
 namespace jc {
 namespace gl {
 
 JointApplicationBase::JointApplicationBase() {
-    flags.initialized = flags.destroyed = jcfalse;
     appState = JointApplicationProtocol::State_Initializing;
     // 保留ステートを無効化する
     pendingState = -1;
@@ -176,7 +174,7 @@ void JointApplicationBase::changeAppState() {
 
     // レジューム
     if (appState == JointApplicationProtocol::State_Running) {
-        if (!flags.initialized) {
+        if (flags.isDisable(ApplicationStateFlag_Initialized)) {
             // 未初期化だから初期化する
             dispatchInitialize();
         } else {
@@ -184,7 +182,7 @@ void JointApplicationBase::changeAppState() {
             dispatchResume();
         }
     } else if (appState == JointApplicationProtocol::State_Paused) {
-        if (flags.initialized) {
+        if (flags.isEnable(ApplicationStateFlag_Initialized)) {
             // 休止を行う
             dispatchPause();
         }
@@ -219,8 +217,8 @@ void JointApplicationBase::dispatchSurfaceResized() {
  */
 void JointApplicationBase::dispatchDestroy() {
 
-    flags.destroyed = jctrue;
-    if (!flags.initialized) {
+    flags.enable(ApplicationStateFlag_Destroyed);
+    if (flags.isDisable(ApplicationStateFlag_Initialized)) {
         // 初期化前であれば何もしない
         return;
     }
@@ -257,7 +255,7 @@ void JointApplicationBase::dispatchInitialize() {
 
     onAppInitialize();
 
-    flags.initialized = jctrue;
+    flags.enable(ApplicationStateFlag_Initialized);
 }
 
 /**
