@@ -144,6 +144,11 @@ struct _Vector2 {
     T& operator[](const s32 index) {
         return ((T*) this)[index];
     }
+
+    void set(const T _x, const T _y) {
+        x = _x;
+        y = _y;
+    }
 };
 
 /**

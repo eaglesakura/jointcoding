@@ -70,6 +70,23 @@ struct RectT {
     }
 
     /**
+     * lt - rbがRectに含まれているならばtrueを返す
+     * 同一座標も含まれる。
+     */
+    jcboolean isIntersectLTRB(const T l, const T t, const T r, const T b) const {
+        return l <= right && r >= left && t <= bottom && b >= top;
+    }
+
+    /**
+     * xy - whがRectに含まれているならばtrueを返す
+     * 同一座標も含まれる。
+     * 反転座標（w < 0 | h < 0）の衝突判定については保証しない。
+     */
+    jcboolean isIntersectXYWH(const T x, const T y, const T w, const T h) const {
+        return isIntersectLTRB(x, y, x + w, y + h);
+    }
+
+    /**
      * 面積を持たない場合trueを返す
      */
     jcboolean empty() const {
