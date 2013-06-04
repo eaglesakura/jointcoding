@@ -202,6 +202,14 @@ public:
         return (s32) virtualDisplaySize.y / 2;
     }
 
+    s32 getRealDisplayWidth() const {
+        return (s32) realDisplaySize.x;
+    }
+
+    s32 getRealDisplayHeight() const {
+        return (s32) realDisplaySize.y;
+    }
+
     /**
      * 仮想ディスプレイの横サイズを取得する。
      * @return 仮想ディスプレイの幅

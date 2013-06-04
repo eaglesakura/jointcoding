@@ -13,6 +13,7 @@
 #include    "jc/widget/window/WindowManager.h"
 #include    "jc/gl/GL2D.h"
 #include    "protocol/jcJointApplicationProtocol.h"
+#include    "jc/gl/context/RenderingContext.hpp"
 
 namespace jc {
 namespace gl {
@@ -234,6 +235,16 @@ private:
 
     BitFlags<ApplicationStateFlag_Num> flags;
 
+    /**
+     * 最後にメインループを追加した時のサーフェイスサイズ
+     */
+    Vector2i checkedSurfaceSize;
+
+    /**
+     * メッセージで送られた実際のサーフェイスサイズ
+     */
+    Vector2i surfaceSize;
+
 protected:
     /**
      * バインドされているプラットフォーム情報
@@ -246,19 +257,9 @@ protected:
     Mutex query_mutex;
 
     /**
-     * ウィンドウクラス
+     * レンダリング用のコンテキスト
      */
-    MWindowManager windowManager;
-
-    /**
-     * 最後にメインループを追加した時のサーフェイスサイズ
-     */
-    Vector2i checkedSurfaceSize;
-
-    /**
-     * メッセージで送られた実際のサーフェイスサイズ
-     */
-    Vector2i surfaceSize;
+    MRenderingContext renderingContext;
 public:
     JointApplicationBase();
 
@@ -335,6 +336,7 @@ public:
 
     /**
      * ウィンドウ描画用デバイスを取得する
+     * マスターデバイスとなるため、Viewと関連づいた1つのみが取得できる。
      */
     virtual MDevice getWindowDevice() const {
         assert(platformContext);
@@ -354,33 +356,19 @@ public:
     }
 
     /**
-     * ウィンドウを取得する
-     */
-    virtual MWindowManager getWindowManager() const {
-        return windowManager;
-    }
-
-    /**
-     * コンテキストを取得する
-     */
-    virtual MWindowContext getWindowContext() const {
-        return windowManager->getWindowContext();
-    }
-
-    /**
      * ウィンドウサイズを取得する
+     * これはレンダリング対象のViewサイズと透過である。
      */
-    virtual Vector2i getWindowSize() const {
-        assert(platformContext);
-        return getWindowDevice()->getSurfaceArea().wh();
+    virtual Vector2i getPlatformViewSize() const {
+        return checkedSurfaceSize;
     }
 
     /**
-     * スプライト管理クラスを取得する
+     * レンダリング用コンテキストを取得する
      */
-    virtual MSpriteManager getSpriteManager() const {
-        assert(windowManager);
-        return windowManager->getWindowContext()->getSpriteManager();
+    virtual MRenderingContext getRenderingContext() const {
+        assert(renderingContext);
+        return renderingContext;
     }
 
 protected:

@@ -59,6 +59,8 @@ class BenchmarkApplication: public JointApplicationBase {
      * オフスクリーンターゲット
      */
     MFrameBufferObject offscreen;
+
+    MSpriteManager spriteManager;
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();

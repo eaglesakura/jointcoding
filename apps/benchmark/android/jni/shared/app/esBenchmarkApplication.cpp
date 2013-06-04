@@ -44,6 +44,9 @@ void BenchmarkApplication::onAppInitialize() {
     getWindowDevice()->getState()->blendFunc(GLBlendType_Alpha);
 
     {
+        spriteManager = SpriteManager::createInstance(getRenderingContext()->getDevice());
+    }
+    {
 
         figure.reset(new Figure());
 
@@ -134,6 +137,8 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
  */
 void BenchmarkApplication::onAppSurfaceResized(const s32 width, const s32 height) {
     jclogf("onAppSurfaceResized 0x%x", this);
+
+    spriteManager->setSurfaceAspect(width, height);
 }
 
 /**
@@ -154,12 +159,11 @@ void BenchmarkApplication::onAppMainRendering() {
 //        state->clearColorf(0, 0, (float) (rand() % 0xFF) / 255.0f, 0);
         state->clearColorf(0, 1, 1, 1);
         state->clearSurface();
-        state->viewport(0, 0, getWindowSize().x, getWindowSize().y);
+        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
     }
 
     {
         state->depthTestEnable(jcfalse);
-        MSpriteManager spriteManager = getSpriteManager();
         spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
 
         if (texture) {
@@ -222,8 +226,7 @@ void BenchmarkApplication::onAppMainRendering() {
     offscreen->unbind(state);
 
     {
-        state->viewport(0, 0, getWindowSize().x, getWindowSize().y);
-        MSpriteManager spriteManager = getSpriteManager();
+        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
         MTextureImage texture = offscreen->getColorTexture();
 
         spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, texture->getWidth() * 2, texture->getHeight() * 2);

@@ -202,11 +202,8 @@ void JointApplicationBase::dispatchSurfaceResized() {
     checkedSurfaceSize = surfaceSize;
     jclogf("Resized Surface(%dx%d)", surfaceSize.x, surfaceSize.y);
 
-    // ビューポート更新
-    getWindowDevice()->getState()->viewport(0, 0, surfaceSize.x, surfaceSize.y);
-
-    // スプライトマネージャーアスペクト比更新
-    getSpriteManager()->setSurfaceAspect(surfaceSize.x, surfaceSize.y);
+    // レンダリングコンテキストにリサイズを伝える
+    renderingContext->onPlatformViewResized(surfaceSize.x, surfaceSize.y);
 
     // アプリに処理を任せる
     onAppSurfaceResized(surfaceSize.x, surfaceSize.y);
@@ -230,8 +227,7 @@ void JointApplicationBase::dispatchDestroy() {
 
     // 各種解放処理を行う
     {
-        windowManager.reset();
-
+        renderingContext.reset();
         {
             MDevice windowDevice = getWindowDevice();
             // VRAMを一括解放する
@@ -244,15 +240,13 @@ void JointApplicationBase::dispatchDestroy() {
  * 初期化処理を行う
  */
 void JointApplicationBase::dispatchInitialize() {
-// ウィンドウ生成
+    // レンダリングコンテキストを生成する
     {
-        windowManager.reset(new WindowManager());
-        // 30fps〜60fpsで扱う
-        windowManager->setFramerateRange(30, 60);
-        windowManager->setWindowEventHandler(this);
-        windowManager->getWindowContext()->setSpriteManager(SpriteManager::createInstance(getWindowDevice()));
+        renderingContext.reset(new RenderingContext());
+        renderingContext->initialize(getWindowDevice());
     }
 
+    // アプリの初期化を行わせる
     onAppInitialize();
 
     flags.enable(ApplicationStateFlag_Initialized);

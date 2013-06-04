@@ -141,6 +141,13 @@ public:
     virtual MVirtualDisplay getCurrentVirtualDisplay() const {
         return currentDisplay;
     }
+
+    /**
+     * サーフェイスサイズの階層数を取得する
+     */
+    virtual s32 getSurfaceDepth() const {
+        return surfaceStack.size();
+    }
 };
 
 /**

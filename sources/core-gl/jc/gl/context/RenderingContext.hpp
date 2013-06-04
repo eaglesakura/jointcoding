@@ -32,6 +32,13 @@ public:
      */
     virtual void onRenderingSurfaceChanged(RenderingContext *pContext, const MRenderingSurface old, const MRenderingSurface now) {
     }
+
+    /**
+     * レンダリングサーフェイスのサイズが変更された
+     * 例えば端末の縦横を回転させた場合がそれに当たる。
+     */
+    virtual void onPlatformViewResized(RenderingContext *pContext, const MRenderingSurface now, const s32 newWidth, const s32 newHeight) {
+    }
 };
 
 /**
@@ -65,12 +72,6 @@ protected:
      *
      */
     virtual void onRenderingSurfaceChanged(const MRenderingSurface old, const MRenderingSurface now) {
-        {
-            // 仮想ディスプレイのレンダリング領域を変更する
-            virtualDisplay->setRealDisplaySize(surface->getWidth(), surface->getHeight());
-            virtualDisplay->updateViewport(VirtualDisplay::FitType_Auto);
-        }
-
         // リスナを呼び出す
         {
             ContextListenerList::iterator itr = listeners.begin(), end = listeners.end();
@@ -89,7 +90,7 @@ protected:
         }
     }
 public:
-    RenderingContext(MDevice device) {
+    RenderingContext() {
     }
 
     virtual ~RenderingContext() {
@@ -191,6 +192,57 @@ public:
      */
     virtual MRenderingStack getRenderingStack() const {
         return renderStack;
+    }
+
+    /**
+     * 現在の仮想ディスプレイ環境に基づいてViewportを指定する。
+     * 仮想ディスプレイ内の領域に対してviewportを行う。
+     *
+     * FIXME 未実装
+     */
+    virtual void viewport2D(const s32 x, const s32 y, const s32 width, const s32 height) {
+
+        jcalertf("Call viewport2D(%d, %d, %d, %d)", x, y, width, height);
+
+        // 現在のviewportを変更する
+        MVirtualDisplay display = getCurrentVirtualDisplay();
+        RectF viewport = display->getDisplayViewport();
+
+        // Viewport指定を行う
+        getState()->viewport2D(display->getRealDisplayWidth(), display->getRealDisplayHeight(), viewport.left, viewport.top, viewport.width(), viewport.height());
+    }
+
+    /**
+     * Platform用のView（SurfaceView/TextureView/SurfaceHolder/UIView）のサイズが変更された
+     *
+     * このメッセージはフレームの頭に到達するため、必ずEGLSurfaceProtocolが設定されていると仮定できる。
+     */
+    virtual void onPlatformViewResized(const s32 newWidth, const s32 newHeight) {
+        assert(device);
+        assert(renderStack->getSurfaceDepth() == 1);
+
+        // viewportを変更する
+        {
+            MVirtualDisplay display = getCurrentVirtualDisplay();
+            display->setRealDisplaySize(newWidth, newHeight);
+            display->updateViewport(VirtualDisplay::FitType_Auto);
+            viewport2D(0, 0, newWidth, newHeight);
+        }
+
+        MRenderingSurface surface = getCurrentRenderingTarget();
+        ContextListenerList::iterator itr = listeners.begin(), end = listeners.end();
+        while (itr != end) {
+            RenderingContextListener *pListener = itr->get();
+            if (pListener) {
+                // コールバック
+                pListener->onPlatformViewResized(this, surface, newWidth, newHeight);
+                ++itr;
+            } else {
+                itr = listeners.erase(itr);
+                end = listeners.end();
+            }
+
+        }
     }
 };
 

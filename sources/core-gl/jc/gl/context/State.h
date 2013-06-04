@@ -313,9 +313,9 @@ public:
         if (depthContext.enable != enable) {
             depthContext.enable = enable;
             if (enable) {
-                glEnable(GL_DEPTH_TEST);
+                glEnable (GL_DEPTH_TEST);
             } else {
-                glDisable(GL_DEPTH_TEST);
+                glDisable (GL_DEPTH_TEST);
             }
 
             assert_gl();
@@ -345,9 +345,9 @@ public:
         if (blendContext.enable != enable) {
             blendContext.enable = enable;
             if (enable) {
-                glEnable(GL_BLEND);
+                glEnable (GL_BLEND);
             } else {
-                glDisable(GL_BLEND);
+                glDisable (GL_BLEND);
             }
 
             assert_gl();
@@ -416,15 +416,24 @@ public:
     }
 
     /**
+     * 2D座標でviewportを指定する
+     */
+    inline jcboolean viewport2D(const s32 surfaceWidth, const s32 surfaceHeight, const GLint x, const GLint y, const GLint width, const GLint height) {
+        const GLint nY = surfaceHeight - (y + height);
+
+        return viewport(x, nY, width, height);
+    }
+
+    /**
      * シザーボックスの有効・無効を切り替える。
      */
     inline jcboolean enableScissor(const jcboolean set) {
         if (set != scissorContext.enable) {
 
             if (set) {
-                glEnable(GL_SCISSOR_TEST);
+                glEnable (GL_SCISSOR_TEST);
             } else {
-                glDisable(GL_SCISSOR_TEST);
+                glDisable (GL_SCISSOR_TEST);
             }
 
             scissorContext.enable = set;
@@ -707,9 +716,9 @@ public:
         if (enable != cullfaceContext.enabled) {
             cullfaceContext.enabled = enable;
             if (enable) {
-                glEnable(GL_CULL_FACE);
+                glEnable (GL_CULL_FACE);
             } else {
-                glDisable(GL_CULL_FACE);
+                glDisable (GL_CULL_FACE);
             }
             return jctrue;
         }

@@ -180,14 +180,14 @@ public:
      * 同値である場合はtrue
      */
     bool operator==(const SelectionPtr &p) const {
-        return get() == dynamic_cast<T>(p.get());
+        return get() == dynamic_cast<T*>(p.get());
     }
 
     /**
      * 異なる値である場合はtrue
      */
     bool operator!=(const SelectionPtr &p) const {
-        return get() != dynamic_cast<T>(p.get());
+        return get() != dynamic_cast<T*>(p.get());
     }
 
     operator bool() const {
