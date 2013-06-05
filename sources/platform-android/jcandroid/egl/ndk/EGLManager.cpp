@@ -109,7 +109,7 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 
 //        eglDisplay = EGL_NO_DISPLAY;
 
-        // コンテキストとサーフェイスが揃っていないから、設定できない
+// コンテキストとサーフェイスが揃っていないから、設定できない
         if( !eglMakeCurrent(eglDisplay, eglDrawSurface, eglReadSurface, eglContext) ) {
             if(backToDefault) {
                 // zeroにも戻せない
@@ -146,6 +146,15 @@ jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
 
     if (!result || EGLError::printEGLError(__FILE__, __LINE__)) {
         jclogf("Bad Surface(%x)", targetSurface);
+
+#ifdef  BADSURFACE_WITH_KILLPROCESS
+        // KILL PROCESS
+        {
+            int *p = NULL;
+            jclog("kill process!!!");
+            *p = 0x3103;
+        }
+#endif
     }
     return result;
 }
@@ -176,7 +185,7 @@ void EGLManager::dispose() {
  * 最も適切なEGLConfigを取得する
  */
 EGLConfig EGLManager::chooseConfig(const EGLDisplay display, const PixelFormat_e pixelFormat, const jcboolean hasDepth, const jcboolean hasStencil) {
-    std::vector<EGLint> specs;
+    std::vector < EGLint > specs;
 
     s32 red_bits = 0;
     s32 blue_bits = 0;
