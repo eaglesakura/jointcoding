@@ -31,19 +31,11 @@ varying mediump float vr_lightdot;
 // シャドウ行列を適用したポリゴン位置
 varying mediump vec4 vr_shadowfrag;
 
-// シャドウ行列を適用したポリゴン位置
-varying mediump vec4 vr_pre_shadowfrag;
-
 void main() {
     // position
     gl_Position = unif_wlp * attr_pos;
     // shadow position
     {
-        {
-            vr_pre_shadowfrag = unif_wlp * attr_pos;
-            vr_pre_shadowfrag = vr_pre_shadowfrag / vr_pre_shadowfrag.w;
-        }
-        
         vec4 shadow_pos = unif_shadow_wlp * attr_pos;
         shadow_pos = shadow_pos / shadow_pos.w;
 

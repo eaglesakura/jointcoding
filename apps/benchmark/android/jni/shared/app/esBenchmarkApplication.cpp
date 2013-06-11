@@ -91,7 +91,7 @@ void BenchmarkApplication::onAppInitialize() {
     // シャドウ用のレンダラを確保する
     {
         // シェーダー読込
-        MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("shadow.frag"));
+        MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("shadow.vert"), Uri::fromAssets("shadow.frag"));
         assert(shader);
 
         shadowRenderer.reset(new ShadowmapRenderer());
