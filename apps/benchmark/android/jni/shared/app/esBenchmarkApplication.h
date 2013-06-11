@@ -28,11 +28,6 @@ class BenchmarkApplication: public JointApplicationBase {
      */
     jc_sp<fw::Figure> figure;
 
-    /**
-     * レンダリング用シェーダー
-     */
-    MGLShaderProgram shader;
-
     float rotate;
 
     /**
@@ -46,6 +41,11 @@ class BenchmarkApplication: public JointApplicationBase {
     jc_sp<BasicFigureRenderer> renderer;
 
     /**
+     * シャドウマップ用のレンダラ
+     */
+    jc_sp<ShadowmapRenderer> shadowRenderer;
+
+    /**
      * フィギュア情報
      */
     MFigureInstanceState figure0;
@@ -56,9 +56,9 @@ class BenchmarkApplication: public JointApplicationBase {
     MFigureInstanceState figure1;
 
     /**
-     * オフスクリーンターゲット
+     * シャドウマップ
      */
-    MFrameBufferObject offscreen;
+    MFrameBufferObject shadowmap;
 
     MSpriteManager spriteManager;
 public:

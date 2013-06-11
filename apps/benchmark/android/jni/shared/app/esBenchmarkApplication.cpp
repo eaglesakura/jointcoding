@@ -68,13 +68,14 @@ void BenchmarkApplication::onAppInitialize() {
     }
 
     {
-        // シェーダー読込
-        shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
-        assert(shader);
     }
 
     // フィギュアのインスタンスを確保する
     {
+        // シェーダー読込
+        MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
+        assert(shader);
+
         renderer.reset(new BasicFigureRenderer());
         renderer->initialize(getWindowDevice(), shader);
 
@@ -86,6 +87,15 @@ void BenchmarkApplication::onAppInitialize() {
         figure1.reset(renderer->createInstanceState(figure));
         figure1->setEnvironmentState(worldEnv);
     }
+    // シャドウ用のレンダラを確保する
+    {
+        // シェーダー読込
+        MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("shadow.frag"));
+        assert(shader);
+
+        shadowRenderer.reset(new ShadowmapRenderer());
+        shadowRenderer->initialize(getWindowDevice(), shader);
+    }
 
     // オフスクリーンターゲットを生成
     {
@@ -93,19 +103,17 @@ void BenchmarkApplication::onAppInitialize() {
 
         const s32 width = 512;
         const s32 height = 512;
-        offscreen.reset(new FrameBufferObject(device));
-        offscreen->allocColorRenderbuffer(device, PixelFormat_RGBA8888);
-        offscreen->allocDepthRenderbuffer(device, 24);
+        shadowmap.reset(new FrameBufferObject(device));
+        shadowmap->allocDepthRenderbuffer(device, 24);
 
         // オフスクリーンのリサイズを行う
-        offscreen->resize(device->getState(), width, height);
+        shadowmap->resize(device->getState(), width, height);
 
         // オフスクリーンテクスチャの確保を行う
-//        offscreen->allocColorRenderTexture(device, PixelFormat_RGBA8888);
-        offscreen->allocDepthRenderTexture(device);
+        shadowmap->allocDepthRenderTexture(device);
 
-        offscreen->checkFramebufferStatus();
-        offscreen->unbind(device->getState());
+        shadowmap->checkFramebufferStatus();
+        shadowmap->unbind(device->getState());
     }
 
 //    // テクスチャロードを開始する
@@ -181,15 +189,15 @@ void BenchmarkApplication::onAppMainRendering() {
     {
         rotate = jc::normalizeDegree(rotate += 1.0f);
 
-        // レンダラーを作成する
-        // レンダリングの環境設定
+        // ライト位置決定
         {
-            Vector3f basicLightPos(0, 1, 1);
-            Matrix4x4 m;
-            m.rotateY(rotate);
-            m.rotateX(rotate);
-            m.multiply(basicLightPos, &basicLightPos);
+            Vector3f basicLightPos(0, 150, 250);
             worldEnv->getShadowmapLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
+
+            MCamera shadowCamera = worldEnv->getShadowmapLight()->getShadowCamera();
+            shadowCamera->setProjection(250.0f, 500.0f, shadowmap->getAspect());
+//            shadowCamera->setPosition(0, 250, 250);
+//            shadowCamera->setLook(0, 0, 0);
         }
 
         {
@@ -215,15 +223,15 @@ void BenchmarkApplication::onAppMainRendering() {
     }
 
     // シャドウマップレンダリング
-    offscreen->bind(state);
+    shadowmap->bind(state);
     {
         state->clearColorf(1, 0, 0, 0);
         state->clear();
-        state->viewport(0, 0, offscreen->getWidth(), offscreen->getHeight());
-        renderer->rendering(device, figure, figure0);
-        renderer->rendering(device, figure, figure1);
+        state->viewport(0, 0, shadowmap->getWidth(), shadowmap->getHeight());
+        shadowRenderer->rendering(device, figure, figure0);
+        shadowRenderer->rendering(device, figure, figure1);
     }
-    offscreen->unbind(state);
+    shadowmap->unbind(state);
 
     // 通常レンダリング
     {
@@ -234,7 +242,7 @@ void BenchmarkApplication::onAppMainRendering() {
 
     {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
-        MTextureImage texture = offscreen->getDepthTexture();
+        MTextureImage texture = shadowmap->getDepthTexture();
 
         spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, texture->getWidth() / 2, texture->getHeight() / 2);
 //        spriteManager->renderingImage(texture, texture->getWidth(), texture->getHeight(), -texture->getWidth(), -texture->getHeight());
@@ -281,8 +289,7 @@ void BenchmarkApplication::onAppDestroy() {
 
     texture.reset();
     figure.reset();
-    shader.reset();
-    offscreen.reset();
+    shadowmap.reset();
 }
 
 }
