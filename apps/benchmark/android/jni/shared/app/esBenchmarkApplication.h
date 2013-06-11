@@ -40,6 +40,8 @@ class BenchmarkApplication: public JointApplicationBase {
      */
     jc_sp<BasicFigureRenderer> renderer;
 
+    MGLShaderProgram basicShader;
+
     /**
      * シャドウマップ用のレンダラ
      */

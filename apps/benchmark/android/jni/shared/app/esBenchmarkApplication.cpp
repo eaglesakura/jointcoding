@@ -76,6 +76,7 @@ void BenchmarkApplication::onAppInitialize() {
         MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
         assert(shader);
 
+        basicShader = shader;
         renderer.reset(new BasicFigureRenderer());
         renderer->initialize(getWindowDevice(), shader);
 
@@ -101,8 +102,8 @@ void BenchmarkApplication::onAppInitialize() {
     {
         MDevice device = getWindowDevice();
 
-        const s32 width = 512;
-        const s32 height = 512;
+        const s32 width = 1024;
+        const s32 height = width;
         shadowmap.reset(new FrameBufferObject(device));
         shadowmap->allocDepthRenderbuffer(device, 24);
 
@@ -192,6 +193,10 @@ void BenchmarkApplication::onAppMainRendering() {
         // ライト位置決定
         {
             Vector3f basicLightPos(0, 150, 250);
+            Matrix4x4 m;
+            m.rotateY(-rotate);
+            m.rotateX(rotate);
+            m.multiply(basicLightPos, &basicLightPos);
             worldEnv->getShadowmapLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
 
             MCamera shadowCamera = worldEnv->getShadowmapLight()->getShadowCamera();
@@ -227,6 +232,7 @@ void BenchmarkApplication::onAppMainRendering() {
         state->clearColorf(1, 0, 0, 0);
         state->clear();
         state->viewport(0, 0, shadowmap->getWidth(), shadowmap->getHeight());
+
         shadowRenderer->rendering(device, figure, figure0);
         shadowRenderer->rendering(device, figure, figure1);
     }
@@ -236,7 +242,35 @@ void BenchmarkApplication::onAppMainRendering() {
     // 通常レンダリング
     {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
+        basicShader->bind();
+        {
+            TextureUniform unif;
+            unif.setLocation(basicShader, "unif_shadowmap");
+            assert(unif.valid());
+            shadowmap->getDepthTexture()->bind(state);
+            unif.upload(state, shadowmap->getDepthTexture());
+        }
+
+        {
+            Matrix4Uniform unif;
+            unif.setLocation(basicShader, "unif_shadow_wlp");
+            assert(unif.valid());
+
+            Matrix4x4 wlp;
+            worldEnv->calcShadowWorldLoopProjection(figure0->getModelview(), &wlp);
+            unif.upload(wlp, GL_FALSE);
+        }
         renderer->rendering(device, figure, figure0);
+
+        {
+            Matrix4Uniform unif;
+            unif.setLocation(basicShader, "unif_shadow_wlp");
+            assert(unif.valid());
+
+            Matrix4x4 wlp;
+            worldEnv->calcShadowWorldLoopProjection(figure1->getModelview(), &wlp);
+            unif.upload(wlp, GL_FALSE);
+        }
         renderer->rendering(device, figure, figure1);
     }
 
@@ -244,7 +278,7 @@ void BenchmarkApplication::onAppMainRendering() {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
         MTextureImage texture = shadowmap->getDepthTexture();
 
-        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, texture->getWidth() / 2, texture->getHeight() / 2);
+        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 128, 128);
 //        spriteManager->renderingImage(texture, texture->getWidth(), texture->getHeight(), -texture->getWidth(), -texture->getHeight());
     }
     getWindowDevice()->postFrontBuffer();
@@ -290,6 +324,7 @@ void BenchmarkApplication::onAppDestroy() {
     texture.reset();
     figure.reset();
     shadowmap.reset();
+    basicShader.reset();
 }
 
 }
