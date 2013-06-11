@@ -75,6 +75,13 @@ struct _Vector3 {
     }
 
     /**
+     * 加算を行う
+     */
+    _Vector3<T> operator+(const _Vector3 &v) const {
+        return _Vector3<T>(x + v.x, y + v.y, z + v.z);
+    }
+
+    /**
      * 減算を行う
      */
     _Vector3<T> operator-(const _Vector3<T> v) const {
@@ -89,6 +96,13 @@ struct _Vector3 {
         y /= div;
         z /= div;
         return (*this);
+    }
+
+    /**
+     * 符号反転を行う
+     */
+    _Vector3<T> operator-() const {
+        return _Vector3<T>(-x, -y, -z);
     }
 
     void set(const T _x, const T _y, const T _z) {

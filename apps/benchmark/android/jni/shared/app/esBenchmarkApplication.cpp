@@ -91,8 +91,8 @@ void BenchmarkApplication::onAppInitialize() {
     {
         MDevice device = getWindowDevice();
 
-        const s32 width = 480;
-        const s32 height = 640;
+        const s32 width = 512;
+        const s32 height = 512;
         offscreen.reset(new FrameBufferObject(device));
         offscreen->allocColorRenderbuffer(device, PixelFormat_RGBA8888);
         offscreen->allocDepthRenderbuffer(device, 24);
@@ -101,8 +101,8 @@ void BenchmarkApplication::onAppInitialize() {
         offscreen->resize(device->getState(), width, height);
 
         // オフスクリーンテクスチャの確保を行う
-        offscreen->allocColorRenderTexture(device, PixelFormat_RGBA8888);
-//        offscreen->allocDepthRenderTexture(device);
+//        offscreen->allocColorRenderTexture(device, PixelFormat_RGBA8888);
+        offscreen->allocDepthRenderTexture(device);
 
         offscreen->checkFramebufferStatus();
         offscreen->unbind(device->getState());
@@ -154,7 +154,8 @@ void BenchmarkApplication::onAppMainUpdate() {
  * フロントバッファ転送もメソッド内で行わせる。
  */
 void BenchmarkApplication::onAppMainRendering() {
-    MGLState state = getWindowDevice()->getState();
+    MDevice device = getWindowDevice();
+    MGLState state = device->getState();
     {
 //        state->clearColorf(0, 0, (float) (rand() % 0xFF) / 255.0f, 0);
         state->clearColorf(0, 1, 1, 1);
@@ -162,26 +163,23 @@ void BenchmarkApplication::onAppMainRendering() {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
     }
 
-    {
-        state->depthTestEnable(jcfalse);
-        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
-
-        if (texture) {
-            spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
-
-            static float rotate = 0;
-            spriteManager->renderingImage(texture, createRectFromXYWH<float>(256, 256, texture->getWidth(), texture->getHeight()), rotate += 1, Color::fromRGBAf(1, 1, 1, 0.5f));
-        }
-    }
+//    {
+//        state->depthTestEnable(jcfalse);
+//        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
+//
+//        if (texture) {
+//            spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
+//
+//            static float rotate = 0;
+//            spriteManager->renderingImage(texture, createRectFromXYWH<float>(256, 256, texture->getWidth(), texture->getHeight()), rotate += 1, Color::fromRGBAf(1, 1, 1, 0.5f));
+//        }
+//    }
 
 // rendering 3d
 
-    offscreen->bind(state);
+// figureやライトの位置を更新する
     {
         rotate = jc::normalizeDegree(rotate += 1.0f);
-
-        MDevice device = getWindowDevice();
-        MGLState state = device->getState();
 
         // レンダラーを作成する
         // レンダリングの環境設定
@@ -191,7 +189,7 @@ void BenchmarkApplication::onAppMainRendering() {
             m.rotateY(rotate);
             m.rotateX(rotate);
             m.multiply(basicLightPos, &basicLightPos);
-            worldEnv->getShadowLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
+            worldEnv->getShadowmapLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
         }
 
         {
@@ -200,7 +198,7 @@ void BenchmarkApplication::onAppMainRendering() {
             m.rotateY(rotate);
             m.multiply(camPos, &camPos);
             worldEnv->getMainCamera()->lookAt(camPos, Vector3f(0, -5, 0), Vector3f(0, 1, 0));
-            worldEnv->getMainCamera()->projection(50.0f, 500.0f, 45.0f, offscreen->getAspect());
+            worldEnv->getMainCamera()->projection(150.0f, 250.0f, 45.0f, device->getSurfaceAspect());
         }
         {
             jc::Transform trans;
@@ -214,22 +212,31 @@ void BenchmarkApplication::onAppMainRendering() {
             trans.scale.set(0.5f, 0.5f, 0.5f);
             figure1->setTransform(&trans);
         }
+    }
 
-        {
-            state->clearColorf(1, 0, 0, 0);
-            state->clear();
-            state->viewport(0, 0, offscreen->getWidth(), offscreen->getHeight());
-            renderer->rendering(device, figure, figure0);
-            renderer->rendering(device, figure, figure1);
-        }
+    // シャドウマップレンダリング
+    offscreen->bind(state);
+    {
+        state->clearColorf(1, 0, 0, 0);
+        state->clear();
+        state->viewport(0, 0, offscreen->getWidth(), offscreen->getHeight());
+        renderer->rendering(device, figure, figure0);
+        renderer->rendering(device, figure, figure1);
     }
     offscreen->unbind(state);
 
+    // 通常レンダリング
     {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
-        MTextureImage texture = offscreen->getColorTexture();
+        renderer->rendering(device, figure, figure0);
+        renderer->rendering(device, figure, figure1);
+    }
 
-        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, texture->getWidth() * 2, texture->getHeight() * 2);
+    {
+        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
+        MTextureImage texture = offscreen->getDepthTexture();
+
+        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, texture->getWidth() / 2, texture->getHeight() / 2);
 //        spriteManager->renderingImage(texture, texture->getWidth(), texture->getHeight(), -texture->getWidth(), -texture->getHeight());
     }
     getWindowDevice()->postFrontBuffer();
@@ -275,6 +282,7 @@ void BenchmarkApplication::onAppDestroy() {
     texture.reset();
     figure.reset();
     shader.reset();
+    offscreen.reset();
 }
 
 }

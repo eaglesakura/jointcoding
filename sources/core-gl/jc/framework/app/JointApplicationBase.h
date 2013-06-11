@@ -357,7 +357,7 @@ public:
 
     /**
      * ウィンドウサイズを取得する
-     * これはレンダリング対象のViewサイズと透過である。
+     * これはレンダリング対象のViewサイズと等価である。
      */
     virtual Vector2i getPlatformViewSize() const {
         return checkedSurfaceSize;

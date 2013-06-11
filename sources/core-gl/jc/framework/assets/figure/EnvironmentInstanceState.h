@@ -29,7 +29,12 @@ class EnvironmentInstanceState: public Object {
      *
      * 複数光源によるシャドウをレンダリングしたい場合は適宜拡張を行うようにする。
      */
-    MLight shadowLight;
+    MShadowLight shadowmapLight;
+
+    /**
+     * シャドウマップ計算用カメラ
+     */
+    MCamera shadowmapCamera;
 public:
     EnvironmentInstanceState();
     virtual ~EnvironmentInstanceState();
@@ -45,9 +50,9 @@ public:
     /**
      * シャドウ計算用のメインライトを取得する
      */
-    virtual MLight getShadowLight() const {
-        assert(shadowLight);
-        return shadowLight;
+    virtual MShadowLight getShadowmapLight() const {
+        assert(shadowmapLight);
+        return shadowmapLight;
     }
 
     /**

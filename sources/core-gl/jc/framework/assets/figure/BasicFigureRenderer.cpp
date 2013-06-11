@@ -73,7 +73,7 @@ void BasicFigureRenderer::bindMaterial(MDevice device, const Figure *pFigure, co
         EnvironmentInstanceState *env = pInstance->getEnvironmentState();
         // 環境ステータスが設定されている場合、環境情報をセットアップする
         if (env) {
-            MLight light = env->getShadowLight();
+            MLight light = env->getShadowmapLight();
             unif_mainlightdirection.upload(light->getDirection());
 
             Matrix3x3 m;

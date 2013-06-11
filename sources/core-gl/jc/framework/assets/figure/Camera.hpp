@@ -31,6 +31,10 @@ struct MatrixCache {
     }
 };
 
+/**
+ * カメラオブジェクト
+ * 内部ではカメラ行列のキャッシュを持ち、複数回のブレンドを行わないように適当に制御する
+ */
 class Camera: public Object {
     /**
      * 現在位置

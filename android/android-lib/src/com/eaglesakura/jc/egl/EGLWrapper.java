@@ -131,10 +131,7 @@ public class EGLWrapper {
         }
 
         // レンダリング用サーフェイスを再度生成
-        EGLSurface eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig, native_window, new int[] {
-            // attributes
-                EGL_NONE
-            });
+        EGLSurface eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig, native_window, null);
         if (eglSurface == EGL10.EGL_NO_SURFACE) {
             throw new RuntimeException("eglCreateWindowSurface");
         }

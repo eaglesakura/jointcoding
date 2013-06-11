@@ -11,7 +11,7 @@ namespace fw {
 
 EnvironmentInstanceState::EnvironmentInstanceState() {
     mainCamera.reset(new Camera());
-    shadowLight.reset(new Light());
+    shadowmapLight.reset(new ShadowLight());
 }
 
 EnvironmentInstanceState::~EnvironmentInstanceState() {
