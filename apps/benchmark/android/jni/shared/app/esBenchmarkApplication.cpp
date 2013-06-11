@@ -196,8 +196,6 @@ void BenchmarkApplication::onAppMainRendering() {
 
             MCamera shadowCamera = worldEnv->getShadowmapLight()->getShadowCamera();
             shadowCamera->setProjection(250.0f, 500.0f, shadowmap->getAspect());
-//            shadowCamera->setPosition(0, 250, 250);
-//            shadowCamera->setLook(0, 0, 0);
         }
 
         {
