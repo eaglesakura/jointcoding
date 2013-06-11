@@ -21,15 +21,4 @@
 #include    "jc/framework/assets/figure/Node.h"
 #include    "jc/framework/assets/figure/Figure.h"
 
-// レンダリング情報
-#include    "jc/framework/assets/figure/Camera.hpp"
-#include    "jc/framework/assets/figure/Light.hpp"
-#include    "jc/framework/assets/figure/EnvironmentInstanceState.h"
-#include    "jc/framework/assets/figure/FigureInstanceState.hpp"
-#include    "jc/framework/assets/figure/FigureRenderer.hpp"
-#include    "jc/framework/assets/figure/BasicFigureRenderer.h"
-
-// Figure Loader
-//#include    "jc/framework/assets/figure/FigureLoader.h"
-
 #endif /* FIGUREASSET_HPP_ */
