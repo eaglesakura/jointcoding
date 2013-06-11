@@ -18,8 +18,10 @@ namespace gl {
 
 /**
  * オフスクリーンレンダリング用フレームバッファを管理する
+ *
+ * IRenderingSurface : レンダリング対象のサーフェイスとして機能する
  */
-class FrameBufferObject: public Object {
+class FrameBufferObject: public Object, public IRenderingSurface {
     vram_handle fbo;
 
     /**

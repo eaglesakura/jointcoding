@@ -221,6 +221,7 @@ void BenchmarkApplication::onAppMainRendering() {
     }
 
     // シャドウマップレンダリング
+    renderingContext->pushSurface(shadowmap);
     shadowmap->bind(state);
     {
         state->clearColorf(1, 0, 0, 0);
@@ -230,6 +231,7 @@ void BenchmarkApplication::onAppMainRendering() {
         shadowRenderer->rendering(device, figure, figure1);
     }
     shadowmap->unbind(state);
+    renderingContext->popSurface();
 
     // 通常レンダリング
     {
