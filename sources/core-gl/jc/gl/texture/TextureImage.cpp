@@ -17,16 +17,25 @@ namespace gl {
 namespace {
 static u32 PIXEL_TYPES[] = {
 //
-        GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,
+        GL_UNSIGNED_SHORT_5_6_5,// RGB565
+        GL_UNSIGNED_SHORT_5_5_5_1, // RGBA5551
+        GL_UNSIGNED_BYTE, // RGB888
+        GL_UNSIGNED_BYTE, // RGBA8888
+        GL_UNSIGNED_BYTE, // BGRA8888
+        GL_HALF_FLOAT_OES, // LuminanceF16
+        GL_HALF_FLOAT_OES, // RGBA F16
 //
         };
 static u32 PIXEL_FORMATS[] = {
 //
+        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA,
 #ifdef GL_BGRA_EXT
-        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_BGRA_EXT,
+        GL_BGRA_EXT, // support RGBA
 #else
-        GL_RGB, GL_RGBA, GL_RGB, GL_RGBA, GL_RGBA,
+        GL_RGBA, // not suppport BGRA
 #endif
+        GL_LUMINANCE,
+        GL_RGBA, // RGBA F16
 //
         };
 }
@@ -111,8 +120,6 @@ void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelForma
 
 /**
  * テクスチャピクセル用のメモリを確保する
- * @param srcPixelType GL_UNSIGNED_INT | GL_UNSIGNED_SHORT_5_6_5 | GL_UNSIGNED_SHORT_5_5_5_1 | GL_UNSIGNED_BYTE
- * @param srcPixelFormat GL_RGB | GL_RGBA
  */
 void TextureImage::allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel) {
     assert(isBinded(NULL) == jctrue);

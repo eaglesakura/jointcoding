@@ -63,6 +63,11 @@ class BenchmarkApplication: public JointApplicationBase {
     MFrameBufferObject shadowmap;
 
     MSpriteManager spriteManager;
+
+    /**
+     * シャドウマップ用テクスチャ
+     */
+    MTextureImage shadowmapTexture;
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();

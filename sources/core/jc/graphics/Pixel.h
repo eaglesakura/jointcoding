@@ -49,6 +49,18 @@ enum PixelFormat_e {
     PixelFormat_BGRA8888,
 
     /**
+     * 2byte
+     * GL_HALF_FLOAT
+     */
+    PixelFormat_LuminanceF16,
+
+    /**
+     * 8byte
+     * GL_HALF_FLOAT
+     */
+    PixelFormat_RGBA_F16,
+
+    /**
      * RGBA各要素を含み、プラットフォームに最適化した状態でロードする
      * 各1byteは保証するが、RGBA並び順は保証しない。
      *
@@ -78,6 +90,8 @@ public:
                 3, // RGB888
                 4, // RGBA8888
                 4, // BGRA8888
+                2, // LuminanceF16
+                8, // RGBA_F16
                 };
         return size[fmt];
     }

@@ -105,13 +105,19 @@ void BenchmarkApplication::onAppInitialize() {
         const s32 width = 1024;
         const s32 height = width;
         shadowmap.reset(new FrameBufferObject(device));
-        shadowmap->allocDepthRenderbuffer(device, 24);
-
         // オフスクリーンのリサイズを行う
         shadowmap->resize(device->getState(), width, height);
 
+        if (shadowmap->allocDepthRenderTexture(device)) {
+            shadowmapTexture = shadowmap->getDepthTexture();
+        } else {
+            shadowmap->allocColorRenderTexture(device, PixelFormat_LuminanceF16);
+            shadowmap->allocDepthRenderbuffer(device, 24);
+
+            shadowmapTexture = shadowmap->getColorTexture();
+        }
         // オフスクリーンテクスチャの確保を行う
-        shadowmap->allocDepthRenderTexture(device);
+//        shadowmap->allocDepthRenderTexture(device);
 
         shadowmap->checkFramebufferStatus();
         shadowmap->unbind(device->getState());
@@ -195,7 +201,7 @@ void BenchmarkApplication::onAppMainRendering() {
             Vector3f basicLightPos(0, 150, 250);
             Matrix4x4 m;
             m.rotateY(-rotate);
-            m.rotateX(rotate);
+//            m.rotateX(rotate);
             m.multiply(basicLightPos, &basicLightPos);
             worldEnv->getShadowmapLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
 
@@ -247,8 +253,7 @@ void BenchmarkApplication::onAppMainRendering() {
             TextureUniform unif;
             unif.setLocation(basicShader, "unif_shadowmap");
             assert(unif.valid());
-            shadowmap->getDepthTexture()->bind(state);
-            unif.upload(state, shadowmap->getDepthTexture());
+            unif.upload(state, shadowmapTexture);
         }
 
         {
@@ -276,7 +281,7 @@ void BenchmarkApplication::onAppMainRendering() {
 
     {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
-        MTextureImage texture = shadowmap->getDepthTexture();
+        MTextureImage texture = shadowmapTexture;
 
         spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 128, 128);
 //        spriteManager->renderingImage(texture, texture->getWidth(), texture->getHeight(), -texture->getWidth(), -texture->getHeight());

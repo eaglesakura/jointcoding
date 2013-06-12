@@ -22,6 +22,7 @@ namespace gl {
  * IRenderingSurface : レンダリング対象のサーフェイスとして機能する
  */
 class FrameBufferObject: public Object, public IRenderingSurface {
+protected:
     vram_handle fbo;
 
     /**
@@ -48,10 +49,21 @@ class FrameBufferObject: public Object, public IRenderingSurface {
      * 焼きこみ先深度テクスチャ
      */
     MTextureImage depthTexture;
+
+    /**
+     * バッファ幅
+     */
+    s32 width;
+
+    /**
+     * バッファ高
+     */
+    s32 height;
 public:
     FrameBufferObject(MDevice device) {
         assert(device);
 
+        width = height = 0;
         fbo = device->getVRAM()->alloc(VRAM_FrameBuffer);
         assert(fbo.get());
     }
@@ -120,6 +132,11 @@ public:
                 assert(false);
                 break;
         }
+
+        // リサイズの必要があるならリサイズを行わせる
+        if (width > 0 && height > 0) {
+            renderbuffer->resize(state, width, height);
+        }
     }
 
     /**
@@ -169,6 +186,9 @@ public:
      */
     virtual void resize(MGLState state, const u32 width, const u32 height) {
         assert(state);
+
+        this->width = width;
+        this->height = height;
 
         if (color) {
             color->resize(state, width, height);
@@ -274,30 +294,14 @@ public:
      * レンダリングターゲットの幅を取得する
      */
     virtual s32 getWidth() const {
-        if (color) {
-            return color->getWidth();
-        } else if (depth) {
-            return depth->getWidth();
-        } else if (stencil) {
-            return stencil->getWidth();
-        }
-        assert(false);
-        return 0;
+        return width;
     }
 
     /**
      * レンダリングターゲットの幅を取得する
      */
     virtual s32 getHeight() const {
-        if (color) {
-            return color->getHeight();
-        } else if (depth) {
-            return depth->getHeight();
-        } else if (stencil) {
-            return stencil->getHeight();
-        }
-        assert(false);
-        return 0;
+        return height;
     }
 
     /**
@@ -312,11 +316,12 @@ public:
      * テクスチャとしてバインドするターゲットを指定する
      */
     virtual void allocColorRenderTexture(MDevice device, const PixelFormat_e texturePixelFormat) {
-        assert(color);
+        assert(width > 0);
+        assert(height > 0);
 
         bind(device->getState());
 
-        colorTexture.reset(new TextureImage(GL_TEXTURE_2D, (s32) color->getWidth(), (s32) color->getHeight(), device));
+        colorTexture.reset(new TextureImage(GL_TEXTURE_2D, width, height, device));
         colorTexture->bind(device->getState());
         colorTexture->allocPixelMemory(texturePixelFormat, 0);
         {
@@ -332,21 +337,19 @@ public:
      *
      * 注）
      * 現行機ではDepthTextureがサポートされていない端末が存在する(Tegra系）
-     * そのため、GL_LUMINANCE/GL_HALF_FLOAT_OESによる輝度テクスチャで代用を行なっている。
-     * 現状、ColorとDepthの両方に対して同時にレンダリングするのは端末によっては出来ないのでその点に注意してコーディングする必要がある。
+     * その場合、このメソッドはfalseを返して何も行わない。
+     * 基本的にこの呼出は非推奨となる。depthを明示的に記録する場合（シャドウマップ等）はcolorbufferで適当な代用を行うこと。
      */
-    virtual void allocDepthRenderTexture(MDevice device) {
-        assert(depth);
+    virtual jcboolean allocDepthRenderTexture(MDevice device) {
+        if (!GPUCapacity::isSupport(GPUExtension_Texture_Depth)) {
+            return jcfalse;
+        }
 
         bind(device->getState());
 
-        const s32 width = depth->getWidth();
-        const s32 height = depth->getHeight();
-
         depthTexture.reset(new TextureImage(GL_TEXTURE_2D, width, height, device));
         depthTexture->bind(device->getState());
-        if (GPUCapacity::isSupport(GPUExtension_Texture_Depth)) {
-            jclog("support depthtexture");
+        {
             // 深度テクスチャがサポートされているため、深度として直接関連付けられる
             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, NULL);
             assert_gl();
@@ -354,26 +357,10 @@ public:
             // 深度設定
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getName(), 0);
             assert_gl();
-        } else if (GPUCapacity::isSupport(GPUExtension_Texture_HalfFloat)) {
-            // colorのテクスチャバインドと両立は出来ない
-            assert(!colorTexture);
-
-            jclog("not support depthtexture | support halffloat");
-            // 深度テクスチャがサポートされていないため、カラー情報として擬似的に関連付ける
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_HALF_FLOAT_OES, NULL);
-            assert_gl();
-
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, depthTexture->getName(), 0);
-            assert_gl();
-        } else {
-            jclog("abort depth !! not support depthtexture & not support halffloat");
-            depthTexture->unbind();
-            depthTexture.reset();
-            return;
         }
-
         depthTexture->onAllocated();
         depthTexture->unbind();
+        return jctrue;
     }
 
     /**
