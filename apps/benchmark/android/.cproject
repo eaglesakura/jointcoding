@@ -60,4 +60,5 @@
 			<resource resourceType="PROJECT" workspacePath="/JointCodingBenchmark"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

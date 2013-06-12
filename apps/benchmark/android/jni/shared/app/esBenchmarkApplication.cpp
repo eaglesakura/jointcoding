@@ -102,7 +102,7 @@ void BenchmarkApplication::onAppInitialize() {
     {
         MDevice device = getWindowDevice();
 
-        const s32 width = 1024;
+        const s32 width = 2048;
         const s32 height = width;
         shadowmap.reset(new FrameBufferObject(device));
         // オフスクリーンのリサイズを行う
@@ -115,7 +115,7 @@ void BenchmarkApplication::onAppInitialize() {
         } else
 #endif
         {
-            shadowmap->allocColorRenderTexture(device, PixelFormat_RGBA_F16);
+            shadowmap->allocColorRenderTexture(device, PixelFormat_LuminanceF16);
             shadowmap->allocDepthRenderbuffer(device, 24);
 
             shadowmapTexture = shadowmap->getColorTexture();
@@ -238,6 +238,7 @@ void BenchmarkApplication::onAppMainRendering() {
     renderingContext->pushSurface(shadowmap);
     shadowmap->bind(state);
     {
+        glDepthRangef(0, 1);
         state->clearColorf(1, 1, 1, 1);
         state->clear();
         state->viewport(0, 0, shadowmap->getWidth(), shadowmap->getHeight());
@@ -258,14 +259,14 @@ void BenchmarkApplication::onAppMainRendering() {
         {
             TextureUniform unif;
             unif.setLocation(basicShader, "unif_shadowmap");
-            assert(unif.valid());
+//            assert(unif.valid());
             unif.upload(state, shadowmapTexture);
         }
 
         {
             Matrix4Uniform unif;
             unif.setLocation(basicShader, "unif_shadow_wlp");
-            assert(unif.valid());
+//            assert(unif.valid());
 
             Matrix4x4 wlp;
             worldEnv->calcShadowWorldLoopProjection(figure0->getModelview(), &wlp);
@@ -276,7 +277,7 @@ void BenchmarkApplication::onAppMainRendering() {
         {
             Matrix4Uniform unif;
             unif.setLocation(basicShader, "unif_shadow_wlp");
-            assert(unif.valid());
+//            assert(unif.valid());
 
             Matrix4x4 wlp;
             worldEnv->calcShadowWorldLoopProjection(figure1->getModelview(), &wlp);
@@ -289,7 +290,7 @@ void BenchmarkApplication::onAppMainRendering() {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
         MTextureImage texture = shadowmapTexture;
 
-        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 128, 128);
+        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 256, 256);
 //        spriteManager->renderingImage(texture, texture->getWidth(), texture->getHeight(), -texture->getWidth(), -texture->getHeight());
     }
     getWindowDevice()->postFrontBuffer();

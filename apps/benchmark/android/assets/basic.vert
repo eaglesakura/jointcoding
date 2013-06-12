@@ -36,13 +36,14 @@ void main() {
     gl_Position = unif_wlp * attr_pos;
     // shadow position
     {
-        vec4 shadow_pos = unif_shadow_wlp * attr_pos;
+        mediump vec4 shadow_pos = unif_shadow_wlp * attr_pos;
         shadow_pos = shadow_pos / shadow_pos.w;
+//        shadow_pos = (shadow_pos - 0.5) * 2.0;
 
         // vp -> 2D
         {
             shadow_pos.x = (shadow_pos.x / 2.0) + 0.5;
-            shadow_pos.y =  ((shadow_pos.y / 2.0) + 0.5);
+            shadow_pos.y =  (shadow_pos.y / 2.0) + 0.5;
         }
         vr_shadowfrag  = shadow_pos;
     }
