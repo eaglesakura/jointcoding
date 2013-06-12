@@ -108,17 +108,20 @@ void BenchmarkApplication::onAppInitialize() {
         // オフスクリーンのリサイズを行う
         shadowmap->resize(device->getState(), width, height);
 
+
+#if 1
         if (shadowmap->allocDepthRenderTexture(device)) {
             shadowmapTexture = shadowmap->getDepthTexture();
-        } else {
-            shadowmap->allocColorRenderTexture(device, PixelFormat_LuminanceF16);
+        } else
+#endif
+        {
+            shadowmap->allocColorRenderTexture(device, PixelFormat_RGBA_F16);
             shadowmap->allocDepthRenderbuffer(device, 24);
 
             shadowmapTexture = shadowmap->getColorTexture();
         }
         // オフスクリーンテクスチャの確保を行う
 //        shadowmap->allocDepthRenderTexture(device);
-
         shadowmap->checkFramebufferStatus();
         shadowmap->unbind(device->getState());
     }
@@ -235,12 +238,15 @@ void BenchmarkApplication::onAppMainRendering() {
     renderingContext->pushSurface(shadowmap);
     shadowmap->bind(state);
     {
-        state->clearColorf(1, 0, 0, 0);
+        state->clearColorf(1, 1, 1, 1);
         state->clear();
         state->viewport(0, 0, shadowmap->getWidth(), shadowmap->getHeight());
 
+        state->colorMask(jctrue, jcfalse, jcfalse, jcfalse);
         shadowRenderer->rendering(device, figure, figure0);
         shadowRenderer->rendering(device, figure, figure1);
+        state->colorMask(jctrue, jctrue, jctrue, jctrue);
+
     }
     shadowmap->unbind(state);
     renderingContext->popSurface();

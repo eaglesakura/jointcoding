@@ -31,7 +31,7 @@ void main() {
     {
 //        gl_FragColor = texture2D(unif_shadowmap, vr_shadowfrag.xy);
         // ライトからの距離を取り出す
-        mediump float light_distance = texture2D(unif_shadowmap, vr_shadowfrag.xy).z + 0.01;
+        mediump float light_distance = texture2D(unif_shadowmap, vr_shadowfrag.xy).x + 0.01;
         // 陰の濃さ係数を計算し、濃さに合わせて陰を強くする
         // ライトからの距離とフラグメントの距離が近いほど、濃い陰が作られる
         mediump float shadow_level = vr_shadowfrag.z - light_distance;
