@@ -85,8 +85,7 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
 // デバイスに廃棄フラグを追加してからロックを行わせる
     MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
 
-    if (device->hasFlags(DeviceFlag_RequestDestroy)) {
-        device->removeFlags(DeviceFlag_RequestDestroy);
+    if (device->getSurface() == pbufferSurface) {
         device->setSurface(EGL_NULL_SURFACE);
     }
 
@@ -132,7 +131,6 @@ void GLNativeTextureViewContext::onGLSuspend() {
     // デバイスに廃棄フラグを追加してからロックを行わせる
     if (device) {
         jcalertf("onGLSuspend !! (%x)", device->getSurface().get());
-        device->addFlags(DeviceFlag_RequestDestroy);
         // デバイスに廃棄フラグを追加してからロックを行わせる
         MutexLock _lock(device->getGPUMutex()); // GPUアクセス中のロックを得ておく
 
