@@ -59,6 +59,10 @@ class GLNativeTextureViewContext: public Object {
      */
     jc_sp<DeviceLock> device_lock;
 
+    /**
+     * 画面が死んでる間用の仮サーフェイス
+     */
+    MEGLSurfaceProtocol pbufferSurface;
 public:
     GLNativeTextureViewContext(const u32 eglFlags);
     virtual ~GLNativeTextureViewContext();

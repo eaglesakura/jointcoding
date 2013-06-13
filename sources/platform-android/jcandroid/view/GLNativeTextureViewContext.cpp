@@ -49,7 +49,7 @@ void GLNativeTextureViewContext::onGLInitialize(jobject surfaceTexture) {
 
     const EGLint attr[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
     EGLContext context = eglCreateContext(display, config, NULL, attr);
-    if (context == EGL_NO_CONTEXT ) {
+    if (context == EGL_NO_CONTEXT) {
         // コンテキストが作成できないのは異常事態
         throw create_exception_t(EGLException, EGLException_CreateContextFailed);
     }
@@ -58,6 +58,15 @@ void GLNativeTextureViewContext::onGLInitialize(jobject surfaceTexture) {
     {
         jc_sp< EGLContextProtocol > contextProtocol( new ndk::EGLContextManager(context, display, config) );
         this->device->setContext(contextProtocol);
+    }
+
+    // 仮サーフェイスを生成する
+    {
+        const EGLint attr[] = { EGL_HEIGHT, 1, EGL_WIDTH, 1, EGL_NONE };
+        EGLSurface eglPBuffer = eglCreatePbufferSurface(display, config, attr);
+        assert(eglPBuffer);
+
+        pbufferSurface.reset(new EGLSurfaceManager(display, eglPBuffer));
     }
     initialized = jctrue;
 }
@@ -69,12 +78,17 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
 
     if (width == this->width && height == this->height) {
         // surfaceサイズが変わらない
-        jclogf("surface size not changed =(%d, %d)", width, height);
-        return;
+        jcalertf("surface size not changed =(%d, %d)", width, height);
+//        return;
     }
 
 // デバイスに廃棄フラグを追加してからロックを行わせる
     MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
+
+    if (device->hasFlags(DeviceFlag_RequestDestroy)) {
+        device->removeFlags(DeviceFlag_RequestDestroy);
+        device->setSurface(EGL_NULL_SURFACE);
+    }
 
     {
         EGLManager *manager = dynamic_cast<EGLManager*>(device->getEGL().get());
@@ -93,11 +107,8 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
         jclogf("onSurfaceSize Changed(%d x %d)", width, height);
         surfaceManager->onSurfaceResized();
         surfaceManager->setSurfaceSize(width, height);
-        return;
-    }
-
+    } else {
 // EGLSurfaceの構築を行う
-    {
         EGLSurface eglSurface = NULL;
         eglSurface = (EGLSurface) EGLSupport::eglCreateWindowSurfaceSupport((jint) display, (jint) config, surfaceTexture);
 
@@ -117,6 +128,26 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
  * サーフェイスを休止する
  */
 void GLNativeTextureViewContext::onGLSuspend() {
+
+    // デバイスに廃棄フラグを追加してからロックを行わせる
+    if (device) {
+        jcalertf("onGLSuspend !! (%x)", device->getSurface().get());
+        device->addFlags(DeviceFlag_RequestDestroy);
+        // デバイスに廃棄フラグを追加してからロックを行わせる
+        MutexLock _lock(device->getGPUMutex()); // GPUアクセス中のロックを得ておく
+
+        // 古いサーフェイスを削除する
+        {
+            MEGLSurfaceProtocol oldSurface = device->getSurface();
+            oldSurface->dispose();
+        }
+
+        // レンダリング側が死なないように、仮サーフェイスをセットする
+        {
+            device->setSurface(pbufferSurface);
+        }
+    }
+
 }
 
 /**
