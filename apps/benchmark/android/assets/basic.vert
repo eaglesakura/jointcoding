@@ -44,6 +44,7 @@ void main() {
         {
             shadow_pos.x = (shadow_pos.x / 2.0) + 0.5;
             shadow_pos.y =  (shadow_pos.y / 2.0) + 0.5;
+            shadow_pos.z =  (shadow_pos.z / 2.0) + 0.5;
         }
         vr_shadowfrag  = shadow_pos;
     }

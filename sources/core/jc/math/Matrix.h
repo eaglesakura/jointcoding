@@ -312,26 +312,16 @@ struct Matrix {
      * @param aspect
      *
      */
-    void projection(const float near, const float far, const float fovY, const float aspect) {
-        float h, w, Q;
-
-        float width_fov = (fovY * (aspect) / 360.0f), height_fov = (fovY / 360.0f);
-
-        w = (float) (1.0 / tan(width_fov * 0.5) / (PI * 2)); // 1/tan(x)
-        // ==
-        // cot(x)
-        h = (float) (1.0 / tan(height_fov * 0.5) / (PI * 2)); // 1/tan(x)
-        // ==
-        // cot(x)
-        Q = far / (far - near);
-
+    inline void projection(const T near, const T far, const T fovY_degree, const T aspect) {
         // clear
         zeromemory(m, sizeof(m));
 
-        m[0][0] = w;
-        m[1][1] = h;
-        m[2][2] = Q;
-        m[3][2] = -Q * near;
+        const float f = (float) (1.0 / (tan(degree2radian(fovY_degree)) / 2.0f)); // 1/tan(x) == cot(x)
+
+        m[0][0] = f / aspect;
+        m[1][1] = f;
+        m[2][2] = ((far + near) / (far - near));
+        m[3][2] = -m[2][2] * near;
         m[2][3] = 1;
     }
 

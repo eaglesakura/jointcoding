@@ -12,8 +12,8 @@ varying mediump vec4 vr_shadowfrag;
 void main() {
     // position
     gl_Position = unif_wlp * attr_pos;
-    gl_Position = gl_Position / gl_Position.w;
-    gl_Position.z = (gl_Position.z - 0.5) * 2.0;
+//    gl_Position = gl_Position / gl_Position.w;
+//    gl_Position.z = (gl_Position.z - 0.5) * 2.0;
 
     // シャドウ計算用
     vr_shadowfrag = unif_wlp * attr_pos;

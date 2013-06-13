@@ -201,7 +201,7 @@ void BenchmarkApplication::onAppMainRendering() {
 
         // ライト位置決定
         {
-            Vector3f basicLightPos(0, 150, 250);
+            Vector3f basicLightPos(0, 200, 200);
             Matrix4x4 m;
             m.rotateY(-rotate);
 //            m.rotateX(rotate);
@@ -218,7 +218,7 @@ void BenchmarkApplication::onAppMainRendering() {
             m.rotateY(rotate);
             m.multiply(camPos, &camPos);
             worldEnv->getMainCamera()->lookAt(camPos, Vector3f(0, -5, 0), Vector3f(0, 1, 0));
-            worldEnv->getMainCamera()->projection(150.0f, 250.0f, 45.0f, device->getSurfaceAspect());
+            worldEnv->getMainCamera()->projection(150.0f, 550.0f, 45.0f, device->getSurfaceAspect());
         }
         {
             jc::Transform trans;
@@ -238,7 +238,6 @@ void BenchmarkApplication::onAppMainRendering() {
     renderingContext->pushSurface(shadowmap);
     shadowmap->bind(state);
     {
-        glDepthRangef(0, 1);
         state->clearColorf(1, 1, 1, 1);
         state->clear();
         state->viewport(0, 0, shadowmap->getWidth(), shadowmap->getHeight());
