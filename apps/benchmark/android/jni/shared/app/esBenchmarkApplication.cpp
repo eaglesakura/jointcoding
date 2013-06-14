@@ -108,13 +108,9 @@ void BenchmarkApplication::onAppInitialize() {
         // オフスクリーンのリサイズを行う
         shadowmap->resize(device->getState(), width, height);
 
-
-#if 1
         if (shadowmap->allocDepthRenderTexture(device)) {
             shadowmapTexture = shadowmap->getDepthTexture();
-        } else
-#endif
-        {
+        } else {
             shadowmap->allocColorRenderTexture(device, PixelFormat_LuminanceF16);
             shadowmap->allocDepthRenderbuffer(device, 24);
 
