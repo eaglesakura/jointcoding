@@ -28,6 +28,9 @@ String::String(const charactor* str) {
     }
 }
 
+String::~String() {
+}
+
 /**
  * 文字列の長さを取得する
  */

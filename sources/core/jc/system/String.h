@@ -28,6 +28,8 @@ public:
         this->native_string = origin.native_string;
     }
 
+    ~String();
+
     /**
      * 文字列の長さを取得する
      */

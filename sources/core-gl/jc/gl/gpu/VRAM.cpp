@@ -101,7 +101,7 @@ struct VramFunction {
 static VramFunction function_tbl[VRAM_e_num] = {
 #if 1
         // VRAM_Texture
-        { 16, (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, "Texture", },
+        { 32, (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, "Texture", },
         // VRAM_Indices
         { 4, (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, "IndexBuffer", },
         // VRAM_VertexBufferObject
@@ -127,9 +127,11 @@ _VRAM::~_VRAM() {
 
 }
 
-static vram_id get(std::list<vram_id> res, VRAM_e type) {
+static vram_id get(std::list<vram_id> &res, const VRAM_e type) {
 
     if (!res.empty()) {
+        jclogf("cache object(type = %d num(%d))", type, res.size());
+
         // 資源が枯渇してなければ、最初のオブジェクトを取り出して返す。
         vram_id result = res.front();
         res.pop_front();
