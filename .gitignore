@@ -42,3 +42,5 @@ doc/
 
 *.gch
 *.archive
+
+glm/

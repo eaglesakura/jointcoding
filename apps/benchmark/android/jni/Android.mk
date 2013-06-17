@@ -31,6 +31,7 @@ LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/core-gl/ -name '*.
 LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/platform-android/ -name '*.c')
 LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/platform-android/ -name '*.cpp')
 
+
 ############################       build  app sources       ###########################
 LOCAL_C_INCLUDES += $(shell find '.' -type d)
 LOCAL_SRC_FILES += $(shell find '.' -name '*.c')
@@ -47,6 +48,10 @@ LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/sources/core-gl
 LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/sources/gen
 LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/sources/gen/protocol
 LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/sources/platform-android
+
+# support OpenGL ES 2.0
+# LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/glm
+
 ############################ make flags     ###########################
 # 例外を有効
 LOCAL_CPPFLAGS   += -fexceptions

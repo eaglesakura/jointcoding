@@ -69,11 +69,11 @@ public:
      */
     Matrix4x4* getMatrix(Matrix4x4 *result) const {
         result->identity();
-        result->lookAt(position, look, up);
+        result->lookAtGL(position, look, up);
 
         {
             Matrix4x4 prj;
-            prj.projection(near, far, fovY, aspect);
+            prj.perspectiveGL(near, far, fovY, aspect);
             multiply(*result, prj, result);
         }
 

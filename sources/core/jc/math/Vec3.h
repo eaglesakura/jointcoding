@@ -84,7 +84,7 @@ struct _Vector3 {
     /**
      * 減算を行う
      */
-    _Vector3<T> operator-(const _Vector3<T> v) const {
+    _Vector3<T> operator-(const _Vector3<T> &v) const {
         return _Vector3<T>(x - v.x, y - v.y, z - v.z);
     }
 
@@ -156,7 +156,7 @@ struct _Vector3 {
      * @return
      *
      */
-    T dot(const _Vector3<T> v) const {
+    T dot(const _Vector3<T> &v) const {
         return (x * v.x) + (y * v.y) + (z * v.z);
     }
 
@@ -169,6 +169,14 @@ struct _Vector3 {
         x /= _len;
         y /= _len;
         z /= _len;
+    }
+
+    /**
+     * 正規化したベクトルを生成する
+     */
+    _Vector3<T> createNormalized() const {
+        const T _len = length();
+        return _Vector3(x / _len, y / _len, z / _len);
     }
 
     /**
@@ -202,6 +210,16 @@ struct _Vector3 {
      */
     T& operator[](const s32 index) {
         return ((T*) this)[index];
+    }
+
+    /**
+     * 外積を生成する。
+     *
+     * @return
+     *
+     */
+    static _Vector3<T> createCross(const _Vector3<T> &v0, const _Vector3<T> &v1) {
+        return _Vector3<T>((v0.y * v1.z) - (v0.z * v1.y), (v0.z * v1.x) - (v0.x * v1.z), (v0.x * v1.y) - (v0.y * v1.x));
     }
 
 };

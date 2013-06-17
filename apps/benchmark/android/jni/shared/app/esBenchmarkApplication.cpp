@@ -214,7 +214,7 @@ void BenchmarkApplication::onAppMainRendering() {
             m.rotateY(rotate);
             m.multiply(camPos, &camPos);
             worldEnv->getMainCamera()->lookAt(camPos, Vector3f(0, -5, 0), Vector3f(0, 1, 0));
-            worldEnv->getMainCamera()->projection(150.0f, 550.0f, 45.0f, device->getSurfaceAspect());
+            worldEnv->getMainCamera()->projection(100.0f, 350.0f, 45.0f, device->getSurfaceAspect());
         }
         {
             jc::Transform trans;

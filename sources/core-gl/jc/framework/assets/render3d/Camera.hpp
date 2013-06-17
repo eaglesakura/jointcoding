@@ -99,6 +99,34 @@ public:
     virtual ~Camera() {
     }
 
+    const Vector3f& getPosition() const {
+        return position;
+    }
+
+    const Vector3f& getLook() const {
+        return look;
+    }
+
+    const Vector3f& getUp() const {
+        return up;
+    }
+
+    float getNearClip() const {
+        return near;
+    }
+
+    float getFarClip() const {
+        return far;
+    }
+
+    float getFovY() const {
+        return fovY;
+    }
+
+    float getAspect() const {
+        return aspect;
+    }
+
     /**
      * カメラ行列を取得する
      */
@@ -108,12 +136,12 @@ public:
         jcboolean materix_update = jcfalse;
         // 各行列を更新する
         if (lookMatrix.old) {
-            lookMatrix.m.lookAt(position, look, up);
+            lookMatrix.m.lookAtGL(position, look, up);
             lookMatrix.old = jcfalse;
             materix_update = jctrue;
         }
         if (prjMatrix.old) {
-            prjMatrix.m.projection(near, far, fovY, aspect);
+            prjMatrix.m.perspectiveGL(near, far, fovY, aspect);
             prjMatrix.old = jcfalse;
             materix_update = jctrue;
         }

@@ -256,13 +256,13 @@ struct Matrix {
 
     /**
      * 視線変更行列を生成する。
+     *
+     * DirectXの仕様に準ずる
      * @param position 視線の起点位置
      * @param look 視線の向かう位置
      * @param up 上方向
-     *
-     * 3D行列のみ利用可能
      */
-    inline void lookAt(const Vector3f position, const Vector3f look, const Vector3f up) {
+    inline void lookAtDX(const Vector3f &position, const Vector3f &look, const Vector3f &up) {
         Vector3f zaxis, xaxis, yaxis;
 
         zaxis = position - look;
@@ -303,16 +303,55 @@ struct Matrix {
     }
 
     /**
-     * 射影行列を作成する。
+     * 視線変更行列を生成する。
      *
+     * OpenGLの仕様に準ずる
+     * @param position 視線の起点位置
+     * @param look 視線の向かう位置
+     * @param up 上方向
      *
+     */
+    inline void lookAtGL(const Vector3f &position, const Vector3f &look, const Vector3f &up) {
+        _Vector3<T> f = (look - position).createNormalized();
+        _Vector3<T> u = up.createNormalized();
+        _Vector3<T> s = _Vector3<T>::createCross(f, u).createNormalized();
+        u = _Vector3<T>::createCross(s, f);
+
+        m[0][0] = s.x;
+        m[1][0] = s.y;
+        m[2][0] = s.z;
+        m[0][1] = u.x;
+        m[1][1] = u.y;
+        m[2][1] = u.z;
+        m[0][2] =-f.x;
+        m[1][2] =-f.y;
+        m[2][2] =-f.z;
+        m[3][0] =-s.dot(position);
+        m[3][1] =-u.dot(position);
+        m[3][2] = f.dot(position);
+
+
+        // 一番右は持っている場合だけ埋めておく
+        if (COLM == 4) {
+            m[0][3] = 0;
+            m[1][3] = 0;
+            m[2][3] = 0;
+            m[3][3] = 1;
+        }
+    }
+
+    /**
+     * パース射影行列を作成する。
+     *
+     * DirectXの仕様に準ずる
+     * http://msdn.microsoft.com/en-us/library/windows/desktop/bb147302(v=vs.85).aspx
      * @param near
      * @param far
      * @param fovY
      * @param aspect
      *
      */
-    inline void projection(const T near, const T far, const T fovY_degree, const T aspect) {
+    inline void perspectiveDX(const T near, const T far, const T fovY_degree, const T aspect) {
         // clear
         zeromemory(m, sizeof(m));
 
@@ -320,9 +359,33 @@ struct Matrix {
 
         m[0][0] = f / aspect;
         m[1][1] = f;
-        m[2][2] = ((far + near) / (far - near));
+        m[2][2] = ((far) / (far - near));
         m[3][2] = -m[2][2] * near;
         m[2][3] = 1;
+    }
+
+    /**
+     * パース射影行列を作成する。
+     *
+     * OpenGLの仕様に準ずる
+     * http://miffysora.wikidot.com/ja:matrix
+     * @param near
+     * @param far
+     * @param fovY
+     * @param aspect
+     *
+     */
+    inline void perspectiveGL(const T near, const T far, const T fovY_degree, const T aspect) {
+        // clear
+        zeromemory(m, sizeof(m));
+
+        const float f = (float) (1.0 / (tan(degree2radian(fovY_degree)) / 2.0f)); // 1/tan(x) == cot(x)
+
+        m[0][0] = f / aspect;
+        m[1][1] = f;
+        m[2][2] = ((far + near) / (near - far));
+        m[3][2] = (2.0f * far * near) / (near - far);
+        m[2][3] = -1;
     }
 
     /**
