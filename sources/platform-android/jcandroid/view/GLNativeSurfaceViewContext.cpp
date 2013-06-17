@@ -63,7 +63,7 @@ jcboolean GLNativeSurfaceViewContext::initialize() {
 
     const EGLint attr[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
     EGLContext context = eglCreateContext(display, config, NULL, attr);
-    if (context == EGL_NO_CONTEXT ) {
+    if (context == EGL_NO_CONTEXT) {
         // コンテキストが作成できないのは異常事態
         throw create_exception_t(EGLException, EGLException_CreateContextFailed);
     }
@@ -137,29 +137,28 @@ void GLNativeSurfaceViewContext::onSurfaceDestroyed(jobject surface) {
     // デバイスに廃棄フラグを追加してからロックを行わせる
     if (device) {
         device->addFlags(DeviceFlag_RequestDestroy);
+
+        MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
+        jclogf("surface destroyed %x", surface);
+
+        MEGLSurfaceProtocol eglSurface = device->getSurface();
+        if (eglSurface) {
+            eglSurface->dispose();
+
+            // デバイスにセットされているサーフェイスをリセットする
+            device->setSurface(EGL_NULL_SURFACE);
+        }
     }
 
-    MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
-    jclogf("surface destroyed %x", surface);
-
-    MEGLSurfaceProtocol eglSurface = device->getSurface();
-    if (eglSurface) {
-        eglSurface->dispose();
-
-        // デバイスにセットされているサーフェイスをリセットする
-        device->setSurface(EGL_NULL_SURFACE);
-    }
 }
 
 void GLNativeSurfaceViewContext::dispose() {
     // デバイスに廃棄フラグを追加してからロックを行わせる
     if (device) {
         device->addFlags(DeviceFlag_RequestDestroy);
-    }
+        MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
 
-    MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
-
-    if (device) {
+        jclog("dispose device");
         device->dispose();
         device.reset();
     }

@@ -16,7 +16,7 @@ Device::Device() {
 }
 
 Device::~Device() {
-    jclogf("Device dispose %x", this);
+    jclogf("Device dispose this(%x) egl(%x) surface(%x) context(%x)", this, egl.get(), surface.get(), context.get());
 }
 
 /**

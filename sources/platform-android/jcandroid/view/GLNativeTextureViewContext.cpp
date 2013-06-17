@@ -130,6 +130,10 @@ void GLNativeTextureViewContext::onGLSuspend() {
 
     // デバイスに廃棄フラグを追加してからロックを行わせる
     if (device) {
+        if (device->hasFlags(DeviceFlag_RequestDestroy)) {
+            return;
+        }
+
         jcalertf("onGLSuspend !! (%x)", device->getSurface().get());
         // デバイスに廃棄フラグを追加してからロックを行わせる
         MutexLock _lock(device->getGPUMutex()); // GPUアクセス中のロックを得ておく
@@ -155,10 +159,7 @@ void GLNativeTextureViewContext::dispose() {
     // デバイスに廃棄フラグを追加してからロックを行わせる
     if (device) {
         device->addFlags(DeviceFlag_RequestDestroy);
-    }
-
-    MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
-    if (device) {
+        MutexLock _lock(getDevice()->getGPUMutex()); // GPUアクセス中のロックを得ておく
         device->dispose();
         device.reset();
     }
