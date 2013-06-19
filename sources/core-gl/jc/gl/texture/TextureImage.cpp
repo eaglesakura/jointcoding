@@ -104,6 +104,7 @@ s32 TextureImage::getFreeTextureUnitIndex() {
 
 void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum) {
     assert(isBinded(NULL) == jctrue);
+    assert(state->getActiveTextureIndex() == bindUnit);
 
     // 領域の確保が済んでいなければ確保する
     if (!this->alloced) {

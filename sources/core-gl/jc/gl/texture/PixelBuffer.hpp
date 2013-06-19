@@ -105,6 +105,7 @@ public:
             return;
         }
 
+        jclogf("convert pixelformat(%d) -> (%d)", pixelFormat, newFormat);
         bytesParPixel = Pixel::getPixelBytes(newFormat);
         jc_sa<u8> newBuffer = Pixel::createPixelBuffer(newFormat, width * height);
 
