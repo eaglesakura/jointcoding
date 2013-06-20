@@ -29,7 +29,7 @@ varying mediump vec3 vr_normal;
 varying mediump float vr_lightdot;
 
 // シャドウ行列を適用したポリゴン位置
-varying mediump vec4 vr_shadowfrag;
+varying mediump vec3 vr_shadowfrag;
 
 void main() {
     // position
@@ -37,16 +37,8 @@ void main() {
     // shadow position
     {
         mediump vec4 shadow_pos = unif_shadow_wlp * attr_pos;
-        shadow_pos = shadow_pos / shadow_pos.w;
-//        shadow_pos = (shadow_pos - 0.5) * 2.0;
-
-        // vp -> 2D
-        {
-            shadow_pos.x = (shadow_pos.x / 2.0) + 0.5;
-            shadow_pos.y =  (shadow_pos.y / 2.0) + 0.5;
-            shadow_pos.z =  (shadow_pos.z / 2.0) + 0.5;
-        }
-        vr_shadowfrag  = shadow_pos;
+        vr_shadowfrag = (shadow_pos / shadow_pos.w).xyz;
+        vr_shadowfrag  = (vr_shadowfrag / 2.0) + 0.5;
     }
     
     // 法線・ライティング

@@ -26,7 +26,12 @@ class BenchmarkApplication: public JointApplicationBase {
     /**
      * 3Dレンダリングフィギュア
      */
-    jc_sp<fw::Figure> figure;
+    jc_sp<fw::Figure> susanow;
+
+    /**
+     * スキニングフィギュア
+     */
+    jc_sp<fw::Figure> antan;
 
     float rotate;
 
@@ -50,12 +55,12 @@ class BenchmarkApplication: public JointApplicationBase {
     /**
      * フィギュア情報
      */
-    MFigureInstanceState figure0;
+    MFigureInstanceState susanow_instance;
 
     /**
      * フィギュア情報
      */
-    MFigureInstanceState figure1;
+    MFigureInstanceState antan_instance;
 
     /**
      * シャドウマップ

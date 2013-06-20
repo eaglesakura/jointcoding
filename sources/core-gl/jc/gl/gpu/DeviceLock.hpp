@@ -134,7 +134,7 @@ public:
         // ロックを試みる
         lockDevice();
 
-        if(throw_error) {
+        if(throw_error && !device->isCurrentThread()) {
             if(!isLockCompleted()) {
                 unlockDevice();
                 if(device->hasFlag(DeviceFlag_NoLock)) {

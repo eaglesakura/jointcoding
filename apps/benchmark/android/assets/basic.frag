@@ -19,7 +19,7 @@ varying mediump vec2 vr_coords;
 varying mediump float vr_lightdot;
 
 // シャドウ行列を適用したポリゴン位置
-varying mediump vec4 vr_shadowfrag;
+varying mediump vec3 vr_shadowfrag;
 
 
 void main() {

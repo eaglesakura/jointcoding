@@ -46,9 +46,10 @@ void BenchmarkApplication::onAppInitialize() {
     {
         spriteManager = SpriteManager::createInstance(getRenderingContext()->getDevice());
     }
-    {
 
-        figure.reset(new Figure());
+    // スキニングなしフィギュアをロード
+    {
+        susanow.reset(new Figure());
 
         // フィギュアロード
         jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
@@ -61,13 +62,31 @@ void BenchmarkApplication::onAppInitialize() {
         jc_sp<FigureLoader> loader(new FigureLoader(getWindowDevice(), factory, texFactory));
 
         // 読み込み対象を指定する
-        loader->setLoadTarget(figure);
+        loader->setLoadTarget(susanow);
 
         // 読込を行う
         loader->load();
     }
 
+    // スキニング付きフィギュアをロード
     {
+        antan.reset(new Figure());
+
+        // フィギュアロード
+        jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
+        jc_sp<UriTextureFactory> texFactory(new UriTextureFactory());
+        texFactory->fromAssets("");
+        texFactory->setFilenameExt(".jpg");
+
+        factory->initialize(Uri::fromAssets("antan.archive"));
+
+        jc_sp<FigureLoader> loader(new FigureLoader(getWindowDevice(), factory, texFactory));
+
+        // 読み込み対象を指定する
+        loader->setLoadTarget(antan);
+
+        // 読込を行う
+        loader->load();
     }
 
     // フィギュアのインスタンスを確保する
@@ -82,11 +101,15 @@ void BenchmarkApplication::onAppInitialize() {
 
         worldEnv.reset(new EnvironmentInstanceState());
 
-        figure0.reset(renderer->createInstanceState(figure));
-        figure0->setEnvironmentState(worldEnv);
+        {
+            susanow_instance.reset(renderer->createInstanceState(susanow));
+            susanow_instance->setEnvironmentState(worldEnv);
+        }
 
-        figure1.reset(renderer->createInstanceState(figure));
-        figure1->setEnvironmentState(worldEnv);
+        {
+            antan_instance.reset(renderer->createInstanceState(antan));
+            antan_instance->setEnvironmentState(worldEnv);
+        }
     }
     // シャドウ用のレンダラを確保する
     {
@@ -199,13 +222,13 @@ void BenchmarkApplication::onAppMainRendering() {
         {
             Vector3f basicLightPos(0, 200, 200);
             Matrix4x4 m;
-            m.rotateY(-rotate);
+//            m.rotateY(-rotate);
 //            m.rotateX(rotate);
             m.multiply(basicLightPos, &basicLightPos);
             worldEnv->getShadowmapLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
 
             MCamera shadowCamera = worldEnv->getShadowmapLight()->getShadowCamera();
-            shadowCamera->setProjection(250.0f, 500.0f, shadowmap->getAspect());
+            shadowCamera->setProjection(100.0f, 500.0f, shadowmap->getAspect());
         }
 
         {
@@ -219,14 +242,14 @@ void BenchmarkApplication::onAppMainRendering() {
         {
             jc::Transform trans;
             trans.translate.x = 15;
-            figure0->setTransform(&trans);
+            susanow_instance->setTransform(&trans);
         }
         {
             jc::Transform trans;
-            trans.translate.x = -15;
+            trans.translate.x = -30;
             trans.rotate.y = -45;
-            trans.scale.set(0.5f, 0.5f, 0.5f);
-            figure1->setTransform(&trans);
+//            trans.scale.set(0.5f, 0.5f, 0.5f);
+            antan_instance->setTransform(&trans);
         }
     }
 
@@ -239,8 +262,8 @@ void BenchmarkApplication::onAppMainRendering() {
         state->viewport(0, 0, shadowmap->getWidth(), shadowmap->getHeight());
 
         state->colorMask(jctrue, jcfalse, jcfalse, jcfalse);
-        shadowRenderer->rendering(device, figure, figure0);
-        shadowRenderer->rendering(device, figure, figure1);
+        shadowRenderer->rendering(device, susanow, susanow_instance);
+        shadowRenderer->rendering(device, antan, antan_instance);
         state->colorMask(jctrue, jctrue, jctrue, jctrue);
 
     }
@@ -264,10 +287,10 @@ void BenchmarkApplication::onAppMainRendering() {
 //            assert(unif.valid());
 
             Matrix4x4 wlp;
-            worldEnv->calcShadowWorldLoopProjection(figure0->getModelview(), &wlp);
+            worldEnv->calcShadowWorldLoopProjection(susanow_instance->getModelview(), &wlp);
             unif.upload(wlp, GL_FALSE);
         }
-        renderer->rendering(device, figure, figure0);
+        renderer->rendering(device, susanow, susanow_instance);
 
         {
             Matrix4Uniform unif;
@@ -275,10 +298,10 @@ void BenchmarkApplication::onAppMainRendering() {
 //            assert(unif.valid());
 
             Matrix4x4 wlp;
-            worldEnv->calcShadowWorldLoopProjection(figure1->getModelview(), &wlp);
+            worldEnv->calcShadowWorldLoopProjection(antan_instance->getModelview(), &wlp);
             unif.upload(wlp, GL_FALSE);
         }
-        renderer->rendering(device, figure, figure1);
+        renderer->rendering(device, antan, antan_instance);
     }
 
     {
@@ -329,7 +352,7 @@ void BenchmarkApplication::onAppDestroy() {
     jclogf("destroy %x", this);
 
     texture.reset();
-    figure.reset();
+    susanow.reset();
     shadowmap.reset();
     basicShader.reset();
 }
