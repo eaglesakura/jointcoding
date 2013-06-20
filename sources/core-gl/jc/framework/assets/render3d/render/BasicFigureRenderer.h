@@ -50,9 +50,14 @@ protected:
     BasicNormalAttribute attr_normal;
 
     /**
-     * WLP行列
+     * LP行列
      */
-    Matrix4Uniform unif_worldlookprojection;
+    Matrix4Uniform unif_lookprojection;
+
+    /**
+     * skinningを行わない場合のワールド行列
+     */
+    Matrix4Uniform unif_world;
 
     /**
      * 拡散反射光テクスチャ
@@ -69,7 +74,7 @@ protected:
      * WLP行列の逆行列を転置した行列
      * 法線計算に利用する
      */
-    Matrix3Uniform   unif_normalmatrix;
+    Matrix3Uniform unif_normalmatrix;
 
     /**
      * レンダリング用シェーダー

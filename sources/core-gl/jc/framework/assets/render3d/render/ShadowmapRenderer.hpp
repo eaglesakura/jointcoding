@@ -48,9 +48,9 @@ protected:
             // シャドウマップには環境設定が必要になる
             assert(env);
 
-            Matrix4x4 wlp;
-            env->calcShadowWorldLoopProjection(pInstance->getModelview(), &wlp);
-            unif_worldlookprojection.upload(wlp, GL_FALSE);
+            // 行列を転送
+            unif_world.upload(pInstance->getModelview());
+            unif_lookprojection.upload(env->getShadowmapLight()->getShadowCamera()->getLookProjectionMatrix());
         }
 
     }

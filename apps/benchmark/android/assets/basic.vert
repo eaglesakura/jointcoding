@@ -7,8 +7,11 @@ attribute mediump vec2 attr_uv;
 // normal
 attribute mediump vec3 attr_normal;
 
-// blended world & look & projection
-uniform highp mat4 unif_wlp;
+// blended look & projection
+uniform highp mat4 unif_lp;
+
+// world
+uniform highp mat4 unif_world;
 
 // シャドウマップ用行列
 uniform highp mat4 unif_shadow_wlp;
@@ -33,7 +36,7 @@ varying mediump vec3 vr_shadowfrag;
 
 void main() {
     // position
-    gl_Position = unif_wlp * attr_pos;
+    gl_Position = unif_lp * unif_world * attr_pos;
     // shadow position
     {
         mediump vec4 shadow_pos = unif_shadow_wlp * attr_pos;

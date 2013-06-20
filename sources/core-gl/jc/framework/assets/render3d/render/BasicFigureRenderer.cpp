@@ -33,8 +33,11 @@ void BasicFigureRenderer::initialize(MDevice device, MGLShaderProgram shader) {
 
     // uniform
     {
-        // world loop projection行列
-        unif_worldlookprojection.setLocation(shader, "unif_wlp");
+        // look projection行列
+        unif_lookprojection.setLocation(shader, "unif_lp");
+
+        // world 行列
+        unif_world.setLocation(shader, "unif_world");
 
         // diffuseテクスチャ
         unif_diffseTexture.setLocation(shader, "unif_diffuse");
@@ -68,11 +71,14 @@ void BasicFigureRenderer::bindMaterial(MDevice device, const Figure *pFigure, co
 
     // uniformのアップロードを行う
     {
-        unif_worldlookprojection.upload(pInstance->getWorldLookProjection());
-
         EnvironmentInstanceState *env = pInstance->getEnvironmentState();
+
+        unif_world.upload(pInstance->getModelview());
         // 環境ステータスが設定されている場合、環境情報をセットアップする
         if (env) {
+            // LP行列を指定する
+            unif_lookprojection.upload(env->getMainCamera()->getLookProjectionMatrix());
+
             MLight light = env->getShadowmapLight();
             unif_mainlightdirection.upload(light->getDirection());
 
