@@ -95,7 +95,7 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
 }
 
 TextureImage::~TextureImage() {
-    this->dispose();
+//    this->dispose();
 }
 
 s32 TextureImage::getFreeTextureUnitIndex() {
@@ -392,6 +392,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             glFinish();
         } catch (Exception &e) {
             jcloge(e);
+            throw;
         }
 
         // 分割読み込み数を設定する
