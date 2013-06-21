@@ -43,7 +43,7 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     texture.alloc(device->getVRAM(), VRAM_Texture);
 
     {
-        s32 index = getFreeTextureUnitIndex();
+        const s32 index = GPUCapacity::getMaxTextureUnits() - 1;
         this->bind(index);
         {
             // npotでは GL_CLAMP_TO_EDGE を指定する必要がある
@@ -74,7 +74,7 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     texture.alloc(device->getVRAM(), VRAM_Texture);
 
     {
-        s32 index = getFreeTextureUnitIndex();
+        const s32 index = GPUCapacity::getMaxTextureUnits() - 1;
         this->bind(index);
         {
             // npotでは GL_CLAMP_TO_EDGE を指定する必要がある
@@ -123,6 +123,7 @@ void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelForma
  */
 void TextureImage::allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel) {
     assert(isBinded(NULL) == jctrue);
+    assert(state->getActiveTextureIndex() == bindUnit);
 
     if (!this->alloced) {
         this->alloced = jctrue;
@@ -320,6 +321,9 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
     jcboolean cancel_flag = jcfalse;
     jcboolean *cancel_ptr = option ? &option->load_cancel : &cancel_flag;
 
+    const s32 texture_unit = GPUCapacity::getMaxTextureUnits() - 1;
+    assert(texture_unit >= 0);
+
     // デバイスの制御待ちチェック
 #define     device_wait(option) if(option && option->load_priority_down){ device->waitLockRequest(1, cancel_ptr); }
 
@@ -363,7 +367,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             }
 
             // テクスチャ用メモリを確保する
-            result->bind();
+            result->bind(texture_unit);
             result->allocPixelMemory(pixelFormat, 0);
 
             // glTexImage2D用にパッキングを行う
@@ -384,6 +388,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             }
 
             // テクスチャロードを開始する
+            result->unbind();
             glFinish();
         } catch (Exception &e) {
             jcloge(e);
@@ -420,8 +425,9 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
                 assert(LOAD_HEIGHT > 0);
                 assert((pixel_y + LOAD_HEIGHT) <= origin_height);
 
-                result->bind();
+                result->bind(texture_unit);
                 result->copyPixelLine(pixelBuffer->getPixelHeader(), pixelFormat, 0, pixel_y, LOAD_HEIGHT);
+                result->unbind();
                 // テクスチャロードはfinish待ちを行う
                 glFinish();
 
@@ -458,10 +464,11 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
                 }
 
                 jclog("gen mipmap");
-                result->bind();
+                result->bind(texture_unit);
                 result->genMipmaps();
                 result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
                 result->setMagFilter(GL_LINEAR);
+                result->unbind();
 
                 // テクスチャロードはfinish待ちを行う
                 glFinish();
