@@ -230,7 +230,7 @@ void BenchmarkApplication::onAppMainUpdate() {
         {
             Vector3f basicLightPos(0, 200, 200);
             Matrix4x4 m;
-//            m.rotateY(-rotate);
+            m.rotateY(-rotate);
 //            m.rotateX(rotate);
             m.multiply(basicLightPos, &basicLightPos);
             worldEnv->getShadowmapLight()->setDirection(basicLightPos, Vector3f(0, 0, 0));
