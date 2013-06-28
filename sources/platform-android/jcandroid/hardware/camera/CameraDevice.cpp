@@ -79,7 +79,7 @@ void CameraDevice::updatePreview() {
 /**
  * プレビューを終了する
  */
-void CameraDevice::endPreview() {
+void CameraDevice::stopPreview() {
     if (!previewTexture) {
         return;
     }
@@ -90,6 +90,14 @@ void CameraDevice::endPreview() {
 }
 
 /**
+ * プレビューサイズを要求するする
+ */
+void CameraDevice::requestPreviewSize(const s32 width, const s32 height, const s32 minWidth, const s32 minHeight) {
+    nativeCamera->requestPreviewSize(width, height, minWidth, minHeight);
+}
+
+
+/**
  * カメラを明示的に解放する
  */
 void CameraDevice::dispose() {
@@ -97,7 +105,7 @@ void CameraDevice::dispose() {
         return;
     }
 
-    endPreview();
+    stopPreview();
     nativeCamera->dispose();
     nativeCamera.reset();
 }

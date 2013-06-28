@@ -14,6 +14,10 @@ public:
 
     static const ::jc::s32 TYPE_MAIN;
     static const ::jc::s32 TYPE_FRONT;
+    static const ::jc::s32 FOCUSMODE_NONE;
+    static const ::jc::s32 FOCUSMODE_PROCESSING;
+    static const ::jc::s32 FOCUSMODE_COMPLETED;
+    static const ::jc::s32 FOCUSMODE_FAILED;
 };
 
 }

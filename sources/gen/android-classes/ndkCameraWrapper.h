@@ -15,21 +15,31 @@ public:
     }
 
     static const ::jc::charactor* CLASS_SIGNATURE;
-    virtual jboolean startPreview(jint textureName);
-    static jboolean startPreview_(jobject _this, jint textureName);
     virtual jint getPreviewHeight();
     static jint getPreviewHeight_(jobject _this);
+    virtual jboolean cancelAutofocus();
+    static jboolean cancelAutofocus_(jobject _this);
+    virtual jboolean renderingToTexture();
+    static jboolean renderingToTexture_(jobject _this);
+    virtual jboolean startAutofocus();
+    static jboolean startAutofocus_(jobject _this);
+    virtual jboolean startPreview(jint textureName);
+    static jboolean startPreview_(jobject _this, jint textureName);
     virtual void dispose();
     static void dispose_(jobject _this);
     virtual jint getPreviewWidth();
     static jint getPreviewWidth_(jobject _this);
+    virtual jint popFocusMode();
+    static jint popFocusMode_(jobject _this);
     static jobject createInstance_unsafe(jint CameraDeviceProtocol_TYPE);
-    virtual jboolean renderingToTexture();
-    static jboolean renderingToTexture_(jobject _this);
+    virtual void requestPreviewSize(jint width, jint height, jint minWidth, jint minHeight);
+    static void requestPreviewSize_(jobject _this, jint width, jint height, jint minWidth, jint minHeight);
     virtual jboolean stopPreview();
     static jboolean stopPreview_(jobject _this);
     virtual jobject getTextureMatrix_unsafe();
     static jobject getTextureMatrix_unsafe_(jobject _this);
+    virtual jboolean isAutofocusProcessing();
+    static jboolean isAutofocusProcessing_(jobject _this);
 
 
     static jc_sp<CameraWrapper> wrap(jobject obj);

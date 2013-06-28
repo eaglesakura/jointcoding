@@ -80,7 +80,7 @@ public:
     /**
      * プレビューを終了する
      */
-    virtual void endPreview();
+    virtual void stopPreview();
 
     /**
      * プレビューテクスチャ用のUV行列を取得する
@@ -100,6 +100,11 @@ public:
     virtual jcboolean isPreviewStarted() const {
         return previewStarted && previewTexture;
     }
+
+    /**
+     * プレビューサイズを要求するする
+     */
+    virtual void requestPreviewSize(const s32 width, const s32 height, const s32 minWidth, const s32 minHeight);
 
     /**
      * カメラを明示的に解放する

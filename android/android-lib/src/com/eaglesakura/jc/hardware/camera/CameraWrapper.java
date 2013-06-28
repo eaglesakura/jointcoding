@@ -3,13 +3,17 @@ package com.eaglesakura.jc.hardware.camera;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.List;
 
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 
 import com.eaglesakura.jc.util.AndroidUtil;
+import com.eaglesakura.jcprotocol.CameraDeviceProtocol;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -20,12 +24,19 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
          cppNamespace = "ndk")
 public class CameraWrapper {
 
+    final Object lock = new Object();
+
     Camera camera = null;
 
     /**
      * カメラタイプ
      */
     int CameraDeviceProtocol_TYPE;
+
+    /**
+     * 現在のフォーカス状態
+     */
+    int CameraDeviceProtocol_FOCUSMODE = CameraDeviceProtocol.FOCUSMODE_NONE;
 
     /**
      * プレビュー用サーフェイス
@@ -50,7 +61,7 @@ public class CameraWrapper {
      * カメラを開く
      * @return
      */
-    public boolean open() {
+    boolean open() {
         try {
             camera = Camera.open();
 
@@ -63,6 +74,77 @@ public class CameraWrapper {
             return true;
         } catch (Exception e) {
             AndroidUtil.log(e);
+            return false;
+        }
+    }
+
+    /**
+     * オートフォーカス処理中であればtrue
+     * @return
+     */
+    @JCMethod
+    public boolean isAutofocusProcessing() {
+        return CameraDeviceProtocol_FOCUSMODE == CameraDeviceProtocol.FOCUSMODE_PROCESSING;
+    }
+
+    /**
+     * オートフォーカスを開始する
+     * @return
+     */
+    @JCMethod
+    public boolean startAutofocus() {
+        synchronized (lock) {
+            try {
+                if (isAutofocusProcessing()) {
+                    return true;
+                }
+
+                CameraDeviceProtocol_FOCUSMODE = CameraDeviceProtocol.FOCUSMODE_PROCESSING;
+                camera.autoFocus(autoFocusCallback);
+                return true;
+            } catch (Exception e) {
+                AndroidUtil.log(e);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 現在のフォーカス状態を取り出す
+     * 処理中でなければ、NONEに戻される
+     * @return
+     */
+    @JCMethod
+    public int popFocusMode() {
+        synchronized (lock) {
+            int result = CameraDeviceProtocol_FOCUSMODE;
+            if (!isAutofocusProcessing()) {
+                CameraDeviceProtocol_FOCUSMODE = CameraDeviceProtocol.FOCUSMODE_NONE;
+            }
+
+            return result;
+        }
+    }
+
+    /**
+     * オートフォーカス処理をキャンセルする
+     * @return
+     */
+    @JCMethod
+    public boolean cancelAutofocus() {
+        synchronized (lock) {
+            if (!isAutofocusProcessing()) {
+                return true;
+            }
+
+            try {
+                CameraDeviceProtocol_FOCUSMODE = CameraDeviceProtocol.FOCUSMODE_NONE;
+                camera.cancelAutoFocus();
+
+                return true;
+            } catch (Exception e) {
+                AndroidUtil.log(e);
+            }
             return false;
         }
     }
@@ -83,6 +165,46 @@ public class CameraWrapper {
     @JCMethod
     public int getPreviewHeight() {
         return cameraParams.getPreviewSize().height;
+    }
+
+    /**
+     * 指定したアスペクト比に近いプレビューサイズを選択する
+     * @param width
+     * @param height
+     * @param minWidth
+     * @param minHeight
+     */
+    @JCMethod
+    public void requestPreviewSize(int width, int height, int minWidth, int minHeight) {
+        final float TARGET_ASPECT = (float) width / (float) height;
+
+        try {
+            List<Size> previewSizes = cameraParams.getSupportedPreviewSizes();
+            Size target = null;
+            float current_diff = 999999999;
+
+            for (Size size : previewSizes) {
+                // 最低限のフォーマットは保つ
+                if (size.width >= minWidth && size.height >= minHeight) {
+                    float aspect_diff = ((float) size.width / (float) size.height) - TARGET_ASPECT;
+
+                    // アスペクト比の差分が小さい＝近い構成をコピーする
+                    if (Math.abs(aspect_diff) < current_diff) {
+                        target = size;
+                        current_diff = aspect_diff;
+                    }
+                }
+            }
+
+            if (target != null) {
+                AndroidUtil.log(String.format("change preview size(%d x %d)", target.width, target.height));
+                cameraParams.setPreviewSize(target.width, target.height);
+                camera.setParameters(cameraParams);
+            }
+        } catch (Exception e) {
+            AndroidUtil.log(e);
+        }
+
     }
 
     /**
@@ -237,4 +359,25 @@ public class CameraWrapper {
             return false;
         }
     }
+
+    /**
+     * オートフォーカス用
+     */
+    final Camera.AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            synchronized (lock) {
+                // キャンセルされていたら何も行わない
+                if (!isAutofocusProcessing()) {
+                    return;
+                }
+
+                if (success) {
+                    CameraDeviceProtocol_FOCUSMODE = CameraDeviceProtocol.FOCUSMODE_COMPLETED;
+                } else {
+                    CameraDeviceProtocol_FOCUSMODE = CameraDeviceProtocol.FOCUSMODE_FAILED;
+                }
+            }
+        }
+    };
 }
