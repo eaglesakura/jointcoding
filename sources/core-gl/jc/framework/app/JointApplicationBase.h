@@ -460,6 +460,11 @@ public:
      */
     virtual void dispatchTask(const ApplicationTaskContext &task);
 
+
+    /**
+     * タッチイベントが呼び出された
+     */
+    virtual void dispatchTouchEvent(jc_sp<TouchEventProtocol> event);
 protected:
     /* アプリライフサイクル */
 

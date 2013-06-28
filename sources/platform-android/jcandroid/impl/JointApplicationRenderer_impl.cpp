@@ -10,6 +10,7 @@
 #include    "jc/framework/app/JointApplicationBase.h"
 #include    "jcandroid/egl/sdk/SdkDeviceManagerContext.hpp"
 #include    "jcandroid/framework/NDKPlatformContext.h"
+#include    "android-classes/ndkNativeTouchEvent.h"
 
 using namespace ndk;
 
@@ -46,6 +47,14 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
     array->unlock(JniArrayUnlock_Commit);
 
     return result;
+}
+
+// タッチイベント処理を行う
+JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_dispatchTouchEvent(JNIEnv *env, jobject _this, jobject toucheventprotocol_0) {
+
+    jc_sp<ndk::NativeTouchEvent> event = ndk::NativeTouchEvent::global(toucheventprotocol_0);
+    // タッチイベント送信を行う
+    joint_context(_this, JointApplicationBase)->dispatchTouchEvent(event);
 }
 
 // main

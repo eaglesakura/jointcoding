@@ -1,5 +1,7 @@
 package com.eaglesakura.jc.framework.context;
 
+import java.util.List;
+
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import com.eaglesakura.jc.egl.view.EGLSurfaceView;
 import com.eaglesakura.jc.egl.view.EGLTextureView;
 import com.eaglesakura.jc.egl.view.RenderingSurface;
 import com.eaglesakura.jc.framework.app.JointApplicationRenderer;
+import com.eaglesakura.jc.ui.NativeTouchEvent;
 import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.jcprotocol.SurfacePixelFormatProtocol;
 import com.eaglesakura.jcprotocol.framework.JointApplicationProtocol;
@@ -53,6 +56,15 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
     private View.OnTouchListener surfaceTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            if (renderer == null) {
+                return true;
+            }
+
+            List<NativeTouchEvent> nativeEvents = NativeTouchEvent.toNativeEvents(event);
+            // 分解して送信する
+            for (NativeTouchEvent evt : nativeEvents) {
+                renderer.dispatchTouchEvent(evt);
+            }
             return true;
         }
     };

@@ -5,6 +5,7 @@ import com.eaglesakura.jc.egl.DeviceManager;
 import com.eaglesakura.jc.egl.WindowDeviceManager;
 import com.eaglesakura.jc.framework.app.thread.JointThread;
 import com.eaglesakura.jc.jni.Pointer;
+import com.eaglesakura.jcprotocol.TouchEventProtocol;
 import com.eaglesakura.jcprotocol.framework.JointApplicationProtocol;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -160,6 +161,14 @@ public abstract class JointApplicationRenderer implements Jointable {
     }
 
     /**
+     * タッチイベントを処理させる
+     * @param event
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public final native void dispatchTouchEvent(TouchEventProtocol event);
+
+    /**
      * パラメータの問い合わせを行う
      * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
      * @param sub_key サブキー。主キーによっては利用する
@@ -282,5 +291,4 @@ public abstract class JointApplicationRenderer implements Jointable {
      * どのようなApplicationがNative側で生成されるかはこの実装に任せる
      */
     protected abstract void createNativeContext();
-
 }

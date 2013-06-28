@@ -317,6 +317,14 @@ jcboolean JointApplicationBase::isLoopSleep() const {
 }
 
 /**
+ * タッチイベントが呼び出された
+ */
+void JointApplicationBase::dispatchTouchEvent(jc_sp<TouchEventProtocol> event) {
+    jclogf("dispatchTouchEvent type(%d) pos(%f, %f)", event->getEventType(), event->getEventPosX(), event->getEventPosY());
+}
+
+
+/**
  * メインループの外部呼び出しを行う
  */
 void JointApplicationBase::dispatchMainloop() {
