@@ -183,14 +183,6 @@ void BenchmarkApplication::onAppSurfaceResized(const s32 width, const s32 height
  * メソッド呼び出し時点でデバイスロック済み
  */
 void BenchmarkApplication::onAppMainUpdate() {
-}
-
-/**
- * メインレンダリングを行わせる。
- * メソッド呼び出し時点でデバイスロック済み。
- * フロントバッファ転送もメソッド内で行わせる。
- */
-void BenchmarkApplication::onAppMainRendering() {
     MDevice device = getWindowDevice();
     MGLState state = device->getState();
     {

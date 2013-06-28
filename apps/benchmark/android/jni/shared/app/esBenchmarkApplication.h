@@ -108,13 +108,6 @@ protected:
     virtual void onAppMainUpdate();
 
     /**
-     * メインレンダリングを行わせる。
-     * メソッド呼び出し時点でデバイスロック済み。
-     * フロントバッファ転送もメソッド内で行わせる。
-     */
-    virtual void onAppMainRendering();
-
-    /**
      * アプリ休止処理
      * 音声の休止等の処理を行う
      */

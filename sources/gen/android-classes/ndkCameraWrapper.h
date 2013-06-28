@@ -1,0 +1,43 @@
+/**
+ * export from "Joint Coding Project"
+ */
+#ifndef __CAMERAWRAPPER_H__
+#define __CAMERAWRAPPER_H__
+#include "jointcoding-android.h"
+
+namespace ndk {
+
+class CameraWrapper: public ::ndk::JniWrapper {
+protected:
+    CameraWrapper(jobject obj);
+public:
+    virtual ~CameraWrapper(void){
+    }
+
+    static const ::jc::charactor* CLASS_SIGNATURE;
+    virtual jboolean startPreview(jint textureName);
+    static jboolean startPreview_(jobject _this, jint textureName);
+    virtual jint getPreviewHeight();
+    static jint getPreviewHeight_(jobject _this);
+    virtual void dispose();
+    static void dispose_(jobject _this);
+    virtual jint getPreviewWidth();
+    static jint getPreviewWidth_(jobject _this);
+    static jobject createInstance_unsafe(jint CameraDeviceProtocol_TYPE);
+    virtual jboolean renderingToTexture();
+    static jboolean renderingToTexture_(jobject _this);
+    virtual jboolean stopPreview();
+    static jboolean stopPreview_(jobject _this);
+    virtual jobject getTextureMatrix_unsafe();
+    static jobject getTextureMatrix_unsafe_(jobject _this);
+
+
+    static jc_sp<CameraWrapper> wrap(jobject obj);
+    static jc_sp<CameraWrapper> global(jobject obj);
+
+    static jclass getClass();
+};
+
+}
+
+#endif // __CAMERAWRAPPER_H__

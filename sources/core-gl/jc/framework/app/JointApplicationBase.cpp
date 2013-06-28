@@ -175,18 +175,23 @@ void JointApplicationBase::changeAppState() {
     // レジューム
     if (appState == JointApplicationProtocol::State_Running) {
         if (flags.isDisable(ApplicationStateFlag_Initialized)) {
+            jclog("start initialize");
             // 未初期化だから初期化する
             dispatchInitialize();
-        } else {
-            // 初期化済みだからレジュームする
-            dispatchResume();
+
         }
+        jclog("start resume");
+        // レジュームする
+        dispatchResume();
     } else if (appState == JointApplicationProtocol::State_Paused) {
         if (flags.isEnable(ApplicationStateFlag_Initialized)) {
             // 休止を行う
             dispatchPause();
         }
     } else if (appState == JointApplicationProtocol::State_Destroyed) {
+        // 休止を行う
+        dispatchPause();
+
         // 廃棄処理を行う
         dispatchDestroy();
     }
@@ -337,7 +342,6 @@ void JointApplicationBase::dispatchMainloop() {
 
                     // フレーム定形処理を行う
                     onAppMainUpdate();
-                    onAppMainRendering();
                 }
             } catch (EGLException &e) {
                 jcloge(e);

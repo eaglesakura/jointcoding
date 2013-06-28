@@ -400,13 +400,6 @@ protected:
     virtual void onAppMainUpdate() = 0;
 
     /**
-     * メインレンダリングを行わせる。
-     * メソッド呼び出し時点でデバイスロック済み。
-     * フロントバッファ転送もメソッド内で行わせる。
-     */
-    virtual void onAppMainRendering() = 0;
-
-    /**
      * アプリのメモリ解放を行う
      * メソッド呼び出し時点でデバイスロック済み。
      */
