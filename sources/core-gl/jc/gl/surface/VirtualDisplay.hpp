@@ -12,6 +12,31 @@
 namespace jc {
 
 /**
+ * VGA = 640x480
+ */
+static const Vector2i DISPLAYSIZE_VGA(640, 480);
+
+/**
+ * WVGA = 800x480
+ */
+static const Vector2i DISPLAYSIZE_WVGA(800, 480);
+
+/**
+ * iPhone5世代のRetinaディスプレイ
+ */
+static const Vector2i DISPLAYSIZE_RETINA_iP5(1136, 640);
+
+/**
+ * HD = 1280x720
+ */
+static const Vector2i DISPLAYSIZE_720p(1280, 720);
+
+/**
+ * FULL-HD = 1920x1020
+ */
+static const Vector2i DISPLAYSIZE_1080p(1920, 1020);
+
+/**
  * ディスプレイサイズに関わる補正を行う。<BR>
  * <BR>
  * 基本的に、画面はスケーリング＆センタリングされる。<BR>
@@ -75,6 +100,20 @@ public:
 
     virtual ~VirtualDisplay() {
 
+    }
+
+    /**
+     * 実ディスプレイアスペクト比を取得する
+     */
+    float getRealDisplayAspect() const {
+        return realDisplaySize.x / realDisplaySize.y;
+    }
+
+    /**
+     * 仮想ディスプレイアスペクト比を取得する
+     */
+    float getVirtualDisplayAspect() const {
+        return virtualDisplaySize.x / virtualDisplaySize.y;
     }
 
     /**

@@ -125,15 +125,32 @@ public:
         return device;
     }
 
-    virtual MRenderingSurface getCurrentRenderingTarget() const {
+    /**
+     * 現在のレンダリングターゲットを取得する
+     */
+    virtual MRenderingSurface getRenderingTarget() const {
         return renderStack->getCurrentRenderingTarget();
     }
 
     /**
      * 現在の仮想ディスプレイを取得する
      */
-    virtual MVirtualDisplay getCurrentVirtualDisplay() const {
+    virtual MVirtualDisplay getVirtualDisplay() const {
         return renderStack->getCurrentVirtualDisplay();
+    }
+
+    /**
+     * 現在の仮想ディスプレイアスペクト比を取得する
+     */
+    virtual float getVirtualDisplayAspect() const {
+        return getVirtualDisplay()->getVirtualDisplayAspect();
+    }
+
+    /**
+     * 現在の仮想ディスプレイサイズを取得する
+     */
+    virtual const Vector2f& getVirtualDisplaySize() const {
+        return getVirtualDisplay()->getVirtualDisplaySize();
     }
 
     /**
@@ -195,17 +212,11 @@ public:
     }
 
     /**
-     * 現在の仮想ディスプレイ環境に基づいてViewportを指定する。
-     * 仮想ディスプレイ内の領域に対してviewportを行う。
-     *
-     * FIXME 未実装
+     * 現在の仮想ディスプレイ設定に基づいてviewportを指定する
      */
-    virtual void viewport2D(const s32 x, const s32 y, const s32 width, const s32 height) {
-
-        jcalertf("Call viewport2D(%d, %d, %d, %d)", x, y, width, height);
-
+    virtual void viewportVirtual() const {
         // 現在のviewportを変更する
-        MVirtualDisplay display = getCurrentVirtualDisplay();
+        MVirtualDisplay display = getVirtualDisplay();
         RectF viewport = display->getDisplayViewport();
 
         // Viewport指定を行う
@@ -223,13 +234,13 @@ public:
 
         // viewportを変更する
         {
-            MVirtualDisplay display = getCurrentVirtualDisplay();
+            MVirtualDisplay display = getVirtualDisplay();
             display->setRealDisplaySize(newWidth, newHeight);
             display->updateViewport(VirtualDisplay::FitType_Auto);
-            viewport2D(0, 0, newWidth, newHeight);
+            viewportVirtual();
         }
 
-        MRenderingSurface surface = getCurrentRenderingTarget();
+        MRenderingSurface surface = getRenderingTarget();
         ContextListenerList::iterator itr = listeners.begin(), end = listeners.end();
         while (itr != end) {
             RenderingContextListener *pListener = itr->get();

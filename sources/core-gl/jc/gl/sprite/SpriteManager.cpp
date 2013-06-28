@@ -74,6 +74,7 @@ SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
     this->windowDevice = device;
 
     this->shader = shader;
+    this->surfaceSize.set(512, 512);
 
 // シェーダーが設定されて無ければ、組み込みで起動する
     if (!shader) {
@@ -104,6 +105,7 @@ void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
 void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_height) {
     shader->bind();
     assert(uniform.aspect.valid());
+    surfaceSize.set(surface_width, surface_height);
     uniform.aspect.upload((float) surface_width / (float) surface_height);
 }
 
@@ -114,8 +116,8 @@ void SpriteManager::rendering(const float x, const float y, const float width, c
 
     {
         // ポリゴンのXYWH情報を生成する
-        const float displayWidth = (float) windowDevice->getSurface()->getWidth();
-        const float displayHeight = (float) windowDevice->getSurface()->getHeight();
+        const float displayWidth = (float) surfaceSize.x;
+        const float displayHeight = (float) surfaceSize.y;
 
         const float sizeX = width / displayWidth * 2;
         const float sizeY = height / displayHeight * 2;

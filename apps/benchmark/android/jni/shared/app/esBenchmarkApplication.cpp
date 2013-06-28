@@ -34,17 +34,30 @@ SurfaceSpecs BenchmarkApplication::getRenderingSurfaceSpecs() const {
 }
 
 /**
+ * レンダリングサーフェイスが変更された
+ */
+void BenchmarkApplication::onRenderingSurfaceChanged(RenderingContext *pContext, const MRenderingSurface old, const MRenderingSurface now) {
+    spriteManager->setSurfaceAspect(now->getWidth(), now->getHeight());
+}
+
+/**
  * アプリ初期化を行わせる
  * メソッド呼び出し時点でデバイスロック済み。
  */
 void BenchmarkApplication::onAppInitialize() {
     jclogf("onAppInitialize 0x%x", this);
 
+    // 仮想ディスプレイサイズをHDに変更する
+    {
+        renderingContext->getVirtualDisplay()->setVirtualDisplaySize(DISPLAYSIZE_RETINA_iP5.x, DISPLAYSIZE_RETINA_iP5.y);
+    }
+
     getWindowDevice()->getState()->blendEnable(jctrue);
     getWindowDevice()->getState()->blendFunc(GLBlendType_Alpha);
 
     {
         spriteManager = SpriteManager::createInstance(getRenderingContext()->getDevice());
+        spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
     }
 
     // スキニングなしフィギュアをロード
@@ -174,8 +187,6 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
  */
 void BenchmarkApplication::onAppSurfaceResized(const s32 width, const s32 height) {
     jclogf("onAppSurfaceResized 0x%x", this);
-
-    spriteManager->setSurfaceAspect(width, height);
 }
 
 /**
@@ -186,14 +197,19 @@ void BenchmarkApplication::onAppMainUpdate() {
     MDevice device = getWindowDevice();
     MGLState state = device->getState();
     {
-//        state->clearColorf(0, 0, (float) (rand() % 0xFF) / 255.0f, 0);
+        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
         state->clearColorf(0, 1, 1, 1);
         state->clearSurface();
-        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
     }
+//
 
+    {
+        state->depthTestEnable(jcfalse);
+        renderingContext->viewportVirtual();
+        spriteManager->setSurfaceAspect((u32)renderingContext->getVirtualDisplaySize().x, (u32)renderingContext->getVirtualDisplaySize().y);
+        spriteManager->renderingRect(0, 0, renderingContext->getVirtualDisplaySize().x, renderingContext->getVirtualDisplaySize().y, 0x7FFFFFFF);
+    }
 //    {
-//        state->depthTestEnable(jcfalse);
 //        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
 //
 //        if (texture) {
@@ -229,7 +245,7 @@ void BenchmarkApplication::onAppMainUpdate() {
             m.rotateY(rotate);
             m.multiply(camPos, &camPos);
             worldEnv->getMainCamera()->lookAt(camPos, Vector3f(0, -5, 0), Vector3f(0, 1, 0));
-            worldEnv->getMainCamera()->projection(100.0f, 350.0f, 45.0f, device->getSurfaceAspect());
+            worldEnv->getMainCamera()->projection(100.0f, 350.0f, 45.0f, renderingContext->getVirtualDisplayAspect());
         }
         {
             jc::Transform trans;
@@ -264,7 +280,7 @@ void BenchmarkApplication::onAppMainUpdate() {
 
     // 通常レンダリング
     {
-        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
+        renderingContext->viewportVirtual();
         basicShader->bind();
         {
             TextureUniform unif;
@@ -299,9 +315,8 @@ void BenchmarkApplication::onAppMainUpdate() {
     {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
         MTextureImage texture = shadowmapTexture;
-
+        spriteManager->setSurfaceAspect(getPlatformViewSize().x, getPlatformViewSize().y);
         spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 256, 256);
-//        spriteManager->renderingImage(texture, texture->getWidth(), texture->getHeight(), -texture->getWidth(), -texture->getHeight());
     }
     getWindowDevice()->postFrontBuffer();
 }

@@ -31,6 +31,11 @@ protected:
     MGLShaderProgram shader;
 
     /**
+     * サーフェイスサイズ
+     */
+    Vector2i surfaceSize;
+
+    /**
      * ステータス情報
      */
     MDevice windowDevice;

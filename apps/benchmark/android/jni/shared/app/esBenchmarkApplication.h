@@ -13,7 +13,7 @@
 
 namespace es {
 
-class BenchmarkApplication: public JointApplicationBase {
+class BenchmarkApplication: public JointApplicationBase, public RenderingContextListener {
     MTextureImage texture;
 
     enum {
@@ -86,6 +86,12 @@ protected:
      * 可能な限りリクエストに沿ったサーフェイスを作成する。
      */
     virtual SurfaceSpecs getRenderingSurfaceSpecs() const;
+
+
+    /**
+     * レンダリングサーフェイスが変更された
+     */
+    virtual void onRenderingSurfaceChanged(RenderingContext *pContext, const MRenderingSurface old, const MRenderingSurface now);
 protected:
     /* アプリライフサイクル */
 
