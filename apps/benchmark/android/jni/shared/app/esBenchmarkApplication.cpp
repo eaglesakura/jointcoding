@@ -12,6 +12,8 @@
 
 #include    "jc/framework/assets/figure/FigureLoader.h"
 
+#include    "jc/widget/view/image/ImageView.h"
+
 using namespace jc::fw;
 namespace es {
 
@@ -56,8 +58,14 @@ void BenchmarkApplication::onAppInitialize() {
     getWindowDevice()->getState()->blendFunc(GLBlendType_Alpha);
 
     {
+        windowManager.reset(new WindowManager());
+
         spriteManager = SpriteManager::createInstance(getRenderingContext()->getDevice());
         spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
+
+        MWindowContext context = windowManager->getWindowContext();
+        context->setRenderingContext(renderingContext);
+        context->setSpriteManager(spriteManager);
     }
 
     // スキニングなしフィギュアをロード
@@ -158,6 +166,15 @@ void BenchmarkApplication::onAppInitialize() {
         shadowmap->unbind(device->getState());
     }
 
+    {
+        {
+            MImageView view(new ImageView(windowManager->getWindowContext()));
+            view->setImage(shadowmapTexture);
+            view->layoutDirect(Vector2f(shadowmapTexture->getWidth(), shadowmapTexture->getHeight()));
+            windowManager->addView(view);
+        }
+    }
+
 //    // テクスチャロードを開始する
     startNewtask(BenchmarkTask_LoadTexture, 0);
 }
@@ -194,6 +211,13 @@ void BenchmarkApplication::onAppSurfaceResized(const s32 width, const s32 height
  * メソッド呼び出し時点でデバイスロック済み
  */
 void BenchmarkApplication::onAppMainUpdate() {
+    windowManager->loopBegin();
+
+    {
+        windowManager->update();
+        windowManager->rendering();
+    }
+
     MDevice device = getWindowDevice();
     MGLState state = device->getState();
     {
@@ -206,7 +230,7 @@ void BenchmarkApplication::onAppMainUpdate() {
     {
         state->depthTestEnable(jcfalse);
         renderingContext->viewportVirtual();
-        spriteManager->setSurfaceAspect((u32)renderingContext->getVirtualDisplaySize().x, (u32)renderingContext->getVirtualDisplaySize().y);
+        spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
         spriteManager->renderingRect(0, 0, renderingContext->getVirtualDisplaySize().x, renderingContext->getVirtualDisplaySize().y, 0x7FFFFFFF);
     }
 //    {
@@ -312,13 +336,14 @@ void BenchmarkApplication::onAppMainUpdate() {
         renderer->rendering(device, antan, antan_instance);
     }
 
-    {
-        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
-        MTextureImage texture = shadowmapTexture;
-        spriteManager->setSurfaceAspect(getPlatformViewSize().x, getPlatformViewSize().y);
-        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 256, 256);
-    }
-    getWindowDevice()->postFrontBuffer();
+//    {
+//        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
+//        MTextureImage texture = shadowmapTexture;
+//        spriteManager->setSurfaceAspect(getPlatformViewSize().x, getPlatformViewSize().y);
+//        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 256, 256);
+//    }
+//    getWindowDevice()->postFrontBuffer();
+    windowManager->loopEnd(jctrue);
 }
 
 /**

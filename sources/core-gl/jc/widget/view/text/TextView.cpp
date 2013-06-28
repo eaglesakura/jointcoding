@@ -10,7 +10,7 @@
 namespace jc {
 namespace view {
 
-TextView::TextView() {
+TextView::TextView(MWindowContext context) : View(context) {
     lineMargin = 0;
     textureCreated = jcfalse;
     textGravity = LayoutGravity_Left | LayoutGravity_Top;
@@ -78,7 +78,7 @@ void TextView::createTexture(MDevice device) {
  * テキストを設定する
  */
 void TextView::setText(const String &text) {
-    setText(getDeviceOrNull(), text);
+    setText(getDevice(), text);
 }
 
 /**
@@ -102,7 +102,7 @@ void TextView::setText(MDevice device, const String text) {
  * フォントの高さを設定する
  */
 void TextView::setTextHeightPixel(const u32 height) {
-    setTextHeightPixel(getDeviceOrNull(), height);
+    setTextHeightPixel(getDevice(), height);
 }
 
 /**

@@ -61,7 +61,7 @@ protected:
     /**
      * 子参照
      */
-    std::list<MSceneGraph> childs;
+    std::list<MSceneGraph> children;
 
     /**
      * 現在の処理パスを取得する
@@ -101,7 +101,7 @@ public:
         assert(pass >= 0);
         currentPass = pass;
 
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        std::list<MSceneGraph>::iterator itr = children.begin(), end = children.end();
         while (itr != end) {
             (*itr)->beginPass(passType, pass);
             ++itr;
@@ -116,7 +116,7 @@ public:
         const s32 finished_pass = jc::max(0, currentPass);
         currentPass = -1;
 
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        std::list<MSceneGraph>::iterator itr = children.begin(), end = children.end();
         while (itr != end) {
             (*itr)->endPass(passType);
             ++itr;
@@ -137,7 +137,7 @@ public:
     }
 
     virtual u32 getChildrenNum() const {
-        return childs.size();
+        return children.size();
     }
 
     /**
@@ -163,7 +163,7 @@ public:
     /**
      * すべての子を外す
      */
-    virtual void removeChilds();
+    virtual void removeChildren();
 
     /**
      * 子を探す

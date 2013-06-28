@@ -35,11 +35,11 @@ protected:
      * 最後に登録されたViewを取得する
      */
     virtual MView getLastView() const {
-        if (childs.empty()) {
+        if (children.empty()) {
             return MView();
         }
 
-        return downcast<View>(childs.back());
+        return downcast<View>(children.back());
     }
 
     virtual RectF getLastViewArea() const {

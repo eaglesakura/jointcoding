@@ -11,7 +11,8 @@
 namespace jc {
 namespace view {
 
-Button::Button() {
+Button::Button(MWindowContext context) :
+        TextView(context) {
     // テキストはRead-Onlyのため、アクションは起こせない
     setFocusable(jctrue);
     setTouchable(jctrue);

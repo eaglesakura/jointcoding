@@ -51,7 +51,7 @@ void WindowEventListener::onTouchBegin(const TouchDetector* detector, const Touc
 
     if (!target) {
         // まだタッチが当たっていない場合はタッチを更新してViewを取得する
-        target = window->findTouchedView(touchPos);
+        target = window->getRootView()->findTouchedView(touchPos);
         refreshTouch = jctrue;
     }
 
@@ -233,7 +233,7 @@ void WindowEventListener::onKeyUp(KeyDetector *detector, const MKeyData keyData)
         MView focusView = window->findFocusedView();
         if (!focusView) {
             // フォーカスが無ければ、適当なフォーカスを当てる
-            focusView = window->findFocusableView();
+            focusView = window->getRootView()->findFocusableView();
 
             jclogf("focused view(%x)", focusView.get());
 

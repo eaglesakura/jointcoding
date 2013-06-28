@@ -16,7 +16,7 @@ namespace view {
     MWindow window = lockWindow();
     assert(window.get());
 
-    MView view = window->findViewById(id);
+    MView view = window->getRootView()->findViewById(id);
     return view;
 }
 
@@ -28,7 +28,7 @@ jc_sp<View> WindowContext::findEnableViewById(const scene_id id) {
     MWindow window = lockWindow();
     assert(window.get());
 
-    MView view = window->findEnableViewById(id);
+    MView view = window->getRootView()->findEnableViewById(id);
     return view;
 }
 

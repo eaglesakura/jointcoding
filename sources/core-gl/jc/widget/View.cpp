@@ -6,17 +6,20 @@
 
 #include    "jc/widget/View.h"
 #include    "jc/widget/window/Window.h"
-#include    "jc/widget/RegisteredInitializer.h"
 #include    "jc/widget/event/RequestFocusEvent.h"
 
 namespace jc {
 namespace view {
 
-View::View() {
+View::View(MWindowContext context) {
+    assert(context);
+
+    this->context = context;
     this->enableRenderingPass = 0x1;
     this->down = this->down_inc = this->focus = jcfalse;
     this->enable = this->focusable = this->touchable = jctrue;
     this->focusmove_fromtouch = jctrue;
+    this->registerd = jcfalse;
     this->visibleMultParent = jctrue;
     this->viewMode = ViewMode_Visible;
 
@@ -26,20 +29,6 @@ View::View() {
 
 View::~View() {
 
-}
-
-/**
- * 遷移カウンターをイニシャライザリストに登録する
- */
-void View::addTransacationInitializer(const jc_selp<TransactionCounter> counter, const float transaction_sec, const LeapType_e type) {
-    addRegisteredInitializer(jc_sp<TransactionInitializer>( new TransactionInitializer(counter, transaction_sec, type)) );
-}
-
-/**
- * タイマーをイニシャライザリストに登録する
- */
-void View::addTimerInitializer(const jc_selp<WindowTimer> timer, const u32 timeMilliSec) {
-    addRegisteredInitializer(jc_sp<RegisteredInitializer>(new TimerInitializer(timer, timeMilliSec)));
 }
 
 /**
@@ -104,7 +93,7 @@ void View::requestFocus(const jcboolean has) {
         dispatchRecuestFocus(jcfalse);
     } else {
         // リクエストを保留させる
-        windowContext->interruptionEvent(RequestFocusEventExtension::createInstance(has, getSelfManagedObject()));
+        context->interruptionEvent(RequestFocusEventExtension::createInstance(has, getSelfManagedObject()));
     }
 
 }
@@ -119,7 +108,7 @@ jcboolean View::hasFocus(const jcboolean recursive) {
     }
 
     if (recursive) {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        std::list<MSceneGraph>::iterator itr = children.begin(), end = children.end();
         while (itr != end) {
 
             MView view = downcast<View>(*itr);
@@ -146,7 +135,7 @@ s32 View::getViewIndex() {
     assert(parent != NULL);
 
     s32 result = 0;
-    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+    std::list<MSceneGraph>::iterator itr = parent->children.begin(), end = parent->children.end();
 
     while (itr != end) {
         MView view = downcast<View>(*itr);
@@ -195,7 +184,7 @@ jc_sp<View> View::findSibling(const s32 offset) {
     // インデックスを探す
 
     s32 check_index = 0;
-    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+    std::list<MSceneGraph>::iterator itr = parent->children.begin(), end = parent->children.end();
 
     while (itr != end) {
         MView view = downcast<View>(*itr);
@@ -220,7 +209,7 @@ jc_sp<View> View::findSibling(const s32 offset) {
 MView View::getChildViewAt(const s32 index) {
     // インデックスを探す
     s32 check_index = 0;
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    std::list<MSceneGraph>::iterator itr = children.begin(), end = children.end();
 
     while (itr != end) {
         MView view = downcast<View>(*itr);
@@ -352,7 +341,7 @@ void View::dispatchKeyEvent(const MKeyData keyData) {
  * フォーカス移動の制御を行う
  */
 void View::dispatchFocusMove(const MKeyData keyData, const scene_id target_view) {
-    MView view = windowContext->findViewById(target_view);
+    MView view = context->findViewById(target_view);
     if (!view) {
         // 対象のViewが見つからなかった
         return;
@@ -515,7 +504,7 @@ MView View::getSelfManagedObject() {
     View *parent = getParentTo<View>();
     assert(parent != NULL);
 
-    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+    std::list<MSceneGraph>::iterator itr = parent->children.begin(), end = parent->children.end();
     while (itr != end) {
         if ((*itr).get() == (SceneGraph*) this) {
             return downcast<View>(*itr);
@@ -537,14 +526,7 @@ void View::registerWindow() {
 
     jcboolean sendMessage = jcfalse;
 // 登録されていなければ登録を行う
-    if (!windowContext && getParent()) {
-        // 元をたどればWindowを手に入れられるはずである
-        Window *window = getRootSceneTo<Window>();
-        assert(window != NULL);
-
-        // ウィンドウからコンテキストをコピーする
-        this->windowContext = window->windowContext;
-
+    if (!registerd && getParent()) {
         // コントローラーを作成する
         {
             setWeightCounter(0.2f);
@@ -555,11 +537,12 @@ void View::registerWindow() {
         }
 
         sendMessage = jctrue;
+        registerd = jctrue;
     }
 
 // 子も登録させる
     {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        std::list<MSceneGraph>::iterator itr = children.begin(), end = children.end();
         while (itr != end) {
             MView view = downcast<View>(*itr);
             if (view) {
@@ -574,18 +557,6 @@ void View::registerWindow() {
         // 登録が完了した
         onRegisteredWindow();
     }
-
-    // 初期化実行を行う
-    {
-        std::list<MRegisteredInitializer>::iterator itr = windowRegisteredInitializer.begin(), end = windowRegisteredInitializer.end();
-        while (itr != end) {
-            (*itr)->onRegisteredWindow(this, windowContext);
-            ++itr;
-        }
-
-        // 既存のイニシャライザリストを解放する
-        windowRegisteredInitializer.clear();
-    }
 }
 
 /**
@@ -595,7 +566,6 @@ void View::addSubView(const jc_sp<View> subView, const jcboolean withRegisterWin
     pushBackChild(subView);
 
     if(withRegisterWindow) {
-        assert(isRegisteredWindow());
         subView->registerWindow();
     }
 }
@@ -604,8 +574,7 @@ void View::addSubView(const jc_sp<View> subView, const jcboolean withRegisterWin
  * ウィンドウ位置を取得する
  */
 RectF View::getWindowArea() {
-    assert(windowContext.get() != NULL);
-    return windowContext->lockWindow()->getLocalLayoutArea();
+    return context->lockWindow()->getLocalArea();
 }
 /**
  * 遷移カウンターを更新する
@@ -618,19 +587,19 @@ void View::setWeightCounter(const float leapTimeSec) {
     // フォーカス用
     {
         const float value = focusCounter.getValue();
-        focusCounter.initialize(windowContext, leapTimeSec);
+        focusCounter.initialize(context, leapTimeSec);
         focusCounter.setValueDirect(value);
     }
     // ダウン用
     {
         const float value = downCounter.getValue();
-        downCounter.initialize(windowContext, leapTimeSec);
+        downCounter.initialize(context, leapTimeSec);
         downCounter.setValueDirect(value);
     }
     // 可視状態用
     {
         const float value = visibleCounter.getValue();
-        visibleCounter.initialize(windowContext, leapTimeSec);
+        visibleCounter.initialize(context, leapTimeSec);
         visibleCounter.setValueDirect(value);
     }
 }
@@ -769,7 +738,7 @@ jcboolean View::isAllFocusWeightZero(const jcboolean recursive) const {
         return jcfalse;
     }
 
-    std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+    std::list<MSceneGraph>::const_iterator itr = children.begin(), end = children.end();
 
     while (itr != end) {
         MView view = downcast<View>(*itr);
@@ -805,7 +774,7 @@ RectF View::getLocalLayoutAreaNest() const {
 RectF View::getGlobalLayoutAreaNest() const {
     RectF result = getGlobalLayoutArea();
 
-    std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+    std::list<MSceneGraph>::const_iterator itr = children.begin(), end = children.end();
 
     while (itr != end) {
 
@@ -872,7 +841,7 @@ void View::onSelfRendering() {
  * ボタンが押されたときと同じアクションを行わせる
  */
 void View::emulateButtonDown() {
-    if(!isDown()) {
+    if (!isDown()) {
         dispatchDownEvent(jctrue);
         dispatchDownEvent(jcfalse);
     }

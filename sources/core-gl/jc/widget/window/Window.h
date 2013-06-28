@@ -15,27 +15,42 @@ namespace view {
 /**
  * すべてのViewを入れるためのRootとして機能する
  */
-class Window: public View {
+class Window: public Object {
     static void broadCastEvent(MView view, MEvent event);
+
+    /**
+     * root view
+     */
+    MView root;
 public:
-    Window(const MWindowContext windowContext) {
-        this->windowContext = windowContext;
+    Window() {
     }
 
     virtual ~Window() {
         jclogf("delete Window(%x)", this);
     }
 
-    /**
-     * 自分自身のレンダリングを行う
-     */
-    virtual void onSelfRendering() {
+    virtual void initialize(MWindowContext context) {
+        this->root.reset(new View(context));
+        root->setUniqueId(ViewID_ROOT);
     }
 
     /**
      * 全Viewにイベントを伝える
      */
     virtual void broadcastEvent(MEvent event);
+
+    /**
+     * 管理用のRootViewを取得する
+     */
+    virtual MView getRootView() const {
+        return root;
+    }
+
+    /**
+     * レイアウトを変更する
+     */
+    virtual void layout(const RectF &area);
 
     /**
      * 特定のレイアウトへイベントを送信する
@@ -52,17 +67,20 @@ public:
     }
 
     /**
-     * 遷移カウンターを更新する
-     * View管理用が一括で更新される
-     * 現在のvalueは維持される。
+     * フォーカス付きのViewを取得する
      */
-    virtual void setWeightCounter(const float leapTimeSec);
+    virtual MView findFocusedView() {
+        return root->findFocusedView();
+    }
 
+    virtual RectF getLocalArea() const {
+        return root->getLocalLayoutArea();
+    }
 };
 
-    /**
-     * managed
-     */
+/**
+ * managed
+ */
 typedef jc_sp<Window> MWindow;
 
 }

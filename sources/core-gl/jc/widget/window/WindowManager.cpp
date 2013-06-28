@@ -13,7 +13,8 @@ namespace view {
 WindowManager::WindowManager() {
     events.reset(new EventQueue());
     windowContext.reset(new WindowContext());
-    window.reset(new Window(windowContext));
+    window.reset(new Window());
+    window->initialize(windowContext);
     windowContext->setWindow(window);
     windowContext->setEventQueue(events);
     windowEventListener.reset(new WindowEventListener(windowContext));
@@ -171,7 +172,7 @@ void WindowManager::handleEvents() {
  * WindowへViewを追加する
  */
 void WindowManager::addView(const MView view) {
-    window->addSubView(view);
+    window->getRootView()->addSubView(view);
 }
 
 /**
@@ -179,10 +180,11 @@ void WindowManager::addView(const MView view) {
  * @param numPass レンダリングするパス数
  */
 void WindowManager::update(const s32 numPass) {
+    MView root = window->getRootView();
     for (s32 i = 0; i < numPass; ++i) {
-        window->beginPass(ScenePassType_Update, i);
-        window->update();
-        window->endPass(ScenePassType_Update);
+        root->beginPass(ScenePassType_Update, i);
+        root->update();
+        root->endPass(ScenePassType_Update);
     }
 }
 
@@ -191,10 +193,11 @@ void WindowManager::update(const s32 numPass) {
  * @param numPass レンダリングするパス数
  */
 void WindowManager::rendering(const s32 numPass) {
+    MView root = window->getRootView();
     for (s32 i = 0; i < numPass; ++i) {
-        window->beginPass(ScenePassType_Rendering, i);
-        window->rendering();
-        window->endPass(ScenePassType_Rendering);
+        root->beginPass(ScenePassType_Rendering, i);
+        root->rendering();
+        root->endPass(ScenePassType_Rendering);
     }
 }
 /**

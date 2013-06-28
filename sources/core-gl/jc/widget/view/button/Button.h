@@ -69,7 +69,7 @@ protected:
     MTextureImage images[ButtonImageType_Normal + 1];
 
 public:
-    Button();
+    Button(MWindowContext context);
     virtual ~Button();
 
 public:

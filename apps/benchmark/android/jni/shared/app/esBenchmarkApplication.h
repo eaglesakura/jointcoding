@@ -73,6 +73,8 @@ class BenchmarkApplication: public JointApplicationBase, public RenderingContext
      * シャドウマップ用テクスチャ
      */
     MTextureImage shadowmapTexture;
+
+    MWindowManager windowManager;
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();
@@ -86,7 +88,6 @@ protected:
      * 可能な限りリクエストに沿ったサーフェイスを作成する。
      */
     virtual SurfaceSpecs getRenderingSurfaceSpecs() const;
-
 
     /**
      * レンダリングサーフェイスが変更された

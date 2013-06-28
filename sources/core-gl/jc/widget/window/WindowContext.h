@@ -15,6 +15,7 @@
 #include    "jc/ui/KeyDetector.h"
 #include    "jc/scene/LoopController.h"
 #include    "jc/widget/event/EventQueue.h"
+#include    "jc/gl/context/RenderingContext.hpp"
 
 namespace jc {
 namespace view {
@@ -28,6 +29,16 @@ class View;
  */
 class WindowContext: public Object {
     friend class WindowManager;
+
+    /**
+     * レンダリング管理パラメーター
+     */
+    MRenderingContext renderContext;
+
+    /**
+     * 所属している仮想ディスプレイを指定する
+     */
+    MVirtualDisplay display;
 
     /**
      * Window本体.
@@ -106,13 +117,6 @@ public:
      */
     virtual MSpriteManager getSpriteManager() const {
         return spriteManager;
-    }
-
-    /**
-     * レンダリングデバイスを取得する
-     */
-    virtual MDevice getDevice() const {
-        return spriteManager->getDevice();
     }
 
     /**
@@ -205,6 +209,31 @@ public:
     T frameValue(const T secValue) {
         return loopController.sec2frame<T>(secValue);
     }
+
+    virtual void setDisplay(MVirtualDisplay display) {
+        this->display = display;
+    }
+
+    virtual void setRenderingContext(MRenderingContext render) {
+        this->renderContext = render;
+        this->display = render->getVirtualDisplay();
+    }
+
+    virtual MRenderingContext getRenderingContext() const {
+        return renderContext;
+    }
+
+    virtual MVirtualDisplay getDisplay() const {
+        return display;
+    }
+
+    /**
+     * レンダリングデバイスを取得する
+     */
+    virtual MDevice getDevice() const {
+        return renderContext->getDevice();
+    }
+
 };
 
 /**

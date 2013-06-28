@@ -10,12 +10,19 @@ namespace jc {
 namespace view {
 
 /**
+ * レイアウトを変更する
+ */
+void Window::layout(const RectF &area) {
+    root->layoutDirect(area);
+}
+
+/**
  *
  */
 void Window::broadCastEvent(MView view, MEvent event) {
     view->dispatchEvent(event);
 
-    std::list<MSceneGraph>::iterator itr = view->childs.begin(), end = view->childs.end();
+    std::list<MSceneGraph>::iterator itr = view->children.begin(), end = view->children.end();
 
     while (itr != end) {
         MView child = downcast<View>(*itr);
@@ -31,7 +38,7 @@ void Window::broadCastEvent(MView view, MEvent event) {
  */
 void Window::broadcastEvent(MEvent event) {
     // 子をチェックする
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    std::list<MSceneGraph>::iterator itr = root->children.begin(), end = root->children.end();
 
     while (itr != end) {
         MView child = downcast<View>(*itr);
@@ -50,20 +57,12 @@ void Window::broadcastEvent(MEvent event) {
  * ハンドルに成功したらtrueを返す
  */
 jcboolean Window::sendEvent(const scene_id layoutId, MEvent event) {
-    MView view = findSceneTo<View>(layoutId);
+    MView view = root->findSceneTo<View>(layoutId);
     if (view) {
         view->dispatchEvent(event);
         return jctrue;
     }
     return jcfalse;
-}
-/**
- * 遷移カウンターを更新する
- * View管理用が一括で更新される
- * 現在のvalueは維持される。
- */
-void Window::setWeightCounter(const float leapTimeSec) {
-    // Windowは特殊なクラスになるため、遷移設定を行わない
 }
 
 }
