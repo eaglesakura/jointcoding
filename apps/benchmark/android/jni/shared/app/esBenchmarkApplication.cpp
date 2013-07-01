@@ -170,7 +170,7 @@ void BenchmarkApplication::onAppInitialize() {
         {
             MImageView view(new ImageView(windowManager->getWindowContext()));
             view->setImage(shadowmapTexture);
-            view->layoutDirect(Vector2f(shadowmapTexture->getWidth(), shadowmapTexture->getHeight()));
+            view->layoutDirect(Vector2f(256, 256));
             windowManager->addView(view);
         }
     }
@@ -213,11 +213,6 @@ void BenchmarkApplication::onAppSurfaceResized(const s32 width, const s32 height
 void BenchmarkApplication::onAppMainUpdate() {
     windowManager->loopBegin();
 
-    {
-        windowManager->update();
-        windowManager->rendering();
-    }
-
     MDevice device = getWindowDevice();
     MGLState state = device->getState();
     {
@@ -233,6 +228,12 @@ void BenchmarkApplication::onAppMainUpdate() {
         spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
         spriteManager->renderingRect(0, 0, renderingContext->getVirtualDisplaySize().x, renderingContext->getVirtualDisplaySize().y, 0x7FFFFFFF);
     }
+
+    {
+        windowManager->update();
+        windowManager->rendering();
+    }
+
 //    {
 //        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
 //

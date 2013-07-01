@@ -73,6 +73,10 @@ public:
      */
     virtual void setImage(MTextureImage image) {
         this->image = image;
+        if(image && localArea.empty()) {
+            localArea.right = image->getWidth();
+            localArea.bottom = image->getHeight();
+        }
     }
 
     /**

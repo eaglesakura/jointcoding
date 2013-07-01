@@ -582,8 +582,6 @@ RectF View::getWindowArea() {
  * 現在のvalueは維持される。
  */
 void View::setWeightCounter(const float leapTimeSec) {
-    assert(isRegisteredWindow());
-
     // フォーカス用
     {
         const float value = focusCounter.getValue();
