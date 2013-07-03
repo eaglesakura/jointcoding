@@ -16,11 +16,14 @@ View::View(MWindowContext context) {
 
     this->context = context;
     this->enableRenderingPass = 0x1;
-    this->down = this->down_inc = this->focus = jcfalse;
-    this->enable = this->focusable = this->touchable = jctrue;
-    this->focusmove_fromtouch = jctrue;
-    this->registerd = jcfalse;
-    this->visibleMultParent = jctrue;
+
+    flags.enable(ViewFlags_Enable);
+    flags.enable(ViewFlags_Focusable);
+    flags.enable(ViewFlags_Touchable);
+    flags.enable(ViewFlags_FocusMoveFromTouch);
+    flags.enable(ViewFlags_Enable);
+    flags.enable(ViewFlags_VisibleMultParent);
+
     this->viewMode = ViewMode_Visible;
 
     // デフォルトのカウンターを整理
@@ -47,12 +50,13 @@ void View::setEnable(const jcboolean enable) {
         return;
     }
 
-    this->enable = enable;
+    flags.set(ViewFlags_Enable, enable);
+
     if (hasFocus()) {
         requestFocus(jcfalse);
     }
 
-    if (down) {
+    if (flags.isEnable(ViewFlags_Down)) {
         dispatchDownEvent(jcfalse);
     }
 
@@ -66,7 +70,7 @@ void View::setEnable(const jcboolean enable) {
  */
 void View::setFocusable(const jcboolean set) {
     const jcboolean _hasFocus = hasFocus();
-    this->focusable = set;
+    flags.set(ViewFlags_Focusable, set);
 
     if (_hasFocus && !set) {
         // フォーカスを持っていたのに、フォーカスを失ってしまった
@@ -80,7 +84,7 @@ void View::setFocusable(const jcboolean set) {
  * タッチでフォーカス移動処理を行う場合はtrue
  */
 void View::setFocusableFromTouch(const jcboolean set) {
-    this->focusmove_fromtouch = set;
+    flags.set(ViewFlags_FocusMoveFromTouch, set);
 }
 
 /**
@@ -362,19 +366,19 @@ void View::dispatchFocusMove(const MKeyData keyData, const scene_id target_view)
  * ダウン状態の更新を行う
  */
 void View::dispatchDownEvent(const jcboolean down) {
-    const jcboolean before_down = this->down;
+    const jcboolean before_down = flags.isEnable(ViewFlags_Down);
 
     if (isTouchable()) {
-        this->down = down;
+        flags.set(ViewFlags_Down, down);
     } else {
-        this->down = jcfalse;
+        flags.disable(ViewFlags_Down);
     }
 
     // 違いが生じたらメッセージを送信
-    if (before_down != this->down) {
-        if (this->down) {
+    if (before_down != flags.isEnable(ViewFlags_Down)) {
+        if (flags.isEnable(ViewFlags_Down)) {
             // インクリメントモードをtrueに変更
-            down_inc = jctrue;
+            flags.isEnable(ViewFlags_DownIncrement);
         }
 
         onDownChanged(down);
@@ -406,7 +410,7 @@ void View::dispatchRecuestFocus(const jcboolean has) {
     }
 
     // 状態が同じだったら何もしない
-    if (focus == has) {
+    if (flags.isEnable(ViewFlags_HasFocus) == has) {
         return;
     }
 
@@ -426,7 +430,7 @@ void View::dispatchRecuestFocus(const jcboolean has) {
 
     // 自分のフォーカス状態を書き換える
     {
-        focus = has;
+        flags.set(ViewFlags_HasFocus, has);
     }
 
     // メッセージを送る
@@ -526,7 +530,7 @@ void View::registerWindow() {
 
     jcboolean sendMessage = jcfalse;
 // 登録されていなければ登録を行う
-    if (!registerd && getParent()) {
+    if (!isRegisteredWindow() && getParent()) {
         // コントローラーを作成する
         {
             setWeightCounter(0.2f);
@@ -537,7 +541,7 @@ void View::registerWindow() {
         }
 
         sendMessage = jctrue;
-        registerd = jctrue;
+        flags.enable(ViewFlags_Registerd);
     }
 
 // 子も登録させる
@@ -607,7 +611,7 @@ void View::setWeightCounter(const float leapTimeSec) {
  */
 float View::getVisibleWeight() const {
     float parentVisible = 1.0f;
-    if (visibleMultParent && getParent()) {
+    if (flags.isEnable(ViewFlags_VisibleMultParent) && getParent()) {
         View *parent = getParentTo<View>();
         if (parent) {
             parentVisible = parent->getVisibleWeight();
@@ -631,12 +635,12 @@ jcboolean View::update() {
         }
 
         // ダウン状態を管理する
-        if (down_inc) {
+        if (flags.isEnable(ViewFlags_DownIncrement)) {
             ++downCounter;
 
             // カウンタが一番上まで行ったらダウンチェックしてもとに戻す
             if (downCounter.isMaxValue() && !isDown()) {
-                down_inc = jcfalse;
+                flags.disable(ViewFlags_DownIncrement);
             }
 
         } else {

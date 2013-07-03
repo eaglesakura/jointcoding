@@ -57,6 +57,61 @@ enum ViewID_e {
 };
 
 /**
+ * Viewの状態管理用フラグ
+ */
+enum ViewFlags_e {
+    /**
+     * フォーカスを持つことが出来る
+     */
+    ViewFlags_Focusable,
+
+    /**
+     * タッチを行える場合true
+     */
+    ViewFlags_Touchable,
+
+    /**
+     * フォーカスを持っている場合true
+     */
+    ViewFlags_HasFocus,
+
+    /**
+     * タッチイベントでフォーカスを移動させる場合true
+     */
+    ViewFlags_FocusMoveFromTouch,
+
+    /**
+     * 押下状態ならばtrue
+     */
+    ViewFlags_Down,
+
+    /**
+     * フォーカスダウンのカウンタインクリメントフラグ
+     */
+    ViewFlags_DownIncrement,
+
+    /**
+     * Viewが有効状態の場合true
+     */
+    ViewFlags_Enable,
+
+    /**
+     * Viewの可視状態を親から乗算する場合はtrue
+     */
+    ViewFlags_VisibleMultParent,
+
+    /**
+     * ViewがWindowに登録済みの場合はtrue
+     */
+    ViewFlags_Registerd,
+
+    /**
+     * フラグ数管理
+     */
+    ViewFlags_Num,
+};
+
+/**
  * UI構築用のView構造を提供する
  *
  * Viewの状態は下記を基本にする
@@ -72,45 +127,14 @@ private:
     friend class WindowEventListener;
 
     /**
+     * 状態管理フラグ
+     */
+    BitFlags<ViewFlags_Num> flags;
+
+    /**
      * click listener
      */
     SOnClickListener onClickListener;
-
-    /**
-     * フォーカスを持つことが出来る場合true
-     */
-    jcboolean focusable;
-
-    /**
-     * タッチを行える場合true
-     */
-    jcboolean touchable;
-
-    /**
-     * フォーカスを持っている場合true
-     */
-    jcboolean focus;
-
-    /**
-     * タッチイベントでフォーカスを移動させる場合true
-     * default = true
-     */
-    jcboolean focusmove_fromtouch;
-
-    /**
-     * ダウンを行なっている途中
-     */
-    jcboolean down;
-
-    /**
-     * ダウン状態のインクリメントを続ける場合はtrue
-     */
-    jcboolean down_inc;
-
-    /**
-     * 有効状態
-     */
-    jcboolean enable;
 
     /**
      * 有効なレンダリングパス
@@ -121,11 +145,6 @@ private:
      * Viewの表示状態を取得する
      */
     ViewMode_e viewMode;
-
-    /**
-     * Window登録済みであればtrue
-     */
-    jcboolean registerd;
 protected:
     /**
      * context
@@ -145,7 +164,7 @@ protected:
      * 押下フォーカスの遷移をリセットする。
      */
     virtual void resetDownFocusCounter() {
-        down_inc = jcfalse;
+        flags.disable(ViewFlags_DownIncrement);
         downCounter.getCounter().setIncrementMode(jctrue);
         downCounter.getCounter().reset();
     }
@@ -172,12 +191,6 @@ protected:
     TransactionCounter visibleCounter;
 
     /**
-     * 可視遷移カウンターに親を引き継ぐ場合はtrue
-     * デフォルト＝true
-     */
-    jcboolean visibleMultParent;
-
-    /**
      * Viewの配置
      */
     RectF localArea;
@@ -200,7 +213,7 @@ protected:
      * 自身のレンダリングを許可するパスであるならtrueを返す。
      */
     virtual jcboolean isSelfRenderingPass() const {
-        if(!enableRenderingPass) {
+        if (!enableRenderingPass) {
             SceneGraph::isSelfRenderingPass();
         }
 
@@ -221,7 +234,7 @@ public:
      * default = true
      */
     virtual jcboolean isEnable() const {
-        return enable;
+        return flags.isEnable(ViewFlags_Enable);
     }
 
     /**
@@ -279,7 +292,7 @@ public:
      * ウィンドウと関連付けが済んでいる場合はtrueを返す
      */
     virtual jcboolean isRegisteredWindow() const {
-        return registerd;
+        return flags.isEnable(ViewFlags_Registerd);
     }
 
     /**
@@ -306,7 +319,7 @@ public:
      * 可視情報を親から引き継ぐ場合はtrue
      */
     virtual void setVisibleWithParent( const jcboolean set) {
-        visibleMultParent = set;
+        flags.set(ViewFlags_VisibleMultParent, set);
     }
 
     /**
@@ -362,7 +375,7 @@ public:
      * フォーカスを持っている場合はtrueを返す
      */
     virtual jcboolean hasFocus() const {
-        return focus;
+        return flags.isEnable(ViewFlags_HasFocus);
     }
 
     /**
@@ -375,7 +388,7 @@ public:
      * フォーカスを持つことができるViewの場合はtrueを返す
      */
     virtual jcboolean isFocusable() const {
-        return focusable && isVisible() && isEnable();
+        return isFocusable() && isVisible() && isEnable();
     }
 
     /**
@@ -383,28 +396,28 @@ public:
      * default = false
      */
     virtual jcboolean isFocusMoveFromTouch() const {
-        return focusmove_fromtouch;
+        return flags.isEnable(ViewFlags_FocusMoveFromTouch);
     }
 
     /**
      * タッチの可否を設定する
      */
     virtual void setTouchable(const jcboolean set) {
-        touchable = set;
+        flags.set(ViewFlags_Touchable, set);
     }
 
     /**
      * タッチを処理すべきViewである場合はtrueを返す
      */
     virtual jcboolean isTouchable() const {
-        return touchable && isVisible() && isEnable();
+        return flags.isEnable(ViewFlags_Touchable) && isVisible() && isEnable();
     }
 
     /**
      * Viewがタッチかキーダウン状態にある場合true
      */
     virtual jcboolean isDown() const {
-        return down;
+        return flags.isEnable(ViewFlags_Down);
     }
 
     /**
