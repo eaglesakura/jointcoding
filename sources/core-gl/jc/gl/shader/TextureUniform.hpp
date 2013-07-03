@@ -63,8 +63,7 @@ public:
 
         // アップロードフラグをチェックする
         if (upload) {
-//            glUniform1iv(location, textures_length, bindUnit);
-            glUniform1i(location, bindUnit[0]);
+            glUniform1iv(location, textures_length, bindUnit);
             assert_gl();
             return jctrue;
         }
@@ -76,23 +75,7 @@ public:
      * GPUにアップロードを行う
      */
     jcboolean upload(MGLState state, MTextureImage tex) {
-        if (!valid()) {
-            return jcfalse;
-        }
-
-        s32 texUnit = -1;
-        // バインドされていなければ、テクスチャをバインドする
-        if (!tex->isBinded(&texUnit)) {
-            texUnit = tex->bind(state);
-        }
-        if (bindUnit[0] != texUnit) {
-            glUniform1i(location, texUnit);
-            bindUnit[0] = texUnit;
-            assert_gl();
-            return jctrue;
-        }
-
-        return jcfalse;
+        return upload(state, &tex, 1);
     }
 };
 

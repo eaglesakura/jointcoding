@@ -367,7 +367,7 @@ public:
         static const GLenum dfactor[] = { GL_ONE_MINUS_SRC_ALPHA, GL_ONE };
 
         *result_sfactor = sfactor[type];
-        *result_dfactor = sfactor[type];
+        *result_dfactor = dfactor[type];
     }
 
     /**
