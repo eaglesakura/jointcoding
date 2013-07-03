@@ -357,13 +357,27 @@ public:
     }
 
     /**
-     * デフォルト設定に従ってブレンドを行う
+     * ブレンド状態を取得する
      */
-    inline jcboolean blendFunc(const GLBlendType_e type) {
+    inline static void  getBlendFunc(const GLBlendType_e type, GLenum *result_sfactor, GLenum *result_dfactor) {
+        assert(result_sfactor);
+        assert(result_dfactor);
+
         static const GLenum sfactor[] = { GL_SRC_ALPHA, GL_SRC_ALPHA, };
         static const GLenum dfactor[] = { GL_ONE_MINUS_SRC_ALPHA, GL_ONE };
 
-        return blendFunc(sfactor[type], dfactor[type]);
+        *result_sfactor = sfactor[type];
+        *result_dfactor = sfactor[type];
+    }
+
+    /**
+     * デフォルト設定に従ってブレンドを行う
+     */
+    inline jcboolean blendFunc(const GLBlendType_e type) {
+        GLenum sfactor;
+        GLenum dfactor;
+        getBlendFunc(type, &sfactor, &dfactor);
+        return blendFunc(sfactor, dfactor);
     }
 
     /**
