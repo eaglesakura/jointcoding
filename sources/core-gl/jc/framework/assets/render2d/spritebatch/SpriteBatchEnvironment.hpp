@@ -4,15 +4,14 @@
  *  Created on: 2013/07/01
  */
 
-#ifndef SPRITEBATCH_HPP_
-#define SPRITEBATCH_HPP_
+#ifndef SPRITEBATCHENVIRONMENT_HPP_
+#define SPRITEBATCHENVIRONMENT_HPP_
 
-#include    "jc/gl/shader/ShaderProgram.h"
-#include    "jc/gl/texture/TextureImage.h"
+#include    "jc/framework/assets/Rendering2DAsset.hpp"
 
 namespace jc {
 
-namespace gl {
+namespace fw {
 
 /**
  * バッチ処理用の頂点
@@ -26,7 +25,7 @@ struct SpriteBatchVertex {
     /**
      * UV位置情報
      */
-    Vector2f uv;
+    Vector2f coord;
 
     /**
      * 頂点カラー
@@ -37,8 +36,9 @@ struct SpriteBatchVertex {
 
     /**
      * レンダリング対象のテクスチャユニット
+     * 負の値の場合、通常のテクスチャを適用せずに描画する
      */
-    s32 texture_unit;
+    s32 texture_index;
 
     /**
      * 回転角情報
@@ -87,7 +87,7 @@ class SpriteBatchEnvironmentState: public Object {
     /**
      * レンダリング用テクスチャ
      */
-    std::vector<TextureImage> textures;
+    std::vector<MTextureImage> textures;
 
     /**
      * レンダリング用シェーダー
@@ -126,9 +126,9 @@ class SpriteBatchEnvironmentState: public Object {
         /**
          * テクスチャ配列
          *
-         * aTextureUnit
+         * aTextureIndex
          */
-        SpriteBatchTextureUnitAttribute texture_unit;
+        SpriteBatchTextureUnitAttribute texture_index;
     } attribute;
 
     struct {
@@ -142,8 +142,8 @@ class SpriteBatchEnvironmentState: public Object {
 
 public:
     SpriteBatchEnvironmentState() {
-        blend.sfactor = GL_ONE;
-        blend.dfactor = GL_ZERO;
+        blend.sfactor = GL_SRC_ALPHA;
+        blend.dfactor = GL_ONE_MINUS_SRC_ALPHA;
     }
 
     virtual ~SpriteBatchEnvironmentState() {
@@ -157,7 +157,7 @@ public:
         attribute.uv.setLocation(shader, "aCoord");
         attribute.color.setLocation(shader, "aColor");
         attribute.rotate.setLocation(shader, "aRotate");
-        attribute.textures.setLocation(shader, "aTextureUnit");
+        attribute.texture_index.setLocation(shader, "aTextureIndex");
     }
 
     /**
@@ -176,9 +176,16 @@ public:
     }
 
     /**
+     * 管理しているテクスチャを解放する
+     */
+    virtual void clearTextures() {
+        textures.clear();
+    }
+
+    /**
      * テクスチャを環境へ追加する
      */
-    jcboolean addTexture(const MTextureImage texture, s32 *result_index) {
+    virtual jcboolean addTexture(const MTextureImage texture, s32 *result_index) {
         assert(texture);
         assert(result_index);
 
@@ -216,7 +223,7 @@ public:
         attribute.position.attributePointer(state);
         attribute.uv.attributePointer(state);
         attribute.color.attributePointer(state);
-        attribute.texture_unit.attributePointer(state);
+        attribute.texture_index.attributePointer(state);
         attribute.rotate.attributePointer(state);
     }
 
@@ -224,6 +231,18 @@ public:
      * シェーダー情報をアップロードする
      */
     virtual void uploadUniforms(MGLState state) {
+        // テクスチャ操作を行う
+        {
+            GLint units[32] = { 0 };
+            // 順番通りにテクスチャをバインドする
+            for (int i = 0; i < textures.size(); ++i) {
+                textures[i]->bind(i, state);
+                units[i] = i;
+            }
+
+            // シェーダーへアップロードする
+            uniform.textures.uploadDirect(state, units, textures.size());
+        }
     }
 };
 

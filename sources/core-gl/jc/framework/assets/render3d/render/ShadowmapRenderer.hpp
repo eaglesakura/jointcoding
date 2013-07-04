@@ -7,7 +7,7 @@
 #ifndef SHADOWMAPRENDERER_HPP_
 #define SHADOWMAPRENDERER_HPP_
 
-#include    "jc/framework/assets/Rendering3DAssets.hpp"
+#include    "jc/framework/assets/Rendering3DAsset.hpp"
 
 namespace jc {
 namespace fw {

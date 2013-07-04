@@ -211,6 +211,9 @@ void BenchmarkApplication::onAppSurfaceResized(const s32 width, const s32 height
  * メソッド呼び出し時点でデバイスロック済み
  */
 void BenchmarkApplication::onAppMainUpdate() {
+    // refresh error
+    glGetError();
+
     windowManager->loopBegin();
 
     MDevice device = getWindowDevice();

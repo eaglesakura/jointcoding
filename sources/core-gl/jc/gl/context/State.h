@@ -285,7 +285,13 @@ public:
      */
     inline void clear(const u32 flags = (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)) {
         glClear(flags);
+#ifdef  DEBUG
+#ifdef  DSUPPORT_TEGRA_PERFHUDES
+        glGetError();
+#else
         assert_gl();
+#endif  // DSUPPORT_TEGRA_PERFHUDES
+#endif // DEBUG
     }
 
     /**
@@ -313,9 +319,9 @@ public:
         if (depthContext.enable != enable) {
             depthContext.enable = enable;
             if (enable) {
-                glEnable (GL_DEPTH_TEST);
+                glEnable(GL_DEPTH_TEST);
             } else {
-                glDisable (GL_DEPTH_TEST);
+                glDisable(GL_DEPTH_TEST);
             }
 
             assert_gl();
@@ -345,9 +351,9 @@ public:
         if (blendContext.enable != enable) {
             blendContext.enable = enable;
             if (enable) {
-                glEnable (GL_BLEND);
+                glEnable(GL_BLEND);
             } else {
-                glDisable (GL_BLEND);
+                glDisable(GL_BLEND);
             }
 
             assert_gl();
@@ -359,7 +365,7 @@ public:
     /**
      * ブレンド状態を取得する
      */
-    inline static void  getBlendFunc(const GLBlendType_e type, GLenum *result_sfactor, GLenum *result_dfactor) {
+    inline static void getBlendFunc(const GLBlendType_e type, GLenum *result_sfactor, GLenum *result_dfactor) {
         assert(result_sfactor);
         assert(result_dfactor);
 
@@ -445,9 +451,9 @@ public:
         if (set != scissorContext.enable) {
 
             if (set) {
-                glEnable (GL_SCISSOR_TEST);
+                glEnable(GL_SCISSOR_TEST);
             } else {
-                glDisable (GL_SCISSOR_TEST);
+                glDisable(GL_SCISSOR_TEST);
             }
 
             scissorContext.enable = set;
@@ -631,6 +637,16 @@ public:
     }
 
     /**
+     * すべてのテクスチャをバインド解除する
+     */
+    inline void unbindAllTexture() {
+        for (int i = 0; i < GPUCapacity::getMaxTextureUnits(); ++i) {
+            activeTexture(i);
+            bindTexture(GL_TEXTURE_2D, 0);
+        }
+    }
+
+    /**
      * シェーダプログラムを有効化する
      * ステートを変更した場合trueを返す
      */
@@ -730,9 +746,9 @@ public:
         if (enable != cullfaceContext.enabled) {
             cullfaceContext.enabled = enable;
             if (enable) {
-                glEnable (GL_CULL_FACE);
+                glEnable(GL_CULL_FACE);
             } else {
-                glDisable (GL_CULL_FACE);
+                glDisable(GL_CULL_FACE);
             }
             return jctrue;
         }

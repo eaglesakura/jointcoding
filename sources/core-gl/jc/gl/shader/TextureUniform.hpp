@@ -35,6 +35,31 @@ public:
     }
 
     /**
+     * GPUに直接バインドユニットを指定してアップロードを行う
+     */
+    jcboolean uploadDirect(MGLState state, GLint *texture_units, const u32 texture_units_length) {
+        if (!valid()) {
+            return jcfalse;
+        }
+
+        assert(state);
+        assert(texture_units);
+        assert(texture_units_length <= GPUCapacity::getMaxTextureUnits());
+
+        // 変更が行われていないためアップロードしない
+        if (!memcmp((void*) bindUnit, (void*) texture_units, sizeof(GLint) * texture_units_length)) {
+            return jcfalse;
+        }
+
+        // アップロードを行う
+        memcpy(bindUnit, texture_units, sizeof(GLint) * texture_units_length);
+        glUniform1iv(location, texture_units_length, bindUnit);
+        assert_gl();
+
+        return jctrue;
+    }
+
+    /**
      * GPUにアップロードを行う
      */
     jcboolean upload(MGLState state, MTextureImage *textures, const u32 textures_length) {

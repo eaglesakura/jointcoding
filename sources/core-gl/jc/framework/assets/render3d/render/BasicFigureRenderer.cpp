@@ -4,7 +4,7 @@
  *  Created on: 2013/06/01
  */
 
-#include    "jc/framework/assets/Rendering3DAssets.hpp"
+#include    "jc/framework/assets/Rendering3DAsset.hpp"
 
 namespace jc {
 namespace fw {

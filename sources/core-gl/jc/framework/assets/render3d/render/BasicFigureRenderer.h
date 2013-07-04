@@ -7,7 +7,7 @@
 #ifndef BASICFIGURERENDERER_H_
 #define BASICFIGURERENDERER_H_
 
-#include    "jc/framework/assets/Rendering3DAssets.hpp"
+#include    "jc/framework/assets/Rendering3DAsset.hpp"
 
 namespace jc {
 namespace fw {
