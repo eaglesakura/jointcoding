@@ -69,7 +69,7 @@ public:
      */
     virtual void initialize(MDevice device, const u32 contexts) {
         fragment.alloc(contexts);
-        for (u32 i = 0; i < contexts; ++i) {
+        for (int i = 0; i < contexts; ++i) {
             fragment[i] = createMeshContext(device, i);
             fragment[i]->initialize(device);
         }

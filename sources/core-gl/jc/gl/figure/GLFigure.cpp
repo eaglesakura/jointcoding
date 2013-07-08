@@ -25,13 +25,13 @@ void GLFigure::onNodeRendering(const s32 nodeNumber, FigureNode *node, const GLF
     const u32 material_num = node->renderingFragments.size();
 
     // マテリアル数だけ繰り返す
-    for (u32 mtl = 0; mtl < material_num; ++mtl) {
+    for (int mtl = 0; mtl < material_num; ++mtl) {
         MGLFigureMeshFragment fragment = node->renderingFragments[mtl];
         jc_sp<GLFigureMaterial> material = fragment->getMaterial();
         const u32 context_num = fragment->getDrawingContextCount();
 
         // コンテキスト数だけ、同一マテリアルで描画する
-        for (u32 ctx = 0; ctx < context_num; ++ctx) {
+        for (int ctx = 0; ctx < context_num; ++ctx) {
             GLFigureMeshFragment::DrawingContext *pContext = fragment->getDrawingContext(ctx).get();
 
             pContext->vertices->bind(device->getState());
@@ -110,7 +110,7 @@ void GLFigure::_rendering(const u32 nodeNumber, const GLFigure::ShaderParams *pa
     const u32 children_num = node->children.size();
 
     // 子ノードも順番に探索していく
-    for (u32 i = 0; i < children_num; ++i) {
+    for (int i = 0; i < children_num; ++i) {
         _rendering(node->children[i], params);
     }
 }
@@ -127,7 +127,7 @@ void GLFigure::rendering(const GLFigure::ShaderParams *params) {
  * 指定したノード番号のボーンテーブルを用意する
  */
 void GLFigure::_enumBones(GLFigureMeshFragment *pFragment, GLFigureMeshFragment::DrawingContext *pContext) {
-    for (u32 i = 0; i < pContext->bone_pick_table_length; ++i) {
+    for (int i = 0; i < pContext->bone_pick_table_length; ++i) {
         const u32 node_nubmer = pContext->bone_pick_table[i];
         MFigureNode bone_node = nodes[node_nubmer];
         const Matrix4x4 &bone = bone_node->matrix_current_world;
@@ -147,7 +147,7 @@ void GLFigure::_posing(AnimationClip *animation, const u32 nodeNumber, const Mat
     multiply(local, parent, &node->matrix_current_world);
 
     // 子を設定する
-    for (u32 i = 0; i < node->children.size(); ++i) {
+    for (int i = 0; i < node->children.size(); ++i) {
         _posing(animation, node->children[i], node->matrix_current_world);
     }
 }
@@ -165,7 +165,7 @@ void GLFigure::_initializeInvertMatrices(const u32 nodeNumber, const Matrix4x4 &
     node->matrix_current_world.invert(&node->matrix_default_invert);
 
     // 子を作成する
-    for (u32 i = 0; i < node->children.size(); ++i) {
+    for (int i = 0; i < node->children.size(); ++i) {
         _initializeInvertMatrices(node->children[i], node->matrix_current_world);
     }
 }
@@ -192,7 +192,7 @@ void GLFigure::initializeInvertMatrices() {
  * レンダリング時のUV値オフセットを設定する
  */
 void GLFigure::setUVOffset(const String &mat_name, const float u, const float v) {
-    for (u32 k = 0; k < materials.size(); ++k) {
+    for (int k = 0; k < materials.size(); ++k) {
         MGLFigureMaterial material = materials[k];
         if (material->name == mat_name) {
             material->offset.u = u;

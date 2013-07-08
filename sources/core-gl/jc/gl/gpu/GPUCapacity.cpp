@@ -109,7 +109,7 @@ void GPUCapacity::initialize() {
                 // for Adreno
                 { "Adreno", GPUFamily_Adreno }, };
 
-        for (s32 i = 0; i < (sizeof(gpu_groups) / sizeof(GPUFamilyGroup)); ++i) {
+        for (int i = 0; i < (sizeof(gpu_groups) / sizeof(GPUFamilyGroup)); ++i) {
             if (strstr(pRenderer, gpu_groups[i].name)) {
                 // GPUファミリー
                 gpuFamily = gpu_groups[i].family;

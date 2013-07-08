@@ -61,7 +61,7 @@ void FigureLoader::onNodeLoadComplete(const jc::FigureDataLoader::NodeInfo &node
     // ノードの階層情報を設定する
     {
         std::vector<FigureNode*> nodes;
-        for (s32 i = 0; i < nodeInfo.children_num; ++i) {
+        for (int i = 0; i < nodeInfo.children_num; ++i) {
             nodes.push_back(figure->getNode(nodeInfo.children[i]));
         }
 
@@ -100,7 +100,7 @@ void FigureLoader::onMeshInfoLoadComplete(const jc::FigureDataLoader::NodeInfo &
     pNode->initialize(device, meshInfo.material_num);
 
     // 各フラグメントごとのコンテキストを生成する
-    for (s32 i = 0; i < meshInfo.material_num; ++i) {
+    for (int i = 0; i < meshInfo.material_num; ++i) {
         jclogf("      context(%d)", meshInfo.context_num[i]);
 
         // 指定コンテキスト数を確保する
@@ -160,7 +160,7 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 
             // データコピー
             Vector3f *positions = (Vector3f*) loaded.data.get();
-            for (s32 i = 0; i < loaded.data_length; ++i) {
+            for (int i = 0; i < loaded.data_length; ++i) {
                 vertices[i].position = positions[i];
             }
         }
@@ -169,7 +169,7 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 
             // データコピー
             Vector2f *coords = (Vector2f*) loaded.data.get();
-            for (s32 i = 0; i < loaded.data_length; ++i) {
+            for (int i = 0; i < loaded.data_length; ++i) {
                 vertices[i].coord = coords[i];
             }
 
@@ -179,7 +179,7 @@ void FigureLoader::onMeshDataLoadComplete(const FigureDataLoader::NodeInfo &node
 
             // データコピー
             Vector3f *normals = (Vector3f*) loaded.data.get();
-            for (s32 i = 0; i < loaded.data_length; ++i) {
+            for (int i = 0; i < loaded.data_length; ++i) {
                 vertices[i].normal = normals[i];
             }
         }

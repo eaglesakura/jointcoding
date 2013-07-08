@@ -111,7 +111,7 @@ public:
     virtual void resizeDrawingContextCount(const u32 num) {
         contexts.resize(num);
 
-        for( u32 i = 0; i < num; ++i ) {
+        for( int i = 0; i < num; ++i ) {
             jc_sp<DrawingContext> ctx = contexts[i];
             if(!ctx) {
                 contexts[i].reset(new DrawingContext());

@@ -89,7 +89,7 @@ inline jcboolean isPowerOfTwo(const T n) {
     }
 
     T bit = 1;
-    for (s32 i = 0; i < 32; ++i) {
+    for (int i = 0; i < 32; ++i) {
         if (n == bit) {
             return jctrue;
         }

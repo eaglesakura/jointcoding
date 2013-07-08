@@ -88,7 +88,7 @@ void BinaryOutputStream::writeFixed32Array(const float *data, const u32 data_len
     fixed32 *data_array = new s32[data_length];
 
     // 全てfixed変換を行う
-    for (u32 i = 0; i < data_length; ++i) {
+    for (int i = 0; i < data_length; ++i) {
         data_array[i] = real2fixed<float, fixed32>(data[i], bits);
     }
 

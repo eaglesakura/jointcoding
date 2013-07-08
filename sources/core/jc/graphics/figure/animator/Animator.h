@@ -98,7 +98,7 @@ private:
     template<typename T, typename VectorType>
     static inline void findFrames(const std::vector<T> &key_list, const u32 frame, KeyFrame<VectorType> **low_ptr, KeyFrame<VectorType> **high_ptr) {
         (*low_ptr) = (KeyFrame<VectorType>*)&(key_list[0]);
-        for (u32 i = 0; i < key_list.size(); ++i) {
+        for (int i = 0; i < key_list.size(); ++i) {
             if (key_list[i].frame <= frame) {
                 // フレームが欲しいフレームを超えてないなら、次をチェックする
                 (*low_ptr) = (KeyFrame<VectorType>*)&(key_list[i]);

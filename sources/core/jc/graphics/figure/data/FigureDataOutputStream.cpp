@@ -64,7 +64,7 @@ void FigureDataOutputStream::writeVertices(const void* vertices, const u32 verti
     u8* current_ptr = (u8*) vertices;
 
     // 全頂点に対して適用する
-    for (u32 i = 0; i < vertices_length; ++i) {
+    for (int i = 0; i < vertices_length; ++i) {
         writeVector3(*((Vector3f*) current_ptr), transform);
         current_ptr += sizeof_once_vertex;
     }

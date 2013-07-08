@@ -115,7 +115,7 @@ u32 BinaryInputStream::readFixed32Array(jc_sa<float> *result_data, u32 *result_d
 
         // 戻り
         float *pResult = new float[length];
-        for(u32 i = 0; i < length; ++i ) {
+        for(int i = 0; i < length; ++i ) {
             pResult[i] = fixed2real<fixed32, float>( pData[i], bits );
         }
 

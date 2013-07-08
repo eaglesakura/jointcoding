@@ -181,7 +181,7 @@ void WindowManager::addView(const MView view) {
  */
 void WindowManager::update(const s32 numPass) {
     MView root = window->getRootView();
-    for (s32 i = 0; i < numPass; ++i) {
+    for (int i = 0; i < numPass; ++i) {
         root->beginPass(ScenePassType_Update, i);
         root->update();
         root->endPass(ScenePassType_Update);
@@ -194,7 +194,7 @@ void WindowManager::update(const s32 numPass) {
  */
 void WindowManager::rendering(const s32 numPass) {
     MView root = window->getRootView();
-    for (s32 i = 0; i < numPass; ++i) {
+    for (int i = 0; i < numPass; ++i) {
         root->beginPass(ScenePassType_Rendering, i);
         root->rendering();
         root->endPass(ScenePassType_Rendering);

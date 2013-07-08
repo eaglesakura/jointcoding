@@ -60,7 +60,7 @@ public:
         indices.reset(new IndexBufferObject(device));
 
         materials.alloc(materialNum);
-        for(s32 i = 0; i < materialNum; ++i) {
+        for(int i = 0; i < materialNum; ++i) {
             materials[i] = createMaterial();
         }
     }
@@ -84,7 +84,7 @@ public:
      * 名前の無いマテリアルを取得する
      */
     virtual MeshMaterial* getFreeMaterial() const {
-        for(s32 i = 0; i < materials.length; ++i) {
+        for(int i = 0; i < materials.length; ++i) {
             if(materials[i] && !materials[i]->hasName()) {
                 return materials[i];
             }
@@ -97,7 +97,7 @@ public:
      * 名前一致で検索するため、動作は遅いが確実にヒットする
      */
     virtual MeshMaterial* getMaterial(const String &name) const {
-        for(s32 i = 0; i < materials.length; ++i) {
+        for(int i = 0; i < materials.length; ++i) {
             if(materials[i] && materials[i]->getName() == name) {
                 return materials[i];
             }
@@ -138,7 +138,7 @@ public:
      */
     virtual MeshMaterial* getMaterialFast(const String &name) const {
         const u32 uniqueId = name.hashCode();
-        for (s32 i = 0; i < materials.length; ++i) {
+        for (int i = 0; i < materials.length; ++i) {
             if (materials[i] && materials[i]->getUniqueId() == uniqueId) {
                 return materials[i];
             }
@@ -218,7 +218,7 @@ public:
         nodes.zeromemory();
 
         // 指定数のノードを生成する
-        for (s32 i = 0; i < (s32) nodeNum; ++i) {
+        for (int i = 0; i < (s32) nodeNum; ++i) {
             nodes[i] = createNode(i);
         }
 

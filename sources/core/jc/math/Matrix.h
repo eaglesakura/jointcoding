@@ -643,8 +643,8 @@ typedef Matrix<3, 3> Matrix3x3;
  */
 template<typename T>
 inline static Matrix3x3* copyMatrix(const T &origin, Matrix3x3 *result) {
-    for (s32 r = 0; r < 3; ++r) {
-        for (s32 c = 0; c < 3; ++c) {
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
             result->m[r][c] = origin.m[r][c];
         }
     }

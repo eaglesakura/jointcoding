@@ -42,7 +42,7 @@ void FileArchiveOutputStream::write_header() {
  * フッダを書き込む
  */
 void FileArchiveOutputStream::write_fooder() {
-    for (u32 i = 0; i < archives.size(); ++i) {
+    for (int i = 0; i < archives.size(); ++i) {
         stream->writeRawByteArray(archives[i].file_name, sizeof(archives[i].file_name));
         stream->writeU32(archives[i].file_head);
         stream->writeU32(archives[i].file_length);

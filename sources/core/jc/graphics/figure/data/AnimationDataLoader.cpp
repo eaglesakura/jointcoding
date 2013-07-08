@@ -25,7 +25,7 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
     // ノード数だけ、アニメーションを読み込む
     MAnimationGroup group(new AnimationGroup(node_num));
 
-    for (u32 i = 0; i < node_num; ++i) {
+    for (int i = 0; i < node_num; ++i) {
 
         // translate
         {
@@ -33,7 +33,7 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
             const String name = stream->readString();
             const u32 key_num = stream->readU16();
 
-            for (u32 k = 0; k < key_num; ++k) {
+            for (int k = 0; k < key_num; ++k) {
                 TranslateKey keyFrame;
                 keyFrame.frame = stream->readU16();
                 keyFrame.value.x = stream->readFixed32();
@@ -52,7 +52,7 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
             const String name = stream->readString();
             const u32 key_num = stream->readU16();
 
-            for (u32 k = 0; k < key_num; ++k) {
+            for (int k = 0; k < key_num; ++k) {
                 RotateKey keyFrame;
                 keyFrame.frame = stream->readU16();
                 keyFrame.value.x = stream->readFixed32();
@@ -72,7 +72,7 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
             const String name = stream->readString();
             const u32 key_num = stream->readU16();
 
-            for (u32 k = 0; k < key_num; ++k) {
+            for (int k = 0; k < key_num; ++k) {
                 ScaleKey keyFrame;
                 keyFrame.frame = stream->readU16();
                 keyFrame.value.x = stream->readFixed32();

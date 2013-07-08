@@ -423,11 +423,11 @@ public:
      */
     inline s32 findFreeHandles(const s32 length) const {
         // 全領域からlength数を引いた数（配列がはみ出さないように）をチェック
-        for (s32 i = 0; i < (getTableNum() - length); ++i) {
+        for (int i = 0; i < (getTableNum() - length); ++i) {
 
             jcboolean finded = jctrue;
             // 連続領域をチェック
-            for (s32 k = 0; k < length; ++i) {
+            for (int k = 0; k < length; ++i) {
                 // 参照数が存在する場合は次へ進む
                 if (metas[i + k].refs) {
                     finded = jcfalse;

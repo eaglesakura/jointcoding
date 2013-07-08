@@ -54,7 +54,7 @@ public:
     inline void registerWegight(s32 boneIndex, float weight) {
         float lowerWeight = 99999.0f; // 最も小さいウェイト値
         s32 lowerWeightIndex = 0; // 最も小さいウェイト値のインデックス
-        for (s32 i = 0; i < WEIGHT_NUM; ++i) {
+        for (int i = 0; i < WEIGHT_NUM; ++i) {
             // 登録されていないインデックスがあればそこへ書き込む
             if (indices[i] == (u8) UNUSED_BONE) {
                 indices[i] = boneIndex;
@@ -80,7 +80,7 @@ public:
      */
     inline void normalize() {
         float sum = 0.0f;
-        for (s32 i = 0; i < WEIGHT_NUM; ++i) {
+        for (int i = 0; i < WEIGHT_NUM; ++i) {
             sum += weights[i];
         }
 
@@ -89,7 +89,7 @@ public:
             return;
         }
 
-        for (s32 i = 0; i < WEIGHT_NUM; ++i) {
+        for (int i = 0; i < WEIGHT_NUM; ++i) {
             weights[i] /= sum;
             if (indices[i] == (u8) UNUSED_BONE) {
                 indices[i] = 0;

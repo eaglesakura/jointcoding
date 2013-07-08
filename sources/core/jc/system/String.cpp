@@ -163,7 +163,7 @@ s32 String::hashCode() const {
 
     s32 result = 0;
     const s32 str_length = length();
-    for (s32 i = 0; i < str_length; i++) {
+    for (int i = 0; i < str_length; i++) {
         result = (result * 31 + str[i]);
     }
     return result;

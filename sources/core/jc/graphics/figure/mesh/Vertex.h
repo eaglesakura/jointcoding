@@ -54,7 +54,7 @@ public:
             return false;
         }
 
-        for (s32 i = 0; i < WEIGHT_NUM; ++i) {
+        for (int i = 0; i < WEIGHT_NUM; ++i) {
             if (weight.indices[i] != v1.weight.indices[i]) {
                 return false;
             }

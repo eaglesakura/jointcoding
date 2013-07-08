@@ -245,7 +245,7 @@ void SharedVRAM::sharedFrom(jc_sp<SharedVRAM> master) {
     };
 
     // 隷属を宣言する
-    for( s32 i = 0; i < (sizeof(shared_obj) / sizeof(VRAM_e)); ++i) {
+    for( int i = 0; i < (sizeof(shared_obj) / sizeof(VRAM_e)); ++i) {
         const VRAM_e type = shared_obj[i];
         vram_tables[type] = master->vram_tables[type];
     }
@@ -269,7 +269,7 @@ vram_handle SharedVRAM::alloc(const VRAM_e type) {
 void SharedVRAM::gc(const u32 gc_flags) {
     MutexLock lock(mtx);
 
-    for (s32 i = 0; i < VRAM_e_num; ++i) {
+    for (int i = 0; i < VRAM_e_num; ++i) {
         if (gc_flags & (0x1 << i)) {
             s32 unused = 0;
             vram_tables[i]->executeExistOrUnused(&unused);
@@ -284,7 +284,7 @@ void SharedVRAM::gc(const u32 gc_flags) {
 void SharedVRAM::dispose() {
     MutexLock lock(mtx);
 
-    for (s32 i = 0; i < VRAM_e_num; ++i) {
+    for (int i = 0; i < VRAM_e_num; ++i) {
         jclogf("vram dispose type(%d) obj(%d)", i, vram_tables[i]->getExistValueNum());
         vram_tables[i]->unuse();
         vram_tables[i].reset();

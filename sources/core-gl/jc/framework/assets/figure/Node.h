@@ -99,7 +99,7 @@ public:
         // マテリアル数だけ確保を行う
         groups.alloc(materials);
 
-        for (u32 i = 0; i < materials; ++i) {
+        for (int i = 0; i < materials; ++i) {
             groups[i] = createGroup(i);
         }
     }

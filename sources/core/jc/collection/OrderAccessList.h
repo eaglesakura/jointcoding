@@ -49,7 +49,7 @@ public:
 template<typename T>
 class OrderAccessList {
 
-    typedef jc_sp< Element<T> > MElement;
+    typedef jc_sp<Element<T> > MElement;
 
     /**
      * 最初の要素
@@ -160,7 +160,7 @@ public:
             } else {
                 elem0 = first;
                 // 指定インデックスまで引き伸ばす
-                for( s32 i = 0; i < index; ++i ) {
+                for( int i = 0; i < index; ++i ) {
                     elem0 = elem0->next;
                 }
                 elem2 = elem0->next;

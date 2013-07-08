@@ -164,18 +164,18 @@ void BasicFigureRenderer::rendering(MDevice device, const jc_selp<Figure> figure
     /**
      * 全メッシュ・マテリアルを巡回して描画を行わせる
      */
-    for(u32 mat = 0; mat < materialNum; ++mat) {
+    for(int mat = 0; mat < materialNum; ++mat) {
         const MeshMaterial *pMaterial = pResource->getMaterial(mat);
 
         // マテリアルの関連付けを行う
         bindMaterial(device, pFigure, pResource, pMaterial, pInstance);
 
         // ノード数だけ描画を繰り返す
-        for (s32 n = 0; n < figure->getNodeNum(); ++n) {
+        for (int n = 0; n < figure->getNodeNum(); ++n) {
             const FigureNode *pNode = pFigure->getNode(n);
-            for (s32 g = 0; g < pNode->getMeshGroupNum(); ++g) {
+            for (int g = 0; g < pNode->getMeshGroupNum(); ++g) {
                 const MeshGroup *pGroup = pNode->getMeshGroup(g);
-                for (s32 f = 0; f < pGroup->getFragmentNum(); ++f) {
+                for (int f = 0; f < pGroup->getFragmentNum(); ++f) {
                     renderingFragment(device, pFigure, pResource, pMaterial, pNode, pGroup, pGroup->getFragment(f), pInstance);
                 }
             }

@@ -49,7 +49,7 @@ public:
         std::map<s32, s32> temp;
         // すべての数が揃うまで繰り返す
 
-        for (s32 i = 0; i < value_num; ++i) {
+        for (int i = 0; i < value_num; ++i) {
             // ランダムな数字をキーにしてレンジを格納する
             s32 temp_key = 0;
             do {

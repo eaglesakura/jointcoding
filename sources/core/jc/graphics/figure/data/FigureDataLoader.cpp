@@ -62,7 +62,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
             node.children.reset(new s32[node.children_num]);
 
             // 子ノードの番号を取り出す
-            for (u32 i = 0; i < node.children_num; ++i) {
+            for (int i = 0; i < node.children_num; ++i) {
                 node.children[i] = stream->readU16();
             }
         }
@@ -99,13 +99,13 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
             mesh.material_num = stream->readS8();
 
             mesh.context_num.reset(new u32[mesh.material_num]);
-            for (u32 i = 0; i < mesh.material_num; ++i) {
+            for (int i = 0; i < mesh.material_num; ++i) {
                 mesh.context_num[i] = stream->readS8();
             }
         }
 
         // load material
-        for (u32 i = 0; i < mesh.material_num; ++i) {
+        for (int i = 0; i < mesh.material_num; ++i) {
             MBinaryInputStream stream = factory->openMaterialInfo(nodeNumber, i);
             FigureDataLoader::MaterialInfo material;
 
@@ -137,8 +137,8 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
         onMeshInfoLoadComplete(node, mesh, &request);
 
         // マテリアル数×コンテキスト数だけデータを読み込む
-        for (u32 i = 0; i < mesh.material_num; ++i) {
-            for (u32 k = 0; k < mesh.context_num[i]; ++k) {
+        for (int i = 0; i < mesh.material_num; ++i) {
+            for (int k = 0; k < mesh.context_num[i]; ++k) {
                 // indices
                 {
                     loadMeshData(node, mesh, i, k, MeshDataType_Indices);
@@ -180,7 +180,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
     }
 
     // 子も読み込む
-    for (u32 i = 0; i < node.children_num; ++i) {
+    for (int i = 0; i < node.children_num; ++i) {
         loadNode(node.children[i]);
     }
 }
@@ -202,7 +202,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             u16 *ptr = (u16*) malloc(data.data_length * sizeof(u16));
             data.data.reset((u8*) ptr, free);
 
-            for (u32 i = 0; i < data.data_length; ++i) {
+            for (int i = 0; i < data.data_length; ++i) {
                 ptr[i] = stream->readU16();
             }
         }
@@ -215,7 +215,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             Vector3f *ptr = (Vector3f*) malloc(data.data_length * sizeof(Vector3f));
             data.data.reset((u8*) ptr, free);
 
-            for (u32 i = 0; i < data.data_length; ++i) {
+            for (int i = 0; i < data.data_length; ++i) {
                 ptr[i].x = stream->readFixed32();
                 ptr[i].y = stream->readFixed32();
                 ptr[i].z = stream->readFixed32();
@@ -230,7 +230,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             Vector2f *ptr = (Vector2f*) malloc(data.data_length * sizeof(Vector2f));
             data.data.reset((u8*) ptr, free);
 
-            for (u32 i = 0; i < data.data_length; ++i) {
+            for (int i = 0; i < data.data_length; ++i) {
                 ptr[i].x = stream->readFixed32();
                 ptr[i].y = stream->readFixed32();
             }
@@ -244,7 +244,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             Vector3f *ptr = (Vector3f*) malloc(data.data_length * sizeof(Vector3f));
             data.data.reset((u8*) ptr, free);
 
-            for (u32 i = 0; i < data.data_length; ++i) {
+            for (int i = 0; i < data.data_length; ++i) {
                 ptr[i].x = stream->readFixed32();
                 ptr[i].y = stream->readFixed32();
                 ptr[i].z = stream->readFixed32();
@@ -260,7 +260,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             u8 *ptr = (u8*) malloc(data.data_length * weight_num);
             data.data.reset((u8*) ptr, free);
 
-            for (u32 i = 0; i < (data.data_length * weight_num); ++i) {
+            for (int i = 0; i < (data.data_length * weight_num); ++i) {
                 ptr[i] = stream->readU8();
             }
         }
@@ -275,7 +275,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             u8 *ptr = (u8*) malloc(data.data_length * weight_num * sizeof(u8));
             data.data.reset((u8*) ptr, free);
 
-            for (u32 i = 0; i < (data.data_length); ++i) {
+            for (int i = 0; i < (data.data_length); ++i) {
                 s32 weight_sum = 0;
                 for (int k = 0; k < weight_num; ++k) {
                     ptr[i * weight_num + k] = stream->readU8();
@@ -297,7 +297,7 @@ void FigureDataLoader::loadMeshData(const NodeInfo &nodeInfo, const MeshInfo &me
             u16 *ptr = (u16*) malloc(data.data_length * sizeof(u16));
             data.data.reset((u8*) ptr, free);
 
-            for (u32 i = 0; i < (data.data_length); ++i) {
+            for (int i = 0; i < (data.data_length); ++i) {
                 ptr[i] = stream->readU16();
             }
         }

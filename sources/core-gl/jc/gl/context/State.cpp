@@ -220,7 +220,7 @@ void GLState::syncContext() {
     // Attrに設定されている情報を取得する
     {
         const u32 maxAttr = min<u32>(GPUCapacity::getMaxVertexAttributes(), MAX_VERTEX_ATTRIBUTE);
-        for (u32 i = 0; i < maxAttr; ++i) {
+        for (int i = 0; i < maxAttr; ++i) {
             // ショートカット用
             VertexAttributePointerData *attr = &vertexAttrContext.buffers[i].pointerData;
             GLint temp = 0;
@@ -283,7 +283,7 @@ void GLState::print(const charactor* file, const s32 line) const {
     // Attrに設定されている情報を取得する
     {
         const u32 maxAttr = min<u32>(GPUCapacity::getMaxVertexAttributes(), MAX_VERTEX_ATTRIBUTE);
-        for (u32 i = 0; i < maxAttr; ++i) {
+        for (int i = 0; i < maxAttr; ++i) {
             // ショートカット用
             const VertexAttributePointerData *attr = &vertexAttrContext.buffers[i].pointerData;
             jclogf("glVertexAttribPointer(index = %d, size = %d, type = 0x%x, normalized = %s, stride = %d, ptr = 0x%X ) = %s",

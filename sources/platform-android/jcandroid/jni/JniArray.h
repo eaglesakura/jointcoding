@@ -391,7 +391,7 @@ public:
      */
     virtual void get(s32 srcIndex, s32 length, PRIMITIVE_TYPE *dst) {
         CALL_JNIENV();
-        for (s32 i = 0; i < length; ++i) {
+        for (int i = 0; i < length; ++i) {
             dst[i] = env->GetObjectArrayElement(getArrayObject(), srcIndex + i);
         }
     }
@@ -412,7 +412,7 @@ public:
      */
     virtual void set(s32 dstIndex, s32 length, PRIMITIVE_TYPE *src) {
         CALL_JNIENV();
-        for( s32 i = 0; i < length; ++i ) {
+        for( int i = 0; i < length; ++i ) {
             env->SetObjectArrayElement(getArrayObject(), dstIndex + i, src[i]);
         }
     }

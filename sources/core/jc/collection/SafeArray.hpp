@@ -153,7 +153,7 @@ public:
         if (pOldValues) {
             const s32 min_length = jc::min(length, newLength);
 
-            for (s32 i = 0; i < min_length; ++i) {
+            for (int i = 0; i < min_length; ++i) {
                 ptr[i] = pOldValues[i];
             }
 
@@ -184,7 +184,7 @@ public:
         // 正常な長さを持たなければならない
         assert(length >= num);
 
-        for (s32 i = 0; i < num; ++i) {
+        for (int i = 0; i < num; ++i) {
             ptr[i] = origin[i];
         }
     }
@@ -274,7 +274,7 @@ public:
  */
 template<typename value_type>
 inline void safe_delete(safe_array<value_type> &values) {
-    for (s32 i = 0; i < values.length; ++i) {
+    for (int i = 0; i < values.length; ++i) {
         SAFE_DELETE(values.ptr[i]);
     }
 }

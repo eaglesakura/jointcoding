@@ -26,7 +26,7 @@ public:
     }
 
     void reset() {
-        for (u32 i = 0; i < (sizeof(flags) / sizeof(u32)); ++i) {
+        for (int i = 0; i < (sizeof(flags) / sizeof(u32)); ++i) {
             flags[i] = 0x00000000;
         }
     }
@@ -88,7 +88,7 @@ public:
      * 全チェック
      */
     jcboolean isAllEnable(const u32 indices_num, const u32* indices) const {
-        for (u32 i = 0; i < indices_num; ++i) {
+        for (int i = 0; i < indices_num; ++i) {
             if (isDisable(indices[i])) {
                 // 一つでもdisableがあったら廃棄
                 return jcfalse;
@@ -102,7 +102,7 @@ public:
      * 全チェック
      */
     jcboolean isAllDisable(const u32 indices_num, const u32* indices) const {
-        for (u32 i = 0; i < indices_num; ++i) {
+        for (int i = 0; i < indices_num; ++i) {
             if (isEnable(indices[i])) {
                 // 一つでもenableがあったら廃棄
                 return jcfalse;

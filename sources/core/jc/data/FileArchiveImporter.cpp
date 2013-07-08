@@ -42,7 +42,7 @@ void FileArchiveImporter::initialize(MInputStream stream) {
     // ファイルのインフォメーションを読み込む
     stream->skip(-4 - ArchiveInfo::SIZEOF * file_num);
 
-    for (u32 i = 0; i < file_num; ++i) {
+    for (int i = 0; i < file_num; ++i) {
         ArchiveInfo info;
 
         stream->read((u8*) info.file_name, sizeof(charactor) * ArchiveInfo::FILENAME_SIZE);
@@ -59,7 +59,7 @@ void FileArchiveImporter::initialize(MInputStream stream) {
  */
 jcboolean FileArchiveImporter::findFile(const String &file_name, ArchiveInfo *result) {
 
-    for (u32 i = 0; i < archives.size(); ++i) {
+    for (int i = 0; i < archives.size(); ++i) {
         if (strcmp(archives[i].file_name, file_name.c_str()) == 0) {
             (*result) = archives[i];
             return jctrue;

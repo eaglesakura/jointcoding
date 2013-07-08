@@ -313,7 +313,7 @@ public:
      */
     virtual void resizeNodeCount(const u32 num) {
         nodes.resize(num);
-        for (u32 i = 0; i < num; ++i) {
+        for (int i = 0; i < num; ++i) {
             MFigureNode node = nodes[i];
             if (!node) {
                 nodes[i].reset(new FigureNode());

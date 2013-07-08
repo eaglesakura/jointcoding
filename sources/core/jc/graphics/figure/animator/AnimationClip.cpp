@@ -18,7 +18,7 @@ AnimationClip::AnimationClip(MAnimationGroup animation) {
     range.start = 0;
     range.end = 0;
 
-    for (u32 i = 0; i < animation->animations_length; ++i) {
+    for (int i = 0; i < animation->animations_length; ++i) {
         u32 end = 0;
         animation->animations[i].getAnimationRange(NULL, NULL, NULL, &end);
 //        jclogf("range-end(%d)", range.end);
