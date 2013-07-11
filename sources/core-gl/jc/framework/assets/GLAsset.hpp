@@ -34,5 +34,6 @@ using namespace jc::gl;
 }
 }
 
+#include    "jc/framework/assets/gldata/VertexAttributeCombine.h"
 
 #endif /* GLASSET_HPP_ */

@@ -32,6 +32,15 @@ public:
     }
 
     /**
+     * すべてのフラグを有効にする
+     */
+    void allEnable() {
+        for (int i = 0; i < (sizeof(flags) / sizeof(u32)); ++i) {
+            flags[i] = 0xFFFFFFFF;
+        }
+    }
+
+    /**
      * フラグを有効にする
      */
     void enable(const u32 index) {
@@ -112,6 +121,8 @@ public:
         return jctrue;
     }
 };
+
+typedef BitFlags<32> SimpleBitFlags;
 
 }
 
