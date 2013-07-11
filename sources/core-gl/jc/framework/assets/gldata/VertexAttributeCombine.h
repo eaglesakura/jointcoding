@@ -74,7 +74,7 @@ struct VertexAttributeRequest {
     /**
      * 属性名
      */
-    charactor *name;
+    const charactor *name;
 
     /**
      * 属性タイプ

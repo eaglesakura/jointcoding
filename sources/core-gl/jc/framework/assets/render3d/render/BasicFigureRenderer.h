@@ -13,21 +13,6 @@ namespace jc {
 namespace fw {
 
 /**
- * 位置
- */
-typedef VertexAttribute<BasicVertex, 3, GL_FLOAT, GL_FALSE, 0> BasicPositionAttribute;
-
-/**
- * UV
- */
-typedef VertexAttribute<BasicVertex, 2, GL_FLOAT, GL_FALSE, sizeof(Vector3f)> BasicCoordAttribute;
-
-/**
- * 法線
- */
-typedef VertexAttribute<BasicVertex, 2, GL_FLOAT, GL_FALSE, sizeof(Vector3f) + sizeof(Vector2f)> BasicNormalAttribute;
-
-/**
  * シンプルな描画を行わせるシンプルなフィギュアレンダラー
  */
 class BasicFigureRenderer: public FigureRenderer {

@@ -23,7 +23,7 @@ void BasicFigureRenderer::initialize(MDevice device, MGLShaderProgram shader) {
 
     // attribute
     {
-        const VertexAttributeRequest request[] {
+        const VertexAttributeRequest request[] = {
         // 位置情報
                 { "attr_pos", VertexAttributeData_float3, jctrue },
                 // UV情報
