@@ -48,6 +48,13 @@ enum VertexAttributeData_e {
     /**
      * GLubyte[4]
      * GL_UNSIGNED_BYTE
+     * normalized=false
+     */
+    VertexAttributeData_ubyte4,
+
+    /**
+     * GLubyte[4]
+     * GL_UNSIGNED_BYTE
      * normalized=true
      */
     VertexAttributeData_ubyte4_normalized,
@@ -73,7 +80,14 @@ struct VertexAttributeRequest {
      * 属性タイプ
      */
     VertexAttributeData_e type;
+
+    /**
+     * 検証必要性がある場合trueを指定する
+     */
+    jcboolean valid;
 };
+
+#define VertexAttributeRequest_length(array)       ( sizeof(array) / sizeof(VertexAttributeRequest))
 
 /**
  * 属性情報配列からキャッシュを生成する

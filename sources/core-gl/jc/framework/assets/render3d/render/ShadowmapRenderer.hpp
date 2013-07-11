@@ -39,7 +39,7 @@ protected:
 
         // 頂点属性の関連付けを行う
         {
-            attr_position.attributePointer(state);
+            attributes.attribute(state);
         }
 
         // ライトマップ設定

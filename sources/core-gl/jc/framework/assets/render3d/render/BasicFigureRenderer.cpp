@@ -23,12 +23,19 @@ void BasicFigureRenderer::initialize(MDevice device, MGLShaderProgram shader) {
 
     // attribute
     {
-        attr_position.setLocation(shader, "attr_pos");
-        // 最低限、位置情報は持っていなければならない
-        assert(attr_position.valid());
+        const VertexAttributeRequest request[] {
+        // 位置情報
+                { "attr_pos", VertexAttributeData_float3, jctrue },
+                // UV情報
+                { "attr_uv", VertexAttributeData_float2, jcfalse },
+                // 法線情報
+                { "attr_normal", VertexAttributeData_float3, jcfalse },
+                // 頂点ウェイト情報
+                { "attr_weight_indices", VertexAttributeData_ubyte4, jcfalse },
+                // 頂点ウェイト情報
+                { "attr_weight", VertexAttributeData_ubyte4_normalized, jcfalse }, };
 
-        attr_coord.setLocation(shader, "attr_uv");
-        attr_normal.setLocation(shader, "attr_normal");
+        attributes.request(shader, request, VertexAttributeRequest_length(request));
     }
 
     // uniform
@@ -64,9 +71,7 @@ void BasicFigureRenderer::bindMaterial(MDevice device, const Figure *pFigure, co
 
     // 頂点属性の関連付けを行う
     {
-        attr_position.attributePointer(state);
-        attr_coord.attributePointer(state);
-        attr_normal.attributePointer(state);
+        attributes.attribute(state);
     }
 
     // uniformのアップロードを行う

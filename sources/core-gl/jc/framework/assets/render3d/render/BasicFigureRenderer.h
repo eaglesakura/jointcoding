@@ -33,21 +33,10 @@ typedef VertexAttribute<BasicVertex, 2, GL_FLOAT, GL_FALSE, sizeof(Vector3f) + s
 class BasicFigureRenderer: public FigureRenderer {
 
 protected:
-
     /**
-     * 位置属性
+     * 頂点属性
      */
-    BasicPositionAttribute attr_position;
-
-    /**
-     * UV
-     */
-    BasicCoordAttribute attr_coord;
-
-    /**
-     * 法線
-     */
-    BasicNormalAttribute attr_normal;
+    VertexAttributeComtine attributes;
 
     /**
      * LP行列

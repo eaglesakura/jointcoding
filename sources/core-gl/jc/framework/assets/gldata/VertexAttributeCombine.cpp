@@ -52,6 +52,11 @@ static const struct {
 { sizeof(float), 4, GL_FALSE, GL_FLOAT },
 
 /**
+ * VertexAttributeData_ubyte4
+ */
+{ sizeof(u8), 4, GL_FALSE, GL_UNSIGNED_BYTE },
+
+/**
  * VertexAttributeData_ubyte4_normalized
  */
 { sizeof(u8), 4, GL_TRUE, GL_UNSIGNED_BYTE },
@@ -88,6 +93,13 @@ void VertexAttributeComtine::request(MGLShaderProgram shader, const VertexAttrib
     // リクエスト数だけ処理を行う
     for (int i = 0; i < requests_length; ++i) {
         attributeCache[i].location = shader->getAttribLocation(requests[i].name);
+
+#ifdef  DEBUG
+        if (requests[i].valid) {
+            assert(attributeCache[i].location >= 0);
+        }
+#endif
+
         attributeCache[i].data_type = requests[i].type;
         attributeCache[i].offset_header = vertexStructSize;
 
