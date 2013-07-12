@@ -29,6 +29,11 @@ class SpriteBatchList {
     SpriteBatchSource primitives;
 
     /**
+     * レンダリング用シェーダー
+     */
+    MPrimitiveBatchShader shader;
+
+    /**
      * レンダリングソース
      */
     struct {
@@ -40,8 +45,8 @@ class SpriteBatchList {
         /**
          *
          */
-        jc_sp< VertexBufferObject<PrimitiveBatchVertex> > vertices;
-    } vbo;
+        jc_sp<VertexBufferObject<PrimitiveBatchVertex> > vertices;
+    }vbo;
 
     enum {
         /**
@@ -68,6 +73,14 @@ public:
     SpriteBatchList();
 
     virtual ~SpriteBatchList();
+
+    /**
+     * レンダリング用シェーダーを設定する
+     */
+    virtual void setShader(MPrimitiveBatchShader shader) {
+        assert(shader);
+        this->shader = shader;
+    }
 
     /**
      * 再度初期化を行う。

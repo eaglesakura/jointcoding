@@ -340,6 +340,18 @@ void BenchmarkApplication::onAppMainUpdate() {
         renderer->rendering(device, antan, antan_instance);
     }
 
+    {
+        SpriteBatchList batch;
+        batch.initialize(device);
+        {
+            QuadSpriteRequest   q;
+            q.info[0].pos = Vector3f(-1, 1, 0);
+            q.info[1].pos = Vector3f(-1, 0, 0);
+            q.info[2].pos = Vector3f(0, 1, 0);
+            q.info[3].pos = Vector3f(0, 0, 0);
+        }
+    }
+
 //    {
 //        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
 //        MTextureImage texture = shadowmapTexture;

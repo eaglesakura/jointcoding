@@ -11,6 +11,7 @@
 
 // frameworks
 #include    "jc/framework/app/JointApplicationBase.h"
+#include    "jc/framework/assets/Rendering2DAsset.hpp"
 #include    "jc/framework/assets/Rendering3DAsset.hpp"
 
 using namespace jc;

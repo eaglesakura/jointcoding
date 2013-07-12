@@ -117,6 +117,7 @@ void SpriteBatchList::request(const PolygonRequest *request) {
 
         // レンダリング環境指定
         {
+            SpriteBatchEnvironmentState *env = next->getEnvironment();
             next->getEnvironment()->setBlend(request->blend);
         }
         next->request(&primitives, request);

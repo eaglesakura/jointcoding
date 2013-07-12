@@ -61,50 +61,12 @@ class SpriteBatchEnvironmentState: public Object {
      */
     std::vector<MTextureImage> textures;
 
-    /**
-     * レンダリング用シェーダー
-     */
-    MGLShader shader;
-
-    /**
-     * 属性グループ
-     */
-    MVertexAttributeCombine attributes;
-
-    struct {
-        /**
-         * 転送済みのテクスチャユニット
-         *
-         * uTextures
-         */
-        TextureUniform textures;
-    } uniform;
-
 public:
     SpriteBatchEnvironmentState() {
         blend = GLBlendType_Alpha;
-        attributes.reset(new VertexAttributeCombine());
     }
 
     virtual ~SpriteBatchEnvironmentState() {
-    }
-
-    /**
-     * シェーダーを設定する
-     */
-    virtual void setShader(MGLShaderProgram shader) {
-        const VertexAttributeRequest requests[] = {
-        // 位置
-                { "aPosition", VertexAttributeData_float3 },
-                // UV
-                { "aCoord", VertexAttributeData_float2 },
-                // 色
-                { "aColor", VertexAttributeData_ubyte4_normalized },
-                // 回転角
-                { "aRotate", VertexAttributeData_float1 },
-                // テクスチャユニット
-                { "aTextureIndex", VertexAttributeData_int1 }, };
-        attributes->request(shader, requests, VertexAttributeRequest_length(requests));
     }
 
     /**
@@ -116,13 +78,6 @@ public:
 
     virtual GLBlendType_e getBlend() const {
         return blend;
-    }
-
-    /**
-     * 管理しているテクスチャを解放する
-     */
-    virtual void clearTextures() {
-        textures.clear();
     }
 
     /**
@@ -164,39 +119,6 @@ public:
     virtual void bind(MGLState state) {
         // ブレンド情報を設定する
         state->blendFunc(blend);
-
-        // 属性情報を割り当てる
-        attributes->attributePointer(state);
-
-        // テクスチャ操作を行う
-        {
-            GLint units[32] = { 0 };
-            // 順番通りにテクスチャをバインドする
-            for (int i = 0; i < textures.size(); ++i) {
-                textures[i]->bind(i, state);
-                units[i] = i;
-            }
-
-            // シェーダーへアップロードする
-            uniform.textures.uploadDirect(state, units, textures.size());
-        }
-    }
-
-    /**
-     * ステートの状態をoutStateへコピーする
-     *
-     * 但し、テクスチャ情報はコピーしない
-     */
-    virtual void clone(SpriteBatchEnvironmentState* outState) {
-        assert(outState);
-
-        outState->attributes = this->attributes;
-        outState->blend = this->blend;
-        outState->uniform = this->uniform;
-        outState->shader = shader;
-        {
-            outState->uniform.textures.clearCache();
-        }
     }
 };
 
