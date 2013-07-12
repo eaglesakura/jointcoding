@@ -21,7 +21,7 @@ protected:
     /**
      * 頂点属性
      */
-    VertexAttributeComtine attributes;
+    VertexAttributeCombine attributes;
 
     /**
      * LP行列

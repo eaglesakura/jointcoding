@@ -35,15 +35,15 @@ struct SpriteBatchVertex {
     Color color;
 
     /**
+     * 回転角情報
+     */
+    float rotate;
+
+    /**
      * レンダリング対象のテクスチャユニット
      * 負の値の場合、通常のテクスチャを適用せずに描画する
      */
     s32 texture_index;
-
-    /**
-     * 回転角情報
-     */
-    float rotate;
 };
 
 /**
@@ -69,7 +69,7 @@ typedef VertexAttribute<SpriteBatchVertex, 1, GL_INT, GL_FALSE, sizeof(Vector2f)
 /**
  * 回転属性
  */
-typedef VertexAttribute<SpriteBatchVertex, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2f) + sizeof(Vector2f) + sizeof(Color) + sizeof(int)> SpriteBatchRotateAttribute;
+typedef VertexAttribute<SpriteBatchVertex, 1, GL_FLOAT, GL_FALSE, sizeof(Vector2f) + sizeof(Vector2f) + sizeof(Color) + sizeof(int)> SpriteBatchRotateAttribute;
 
 /**
  * スプライトレンダリング時の環境情報を設定する
@@ -79,7 +79,7 @@ class SpriteBatchEnvironmentState: public Object {
     /**
      * ブレンディング情報
      */
-    struct _ {
+    struct _blend {
         GLenum sfactor;
         GLenum dfactor;
     } blend;
@@ -94,42 +94,10 @@ class SpriteBatchEnvironmentState: public Object {
      */
     MGLShader shader;
 
-    struct {
-        /**
-         * 位置情報
-         *
-         * aPosition
-         */
-        SpriteBatchPositionAttribute position;
-
-        /**
-         * UV情報
-         *
-         * aCoord
-         */
-        SpriteBatchCoordAttribute uv;
-
-        /**
-         * color
-         *
-         * aColor
-         */
-        SpriteBatchColorAttribute color;
-
-        /**
-         * 回転角
-         *
-         * aRotate
-         */
-        SpriteBatchColorAttribute rotate;
-
-        /**
-         * テクスチャ配列
-         *
-         * aTextureIndex
-         */
-        SpriteBatchTextureUnitAttribute texture_index;
-    } attribute;
+    /**
+     * 属性グループ
+     */
+    MVertexAttributeCombine attributes;
 
     struct {
         /**
@@ -144,6 +112,7 @@ public:
     SpriteBatchEnvironmentState() {
         blend.sfactor = GL_SRC_ALPHA;
         blend.dfactor = GL_ONE_MINUS_SRC_ALPHA;
+        attributes.reset(new VertexAttributeCombine());
     }
 
     virtual ~SpriteBatchEnvironmentState() {
@@ -153,11 +122,18 @@ public:
      * シェーダーを設定する
      */
     virtual void setShader(MGLShaderProgram shader) {
-        attribute.position.setLocation(shader, "aPosition");
-        attribute.uv.setLocation(shader, "aCoord");
-        attribute.color.setLocation(shader, "aColor");
-        attribute.rotate.setLocation(shader, "aRotate");
-        attribute.texture_index.setLocation(shader, "aTextureIndex");
+        const VertexAttributeRequest requests[] = {
+        // 位置
+                { "aPosition", VertexAttributeData_float2 },
+                // UV
+                { "aCoord", VertexAttributeData_float2 },
+                // 色
+                { "aColor", VertexAttributeData_ubyte4_normalized },
+                // 回転角
+                { "aRotate", VertexAttributeData_float1 },
+                // テクスチャユニット
+                { "aTextureIndex", VertexAttributeData_int1 }, };
+        attributes->request(shader, requests, VertexAttributeRequest_length(requests));
     }
 
     /**
@@ -219,18 +195,19 @@ public:
      * 属性情報を関連付ける。
      * 既に頂点バッファはバインド済みである必要がある
      */
-    virtual void attachAttributes(MGLState state) {
-        attribute.position.attributePointer(state);
-        attribute.uv.attributePointer(state);
-        attribute.color.attributePointer(state);
-        attribute.texture_index.attributePointer(state);
-        attribute.rotate.attributePointer(state);
+    void attachAttributes(MGLState state) {
     }
 
     /**
-     * シェーダー情報をアップロードする
+     * レンダリング準備を行わせる
      */
-    virtual void uploadUniforms(MGLState state) {
+    virtual void bind(MGLState state) {
+        // ブレンド情報を設定する
+        state->blendFunc(blend.sfactor, blend.dfactor);
+
+        // 属性情報を割り当てる
+        attributes->attributePointer(state);
+
         // テクスチャ操作を行う
         {
             GLint units[32] = { 0 };
@@ -242,6 +219,23 @@ public:
 
             // シェーダーへアップロードする
             uniform.textures.uploadDirect(state, units, textures.size());
+        }
+    }
+
+    /**
+     * ステートの状態をoutStateへコピーする
+     *
+     * 但し、テクスチャ情報はコピーしない
+     */
+    virtual void clone(SpriteBatchEnvironmentState* outState) {
+        assert(outState);
+
+        outState->attributes = this->attributes;
+        outState->blend = this->blend;
+        outState->uniform = this->uniform;
+        outState->shader = shader;
+        {
+            outState->uniform.textures.clearCache();
         }
     }
 };

@@ -37,13 +37,6 @@ struct SpriteRequest {
      */
     s32 vertex_info_length;
 
-#if 0
-    /**
-     * 描画用のインデックスリスト
-     */
-    GLushort indices[NUM_VERTEX];
-#endif
-
     /**
      * テクスチャ
      * NULLの場合白紙を描画する
@@ -59,12 +52,6 @@ struct SpriteRequest {
         rotate = 0;
         vertex_info = NULL;
         vertex_info_length = 0;
-#if 0
-        for (int i = 0; i < NUM_VERTEX; ++i) {
-            indices[i] = i;
-        }
-#endif
-
     }
 };
 
@@ -92,7 +79,6 @@ typedef TSpriteRequest<3> TriangleSpriteRequest;
  * 四角形のリクエスト
  */
 typedef TSpriteRequest<4> QuadSpriteRequest;
-
 
 /**
  * スプライトバッチはひとつの巨大なデータとして管理し、必要な部位ごとに部分描画を行うことで対応する
@@ -154,6 +140,8 @@ public:
         return jctrue;
     }
 };
+
+typedef jc_sp<SpriteBatchGroup> MSpriteBatchGroup;
 
 }
 }

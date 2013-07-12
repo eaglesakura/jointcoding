@@ -24,14 +24,20 @@ class TextureUniform: public UniformBase {
     GLint bindUnit[MAX_TEXTURES];
 public:
     TextureUniform() {
-
-        for (int i = 0; i < MAX_TEXTURES; ++i) {
-            bindUnit[i] = 0;
-        }
+        clearCache();
     }
 
     ~TextureUniform() {
 
+    }
+
+    /**
+     * ローカルキャッシュを削除する
+     */
+    void clearCache() {
+        for (int i = 0; i < MAX_TEXTURES; ++i) {
+            bindUnit[i] = 0;
+        }
     }
 
     /**

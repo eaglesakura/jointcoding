@@ -34,49 +34,51 @@ static const struct {
 /**
  * VertexAttributeData_float1
  */
-{ sizeof(float), 1, GL_FALSE, GL_FLOAT },
+{ sizeof(GLfloat), 1, GL_FALSE, GL_FLOAT },
 
 /**
  * VertexAttributeData_float2
  */
-{ sizeof(float), 2, GL_FALSE, GL_FLOAT },
+{ sizeof(GLfloat), 2, GL_FALSE, GL_FLOAT },
 
 /**
  * VertexAttributeData_float3
  */
-{ sizeof(float), 3, GL_FALSE, GL_FLOAT },
+{ sizeof(GLfloat), 3, GL_FALSE, GL_FLOAT },
 
 /**
  * VertexAttributeData_float4
  */
-{ sizeof(float), 4, GL_FALSE, GL_FLOAT },
+{ sizeof(GLfloat), 4, GL_FALSE, GL_FLOAT },
 
 /**
  * VertexAttributeData_ubyte4
  */
-{ sizeof(u8), 4, GL_FALSE, GL_UNSIGNED_BYTE },
+{ sizeof(GLubyte), 4, GL_FALSE, GL_UNSIGNED_BYTE },
 
 /**
  * VertexAttributeData_ubyte4_normalized
  */
-{ sizeof(u8), 4, GL_TRUE, GL_UNSIGNED_BYTE },
+{ sizeof(GLubyte), 4, GL_TRUE, GL_UNSIGNED_BYTE },
 
 /**
- * VertexAttributeData_ushort_normalized
+ * VertexAttributeData_ushort1_normalized
  */
-{ sizeof(u16), 1, GL_TRUE, GL_UNSIGNED_SHORT },
+{ sizeof(GLushort), 1, GL_TRUE, GL_UNSIGNED_SHORT },
+
+{ sizeof(GLint), 1, GL_FALSE, GL_INT },
 
 };
 
 }
 
-VertexAttributeComtine::VertexAttributeComtine() {
+VertexAttributeCombine::VertexAttributeCombine() {
     enables.allEnable();
     vertexStructSize = 0;
 
 }
 
-VertexAttributeComtine::~VertexAttributeComtine() {
+VertexAttributeCombine::~VertexAttributeCombine() {
 
 }
 
@@ -85,7 +87,7 @@ VertexAttributeComtine::~VertexAttributeComtine() {
  *
  * 頂点構造体の配置とVertexAttributeRequestのインデックスはリンクさせる必要がある
  */
-void VertexAttributeComtine::request(MGLShaderProgram shader, const VertexAttributeRequest *requests, const int requests_length) {
+void VertexAttributeCombine::request(MGLShaderProgram shader, const VertexAttributeRequest *requests, const int requests_length) {
     // キャッシュを生成する
     attributeCache.alloc(requests_length);
 
@@ -112,7 +114,7 @@ void VertexAttributeComtine::request(MGLShaderProgram shader, const VertexAttrib
  * ステートに関連付ける
  * シェーダーはバインド済みである必要がある
  */
-void VertexAttributeComtine::attribute(MGLState state, void* vertex_ptr) {
+void VertexAttributeCombine::attributePointer(MGLState state, void* vertex_ptr) {
 
     for (int i = 0; i < attributeCache.length; ++i) {
         // ロケーションが有効であり、属性利用も有効である場合は属性設定する

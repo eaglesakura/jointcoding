@@ -64,7 +64,14 @@ enum VertexAttributeData_e {
      * GL_UNSIGNED_SHORT
      * normalized=true
      */
-    VertexAttributeData_ushort_normalized,
+    VertexAttributeData_ushort1_normalized,
+
+    /**
+     * GLint
+     * GL_INT
+     * normalized=false
+     */
+    VertexAttributeData_int1,
 };
 
 /**
@@ -112,7 +119,7 @@ struct VertexAttributeCache {
 /**
  * 頂点属性の組み合わせを設定する
  */
-class VertexAttributeComtine: public Object {
+class VertexAttributeCombine: public Object {
 
     /**
      * 属性キャッシュ
@@ -129,9 +136,9 @@ class VertexAttributeComtine: public Object {
      */
     SimpleBitFlags enables;
 public:
-    VertexAttributeComtine();
+    VertexAttributeCombine();
 
-    virtual ~VertexAttributeComtine();
+    virtual ~VertexAttributeCombine();
 
     /**
      *
@@ -151,8 +158,13 @@ public:
      * ステートに関連付ける
      * シェーダーはバインド済みである必要がある
      */
-    virtual void attribute(MGLState state, void* vertex_ptr = NULL);
+    virtual void attributePointer(MGLState state, void* vertex_ptr = NULL);
 };
+
+/**
+ *
+ */
+typedef jc_sp<VertexAttributeCombine> MVertexAttributeCombine;
 
 }
 }
