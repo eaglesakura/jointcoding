@@ -28,10 +28,13 @@ class VertexBufferObject: public Object {
      */
     vram_handle vertices;
 
+    u32 vertices_length;
+
 public:
     VertexBufferObject(MDevice device) {
         assert(device);
         vertices = device->getVRAM()->alloc(VRAM_VertexBufferObject);
+        vertices_length = 0;
     }
 
     virtual ~VertexBufferObject() {
@@ -47,6 +50,27 @@ public:
      */
     virtual void bufferData(const void *vertices, const s32 sizeof_vertex, const u32 vertices_length, const GLenum usage) {
         glBufferData(GL_ARRAY_BUFFER, sizeof_vertex * vertices_length, (GLvoid*) vertices, usage);
+        this->vertices_length = vertices_length;
+        assert_gl();
+    }
+
+    /**
+     * バッファの一部にデータを転送する。
+     * 必ずbind()済みの状態で呼び出すこと
+     */
+    virtual void bufferSubData(const u32 offset_num, const void* vertices, const s32 sizeof_vertex, const u32 vertices_length) {
+        assert(offset_num >= 0);
+        assert((offset_num + vertices_length) <= vertices_length);
+
+        glBufferSubData(GL_ARRAY_BUFFER, sizeof_vertex * offset_num, sizeof_vertex * vertices_length, vertices);
+        assert_gl();
+    }
+
+    /**
+     * 長さを取得する
+     */
+    virtual u32 length() const {
+        return vertices_length;
     }
 
     /**

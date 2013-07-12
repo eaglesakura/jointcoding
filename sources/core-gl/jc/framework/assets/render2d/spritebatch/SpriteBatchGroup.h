@@ -13,16 +13,16 @@ namespace jc {
 namespace fw {
 
 /**
- * スプライトレンダリングデータ
+ * レンダリングデータ
  */
-struct SpriteRequest {
+struct PolygonRequest {
     /**
      * 位置情報
      *
      * TriangleStrip情報
      */
     struct VertexInfo {
-        Vector2f pos;
+        Vector3f pos;
         Vector2f coord;
         Color color;
     };
@@ -48,7 +48,13 @@ struct SpriteRequest {
      */
     float rotate;
 
-    SpriteRequest() {
+    /**
+     * ブレンディングタイプ指定
+     */
+    GLBlendType_e blend;
+
+    PolygonRequest() {
+        blend = GLBlendType_Alpha;
         rotate = 0;
         vertex_info = NULL;
         vertex_info_length = 0;
@@ -60,9 +66,9 @@ struct SpriteRequest {
  */
 template<u32 NUM_VERTEX>
 struct TSpriteRequest {
-    SpriteRequest req;
+    PolygonRequest req;
 
-    SpriteRequest::VertexInfo info[NUM_VERTEX];
+    PolygonRequest::VertexInfo info[NUM_VERTEX];
 
     TSpriteRequest() {
         req.vertex_info = info;
@@ -88,7 +94,7 @@ struct SpriteBatchSource {
     /**
      * 頂点キャッシュ
      */
-    std::vector<SpriteBatchVertex> vertices;
+    std::vector<PrimitiveBatchVertex> vertices;
 
     /**
      * インデックスバッファキャッシュ
@@ -99,19 +105,19 @@ struct SpriteBatchSource {
 /**
  * スプライトバッチ描画用の１つのレンダリンググループを形成する
  */
-class SpriteBatchGroup: public Object {
+class PolygonBatchGroup: public Object {
     struct {
         s32 start;
         s32 num;
     } indices_range;
 
 public:
-    SpriteBatchGroup() {
+    PolygonBatchGroup() {
         indices_range.start = -1;
         indices_range.num = -1;
     }
 
-    virtual ~SpriteBatchGroup() {
+    virtual ~PolygonBatchGroup() {
     }
 
     /**
@@ -123,7 +129,7 @@ public:
      * レンダリングリクエストを送る
      * リクエストが受諾された場合trueを返す
      */
-    virtual jcboolean requestRendering(MSpriteBatchEnvironmentState env, SpriteBatchSource *mesh, const SpriteRequest *sprite);
+    virtual jcboolean requestRendering(SpriteBatchEnvironmentState *env, SpriteBatchSource *mesh, const PolygonRequest *sprite);
 
     /**
      * レンダリングを行う範囲を取得する
@@ -141,7 +147,7 @@ public:
     }
 };
 
-typedef jc_sp<SpriteBatchGroup> MSpriteBatchGroup;
+typedef jc_sp<PolygonBatchGroup> MSpriteBatchGroup;
 
 }
 }

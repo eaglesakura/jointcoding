@@ -14,6 +14,7 @@
 #include    "jc/framework/assets/render2d/spritebatch/SpriteBatchEnvironment.hpp"
 #include    "jc/framework/assets/render2d/spritebatch/SpriteBatchGroup.h"
 #include    "jc/framework/assets/render2d/spritebatch/SpriteBatchRenderer.h"
+#include    "jc/framework/assets/render2d/spritebatch/SpriteBatchList.h"
 
 
 

@@ -14,6 +14,8 @@ namespace fw {
 
 /**
  * レンダリング用の１グループ設定
+ * 一つのレンダリング単位となる。
+ * MAX_TEXTURE_UNITSの数が最低限グループ化出来る数になるため、あまりにTexture切り替えが多い描画の場合はさほど効率的にならない可能性がある。
  */
 class SpriteRenderer: public Object {
     /**
@@ -24,7 +26,7 @@ class SpriteRenderer: public Object {
     /**
      * レンダリンググループ
      */
-    SpriteBatchGroup group;
+    PolygonBatchGroup group;
 public:
     SpriteRenderer();
 
@@ -38,8 +40,8 @@ public:
     /**
      * レンダリンググループを取得する
      */
-    virtual SpriteBatchGroup* getBatchGroup() const {
-        return const_cast<SpriteBatchGroup*>(&group);
+    virtual PolygonBatchGroup* getBatchGroup() const {
+        return const_cast<PolygonBatchGroup*>(&group);
     }
 
     /**
@@ -47,6 +49,13 @@ public:
      */
     virtual SpriteBatchEnvironmentState* getEnvironment() const {
         return const_cast<SpriteBatchEnvironmentState*>(&state);
+    }
+
+    /**
+     * レンダリングリクエストを送る
+     */
+    virtual jcboolean request(SpriteBatchSource *batchSource, const PolygonRequest *request) {
+        return getBatchGroup()->requestRendering(getEnvironment(), batchSource, request);
     }
 };
 

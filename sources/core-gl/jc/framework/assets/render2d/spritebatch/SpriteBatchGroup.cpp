@@ -12,7 +12,7 @@ namespace fw {
 /**
  * リクエストを開始する
  */
-void SpriteBatchGroup::beginRequest(SpriteBatchSource *mesh) {
+void PolygonBatchGroup::beginRequest(SpriteBatchSource *mesh) {
 
 }
 
@@ -20,10 +20,16 @@ void SpriteBatchGroup::beginRequest(SpriteBatchSource *mesh) {
  * レンダリングリクエストを送る
  * リクエストが受諾された場合trueを返す
  */
-jcboolean SpriteBatchGroup::requestRendering(MSpriteBatchEnvironmentState env, SpriteBatchSource *mesh, const SpriteRequest *sprite) {
+jcboolean PolygonBatchGroup::requestRendering(SpriteBatchEnvironmentState *env, SpriteBatchSource *mesh, const PolygonRequest *sprite) {
     assert(env);
     assert(mesh);
     assert(sprite);
+
+    // ブレンドタイプをチェック
+    if (sprite->blend != env->getBlend()) {
+        // ブレンドが一致しないため、描画が出来ない
+        return jcfalse;
+    }
 
     // テクスチャ番号
     s32 textureIndex = -1;
@@ -37,7 +43,7 @@ jcboolean SpriteBatchGroup::requestRendering(MSpriteBatchEnvironmentState env, S
     }
 
     // 頂点を生成する
-    SpriteBatchVertex vtx;
+    PrimitiveBatchVertex vtx;
     for (int i = 0; i < sprite->vertex_info_length; ++i) {
         vtx.position = sprite->vertex_info[i].pos;
         vtx.coord = sprite->vertex_info[i].coord;

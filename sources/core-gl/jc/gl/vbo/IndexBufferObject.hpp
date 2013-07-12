@@ -73,6 +73,26 @@ public:
     }
 
     /**
+     * データの一部分を転送する
+     *
+     * @param offset_num オフセット数を指定する。sizeof(u16)が自動的に適用されるため、注意する
+     */
+    virtual void bufferSubData(const s32 offset_num, const u16 *indices, const u32 indices_length) {
+        assert(offset_num >= 0);
+        assert((offset_num + indices_length) <= this->indices_length);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset_num * sizeof(u16), indices_length * sizeof(u16), indices);
+        assert_gl();
+    }
+
+    /**
+     * 配列数を取得する。
+     * byte単位ではなく個数のため、byte数に変換する場合は *= sizeof(u16)が必要
+     */
+    virtual u32 length() const {
+        return indices_length;
+    }
+
+    /**
      * レンダリングを行う
      * @param mode レンダリングモードを指定する デフォルトはGL_TRIANGLES
      */

@@ -16,11 +16,11 @@ namespace fw {
 /**
  * バッチ処理用の頂点
  */
-struct SpriteBatchVertex {
+struct PrimitiveBatchVertex {
     /**
      * 位置情報
      */
-    Vector2f position;
+    Vector3f position;
 
     /**
      * UV位置情報
@@ -47,31 +47,6 @@ struct SpriteBatchVertex {
 };
 
 /**
- * 位置情報属性
- */
-typedef VertexAttribute<SpriteBatchVertex, 2, GL_FLOAT, GL_FALSE, 0> SpriteBatchPositionAttribute;
-
-/**
- * UV情報属性
- */
-typedef VertexAttribute<SpriteBatchVertex, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2f)> SpriteBatchCoordAttribute;
-
-/**
- * カラー情報属性
- */
-typedef VertexAttribute<SpriteBatchVertex, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vector2f) + sizeof(Vector2f)> SpriteBatchColorAttribute;
-
-/**
- * テクスチャユニット属性
- */
-typedef VertexAttribute<SpriteBatchVertex, 1, GL_INT, GL_FALSE, sizeof(Vector2f) + sizeof(Vector2f) + sizeof(Color)> SpriteBatchTextureUnitAttribute;
-
-/**
- * 回転属性
- */
-typedef VertexAttribute<SpriteBatchVertex, 1, GL_FLOAT, GL_FALSE, sizeof(Vector2f) + sizeof(Vector2f) + sizeof(Color) + sizeof(int)> SpriteBatchRotateAttribute;
-
-/**
  * スプライトレンダリング時の環境情報を設定する
  *
  */
@@ -79,10 +54,7 @@ class SpriteBatchEnvironmentState: public Object {
     /**
      * ブレンディング情報
      */
-    struct _blend {
-        GLenum sfactor;
-        GLenum dfactor;
-    } blend;
+    GLBlendType_e blend;
 
     /**
      * レンダリング用テクスチャ
@@ -110,8 +82,7 @@ class SpriteBatchEnvironmentState: public Object {
 
 public:
     SpriteBatchEnvironmentState() {
-        blend.sfactor = GL_SRC_ALPHA;
-        blend.dfactor = GL_ONE_MINUS_SRC_ALPHA;
+        blend = GLBlendType_Alpha;
         attributes.reset(new VertexAttributeCombine());
     }
 
@@ -124,7 +95,7 @@ public:
     virtual void setShader(MGLShaderProgram shader) {
         const VertexAttributeRequest requests[] = {
         // 位置
-                { "aPosition", VertexAttributeData_float2 },
+                { "aPosition", VertexAttributeData_float3 },
                 // UV
                 { "aCoord", VertexAttributeData_float2 },
                 // 色
@@ -139,16 +110,12 @@ public:
     /**
      * ブレンディング関数を設定する
      */
-    virtual void setBlend(const GLenum sfactor, const GLenum dfactor) {
-        blend.sfactor = sfactor;
-        blend.dfactor = dfactor;
+    virtual void setBlend(const GLBlendType_e type) {
+        this->blend = type;
     }
 
-    /**
-     * ブレンディング関数を設定する
-     */
-    virtual void setBlend(const GLBlendType_e type) {
-        GLState::getBlendFunc(type, &blend.sfactor, &blend.dfactor);
+    virtual GLBlendType_e getBlend() const {
+        return blend;
     }
 
     /**
@@ -192,18 +159,11 @@ public:
     }
 
     /**
-     * 属性情報を関連付ける。
-     * 既に頂点バッファはバインド済みである必要がある
-     */
-    void attachAttributes(MGLState state) {
-    }
-
-    /**
      * レンダリング準備を行わせる
      */
     virtual void bind(MGLState state) {
         // ブレンド情報を設定する
-        state->blendFunc(blend.sfactor, blend.dfactor);
+        state->blendFunc(blend);
 
         // 属性情報を割り当てる
         attributes->attributePointer(state);
