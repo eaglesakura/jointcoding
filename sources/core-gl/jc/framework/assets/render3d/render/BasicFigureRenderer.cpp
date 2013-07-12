@@ -71,7 +71,7 @@ void BasicFigureRenderer::bindMaterial(MDevice device, const Figure *pFigure, co
 
     // 頂点属性の関連付けを行う
     {
-        attributes.attribute(state);
+        attributes.attributePointer(state);
     }
 
     // uniformのアップロードを行う

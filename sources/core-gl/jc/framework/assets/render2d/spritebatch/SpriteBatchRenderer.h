@@ -39,14 +39,14 @@ public:
      * レンダリンググループを取得する
      */
     virtual SpriteBatchGroup* getBatchGroup() const {
-        return &group;
+        return const_cast<SpriteBatchGroup*>(&group);
     }
 
     /**
      *
      */
     virtual SpriteBatchEnvironmentState* getEnvironment() const {
-        return &state;
+        return const_cast<SpriteBatchEnvironmentState*>(&state);
     }
 };
 

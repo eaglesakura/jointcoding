@@ -285,12 +285,9 @@ public:
      */
     inline void clear(const u32 flags = (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)) {
         glClear(flags);
+
 #ifdef  DEBUG
-#ifdef  DSUPPORT_TEGRA_PERFHUDES
         glGetError();
-#else
-        assert_gl();
-#endif  // DSUPPORT_TEGRA_PERFHUDES
 #endif // DEBUG
     }
 
