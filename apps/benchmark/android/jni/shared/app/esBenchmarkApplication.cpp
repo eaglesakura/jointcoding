@@ -350,6 +350,8 @@ void BenchmarkApplication::onAppMainUpdate() {
             q.info[2].pos = Vector3f(0, 1, 0);
             q.info[3].pos = Vector3f(0, 0, 0);
         }
+
+        device->getVRAM()->gc();
     }
 
 //    {

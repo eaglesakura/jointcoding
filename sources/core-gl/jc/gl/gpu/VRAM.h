@@ -120,7 +120,12 @@ enum VRAM_GC_e {
     /**
      * デフォルトの挙動（全資源一括解放）を行う。
      */
-    VRAM_GC_default = 0xFFFFFFFF,
+    VRAM_GC_default = 0x0000FFFF,
+
+    /**
+     * 解放フラグ
+     */
+    VRAM_GC_Dispose = 0x10000000,
 };
 
 /**

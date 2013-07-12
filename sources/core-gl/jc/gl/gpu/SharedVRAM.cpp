@@ -169,15 +169,17 @@ vram_handle SharedVRAM::alloc(const VRAM_e type) {
 void SharedVRAM::gc(const u32 gc_flags) {
     MutexLock lock(mtx);
 
+    const jcboolean req_dispose = ((gc_flags & VRAM_GC_Dispose) != 0);
+
     for (int i = 0; i < VRAM_e_num; ++i) {
-        if (gc_flags & (0x1 << i)) {
+        if ((gc_flags & (0x1 << i)) || req_dispose) {
             // 廃棄が確定したIDを列挙する
             std::vector<GLuint> destroy_table;
 
             std::vector<vram_handle>::iterator itr = gc_tables[i]->begin(), end = gc_tables[i]->end();
             while (itr != end) {
                 // GCターゲットでしか管理していない場合、廃棄対象である
-                if (itr->refs() <= 1) {
+                if (itr->refs() <= 1 || req_dispose) {
                     destroy_table.push_back(itr->get());
                     itr = gc_tables[i]->erase(itr);
                     end = gc_tables[i]->end();
@@ -190,7 +192,9 @@ void SharedVRAM::gc(const u32 gc_flags) {
                 function_tbl[i].delete_func(destroy_table.size(), (u32*) (&(destroy_table[0])));
             }
 
-            jclogf("vram gc type(%d) obj(%d)", i, destroy_table.size());
+            if (!destroy_table.empty()) {
+                jclogf("vram gc type(%d) obj(%d)", i, destroy_table.size());
+            }
         }
     }
 }
@@ -199,12 +203,7 @@ void SharedVRAM::gc(const u32 gc_flags) {
  * 資源の完全な解放を行う
  */
 void SharedVRAM::dispose() {
-    MutexLock lock(mtx);
-
-    for (int i = 0; i < VRAM_e_num; ++i) {
-        jclogf("vram dispose type(%d) obj(%d)", i, gc_tables[i]->size());
-    }
-
+    gc(VRAM_GC_Dispose);
 }
 
 }
