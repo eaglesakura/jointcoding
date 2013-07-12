@@ -10,219 +10,108 @@
 
 namespace jc {
 namespace gl {
-/**
- * テクスチャ用コールバック関数
- */
-void vramtable_texture_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
-    switch (callback) {
-        case HandleCallback_Allocated: {
-            // 生成を行う
-            glGenTextures(objects, pValues);
-            assert_gl();
-        }
-            break;
-        case HandleCallback_Unused: {
-            // 廃棄を行う
-            glDeleteTextures(objects, pValues);
-            assert_gl();
-            zeromemory(pValues, sizeof(GLuint) * objects);
 
-            jclogf("vram delete %d objects", objects);
-        }
-            break;
-    }
-}
-/**
- * インデックスバッファ用コールバック関数
- */
-void vramtable_indices_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
-    switch (callback) {
-        case HandleCallback_Allocated: {
-            // 生成を行う
-            glGenBuffers(objects, pValues);
-            assert_gl();
-        }
-            break;
-        case HandleCallback_Unused: {
-            // 廃棄を行う
-            glDeleteBuffers(objects, pValues);
-            assert_gl();
-            zeromemory(pValues, sizeof(GLuint) * objects);
+namespace {
 
-            jclogf("vram delete  %d objects", objects);
-        }
-            break;
-    }
-}
-/**
- * VBO用コールバック関数
- */
-void vramtable_vbo_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
-    switch (callback) {
-        case HandleCallback_Allocated: {
-            // 生成を行う
-            glGenBuffers(objects, pValues);
-            assert_gl();
-        }
-            break;
-        case HandleCallback_Unused: {
-            // 廃棄を行う
-            glDeleteBuffers(objects, pValues);
-            assert_gl();
-            zeromemory(pValues, sizeof(GLuint) * objects);
+typedef void (*vram_alloc_function)(s32 size, u32 *result_array);
+typedef void (*vram_delete_function)(s32 size, u32 *obj_array);
 
-            jclogf("vram delete  %d objects", objects);
-        }
-            break;
-    }
-}
 /**
- * 頂点シェーダ用コールバック関数
+ * 頂点シェーダの確保
  */
-void vramtable_vertshader_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
-    switch (callback) {
-        case HandleCallback_Allocated: {
-            // 生成を行う
-            for (int i = 0; i < objects; ++i) {
-                pValues[i] = glCreateShader(GL_VERTEX_SHADER);
-            }
-            assert_gl();
-        }
-            break;
-        case HandleCallback_Unused: {
-            // 廃棄を行う
-            for (int i = 0; i < objects; ++i) {
-                glDeleteShader(pValues[i]);
-            }
-            assert_gl();
-            zeromemory(pValues, sizeof(GLuint) * objects);
-
-            jclogf("vram delete  %d objects", objects);
-        }
-            break;
+static void alloc_vshader(s32 size, u32 *result_array) {
+    for (s32 i = 0; i < size; ++i) {
+        result_array[i] = glCreateShader(GL_VERTEX_SHADER);
     }
 }
 
 /**
- * フラグメントシェーダ用コールバック関数
+ * 頂点シェーダの解放
  */
-void vramtable_fragshader_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
-    switch (callback) {
-        case HandleCallback_Allocated: {
-            // 生成を行う
-            for (int i = 0; i < objects; ++i) {
-                pValues[i] = glCreateShader(GL_FRAGMENT_SHADER);
-            }
-            assert_gl();
+static void delete_vshader(s32 size, u32 *obj_array) {
+    for (s32 i = 0; i < size; ++i) {
+        if (obj_array[i]) {
+            glDeleteShader(obj_array[i]);
         }
-            break;
-        case HandleCallback_Unused: {
-            // 廃棄を行う
-            for (int i = 0; i < objects; ++i) {
-                glDeleteShader(pValues[i]);
-            }
-            assert_gl();
-            zeromemory(pValues, sizeof(GLuint) * objects);
-
-            jclogf("vram delete  %d objects", objects);
-        }
-            break;
     }
 }
 
 /**
- * シェーダープログラム用コールバック関数
+ * フラグメントシェーダの確保
  */
-void vramtable_program_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
-    switch (callback) {
-        case HandleCallback_Allocated: {
-            // 生成を行う
-            for (int i = 0; i < objects; ++i) {
-                pValues[i] = glCreateProgram();
-            }
-        }
-            break;
-        case HandleCallback_Unused: {
-            // 廃棄を行う
-            for (int i = 0; i < objects; ++i) {
-                glDeleteProgram(pValues[i]);
-            }
-            assert_gl();
-            zeromemory(pValues, sizeof(GLuint) * objects);
-
-            jclogf("vram delete  %d objects", objects);
-        }
-            break;
+static void alloc_fshader(s32 size, u32 *result_array) {
+    for (s32 i = 0; i < size; ++i) {
+        result_array[i] = glCreateShader(GL_FRAGMENT_SHADER);
     }
 }
 
 /**
- * フレームバッファ用コールバック関数
+ * フラグメントシェーダの解放
  */
-void vramtable_framebuffer_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
-    switch (callback) {
-        case HandleCallback_Allocated: {
-            // 生成を行う
-            glGenFramebuffers(objects, pValues);
+static void delete_fshader(s32 size, u32 *obj_array) {
+    for (s32 i = 0; i < size; ++i) {
+        if (obj_array[i]) {
+            glDeleteShader(obj_array[i]);
         }
-            break;
-        case HandleCallback_Unused: {
-            // 廃棄を行う
-            glDeleteFramebuffers(objects, pValues);
-            assert_gl();
-            zeromemory(pValues, sizeof(GLuint) * objects);
-
-            jclogf("vram delete  %d objects", objects);
-        }
-            break;
     }
 }
 
 /**
- * レンダリングバッファ用コールバック関数
+ * ShaderProgramを作成する
  */
-void vramtable_renderbuffer_callback(const HandleCallback_e callback, void* pHandleTable_this, GLuint* pValues, handle_meta *pMetaHeader, const u32 objects) {
-    switch (callback) {
-        case HandleCallback_Allocated: {
-            // 生成を行う
-            glGenRenderbuffers(objects, pValues);
-        }
-            break;
-        case HandleCallback_Unused: {
-            // 廃棄を行う
-            glDeleteRenderbuffers(objects, pValues);
-            assert_gl();
-            zeromemory(pValues, sizeof(GLuint) * objects);
-
-            jclogf("vram delete  %d objects", objects);
-        }
-            break;
+static void alloc_shader_program(s32 size, u32 *result_array) {
+    for (s32 i = 0; i < size; ++i) {
+        result_array[i] = glCreateProgram();
     }
+}
+
+/**
+ * ShaderProgramを削除する
+ */
+static void delete_shader_program(s32 size, u32 *obj_array) {
+    for (s32 i = 0; i < size; ++i) {
+        if (obj_array[i]) {
+            glDeleteProgram(obj_array[i]);
+        }
+    }
+}
+
+struct VramFunction {
+    /**
+     * 確保関数
+     */
+    vram_alloc_function alloc_func;
+
+    /**
+     * 解放関数
+     */
+    vram_delete_function delete_func;
+};
+
+static VramFunction function_tbl[VRAM_e_num] = {
+// VRAM_Texture
+        { (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, },
+        // VRAM_Indices
+        { (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, },
+        // VRAM_VertexBufferObject
+        { (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, },
+        // VRAM_VertexShader
+        { (vram_alloc_function) alloc_vshader, (vram_delete_function) delete_vshader, },
+        // VRAM_FragmentShader
+        { (vram_alloc_function) alloc_fshader, (vram_delete_function) delete_fshader, },
+        // VRAM_ShaderProgram
+        { (vram_alloc_function) alloc_shader_program, (vram_delete_function) delete_shader_program, },
+        // VRAM_FrameBuffer
+        { (vram_alloc_function) glGenFramebuffers, (vram_delete_function) glDeleteFramebuffers },
+        // VRAM_RenderBuffer
+        { (vram_alloc_function) glGenRenderbuffers, (vram_delete_function) glDeleteRenderbuffers },
+// end
+        };
 }
 
 SharedVRAM::SharedVRAM() {
-
-    const handletable_callback callback_functions[] = {
-    // textures
-            (handletable_callback) vramtable_texture_callback,
-            // indices
-            (handletable_callback) vramtable_indices_callback,
-            // vbo
-            (handletable_callback) vramtable_vbo_callback,
-            // vert shader
-            (handletable_callback) vramtable_vertshader_callback,
-            // frag shader
-            (handletable_callback) vramtable_fragshader_callback,
-            // program
-            (handletable_callback) vramtable_program_callback,
-            // framebuffer
-            (handletable_callback) vramtable_framebuffer_callback,
-            // renderbufffer
-            (handletable_callback) vramtable_renderbuffer_callback, };
-
     for (int i = 0; i < VRAM_e_num; ++i) {
-        vram_tables[i].reset(new vram_table());
-        vram_tables[i]->setCallback(callback_functions[i]);
+        gc_tables[i].reset(new vram_table());
     }
 }
 
@@ -244,22 +133,33 @@ void SharedVRAM::sharedFrom(jc_sp<SharedVRAM> master) {
         VRAM_VertexBufferObject,
     };
 
-    // 隷属を宣言する
+// 隷属を宣言する
     for( int i = 0; i < (sizeof(shared_obj) / sizeof(VRAM_e)); ++i) {
         const VRAM_e type = shared_obj[i];
-        vram_tables[type] = master->vram_tables[type];
+        // GCテーブルを共有する
+        gc_tables[type] = master->gc_tables[type];
     }
 }
 
-/**
- * 領域確保を行う
- */
 vram_handle SharedVRAM::alloc(const VRAM_e type) {
     MutexLock lock(mtx);
 
-    vram_handle result;
-    result.reset(vram_tables[type]);
-    result.alloc();
+    tagvram_id *p = new tagvram_id();
+    assert(p);
+
+    // 確保を行う
+    {
+        assert(function_tbl[type].alloc_func);
+        function_tbl[type].alloc_func(1, &p->handle);
+        assert(p->handle);
+    }
+
+    vram_handle result(p);
+    // gcテーブルに戻りを追加する
+    gc_tables[type]->push_back(result);
+
+    // 想定通りの管理数であることを保証する
+    assert(result.refs() == 2);
     return result;
 }
 
@@ -271,9 +171,26 @@ void SharedVRAM::gc(const u32 gc_flags) {
 
     for (int i = 0; i < VRAM_e_num; ++i) {
         if (gc_flags & (0x1 << i)) {
-            s32 unused = 0;
-            vram_tables[i]->executeExistOrUnused(&unused);
-            jclogf("vram gc type(%d) obj(%d)", i, unused);
+            // 廃棄が確定したIDを列挙する
+            std::vector<GLuint> destroy_table;
+
+            std::vector<vram_handle>::iterator itr = gc_tables[i]->begin(), end = gc_tables[i]->end();
+            while (itr != end) {
+                // GCターゲットでしか管理していない場合、廃棄対象である
+                if (itr->refs() <= 1) {
+                    destroy_table.push_back(itr->get());
+                    itr = gc_tables[i]->erase(itr);
+                    end = gc_tables[i]->end();
+                } else {
+                    ++itr;
+                }
+            }
+
+            if (!destroy_table.empty()) {
+                function_tbl[i].delete_func(destroy_table.size(), (u32*) (&(destroy_table[0])));
+            }
+
+            jclogf("vram gc type(%d) obj(%d)", i, destroy_table.size());
         }
     }
 }
@@ -285,9 +202,7 @@ void SharedVRAM::dispose() {
     MutexLock lock(mtx);
 
     for (int i = 0; i < VRAM_e_num; ++i) {
-        jclogf("vram dispose type(%d) obj(%d)", i, vram_tables[i]->getExistValueNum());
-        vram_tables[i]->unuse();
-        vram_tables[i].reset();
+        jclogf("vram dispose type(%d) obj(%d)", i, gc_tables[i]->size());
     }
 
 }

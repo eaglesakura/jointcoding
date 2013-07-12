@@ -46,7 +46,7 @@ void ShaderProgram::unbind() {
  * 管理しているリソースの解放を行う
  */
 void ShaderProgram::dispose() {
-    if (program.exist()) {
+    if (program) {
         unbind();
         // 各々のシェーダーのデタッチと削除を行う
         program.reset();

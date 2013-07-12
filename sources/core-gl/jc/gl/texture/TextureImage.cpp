@@ -296,7 +296,7 @@ jcboolean TextureImage::isBinded(s32 *resultIndex) {
  * 管理している資源を開放する
  */
 void TextureImage::dispose() {
-    if (texture.exist()) {
+    if (texture) {
         this->unbind();
         texture.reset();
     }

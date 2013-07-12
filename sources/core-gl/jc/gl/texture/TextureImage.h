@@ -338,9 +338,6 @@ public:
      * 名称は一意の32bit整数になる。
      */
     virtual u32 getName() const {
-        if (!texture.exist()) {
-            return 0;
-        }
         return texture.get();
     }
 

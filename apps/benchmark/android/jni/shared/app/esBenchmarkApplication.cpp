@@ -401,7 +401,9 @@ void BenchmarkApplication::onAppDestroy() {
 
     texture.reset();
     susanow.reset();
+    antan.reset();
     shadowmap.reset();
+    shadowmapTexture.reset();
     basicShader.reset();
 }
 

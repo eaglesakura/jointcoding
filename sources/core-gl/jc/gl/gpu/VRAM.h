@@ -108,7 +108,6 @@ enum VRAM_GC_e {
      */
     VRAM_GC_ShaderProgram = 0x1 << VRAM_ShaderProgram,
 
-
     /**
      * リンクされたシェーダーを解放する
      */
@@ -124,9 +123,95 @@ enum VRAM_GC_e {
     VRAM_GC_default = 0xFFFFFFFF,
 };
 
-typedef handle_table<GLuint> vram_table;
+/**
+ * VRAMの管理ID
+ */
+struct tagvram_id {
+    s32 refs;
 
-typedef Handle<GLuint> vram_handle;
+    /**
+     * VRAMのアクセスハンドル
+     */
+    GLuint handle;
+
+    tagvram_id() {
+        refs = 0;
+        handle = 0;
+    }
+};
+
+/**
+ * VRAMの管理用
+ */
+class vram_handle {
+    tagvram_id *p;
+public:
+    vram_handle() {
+        this->p = NULL;
+    }
+
+    vram_handle(tagvram_id *p) {
+        this->p = p;
+        ++p->refs;
+    }
+    vram_handle(const vram_handle &origin) {
+        this->p = origin.p;
+        ++p->refs;
+    }
+
+    ~vram_handle() {
+        reset();
+    }
+
+    /**
+     * 参照数を追加する
+     */
+    vram_handle& operator =(const vram_handle &origin) {
+        if (origin) {
+            ++(origin.p->refs);
+        }
+
+        reset();
+        p = origin.p;
+        return *this;
+    }
+
+    operator bool() const {
+        return p != NULL;
+    }
+
+    bool operator!() const {
+        return p == NULL;
+    }
+
+    /**
+     * ハンドルを取得する
+     */
+    GLint get() const {
+        return p->handle;
+    }
+
+    /**
+     * 参照数を取得する
+     */
+    s32 refs() const {
+        return p->refs;
+    }
+
+    void reset() {
+        if (p) {
+            --(p->refs);
+            // 参照カウンタが一定以下になったら削除する
+            if (p->refs <= 0) {
+                SAFE_DELETE(p);
+            } else {
+                p = NULL;
+            }
+        }
+    }
+};
+
+typedef std::vector<vram_handle> vram_table;
 
 /**
  * Shared Contextを前提としたVRAMクラス
@@ -136,9 +221,9 @@ typedef Handle<GLuint> vram_handle;
  */
 class SharedVRAM: public Object {
     /**
-     * VRAMのアクセス用テーブル
+     * GCのクリーンアップテーブル
      */
-    jc_sp<vram_table> vram_tables[VRAM_e_num];
+    jc_sp<vram_table> gc_tables[VRAM_e_num];
 
     /**
      * 生成時のミューテックス
@@ -157,7 +242,7 @@ public:
     void sharedFrom( jc_sp<SharedVRAM> master);
 
     /**
-     * 領域確保を行う
+     * VRAMの領域確保を行う
      */
     vram_handle alloc(const VRAM_e type);
 
