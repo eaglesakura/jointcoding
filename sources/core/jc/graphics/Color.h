@@ -18,6 +18,11 @@ namespace jc {
 typedef u32 rgba32;
 
 /**
+ * ABGRで色情報を設定する
+ */
+typedef u32 abgr32;
+
+/**
  * ARGBで色情報を設定する
  */
 typedef u32 argb32;
@@ -162,6 +167,21 @@ union Color {
         const u8 B = (u8) max<u32>(0, (s32) tag.b - (s32) col.tag.b);
         const u8 A = (u8) max<u32>(0, (s32) tag.a - (s32) col.tag.a);
         return fromRGBAi(R, G, B, A);
+    }
+
+    /**
+     * RGBA順を逆に格納する
+     */
+    inline Color makeRevert() const {
+        return fromRGBAi(tag.a, tag.b, tag.g, tag.r);
+    }
+
+    inline abgr32 abgr() const {
+        return ((((argb32) tag.a) & 0xFF) << 24) // a
+        | ((((argb32) tag.b) & 0xFF) << 16) // b
+                | ((((argb32) tag.g) & 0xFF) << 8) // g
+                | ((((argb32) tag.r) & 0xFF)); // r
+
     }
 
     /**

@@ -24,7 +24,10 @@ struct PolygonRequest {
     struct VertexInfo {
         Vector3f pos;
         Vector2f coord;
-        Color color;
+        /**
+         * 上位からRGBA順で色情報を格納する
+         */
+        GLuint color;
     };
 
     /**
@@ -59,20 +62,29 @@ struct PolygonRequest {
         vertex_info = NULL;
         vertex_info_length = 0;
     }
+
+    /**
+     * 一括で色を指定する
+     */
+    PolygonRequest& color(const Color c) {
+        const abgr32 temp = c.abgr();
+        for (int i = 0; i < vertex_info_length; ++i) {
+            vertex_info[i].color = temp;
+        }
+        return *this;
+    }
 };
 
 /**
  * テンプレートを利用して適当な長さのリクエストを行えるようにする
  */
 template<u32 NUM_VERTEX>
-struct TSpriteRequest {
-    PolygonRequest req;
-
+struct TSpriteRequest: public PolygonRequest {
     PolygonRequest::VertexInfo info[NUM_VERTEX];
 
     TSpriteRequest() {
-        req.vertex_info = info;
-        req.vertex_info_length = NUM_VERTEX;
+        vertex_info = info;
+        vertex_info_length = NUM_VERTEX;
     }
 };
 
@@ -106,24 +118,18 @@ struct SpriteBatchSource {
  * スプライトバッチ描画用の１つのレンダリンググループを形成する
  */
 class PolygonBatchGroup: public Object {
-    struct {
-        s32 start;
-        s32 num;
-    } indices_range;
+    /**
+     * 描画すべきインデックス数
+     */
+    s32 indices;
 
 public:
     PolygonBatchGroup() {
-        indices_range.start = -1;
-        indices_range.num = -1;
+        indices = 0;
     }
 
     virtual ~PolygonBatchGroup() {
     }
-
-    /**
-     * リクエストを開始する
-     */
-    virtual void beginRequest(SpriteBatchSource *mesh);
 
     /**
      * レンダリングリクエストを送る
@@ -134,14 +140,15 @@ public:
     /**
      * レンダリングを行う範囲を取得する
      */
-    virtual jcboolean getRenderingRange(s32 *result_indices_start, s32 *result_indices_num) {
-        assert(result_indices_start);
-        assert(result_indices_num);
+    virtual jcboolean getRenderingRange(s32 *result_indices) {
+        assert(result_indices);
 
         // レンダリング可能なデータが存在しない
-        if (indices_range.num <= 0) {
+        if (indices <= 0) {
+            jclog("no rendering primitives");
             return jcfalse;
         }
+        *result_indices = indices;
 
         return jctrue;
     }

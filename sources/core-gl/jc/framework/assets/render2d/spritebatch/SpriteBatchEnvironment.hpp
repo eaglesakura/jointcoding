@@ -32,18 +32,18 @@ struct PrimitiveBatchVertex {
      *
      * α等を処理する
      */
-    Color color;
+    GLuint color;
 
     /**
      * 回転角情報
      */
-    float rotate;
+    GLshort rotate;
 
     /**
      * レンダリング対象のテクスチャユニット
      * 負の値の場合、通常のテクスチャを適用せずに描画する
      */
-    s32 texture_index;
+    GLshort texture_index;
 };
 
 /**
@@ -51,6 +51,13 @@ struct PrimitiveBatchVertex {
  *
  */
 class SpriteBatchEnvironmentState: public Object {
+    enum {
+        /**
+         * テクスチャユニット数制限
+         */
+        MAX_TEXTURES = 16,
+    };
+
     /**
      * ブレンディング情報
      */
@@ -88,7 +95,7 @@ public:
         assert(result_index);
 
         // テクスチャが限界を超えていたら追加できない
-        if (textures.size() >= GPUCapacity::getMaxTextureUnits()) {
+        if (textures.size() >= jc::min<u32>(MAX_TEXTURES, GPUCapacity::getMaxTextureUnits())) {
             return jcfalse;
         }
 

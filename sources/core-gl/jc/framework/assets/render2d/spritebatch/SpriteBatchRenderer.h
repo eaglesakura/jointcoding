@@ -13,6 +13,19 @@ namespace jc {
 namespace fw {
 
 /**
+ * スプライトレンダリング中の引き継ぎキャッシュ保持
+ */
+struct SpriteRendererCache {
+    /**
+     * レンダリングする頂点のヘッダ情報
+     */
+    s32 vertex_head;
+    SpriteRendererCache() {
+        vertex_head = 0;
+    }
+};
+
+/**
  * レンダリング用の１グループ設定
  * 一つのレンダリング単位となる。
  * MAX_TEXTURE_UNITSの数が最低限グループ化出来る数になるため、あまりにTexture切り替えが多い描画の場合はさほど効率的にならない可能性がある。
@@ -35,7 +48,7 @@ public:
     /**
      * レンダリングを行わせる
      */
-    virtual void rendering(MGLState state);
+    virtual void rendering(MGLState state, SpriteRendererCache *cache);
 
     /**
      * レンダリンググループを取得する

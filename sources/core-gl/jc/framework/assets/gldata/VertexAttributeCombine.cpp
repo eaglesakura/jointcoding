@@ -66,6 +66,11 @@ static const struct {
  */
 { sizeof(GLushort), 1, GL_TRUE, GL_UNSIGNED_SHORT },
 
+/**
+ * VertexAttributeData_ushort1_normalized
+ */
+{ sizeof(GLshort), 1, GL_TRUE, GL_SHORT },
+
 { sizeof(GLint), 1, GL_FALSE, GL_INT },
 
 };
@@ -107,6 +112,7 @@ void VertexAttributeCombine::request(MGLShaderProgram shader, const VertexAttrib
 
         // オフセットを加算する
         vertexStructSize += (g_attributes[requests[i].type].bytes * g_attributes[requests[i].type].datanum);
+//        jclogf("attribute(%s) location(%d) offset(%d)", requests[i].name, attributeCache[i].location, attributeCache[i].offset_header);
     }
 }
 

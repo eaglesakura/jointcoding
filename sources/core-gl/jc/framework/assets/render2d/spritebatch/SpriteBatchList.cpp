@@ -44,11 +44,14 @@ void SpriteBatchList::initialize(MDevice device) {
 void SpriteBatchList::uploadGPU(MDevice device) {
     // empty状態なら何もしない
     if (primitives.indices.empty()) {
+        jclog("abort upload GPU");
         state = BatchState_Wait;
         return;
     }
 
     MGLState state = device->getState();
+    shader->bind(state);
+
     // インデックスバッファ
     {
         vbo.indices->bind(state);
@@ -84,17 +87,29 @@ void SpriteBatchList::rendering(MGLState state) {
         return;
     }
 
-    vbo.indices->bind(state);
-    vbo.vertices->bind(state);
+    this->state = BatchState_Rendering;
 
-    // レンダリング
-    {
-        std::list<MSpriteRenderer>::iterator itr = sprites.begin(), end = sprites.end();
-        while (itr != end) {
-            (*itr)->rendering(state);
-            ++itr;
+    if (!sprites.empty()) {
+        shader->bind(state);
+        SpriteRendererCache cache;
+
+        vbo.indices->bind(state);
+        vbo.vertices->bind(state);
+        shader->attributePointer(state);
+
+        // レンダリング
+        {
+            std::list<MSpriteRenderer>::iterator itr = sprites.begin(), end = sprites.end();
+            while (itr != end) {
+                (*itr)->rendering(state, &cache);
+                ++itr;
+            }
         }
+    } else {
+        jclog("abort rendering");
     }
+
+    this->state = BatchState_Wait;
 }
 
 /**

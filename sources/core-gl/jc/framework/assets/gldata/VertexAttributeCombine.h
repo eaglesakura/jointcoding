@@ -12,6 +12,16 @@
 namespace jc {
 namespace fw {
 
+struct VertexColor {
+    GLubyte color[4];
+
+    VertexColor() {
+        for (int i = 0; i < 4; ++i) {
+            color[i] = 0xFF;
+        }
+    }
+};
+
 /**
  * 頂点属性の設定を行う
  * アラインメントチェックを行わないため、バイト境界に注意する
@@ -65,6 +75,13 @@ enum VertexAttributeData_e {
      * normalized=true
      */
     VertexAttributeData_ushort1_normalized,
+
+    /**
+     * GLshort
+     * GL_SHORT
+     * normalized=true
+     */
+    VertexAttributeData_short1_normalized,
 
     /**
      * GLint

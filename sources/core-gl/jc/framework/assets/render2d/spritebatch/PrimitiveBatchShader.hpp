@@ -50,20 +50,21 @@ public:
      */
     virtual void setShader(MGLShaderProgram shader) {
         this->shader = shader;
+        assert(shader);
 
         // attributes
         {
             const VertexAttributeRequest requests[] = {
             // 位置
-                    { "aPosition", VertexAttributeData_float3 },
+                    { "aPosition", VertexAttributeData_float3, jctrue },
                     // UV
-                    { "aCoord", VertexAttributeData_float2 },
+                    { "aCoord", VertexAttributeData_float2, jcfalse },
                     // 色
-                    { "aColor", VertexAttributeData_ubyte4_normalized },
+                    { "aColor", VertexAttributeData_ubyte4_normalized, jcfalse },
                     // 回転角
-                    { "aRotate", VertexAttributeData_float1 },
+                    { "aRotate", VertexAttributeData_short1_normalized, jcfalse },
                     // テクスチャユニット
-                    { "aTextureIndex", VertexAttributeData_int1 }, };
+                    { "aTextureIndex", VertexAttributeData_short1_normalized, jcfalse }, };
             attributes.request(shader, requests, VertexAttributeRequest_length(requests));
         }
 
@@ -74,9 +75,34 @@ public:
     }
 
     /**
+     * シェーダーバインドを行う
+     */
+    virtual void bind(MGLState state) {
+        assert(shader);
+        shader->bind();
+    }
+
+    /**
+     * シェーダーの解除を行う
+     */
+    virtual void unbind(MGLState state) {
+        assert(shader);
+        shader->unbind();
+    }
+
+    /**
+     * 属性情報を更新する
+     */
+    virtual void attributePointer(MGLState state) {
+        attributes.attributePointer(state);
+    }
+
+    /**
      * テクスチャ情報をアップロードする
      */
     virtual void upload(MGLState state, MTextureImage *textures, const u32 textures_length) {
+        attributes.attributePointer(state);
+
         assert(textures_length <= GPUCapacity::getMaxTextureUnits());
 
         // テクスチャ操作を行う

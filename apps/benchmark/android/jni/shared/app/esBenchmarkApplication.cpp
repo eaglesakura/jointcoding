@@ -237,16 +237,16 @@ void BenchmarkApplication::onAppMainUpdate() {
         windowManager->rendering();
     }
 
-//    {
-//        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
-//
-//        if (texture) {
-//            spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
-//
-//            static float rotate = 0;
-//            spriteManager->renderingImage(texture, createRectFromXYWH<float>(256, 256, texture->getWidth(), texture->getHeight()), rotate += 1, Color::fromRGBAf(1, 1, 1, 0.5f));
-//        }
-//    }
+    {
+        spriteManager->renderingArea(createRectFromXYWH<float>(1, 1, 512, 512), 0xFFFF00FF, 0x0000FFFF);
+
+        if (texture) {
+            spriteManager->renderingImage(texture, 128, 128, Color::fromRGBAf(1, 1, 1, 0.75f));
+
+            static float rotate = 0;
+            spriteManager->renderingImage(texture, createRectFromXYWH<float>(256, 256, texture->getWidth(), texture->getHeight()), rotate += 1, Color::fromRGBAf(1, 1, 1, 0.5f));
+        }
+    }
 
 // rendering 3d
 
@@ -340,11 +340,52 @@ void BenchmarkApplication::onAppMainUpdate() {
         renderer->rendering(device, antan, antan_instance);
     }
 
+//    if (0)
+    {
+        // シェーダーのコンパイル確認
+        if (!primitiveBatchShader) {
+            primitiveBatchShader = ShaderProgram::buildFromUri(device, Uri::fromAssets("pbatch.vsh"), Uri::fromAssets("pbatch.fsh"));
+            assert(primitiveBatchShader);
+        }
+
+        state->cullFaceEnable(jcfalse);
+        MPrimitiveBatchShader batchShader(new PrimitiveBatchShader());
+        batchShader->setShader(primitiveBatchShader);
+
+        SpriteBatchList batch;
+        batch.initialize(device);
+        batch.setShader(batchShader);
+
+        {
+            QuadSpriteRequest q;
+            q.vertex_info[0].pos = Vector3f(-1, 1, 0);
+            q.vertex_info[1].pos = Vector3f(-1, 0, 0);
+            q.vertex_info[2].pos = Vector3f(0, 1, 0);
+            q.vertex_info[3].pos = Vector3f(0, 0, 0);
+            q.color(Color::fromRGBAf(0, 1, 0, 1));
+            batch.request((PolygonRequest*) &q);
+        }
+
+        {
+            QuadSpriteRequest q;
+            q.vertex_info[0].pos = Vector3f(0, 1, 0);
+            q.vertex_info[1].pos = Vector3f(0, 0, 0);
+            q.vertex_info[2].pos = Vector3f(1, 1, 0);
+            q.vertex_info[3].pos = Vector3f(1, 0, 0);
+            q.color(Color::fromRGBAf(1, 0, 0, 1));
+            batch.request((PolygonRequest*) &q);
+        }
+        batch.uploadGPU(device);
+        batch.rendering(state);
+
+        device->getVRAM()->gc();
+    }
+#if 0
     {
         SpriteBatchList batch;
         batch.initialize(device);
         {
-            QuadSpriteRequest   q;
+            QuadSpriteRequest q;
             q.info[0].pos = Vector3f(-1, 1, 0);
             q.info[1].pos = Vector3f(-1, 0, 0);
             q.info[2].pos = Vector3f(0, 1, 0);
@@ -353,6 +394,7 @@ void BenchmarkApplication::onAppMainUpdate() {
 
         device->getVRAM()->gc();
     }
+#endif
 
 //    {
 //        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
@@ -362,6 +404,8 @@ void BenchmarkApplication::onAppMainUpdate() {
 //    }
 //    getWindowDevice()->postFrontBuffer();
     windowManager->loopEnd(jctrue);
+
+    Thread::sleep(1000 / 15);
 }
 
 /**

@@ -75,6 +75,11 @@ class BenchmarkApplication: public JointApplicationBase, public RenderingContext
     MTextureImage shadowmapTexture;
 
     MWindowManager windowManager;
+
+    /**
+     * プリミティブのバッチレンダリング用シェーダー
+     */
+    MGLShaderProgram primitiveBatchShader;
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();

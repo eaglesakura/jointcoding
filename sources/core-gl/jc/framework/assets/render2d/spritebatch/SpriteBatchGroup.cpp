@@ -10,13 +10,6 @@ namespace jc {
 namespace fw {
 
 /**
- * リクエストを開始する
- */
-void PolygonBatchGroup::beginRequest(SpriteBatchSource *mesh) {
-
-}
-
-/**
  * レンダリングリクエストを送る
  * リクエストが受諾された場合trueを返す
  */
@@ -28,6 +21,7 @@ jcboolean PolygonBatchGroup::requestRendering(SpriteBatchEnvironmentState *env, 
     // ブレンドタイプをチェック
     if (sprite->blend != env->getBlend()) {
         // ブレンドが一致しないため、描画が出来ない
+        jclog("fail blend");
         return jcfalse;
     }
 
@@ -38,9 +32,13 @@ jcboolean PolygonBatchGroup::requestRendering(SpriteBatchEnvironmentState *env, 
     if (sprite->texture) {
         // テクスチャを追加しきれない場合、追加は出来ない
         if (!env->addTexture(sprite->texture, &textureIndex)) {
+            jclog("fail textures");
             return jcfalse;
         }
     }
+
+    // 頂点数を加算しておく
+    indices += sprite->vertex_info_length;
 
     // 頂点を生成する
     PrimitiveBatchVertex vtx;
@@ -63,6 +61,9 @@ jcboolean PolygonBatchGroup::requestRendering(SpriteBatchEnvironmentState *env, 
                 // ダミーインデックスを追加する
                 mesh->indices.push_back(last_index);
                 mesh->indices.push_back(next_index);
+
+                // ダミーインデックス分の頂点数を加算する
+                indices += 2;
             }
 
             // 実描画用のインデックスを追加する
