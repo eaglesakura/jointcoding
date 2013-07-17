@@ -348,7 +348,8 @@ void BenchmarkApplication::onAppMainUpdate() {
             assert(primitiveBatchShader);
         }
 
-        state->cullFaceEnable(jcfalse);
+        state->cullFaceEnable(jctrue);
+//        state->cullFace(GL_BACK);
         MPrimitiveBatchShader batchShader(new PrimitiveBatchShader());
         batchShader->setShader(primitiveBatchShader);
 
@@ -363,9 +364,16 @@ void BenchmarkApplication::onAppMainUpdate() {
             q.vertex_info[2].pos = Vector3f(0, 1, 0);
             q.vertex_info[3].pos = Vector3f(0, 0, 0);
             q.color(Color::fromRGBAf(0, 1, 0, 1));
-            batch.request((PolygonRequest*) &q);
+            batch.request(&q);
         }
-
+        {
+            TriangleSpriteRequest t;
+            t.vertex_info[0].pos = Vector3f(-0.5f, 0, 0);
+            t.vertex_info[1].pos = Vector3f(-1.0f, -1.0f, 0);
+            t.vertex_info[2].pos = Vector3f(0.0f, -1.0f, 0);
+            t.color(Color::fromRGBAf(1.0f, 1.0f, 1.0f, 1.0f));
+            batch.request(&t);
+        }
         {
             QuadSpriteRequest q;
             q.vertex_info[0].pos = Vector3f(0, 1, 0);
@@ -373,28 +381,13 @@ void BenchmarkApplication::onAppMainUpdate() {
             q.vertex_info[2].pos = Vector3f(1, 1, 0);
             q.vertex_info[3].pos = Vector3f(1, 0, 0);
             q.color(Color::fromRGBAf(1, 0, 0, 1));
-            batch.request((PolygonRequest*) &q);
+            batch.request(&q);
         }
         batch.uploadGPU(device);
         batch.rendering(state);
 
         device->getVRAM()->gc();
     }
-#if 0
-    {
-        SpriteBatchList batch;
-        batch.initialize(device);
-        {
-            QuadSpriteRequest q;
-            q.info[0].pos = Vector3f(-1, 1, 0);
-            q.info[1].pos = Vector3f(-1, 0, 0);
-            q.info[2].pos = Vector3f(0, 1, 0);
-            q.info[3].pos = Vector3f(0, 0, 0);
-        }
-
-        device->getVRAM()->gc();
-    }
-#endif
 
 //    {
 //        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);

@@ -40,6 +40,7 @@ jcboolean PolygonBatchGroup::requestRendering(SpriteBatchEnvironmentState *env, 
     // 頂点数を加算しておく
     indices += sprite->vertex_info_length;
 
+    GLuint last_index = 0;
     // 頂点を生成する
     PrimitiveBatchVertex vtx;
     for (int i = 0; i < sprite->vertex_info_length; ++i) {
@@ -52,8 +53,9 @@ jcboolean PolygonBatchGroup::requestRendering(SpriteBatchEnvironmentState *env, 
         // 末尾に追加する
         {
             const GLushort next_index = (GLushort) mesh->vertices.size();
+            last_index = next_index;
 
-            // 接続用のダミーインデックスを挿入する
+            // ２つめ以降のプリミティブには接続用のダミーインデックスを挿入する
             if (i == 0 && mesh->vertices.size()) {
                 // 最後に指定されたインデックス
                 const GLushort last_index = mesh->indices[mesh->indices.size() - 1];
@@ -70,6 +72,12 @@ jcboolean PolygonBatchGroup::requestRendering(SpriteBatchEnvironmentState *env, 
             mesh->vertices.push_back(vtx);
             mesh->indices.push_back(next_index);
         }
+    }
+
+    // 奇数個頂点ならばカリング調整用インデックスを挿入する
+    if (indices % 2) {
+        mesh->indices.push_back(last_index);
+        ++indices;
     }
 
     return jctrue;
