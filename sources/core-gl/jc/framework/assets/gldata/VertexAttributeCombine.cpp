@@ -67,7 +67,7 @@ static const struct {
 { sizeof(GLushort), 1, GL_TRUE, GL_UNSIGNED_SHORT },
 
 /**
- * VertexAttributeData_ushort1_normalized
+ * VertexAttributeData_short1_normalized
  */
 { sizeof(GLshort), 1, GL_TRUE, GL_SHORT },
 

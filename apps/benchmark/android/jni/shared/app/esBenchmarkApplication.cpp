@@ -176,7 +176,7 @@ void BenchmarkApplication::onAppInitialize() {
     }
 
 //    // テクスチャロードを開始する
-    startNewtask(BenchmarkTask_LoadTexture, 0);
+//    startNewtask(BenchmarkTask_LoadTexture, 0);
 }
 
 void BenchmarkApplication::loadTexture(MDevice subDevice) {
@@ -249,7 +249,7 @@ void BenchmarkApplication::onAppMainUpdate() {
     }
 
 // rendering 3d
-
+#if 0
 // figureやライトの位置を更新する
     {
         rotate = jc::normalizeDegree(rotate += 1.0f);
@@ -339,24 +339,28 @@ void BenchmarkApplication::onAppMainUpdate() {
         }
         renderer->rendering(device, antan, antan_instance);
     }
+#endif
 
-//    if (0)
-    {
+    if (1) {
         // シェーダーのコンパイル確認
         if (!primitiveBatchShader) {
             primitiveBatchShader = ShaderProgram::buildFromUri(device, Uri::fromAssets("pbatch.vsh"), Uri::fromAssets("pbatch.fsh"));
             assert(primitiveBatchShader);
         }
 
+        if (!spbatch) {
+            spbatch.reset(new SpriteBatchList());
+
+//            MPrimitiveBatchShader batchShader(new PrimitiveBatchShader());
+//            batchShader->setShader(primitiveBatchShader);
+//            spbatch->setShader(batchShader);
+
+        }
+#if 0
+
         state->cullFaceEnable(jctrue);
-//        state->cullFace(GL_BACK);
-        MPrimitiveBatchShader batchShader(new PrimitiveBatchShader());
-        batchShader->setShader(primitiveBatchShader);
 
-        SpriteBatchList batch;
-        batch.initialize(device);
-        batch.setShader(batchShader);
-
+        spbatch->initialize(device);
         {
             QuadSpriteRequest q;
             q.vertex_info[0].pos = Vector3f(-1, 1, 0);
@@ -364,7 +368,7 @@ void BenchmarkApplication::onAppMainUpdate() {
             q.vertex_info[2].pos = Vector3f(0, 1, 0);
             q.vertex_info[3].pos = Vector3f(0, 0, 0);
             q.color(Color::fromRGBAf(0, 1, 0, 1));
-            batch.request(&q);
+            spbatch->request(&q);
         }
         {
             TriangleSpriteRequest t;
@@ -372,33 +376,34 @@ void BenchmarkApplication::onAppMainUpdate() {
             t.vertex_info[1].pos = Vector3f(-1.0f, -1.0f, 0);
             t.vertex_info[2].pos = Vector3f(0.0f, -1.0f, 0);
             t.color(Color::fromRGBAf(1.0f, 1.0f, 1.0f, 1.0f));
-            batch.request(&t);
+            spbatch->request(&t);
         }
         {
             QuadSpriteRequest q;
             q.vertex_info[0].pos = Vector3f(0, 1, 0);
-            q.vertex_info[1].pos = Vector3f(0, 0, 0);
-            q.vertex_info[2].pos = Vector3f(1, 1, 0);
-            q.vertex_info[3].pos = Vector3f(1, 0, 0);
-            q.color(Color::fromRGBAf(1, 0, 0, 1));
-            batch.request(&q);
-        }
-        batch.uploadGPU(device);
-        batch.rendering(state);
+            q.vertex_info[0].coord.set(0, 0);
 
-        device->getVRAM()->gc();
+            q.vertex_info[1].pos = Vector3f(0, 0, 0);
+            q.vertex_info[1].coord.set(0, 1);
+
+            q.vertex_info[2].pos = Vector3f(1, 1, 0);
+            q.vertex_info[2].coord.set(1, 0);
+
+            q.vertex_info[3].pos = Vector3f(1, 0, 0);
+            q.vertex_info[3].coord.set(1, 1);
+
+            q.color(Color::fromRGBAf(1, 0, 0, 1));
+            spbatch->request(&q);
+        }
+        spbatch->uploadGPU(device);
+        spbatch->rendering(state);
+#endif
     }
 
-//    {
-//        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
-//        MTextureImage texture = shadowmapTexture;
-//        spriteManager->setSurfaceAspect(getPlatformViewSize().x, getPlatformViewSize().y);
-//        spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 256, 256);
-//    }
-//    getWindowDevice()->postFrontBuffer();
+    glFinish();
     windowManager->loopEnd(jctrue);
 
-    Thread::sleep(1000 / 15);
+//    Thread::sleep(1000 / 15);
 }
 
 /**

@@ -104,6 +104,11 @@ public:
     virtual void request(const PolygonRequest *request);
 };
 
+/**
+ * managed
+ */
+typedef jc_sp<SpriteBatchList> MSpriteBatchList;
+
 }
 }
 

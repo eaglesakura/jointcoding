@@ -80,6 +80,8 @@ class BenchmarkApplication: public JointApplicationBase, public RenderingContext
      * プリミティブのバッチレンダリング用シェーダー
      */
     MGLShaderProgram primitiveBatchShader;
+
+    MSpriteBatchList spbatch;
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();
