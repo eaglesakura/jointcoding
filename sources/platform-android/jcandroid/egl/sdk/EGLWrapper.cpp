@@ -55,6 +55,8 @@ void SdkEGLWrapper::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceP
         jc_sp<SdkEGLSurfaceWrapper> surfaceWrapper = downcast<SdkEGLSurfaceWrapper>(surface);
         assert(surfaceWrapper);
         assert(contextWrapper);
+        assert(surfaceWrapper->eglSurface);
+        assert(contextWrapper->eglContext);
 
         jEGLContext = contextWrapper->eglContext->getObject();
         jEGLSurface = surfaceWrapper->eglSurface->getObject();
@@ -62,7 +64,7 @@ void SdkEGLWrapper::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceP
         assert(jEGLContext);
         assert(jEGLSurface);
     }
-
+//    jclogf("jEGLContext(%x) jEGLSurface(%x)", jEGLContext, jEGLSurface);
     completed = eglWrapper->current(jEGLContext, jEGLSurface);
     if(!completed) {
         // eglMakeCurrentに失敗した

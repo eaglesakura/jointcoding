@@ -120,7 +120,7 @@ public:
     /**
      *
      * @param device ロック対象のデバイス。DeviceLockが生きている限り、deviceの利用は当該スレッドの専有となる。
-     * @param throw_error エラーが発生した場合、例外を投げるならtrue。デフォルトがtrueなのは、チェック機構予備忘れ防止の為。
+     * @param throw_error エラーが発生した場合、例外を投げるならtrue
      */
     DeviceLock(MDevice device, const jcboolean throw_error, const jcboolean makeCurrent = jctrue) {
         // デバイスは必ず引数に含めなければならない

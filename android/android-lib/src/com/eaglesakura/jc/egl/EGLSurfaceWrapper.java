@@ -13,6 +13,23 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
          cppNamespace = "ndk")
 public class EGLSurfaceWrapper {
 
+    public enum SurfaceType {
+        /**
+         * TextureView上に生成されたサーフェイス
+         */
+        SurfaceTexture,
+
+        /**
+         * SurfaceView上に生成されたサーフェイス
+         */
+        SurfaceHolder,
+
+        /**
+         * PBufferSurface
+         */
+        PBuffer,
+    }
+
     /**
      * サーフェイス情報
      */
@@ -38,10 +55,21 @@ public class EGLSurfaceWrapper {
      */
     boolean windowSurface = false;
 
-    EGLSurfaceWrapper(EGLWrapper egl, EGLSurface surface) {
+    final SurfaceType surfaceType;
+
+    EGLSurfaceWrapper(EGLWrapper egl, EGLSurface surface, SurfaceType type) {
+        this.surfaceType = type;
         this.egl = egl;
         this.eglSurface = surface;
         onSurfaceResized();
+    }
+
+    /**
+     * サーフェイスの種類を取得する
+     * @return
+     */
+    public SurfaceType getSurfaceType() {
+        return surfaceType;
     }
 
     /**

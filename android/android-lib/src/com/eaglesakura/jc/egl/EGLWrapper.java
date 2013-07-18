@@ -12,6 +12,7 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.view.SurfaceHolder;
 
+import com.eaglesakura.jc.egl.EGLSurfaceWrapper.SurfaceType;
 import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
@@ -36,6 +37,11 @@ public class EGLWrapper {
      * レンダリング用ディスプレイ
      */
     EGLDisplay eglDisplay = null;
+
+    /**
+     * レンダリング後の戻り先ディスプレイ
+     */
+    EGLDisplay backDisplay = null;
 
     /**
      * config情報
@@ -126,7 +132,13 @@ public class EGLWrapper {
      * @return
      */
     public EGLSurfaceWrapper createWindowSurface(Object native_window) {
-        if (!(native_window instanceof SurfaceHolder) && !(native_window instanceof SurfaceTexture)) {
+        final SurfaceType type;
+
+        if (native_window instanceof SurfaceHolder) {
+            type = SurfaceType.SurfaceHolder;
+        } else if (native_window instanceof SurfaceTexture) {
+            type = SurfaceType.SurfaceTexture;
+        } else {
             throw new IllegalArgumentException("surface error");
         }
 
@@ -136,7 +148,7 @@ public class EGLWrapper {
             throw new RuntimeException("eglCreateWindowSurface");
         }
 
-        EGLSurfaceWrapper result = new EGLSurfaceWrapper(this, eglSurface);
+        EGLSurfaceWrapper result = new EGLSurfaceWrapper(this, eglSurface, type);
         // ウィンドウ属性を付与する
         result.windowSurface = true;
         return result;
@@ -157,7 +169,7 @@ public class EGLWrapper {
             throw new RuntimeException("eglCreateWindowSurface");
         }
 
-        return new EGLSurfaceWrapper(this, eglSurface);
+        return new EGLSurfaceWrapper(this, eglSurface, SurfaceType.PBuffer);
     }
 
     /**
@@ -243,9 +255,16 @@ public class EGLWrapper {
                 EGLContext eglContext = context.getContext();
                 EGLSurface eglSurface = surface.getSurface();
 
+                if (surface.getSurfaceType() == SurfaceType.SurfaceTexture) {
+                    backDisplay = eglDisplay;
+                } else {
+                    backDisplay = EGL_NO_DISPLAY;
+                }
+
                 result = egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
             } else if (context == null && surface == null) {
-                result = egl.eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+                // 予約されたディスプレイに対して戻る
+                result = egl.eglMakeCurrent(backDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
             }
 
             return result;

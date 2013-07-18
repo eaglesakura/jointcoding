@@ -249,7 +249,7 @@ void BenchmarkApplication::onAppMainUpdate() {
     }
 
 // rendering 3d
-#if 0
+#if 1
 // figureやライトの位置を更新する
     {
         rotate = jc::normalizeDegree(rotate += 1.0f);
@@ -351,13 +351,11 @@ void BenchmarkApplication::onAppMainUpdate() {
         if (!spbatch) {
             spbatch.reset(new SpriteBatchList());
 
-//            MPrimitiveBatchShader batchShader(new PrimitiveBatchShader());
-//            batchShader->setShader(primitiveBatchShader);
-//            spbatch->setShader(batchShader);
-
+            MPrimitiveBatchShader batchShader(new PrimitiveBatchShader());
+            batchShader->setShader(primitiveBatchShader);
+            spbatch->setShader(batchShader);
         }
-#if 0
-
+#if 1
         state->cullFaceEnable(jctrue);
 
         spbatch->initialize(device);
