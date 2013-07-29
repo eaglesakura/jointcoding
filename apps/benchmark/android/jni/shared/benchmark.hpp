@@ -22,4 +22,7 @@ using namespace jc::fw;
 // app
 #include    "esBenchmarkApplication.h"
 
+// view
+#include    "Benchmark3DView.h"
+
 #endif /* BENCHMARK_HPP_ */
