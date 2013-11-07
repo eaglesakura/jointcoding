@@ -124,11 +124,16 @@ public class ImageDecoder {
      */
     @JCMethod
     public static ImageDecoder decodeFromStream(InputStream stream) {
+        Bitmap image = null;
         try {
-            Bitmap image = BitmapFactory.decodeStream(stream);
+            image = BitmapFactory.decodeStream(stream);
             return decodeFromBitmap(image, true);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (image != null) {
+                image.recycle();
+            }
         }
 
         return null;

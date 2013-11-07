@@ -133,6 +133,13 @@ public class AppFont {
         return fontSize;
     }
 
+    public void dispose() {
+        if (image != null) {
+            image.recycle();
+            image = null;
+        }
+    }
+
     /**
      * 画像領域の計算のみを行う。
      * @param text
@@ -242,6 +249,7 @@ public class AppFont {
 
         ImageDecoder result = ImageDecoder.decodeFromBitmap(font.getImage(), true);
 
+        font.dispose();
         return result;
     }
 }
