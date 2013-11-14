@@ -24,9 +24,7 @@ public:
     /**
      * 内部コピーする
      */
-    String(const String &origin) {
-        this->native_string = origin.native_string;
-    }
+    String(const String &origin);
 
     ~String();
 

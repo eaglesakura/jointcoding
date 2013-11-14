@@ -11,7 +11,6 @@
 
 namespace jc {
 
-
 /**
  * デフォルトの解放用関数
  */
@@ -20,7 +19,6 @@ void impl_release_func(void *ref) {
     T* p = (T*) ref;
     SAFE_DELETE(p);
 }
-
 
 typedef void* impl_ref;
 

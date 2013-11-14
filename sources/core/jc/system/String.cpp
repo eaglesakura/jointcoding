@@ -26,9 +26,22 @@ String::String(const charactor* str) {
         // それ以外は共有にnilオブジェクトを利用する
         native_string = ImplCapsule(new string_t(""), JC_CAPSULE_RELEAE(string_t) );
     }
+
+    jcmark(this);
 }
 
+/**
+ * 内部コピーする
+ */
+String::String(const String &origin) {
+    this->native_string = origin.native_string;
+
+    jcmark(this);
+}
+
+
 String::~String() {
+    jcunmark(this);
 }
 
 /**

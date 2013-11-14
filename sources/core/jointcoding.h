@@ -10,7 +10,6 @@
 
 // macro
 #include    "jc/system/Macro.h"
-
 // C library
 /*
 #include "stdio.h"
@@ -18,6 +17,7 @@
 #include "string.h"
 #include "stdarg.h"
 */
+
 #include "jc/system/Log.h"
 #include "jc/mem/SmartPtr.h"
 #include "jc/util/ImplCapsule.h"
@@ -29,4 +29,6 @@
 #include "jc/thread/Mutex.h"
 
 
+// Debug Util
+#include "jc/mem/MemoryCheck.h"
 #endif /* JOINTCODING_H_ */
