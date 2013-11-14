@@ -27,7 +27,7 @@ String::String(const charactor* str) {
         native_string = ImplCapsule(new string_t(""), JC_CAPSULE_RELEAE(string_t) );
     }
 
-    jcmark(this);
+    jcmarkvoid(this);
 }
 
 /**
@@ -36,12 +36,12 @@ String::String(const charactor* str) {
 String::String(const String &origin) {
     this->native_string = origin.native_string;
 
-    jcmark(this);
+    jcmarkvoid(this);
 }
 
 
 String::~String() {
-    jcunmark(this);
+    jcunmarkvoid(this);
 }
 
 /**

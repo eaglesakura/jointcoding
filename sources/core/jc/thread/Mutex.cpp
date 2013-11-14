@@ -3,6 +3,7 @@
  *
  *  Created on: 2012/07/21
  */
+#include    "jointcoding.h"
 #include    "jc/system/Macro.h"
 #include    "jc/thread/Mutex.h"
 
@@ -14,11 +15,11 @@ Mutex::Mutex() {
     mutex = ImplCapsule(new native_mutex(), JC_CAPSULE_RELEAE(native_mutex) );
 
 
-    jcmark(this);
+    jcmarkvoid(this);
 }
 
 Mutex::~Mutex() {
-    jcunmark(this);
+    jcunmarkvoid(this);
 }
 
 }

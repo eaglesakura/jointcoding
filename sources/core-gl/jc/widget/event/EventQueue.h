@@ -29,9 +29,11 @@ class EventQueue: public Object {
     std::list<MEvent> events;
 public:
     EventQueue() {
+        jcmark(this);
     }
 
     virtual ~EventQueue() {
+        jcunmark(this);
     }
 
     /**

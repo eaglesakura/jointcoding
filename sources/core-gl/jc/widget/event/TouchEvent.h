@@ -21,9 +21,12 @@ class TouchEventExtension: public Object {
 public:
     TouchEventExtension(const jc_sp<TouchEventProtocol> event) {
         this->event = event;
+
+        jcmark(this);
     }
 
     virtual ~TouchEventExtension() {
+        jcunmark(this);
     }
 
     /**

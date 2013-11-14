@@ -65,7 +65,7 @@ enum BroadcastType_e {
 /**
  * Viewに伝えるイベント情報
  */
-class Event: Object {
+class Event: public Object {
     /**
      * 拡張アイテム
      */
@@ -85,9 +85,12 @@ public:
         this->type = EventType_type;
         this->extension = extension;
         this->broadcast = jcfalse;
+
+        jcmark(this);
     }
 
     virtual ~Event() {
+        jcunmark(this);
     }
 
     /**

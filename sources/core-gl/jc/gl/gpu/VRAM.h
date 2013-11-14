@@ -85,6 +85,18 @@ struct tagVramId {
      * リファレンスは手動で行うため、扱いに注意する。
      */
     s32 ref_count;
+
+    tagVramId() {
+        obj = 0;
+        type = VRAM_e_NULL;
+        ref_count = 0;
+
+        jcmarkvoid(this);
+    }
+
+    ~tagVramId() {
+        jcunmarkvoid(this);
+    }
 };
 
 typedef tagVramId* vram_id;

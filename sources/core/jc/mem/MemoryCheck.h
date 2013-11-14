@@ -60,6 +60,11 @@ private:
 
 #define jcunmark(ptr)   jc::MemoryCheck::unmark(ptr, __FILE__, __LINE__);
 
+
+#define jcmarkvoid(ptr)     jc::MemoryCheck::mark(ptr, __FILE__, __LINE__);
+
+#define jcunmarkvoid(ptr)     jc::MemoryCheck::unmark(ptr, __FILE__, __LINE__);
+
 }
 
 #endif /* JCNEW_H_ */
