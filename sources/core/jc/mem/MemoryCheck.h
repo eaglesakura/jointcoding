@@ -11,6 +11,7 @@
 
 namespace jc {
 
+class Object;
 class MemoryCheck {
 public:
     /**

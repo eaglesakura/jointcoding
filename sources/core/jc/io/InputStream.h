@@ -14,10 +14,15 @@
 
 namespace jc {
 
-class InputStream {
+class InputStream : public Object {
+
+protected:
+    InputStream() {
+        jcmark(this);
+    }
 public:
     virtual ~InputStream() {
-
+        jcunmark(this);
     }
 
     /**
@@ -65,9 +70,9 @@ public:
     static String toText(jc_sp<InputStream> is);
 };
 
-    /**
-     * ManagedPointer
-     */
+/**
+ * ManagedPointer
+ */
 typedef jc_sp<InputStream> MInputStream;
 
 }
