@@ -49,7 +49,7 @@ void JointApplicationBase::dispatchDestroy() {
 
         windowManager.reset();
 
-        getVRAM()->gc();
+        getVRAM()->gc(getState());
     } catch (Exception &e) {
         jcloge(e);
     }

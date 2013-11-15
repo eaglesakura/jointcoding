@@ -293,9 +293,9 @@ public:
         if (depthContext.enable != enable) {
             depthContext.enable = enable;
             if (enable) {
-                glEnable(GL_DEPTH_TEST);
+                glEnable (GL_DEPTH_TEST);
             } else {
-                glDisable(GL_DEPTH_TEST);
+                glDisable (GL_DEPTH_TEST);
             }
 
             assert_gl();
@@ -325,9 +325,9 @@ public:
         if (blendContext.enable != enable) {
             blendContext.enable = enable;
             if (enable) {
-                glEnable(GL_BLEND);
+                glEnable (GL_BLEND);
             } else {
-                glDisable(GL_BLEND);
+                glDisable (GL_BLEND);
             }
 
             assert_gl();
@@ -402,9 +402,9 @@ public:
         if (set != scissorContext.enable) {
 
             if (set) {
-                glEnable(GL_SCISSOR_TEST);
+                glEnable (GL_SCISSOR_TEST);
             } else {
-                glDisable(GL_SCISSOR_TEST);
+                glDisable (GL_SCISSOR_TEST);
             }
 
             scissorContext.enable = set;
@@ -780,6 +780,8 @@ public:
      */
     inline void pushScissor() {
         scissor_stack.push_front(scissorContext);
+
+        jclogf("scissor_stack depth(%d)", scissor_stack.size());
     }
 
     /**
@@ -787,6 +789,8 @@ public:
      */
     inline void pushBlendfunc() {
         blend_stack.push_front(blendContext);
+
+        jclogf("blend_stack depth(%d)", blend_stack.size());
     }
 
     /**
@@ -794,6 +798,8 @@ public:
      */
     inline void pushColorMask() {
         colormask_stack.push_front(maskContext);
+
+        jclogf("colormask_stack depth(%d)", colormask_stack.size());
     }
 
     /**

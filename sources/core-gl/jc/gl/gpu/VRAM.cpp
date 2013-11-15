@@ -168,6 +168,7 @@ static vram_id get(std::list<vram_id> &res, const VRAM_e type) {
  * allocした時点でref=1がされているため、新たにref()を行う必要はない。
  */
 vram_id _VRAM::alloc(VRAM_e type) {
+    MutexLock lock(mutex);
     ++alloced_num[type];
 
     return ref(get(this->alloc_pool[type], type));
@@ -197,6 +198,8 @@ void _VRAM::release(vram_id vid) {
         return;
     }
 
+    MutexLock lock(mutex);
+
 #ifdef  PRINT_VRAM
     jclogf("release vram(%x = obj:%d  type:%d ref:%d)", vid, vid->obj, vid->type, vid->ref_count);
 #endif
@@ -221,6 +224,8 @@ void _VRAM::release(vram_id vid) {
  * GLオブジェクトの生存期間に関わらず強制的に開放されるため、呼び出しを行う際は注意をすること。
  */
 void _VRAM::dispose() {
+    MutexLock lock(mutex);
+
     for (s32 i = 0; i < VRAM_e_num; ++i) {
         std::list<vram_id>::iterator itr = alloc_pool[i].begin(), end = alloc_pool[i].end();
         while (itr != end) {
@@ -234,13 +239,13 @@ void _VRAM::dispose() {
     }
 
     // まとめて解放を行う
-    this->gc();
+    this->gc(MGLState());
 }
 
 /**
  * 不要な資源を解放する。
  */
-void _VRAM::gc(const u32 gc_flags) {
+void _VRAM::gc(MGLState state, const u32 gc_flags) {
     int gc_objects = 0;
     for (s32 i = 0; i < VRAM_e_num; ++i) {
         if (has_flag(gc_flags, (0x1 << i))) {
@@ -248,6 +253,22 @@ void _VRAM::gc(const u32 gc_flags) {
                 jclogf("delete start(type %s : %d objects)", function_tbl[i].type_name, dealloc_pool[i].size());
 
                 gc_objects += dealloc_pool[i].size();
+
+                if (state) {
+
+                    switch (i) {
+                        case VRAM_Texture: {
+                            std::vector<u32>::iterator itr = dealloc_pool[i].begin(), end = dealloc_pool[i].end();
+                            while (itr != end) {
+                                // テクスチャを外す
+                                state->unbindTexture((*itr));
+
+                                ++itr;
+                            }
+                        }
+                            break;
+                    }
+                }
 
                 // 解放ビットフラグを含んでいたら、解放を行う
                 function_tbl[i].delete_func((s32) dealloc_pool[i].size(), (u32*) &(dealloc_pool[i][0]));

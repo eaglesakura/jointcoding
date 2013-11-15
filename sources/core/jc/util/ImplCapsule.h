@@ -60,6 +60,10 @@ class ImplCapsule {
 
         ~tagImpl() {
             if (release_func) {
+                if (ref) {
+                    jcunmarkvoid(ref);
+                }
+
                 release_func(ref);
                 ref = NULL;
             }
@@ -80,6 +84,8 @@ public:
         this->impl.reset(new tagImpl);
         this->impl->ref = ref;
         this->impl->release_func = func;
+
+        jcmarkvoid(ref);
     }
 
     /**

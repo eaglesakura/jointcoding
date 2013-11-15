@@ -9,17 +9,6 @@
 #include    "jc/system/StringUtil.h"
 #include    "boost/algorithm/string.hpp"
 
-/**
- * 可変長配列
- * 通常はstd::vector
- */
-#define jc_varray   ::std::vector
-
-/**
- * 可変長リスト
- * 通常はstd::list
- */
-#define jc_vlist    ::std::list
 
 namespace jc {
 
@@ -30,10 +19,10 @@ namespace jc {
  * @param delim 分割用の文字列
  * @param result 格納先のベクター
  */
-::jc::s32 split(const String &origin, const String &delim, jc_varray<String> *result) {
+::jc::s32 split(const String &origin, const String &delim, ::std::vector<String> *result) {
     const std::string &str = origin.get_native<std::string>();
     const std::string &dlm = delim.get_native<std::string>();
-    jc_varray<std::string> temp;
+    ::std::vector<std::string> temp;
 
     // 分割はboostを利用する
         boost::split(temp, str, boost::is_any_of(dlm));

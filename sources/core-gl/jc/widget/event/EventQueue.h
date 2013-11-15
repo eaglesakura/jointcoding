@@ -71,7 +71,7 @@ public:
         }
 
         MEvent result = events.front();
-        events.erase(events.begin());
+        events.pop_front();
 
         return result;
     }

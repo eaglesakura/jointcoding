@@ -283,7 +283,6 @@ jcboolean TextureImage::isBinded(s32 *resultIndex) {
  */
 void TextureImage::dispose() {
     if (texture.exist()) {
-        this->unbind();
         texture.release();
     }
 }

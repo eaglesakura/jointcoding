@@ -169,6 +169,7 @@ enum VRAM_GC_e {
     VRAM_GC_default = 0xFFFFFFFF,
 };
 
+class GLState;
 /**
  * VRAM上のオブジェクトalloc/ref/releaseを管理する。
  * SmartPtrに比べて、VRAM資源管理用に最適化を行う。
@@ -199,6 +200,8 @@ class _VRAM {
      * 廃棄用のVRAM領域
      */
     std::vector<u32> dealloc_pool[VRAM_e_num];
+
+    jcmutex mutex;
 public:
     _VRAM();
     virtual ~_VRAM();
@@ -230,7 +233,7 @@ public:
     /**
      * 不要な資源をまとめて解放する。
      */
-    virtual void gc(const u32 gc_flags = VRAM_GC_default);
+    virtual void gc(jc_sp<GLState> state, const u32 gc_flags = VRAM_GC_default);
 
     /**
      *

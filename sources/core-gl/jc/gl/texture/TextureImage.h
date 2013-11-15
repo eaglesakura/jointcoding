@@ -99,7 +99,6 @@ struct TextureLoadOption {
  * GLES2.0を基本とするため、テクスチャサイズは2^n以外も可能だが、パフォーマンスには影響する
  */
 class TextureImage: public Object {
-
     struct {
         /**
          * テクスチャサイズとしての幅

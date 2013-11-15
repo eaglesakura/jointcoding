@@ -189,6 +189,7 @@ void MemoryCheck::unmark(void* memory, const char* file, const int line) {
 void MemoryCheck::dump() {
     native_lock lock(g_memcheck_lock);
 
+    jclog("----------------------")
     {
         std::list<MemoryMark*>::const_iterator itr = marks.begin(), end = marks.end();
         while (itr != end) {
