@@ -84,8 +84,36 @@ public class AppFont {
             }
         }
 
+        int HEADER_WIDTH = 0;
+        {
+            int index = 0;
+
+            while (index < text.length()) {
+
+                // 頭の文字を取り出す
+                final char c = text.charAt(index);
+                switch (c) {
+                    case ' ':
+                        // 半角スペース処理
+                        HEADER_WIDTH += (heightPixel / 2);
+                        break;
+                    case '　':
+                        // 全角スペース処理
+                        HEADER_WIDTH += heightPixel;
+                        break;
+                    default:
+                        // もう処理しない
+                        index += text.length();
+                        break;
+                }
+
+                ++index;
+            }
+
+        }
+
         FontMetrics fontMetrics = paint.getFontMetrics();
-        final int IMAGE_WIDTH = Math.max(1, bounds.width() + bounds.left);
+        final int IMAGE_WIDTH = Math.max(1, bounds.width()) + HEADER_WIDTH;
         final int IMAGE_HEIGHT = (int) Math.max(//
                 Math.abs(fontMetrics.ascent) + Math.abs(fontMetrics.descent),
                 //
@@ -101,7 +129,7 @@ public class AppFont {
             int y = 0;
             for (String singleLine : lines) {
                 paint.getTextBounds(singleLine, 0, singleLine.length(), bounds);
-                canvas.drawText(singleLine, 0, y - fontMetrics.top, paint);
+                canvas.drawText(singleLine, HEADER_WIDTH - bounds.left, y - fontMetrics.top, paint);
                 y += IMAGE_HEIGHT;
             }
         }
