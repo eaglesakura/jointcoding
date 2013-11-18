@@ -79,7 +79,7 @@ public:
     }
 
     /**
-     * beforeからafterの経過時間をミリ秒単位で取得する
+     * beforeからafterの経過時間を秒単位で取得する
      */
     inline static double lapseTimeSec(const jctime &before, const jctime &after) {
         return ((double)(after - before).total_milliseconds()) / 1000.0;

@@ -238,6 +238,11 @@ s32 TextureImage::bind() {
  * テクスチャをindex番のユニットに関連付ける
  */
 void TextureImage::bind(s32 index) {
+    if (!texture.exist()) {
+        jclogf("texture is not exist(%x)", this);
+        return;
+    }
+
     assert(index >= 0 && index < GPUCapacity::getMaxTextureUnits());
 
     if (bindUnit == index) {
