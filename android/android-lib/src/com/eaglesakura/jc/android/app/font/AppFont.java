@@ -84,6 +84,37 @@ public class AppFont {
             }
         }
 
+        FontMetrics fontMetrics = paint.getFontMetrics();
+        final int HEADER_WIDTH = getHeaderWidth(text, heightPixel);
+        final int IMAGE_WIDTH = Math.max(1, bounds.width()) + HEADER_WIDTH;
+        final int IMAGE_HEIGHT = (int) Math.max(//
+                Math.abs(fontMetrics.ascent) + Math.abs(fontMetrics.descent),
+                //
+                (Math.abs(fontMetrics.top) + Math.abs(fontMetrics.bottom)));
+
+        image = Bitmap.createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT * lines.length, Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(image);
+        paint.setColor(0xffffffff);
+
+        // 複数行テキストをレンダリング
+        {
+            int y = 0;
+            for (String singleLine : lines) {
+                paint.getTextBounds(singleLine, 0, singleLine.length(), bounds);
+                canvas.drawText(singleLine, HEADER_WIDTH - bounds.left, y - fontMetrics.top, paint);
+                y += IMAGE_HEIGHT;
+            }
+        }
+    }
+
+    /**
+     * ヘッダに付与しなければならない幅を取得する
+     * @param text
+     * @param heightPixel
+     * @return
+     */
+    private int getHeaderWidth(String text, int heightPixel) {
         int HEADER_WIDTH = 0;
         {
             int index = 0;
@@ -112,27 +143,7 @@ public class AppFont {
 
         }
 
-        FontMetrics fontMetrics = paint.getFontMetrics();
-        final int IMAGE_WIDTH = Math.max(1, bounds.width()) + HEADER_WIDTH;
-        final int IMAGE_HEIGHT = (int) Math.max(//
-                Math.abs(fontMetrics.ascent) + Math.abs(fontMetrics.descent),
-                //
-                (Math.abs(fontMetrics.top) + Math.abs(fontMetrics.bottom)));
-
-        image = Bitmap.createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT * lines.length, Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(image);
-        paint.setColor(0xffffffff);
-
-        // 複数行テキストをレンダリング
-        {
-            int y = 0;
-            for (String singleLine : lines) {
-                paint.getTextBounds(singleLine, 0, singleLine.length(), bounds);
-                canvas.drawText(singleLine, HEADER_WIDTH - bounds.left, y - fontMetrics.top, paint);
-                y += IMAGE_HEIGHT;
-            }
-        }
+        return HEADER_WIDTH;
     }
 
     /**
@@ -187,7 +198,7 @@ public class AppFont {
                 //
                 (Math.abs(fontMetrics.top) + Math.abs(fontMetrics.bottom)));
 
-        result.x = IMAGE_WIDTH;
+        result.x = IMAGE_WIDTH + getHeaderWidth(text, fontSize);
         result.y = IMAGE_HEIGHT;
         return result;
     }
