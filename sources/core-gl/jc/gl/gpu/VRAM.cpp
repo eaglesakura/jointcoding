@@ -282,7 +282,9 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
         }
     }
 
-    jclogf("VRAM-GC(%d objects)", gc_objects);
+    if (gc_objects) {
+        jclogf("VRAM-GC(%d objects)", gc_objects);
+    }
 }
 
 /**

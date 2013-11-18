@@ -85,7 +85,7 @@ public class AppFont {
         }
 
         FontMetrics fontMetrics = paint.getFontMetrics();
-        final int IMAGE_WIDTH = Math.max(1, bounds.width());
+        final int IMAGE_WIDTH = Math.max(1, bounds.width() + bounds.left);
         final int IMAGE_HEIGHT = (int) Math.max(//
                 Math.abs(fontMetrics.ascent) + Math.abs(fontMetrics.descent),
                 //
@@ -101,7 +101,7 @@ public class AppFont {
             int y = 0;
             for (String singleLine : lines) {
                 paint.getTextBounds(singleLine, 0, singleLine.length(), bounds);
-                canvas.drawText(singleLine, -bounds.left, y - fontMetrics.top, paint);
+                canvas.drawText(singleLine, 0, y - fontMetrics.top, paint);
                 y += IMAGE_HEIGHT;
             }
         }

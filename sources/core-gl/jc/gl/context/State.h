@@ -781,7 +781,7 @@ public:
     inline void pushScissor() {
         scissor_stack.push_front(scissorContext);
 
-        jclogf("scissor_stack depth(%d)", scissor_stack.size());
+//        jclogf("scissor_stack depth(%d)", scissor_stack.size());
     }
 
     /**
@@ -790,7 +790,7 @@ public:
     inline void pushBlendfunc() {
         blend_stack.push_front(blendContext);
 
-        jclogf("blend_stack depth(%d)", blend_stack.size());
+//        jclogf("blend_stack depth(%d)", blend_stack.size());
     }
 
     /**
@@ -799,7 +799,7 @@ public:
     inline void pushColorMask() {
         colormask_stack.push_front(maskContext);
 
-        jclogf("colormask_stack depth(%d)", colormask_stack.size());
+//        jclogf("colormask_stack depth(%d)", colormask_stack.size());
     }
 
     /**

@@ -57,14 +57,30 @@ private:
     MemoryCheck();
 };
 
-#define jcmark(ptr)     jc::MemoryCheck::marking(ptr, __FILE__, __LINE__);
 
-#define jcunmark(ptr)   jc::MemoryCheck::unmark(ptr, __FILE__, __LINE__);
+#ifdef  DEBUG_MEMORYCHECK
+
+#define jcmark(ptr)     jc::MemoryCheck::marking(ptr, __FILE__, __LINE__)
+
+#define jcunmark(ptr)   jc::MemoryCheck::unmark(ptr, __FILE__, __LINE__)
 
 
-#define jcmarkvoid(ptr)     jc::MemoryCheck::mark(ptr, __FILE__, __LINE__);
+#define jcmarkvoid(ptr)     jc::MemoryCheck::mark(ptr, __FILE__, __LINE__)
 
-#define jcunmarkvoid(ptr)     jc::MemoryCheck::unmark(ptr, __FILE__, __LINE__);
+#define jcunmarkvoid(ptr)     jc::MemoryCheck::unmark(ptr, __FILE__, __LINE__)
+
+#else
+
+#define jcmark(ptr)
+
+#define jcunmark(ptr)
+
+
+#define jcmarkvoid(ptr)
+
+#define jcunmarkvoid(ptr)
+
+#endif
 
 }
 
