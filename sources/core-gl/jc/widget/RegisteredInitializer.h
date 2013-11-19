@@ -16,8 +16,14 @@ namespace view {
 
 class View;
 class RegisteredInitializer: public Object {
+
+protected:
+    RegisteredInitializer() {
+        jcmark(this);
+    }
 public:
     virtual ~RegisteredInitializer() {
+        jcunmark(this);
     }
 
     virtual void onRegisteredWindow(View *view, MWindowContext windowContext) = 0;
@@ -50,9 +56,12 @@ public:
         this->target = target;
         this->transactionTimeSec = transTimeSec;
         this->leapType = type;
+
+        jcmark(this);
     }
 
     virtual ~TransactionInitializer() {
+        jcunmark(this);
     }
 
     virtual void onRegisteredWindow(View *view, MWindowContext windowContext) {
@@ -77,9 +86,12 @@ public:
 
         WindowTimer *timer = target.get();
         timer->setTimerMS(timeMilliSec);
+
+        jcmark(this);
     }
 
     virtual ~TimerInitializer() {
+        jcunmark(this);
     }
 
     virtual void onRegisteredWindow(View *view, MWindowContext windowContext) {

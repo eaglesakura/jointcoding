@@ -127,15 +127,9 @@ _VRAM::~_VRAM() {
 
 }
 
-static vram_id get(std::list<vram_id> &res, const VRAM_e type) {
-
-    if (!res.empty()) {
-        jclogf("cache object(type = %d num(%d))", type, res.size());
-
-        // 資源が枯渇してなければ、最初のオブジェクトを取り出して返す。
-        vram_id result = res.front();
-        res.pop_front();
-        return result;
+static vram_id get(std::list<vram_id> *res, const VRAM_e type) {
+    if (!res->empty()) {
+        jclogf("cache object(type = %d num(%d))", type, res->size());
     } else {
         // 資源が枯渇しているため、確保を行う
         const s32 alloc_num = function_tbl[type].once_alloc;
@@ -146,6 +140,8 @@ static vram_id get(std::list<vram_id> &res, const VRAM_e type) {
 
         // 指定数のオブジェクトを確保する
         alloc_func((s32) alloc_num, (u32*) vram_obj.get());
+        // GL動作検証
+        assert_gl();
 
         // VRAMオブジェクトを追加する
         for (s32 i = 0; i < alloc_num; ++i) {
@@ -153,14 +149,14 @@ static vram_id get(std::list<vram_id> &res, const VRAM_e type) {
             vram->obj = vram_obj[i];
             vram->type = type;
             vram->ref_count = 0;
-            res.push_back(vram);
+            res->push_back(vram);
         }
-
-        // 一番手前にあるオブジェクトを返す
-        vram_id result = res.front();
-        res.pop_front();
-        return result;
     }
+
+    // 一番手前にあるオブジェクトを返す
+    vram_id result = res->front();
+    res->pop_front();
+    return result;
 }
 
 /**
@@ -171,7 +167,7 @@ vram_id _VRAM::alloc(VRAM_e type) {
     MutexLock lock(mutex);
     ++alloced_num[type];
 
-    return ref(get(this->alloc_pool[type], type));
+    return ref(get(&alloc_pool[type], type));
 }
 
 /**
@@ -181,6 +177,8 @@ vram_id _VRAM::ref(vram_id vid) {
     if (!vid) {
         return NULL;
     }
+    MutexLock lock(mutex);
+
     ++vid->ref_count;
 #ifdef  PRINT_VRAM
     jclogf("ref     vram(%x = obj:%d  type:%d ref:%d)", vid, vid->obj, vid->type, vid->ref_count)
@@ -246,6 +244,8 @@ void _VRAM::dispose() {
  * 不要な資源を解放する。
  */
 void _VRAM::gc(MGLState state, const u32 gc_flags) {
+    MutexLock lock(mutex);
+
     int gc_objects = 0;
     for (s32 i = 0; i < VRAM_e_num; ++i) {
         if (has_flag(gc_flags, (0x1 << i))) {

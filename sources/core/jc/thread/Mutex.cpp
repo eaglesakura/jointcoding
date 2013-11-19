@@ -12,8 +12,7 @@
 namespace jc {
 
 Mutex::Mutex() {
-    mutex = ImplCapsule(new native_mutex(), JC_CAPSULE_RELEAE(native_mutex) );
-
+    mutex.reset(new ::boost::recursive_mutex());
 
     jcmarkvoid(this);
 }

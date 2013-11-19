@@ -33,6 +33,11 @@ class MemoryMark {
     int fileLine;
 
     /**
+     * allocされた合計数
+     */
+    int sumAlloc;
+
+    /**
      * 該当ファイルで生成されたポインタ
      */
     std::list<void*> pointers;
@@ -41,6 +46,7 @@ public:
     MemoryMark(char* fileName, const int fileLine) {
         this->fileName = fileName;
         this->fileLine = fileLine;
+        this->sumAlloc = 0;
     }
 
     ~MemoryMark() {
@@ -59,9 +65,9 @@ public:
      */
     void dump() {
         if (isEmpty()) {
-            jclogf("%s L%d [no markers]", fileName, fileLine);
+            jclogf("%s L%d [no markers] sum[%d]", fileName, fileLine, sumAlloc);
         } else {
-            jclogf("%s L%d [has %d markers]", fileName, fileLine, pointers.size());
+            jclogf("%s L%d [has %d markers] sum[%d]", fileName, fileLine, pointers.size(), sumAlloc);
         }
 
 //        std::list<void*>::const_iterator itr = pointers.begin(), end = pointers.end();
@@ -96,6 +102,7 @@ public:
     void mark(const void* p) {
         if (!hasPointer(p)) {
             pointers.push_back((void*) p);
+            ++sumAlloc;
         }
     }
 

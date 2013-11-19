@@ -13,16 +13,21 @@ using namespace boost;
 
 namespace jc {
 
-MutexLock::MutexLock(jc::Mutex &mtx) {
+MutexLock::MutexLock(const jc::Mutex &mtx) {
     this->mutex = mtx.mutex;
-    nativeLock = (new native_lock(mtx.mutex.as<native_mutex>()));
+    this->lock = (void*) new native_lock(*this->mutex.get());
 
     jcmarkvoid(this);
 
 }
 
 MutexLock::~MutexLock() {
-    IMPL_SAFE_DELETE(nativeLock, native_lock);
+    {
+        native_lock *pLock = (native_lock*)this->lock;
+        SAFE_DELETE(pLock);
+        this->lock = NULL;
+    }
+    mutex.reset();
 
     jcunmarkvoid(this);
 }

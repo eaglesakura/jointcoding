@@ -10,14 +10,18 @@
 #include    "jc/mem/SmartPtr.h"
 #include    "jc/util/ImplCapsule.h"
 
+namespace   boost {
+class recursive_mutex;
+}
 namespace jc {
+
 
 class MutexLock;
 /**
  * Mutexをもう1枚ラップして、boostの直接includeを行わないようにする。
  */
 class Mutex {
-    ImplCapsule mutex;
+    jc_sp<boost::recursive_mutex> mutex;
 
     /**
      * コピーコンストラクタは作らせない
@@ -41,29 +45,25 @@ typedef jc::Mutex jcmutex;
  */
 class MutexLock {
     /**
-     * 実装を隠蔽する
-     */
-    typedef void* NativeMutexLockPtr;
-
-    /**
      * 解放が終わるまで、mutexは確保しておく
      */
-    ImplCapsule mutex;
+    jc_sp<boost::recursive_mutex> mutex;
 
     /**
      * ロックオブジェクト
      */
-    NativeMutexLockPtr nativeLock;
+    void* lock;
 
 public:
-    MutexLock(Mutex &mtx);
+    MutexLock(const Mutex &mtx);
     ~MutexLock();
 
+private:
     /**
      * ミューテックスのロックを行う。
      * 実際にロックが行えるまで、このメソッドは返らない。
      */
-    static jc_sp<MutexLock> lock(Mutex &mtx) {
+    static jc_sp<MutexLock> reqeuestLock(Mutex &mtx) {
         return jc_sp < MutexLock > (new MutexLock(mtx));
     }
 };
