@@ -10,14 +10,16 @@
 #include    "jc/system/Macro.h"
 #include    "jc/util/ImplCapsule.h"
 #include    <vector>
+#include    <string>
 
 namespace jc {
 
 class String {
+
     /**
      * ネイティブ実装の文字列
      */
-    ImplCapsule native_string;
+    jc_sp<std::string> text;
 public:
     String(const charactor* str = NULL);
 
@@ -42,7 +44,7 @@ public:
      * 代入を行う
      */
     String& operator=(const String &cpy) {
-        native_string = cpy.native_string;
+        text = cpy.text;
         return *this;
     }
 
@@ -110,17 +112,15 @@ public:
      * ネイティブクラスに変換して取得する
      * 変換は必ずJC_NATIVE_STRINGを利用しなければならない。
      */
-    template<typename T>
-    T& get_native() {
-        return native_string.as<T>();
+    std::string& get() {
+        return *text.get();
     }
 
     /**
      * ネイティブクラスに変換して取得する
      */
-    template<typename T>
-    const T& get_native() const {
-        return native_string.as<T>();
+    const std::string& get() const {
+        return *text.get();
     }
 
     /**

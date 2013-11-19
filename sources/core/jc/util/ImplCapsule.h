@@ -7,6 +7,7 @@
 #ifndef JCIMPLCAPSULE_H_
 #define JCIMPLCAPSULE_H_
 
+#if 0
 #include    "jc/mem/SmartPtr.h"
 
 namespace jc {
@@ -137,5 +138,6 @@ public:
 #define     CAPSULE_AS( type, var_name, capsule )       type &var_name = capsule.as<type>();
 
 }
+#endif
 
 #endif /* JCIMPLCAPSULE_H_ */

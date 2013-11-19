@@ -20,8 +20,8 @@ namespace jc {
  * @param result 格納先のベクター
  */
 ::jc::s32 split(const String &origin, const String &delim, ::std::vector<String> *result) {
-    const std::string &str = origin.get_native<std::string>();
-    const std::string &dlm = delim.get_native<std::string>();
+    const std::string &str = origin.get();
+    const std::string &dlm = delim.get();
     ::std::vector<std::string> temp;
 
     // 分割はboostを利用する
