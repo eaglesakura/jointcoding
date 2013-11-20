@@ -8,7 +8,6 @@
 #define JCMUTEX_H_
 
 #include    "jc/mem/SmartPtr.h"
-#include    "jc/util/ImplCapsule.h"
 
 namespace   boost {
 class recursive_mutex;

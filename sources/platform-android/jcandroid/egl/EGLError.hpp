@@ -22,6 +22,7 @@ public:
         if (error == EGL_SUCCESS) {
             return jcfalse;
         }
+#ifndef NO_EGL_ERRORLOG
 #define LOG_EGL( error_enum )    case error_enum: ::jc::__logDebugF(error_enum != EGL_SUCCESS ? LogType_Alert : LogType_Debug, ::jc::__getFileName(file), "L %d | %s", line, #error_enum); return error != EGL_SUCCESS ? jctrue : jcfalse;
         switch (error) {
             LOG_EGL(EGL_NOT_INITIALIZED);
@@ -41,8 +42,10 @@ public:
         }
 
         jclogf("EGL unknown error = 0x%x", error);
-        return jctrue;
 #undef LOG_EGL
+#endif
+        return jctrue;
+
     }
 
     /**

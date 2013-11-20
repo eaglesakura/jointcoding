@@ -137,16 +137,18 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 jcboolean EGLManager::postFrontBuffer(MEGLSurfaceProtocol displaySurface) {
     EGLSurfaceManager *surfaceManager = dynamic_cast<EGLSurfaceManager*>(displaySurface.get());
     const EGLSurface targetSurface = surfaceManager->getSurface();
-//    const EGLSurface currentSurface = eglGetCurrentSurface(EGL_DRAW);
-//    if (currentSurface != targetSurface) {
-//        jclogf("current surface(%x) != app surface(%x)", currentSurface, targetSurface);
-//        return jcfalse;
-//    }
+    const EGLSurface currentSurface = eglGetCurrentSurface(EGL_DRAW);
+    if (currentSurface != targetSurface) {
+        jclogf("current surface(%x) != app surface(%x)", currentSurface, targetSurface);
+        return jcfalse;
+    }
     jcboolean result = eglSwapBuffers(display, targetSurface);
 //    jcboolean result = jctrue;
 
     if (!result || EGLError::printEGLError(__FILE__, __LINE__)) {
+#ifndef NO_EGL_ERRORLOG
         jclogf("Bad Surface(%x)", targetSurface);
+#endif
 
 #ifdef  BADSURFACE_WITH_KILLPROCESS
         // KILL PROCESS

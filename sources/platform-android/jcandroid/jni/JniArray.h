@@ -51,6 +51,7 @@ protected:
     }
 public:
     virtual ~JniArray() {
+        assert(pointer == NULL);
     }
 
     /**

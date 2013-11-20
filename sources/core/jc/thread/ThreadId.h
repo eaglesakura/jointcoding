@@ -15,21 +15,15 @@ namespace jc {
  * スレッドごとのIDを管理する
  */
 class ThreadID {
-
-    /**
-     * ThreadIDの実装を隠蔽する
-     */
-    typedef void* NativeThreadIdPtr;
-
     /**
      * 管理する生情報
      */
-    NativeThreadIdPtr threadId;
+    void* threadId;
 
     /**
      * 持っているポインタと交換する
      */
-    void swap(NativeThreadIdPtr p);
+    void swap(void* p);
 
 public:
     /**
@@ -40,7 +34,7 @@ public:
     /**
      * 指定したIDから作成する
      */
-    ThreadID(NativeThreadIdPtr _id);
+    ThreadID(void* _id);
 
     /**
      * コピーコンストラクタ

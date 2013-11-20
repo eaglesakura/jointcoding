@@ -8,7 +8,6 @@
 #define JCSTRING_H_
 
 #include    "jc/system/Macro.h"
-#include    "jc/util/ImplCapsule.h"
 #include    <vector>
 #include    <string>
 
