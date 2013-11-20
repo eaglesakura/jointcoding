@@ -90,7 +90,7 @@ jc::String ThreadID::toString() const {
     const u64 rawId = *((u64*) threadId);
 //    jclogf("rawId = %d", rawId);
     charactor str[40] = { 0 };
-    sprintf(str, "thread_%lu", rawId);
+    sprintf(str, "thread_%llu", rawId);
     return str;
 }
 

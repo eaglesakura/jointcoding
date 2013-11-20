@@ -272,10 +272,14 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
 
                 state->finish();
                 assert_gl();
-                 // 解放ビットフラグを含んでいたら、解放を行う
-                function_tbl[i].delete_func((s32) dealloc_pool[i].size(), (u32*) &(dealloc_pool[i][0]));
-                assert_gl();
+                // 解放ビットフラグを含んでいたら、解放を行う
+                for (u32 k = 0; k < dealloc_pool[i].size(); ++k) {
+                    function_tbl[i].delete_func(1, (u32*) &(dealloc_pool[i][k]));
+                    assert_gl();
+                    state->flush();
+                }
                 state->finish();
+
                 assert_gl();
                 // プール解放
                 dealloc_pool[i].clear();

@@ -8,6 +8,13 @@
 
 #include    "jointcoding.h"
 #include    <stddef.h>
+#include    <new>
+
+extern void* operator new(size_t size) throw (std::bad_alloc);
+extern void* operator new[](size_t size) throw (std::bad_alloc);
+
+extern void operator delete(void* p) throw ();
+extern void operator delete[](void* p) throw ();
 
 namespace jc {
 
@@ -57,13 +64,11 @@ private:
     MemoryCheck();
 };
 
-
 #ifdef  DEBUG_MEMORYCHECK
 
 #define jcmark(ptr)     jc::MemoryCheck::marking(ptr, __FILE__, __LINE__)
 
 #define jcunmark(ptr)   jc::MemoryCheck::unmark(ptr, __FILE__, __LINE__)
-
 
 #define jcmarkvoid(ptr)     jc::MemoryCheck::mark(ptr, __FILE__, __LINE__)
 
@@ -74,7 +79,6 @@ private:
 #define jcmark(ptr)
 
 #define jcunmark(ptr)
-
 
 #define jcmarkvoid(ptr)
 
