@@ -7,23 +7,6 @@
 #include    "jointcoding.h"
 #include    <list>
 
-namespace jc {
-
-namespace debug {
-
-/**
- * ヒープに確保したメモリをbyte単位で取得する
- */
-u32 getAllocatedHeapBytes();
-/**
- * ヒープに確保したメモリを個数単位で取得する
- */
-u32 getAllocatedHeapObjects();
-
-}
-
-}
-
 /**
  * 実装部はboostに一任する
  */
@@ -215,8 +198,12 @@ void MemoryCheck::dump() {
 
     jclog("----------------------")
 
-    jclogf("allocated heap [%d bytes]", jc::debug::getAllocatedHeapBytes());
-    jclogf("allocated heap [%d objects]", jc::debug::getAllocatedHeapObjects());
+    {
+        debug::AllocatedHeapInfo info;
+        debug::getAllocatedInfo(&info);
+        jclogf("allocated heap [%u bytes]", info.heap_bytes);
+        jclogf("allocated heap [%u objects] [%u marked][%u nomarked]", info.objects, info.objects_marked, info.objects_nomarked);
+    }
     {
         std::list<MemoryMark*>::const_iterator itr = marks.begin(), end = marks.end();
         while (itr != end) {

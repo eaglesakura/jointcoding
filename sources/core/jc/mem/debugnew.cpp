@@ -21,8 +21,7 @@ struct AllocHeader {
     int line;
 };
 
-static u32 gAllocatedBytes = 0;
-static u32 gAllocatedObjects = 0;
+static jc::debug::AllocatedHeapInfo gHeapInfo = { 0 };
 
 static pthread_mutex_t alloc_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -34,7 +33,7 @@ static const u32 ARRAY_SYSTEM_BYTES = 4;
 /**
  * 排他制御を行った上でメモリを確保する
  */
-void* alloc_mem(const size_t size, const u32 systemSize) {
+void* alloc_mem(const size_t size, const u32 systemSize, char * const file, int line) {
     pthread_mutex_lock(&alloc_mutex);
 
     void* result = NULL;
@@ -42,14 +41,20 @@ void* alloc_mem(const size_t size, const u32 systemSize) {
     {
         AllocHeader *pHead = (AllocHeader*) malloc(size + sizeof(AllocHeader));
 
-        pHead->file = NULL;
-        pHead->line = 0;
+        pHead->file = file;
+        pHead->line = line;
         pHead->size = (size - systemSize);
 
         // 確保済みbytesをインクリメント
         {
-            gAllocatedBytes += pHead->size;
-            ++gAllocatedObjects;
+            gHeapInfo.heap_bytes += pHead->size;
+            ++gHeapInfo.objects;
+
+            if (file) {
+                ++gHeapInfo.objects_marked;
+            } else {
+                ++gHeapInfo.objects_nomarked;
+            }
         }
 
         // 返却値はヘッダを無視する
@@ -71,8 +76,14 @@ void free_mem(void* p, const u32 systemSize) {
 
         // 確保済みbytesをデクリメント
         {
-            gAllocatedBytes -= pHead->size;
-            --gAllocatedObjects;
+            gHeapInfo.heap_bytes -= pHead->size;
+            --gHeapInfo.objects;
+
+            if (pHead->file) {
+                --gHeapInfo.objects_marked;
+            } else {
+                --gHeapInfo.objects_nomarked;
+            }
         }
         free(pHead);
     }
@@ -86,14 +97,22 @@ void free_mem(void* p, const u32 systemSize) {
  * メモリを単体確保する
  */
 void* operator new(size_t size) throw (std::bad_alloc) {
-    return alloc_mem(size, 0);
+    return alloc_mem(size, 0, NULL, 0);
 }
 
 /**
  * メモリを配列確保する
  */
 void* operator new[](size_t size) throw (std::bad_alloc) {
-    return alloc_mem(size, ARRAY_SYSTEM_BYTES);
+    return alloc_mem(size, ARRAY_SYSTEM_BYTES, NULL, 0);
+}
+
+void* operator new(size_t size, char * const file, int line) throw (std::bad_alloc) {
+    return alloc_mem(size, 0, __getFileName(file), line);
+}
+
+void* operator new[](size_t size, char * const file, int line) throw (std::bad_alloc) {
+    return alloc_mem(size, ARRAY_SYSTEM_BYTES, __getFileName(file), line);
 }
 
 /**
@@ -111,23 +130,20 @@ void operator delete[](void* p) throw () {
 }
 
 namespace jc {
-
 namespace debug {
 
 /**
- * ヒープに確保したメモリをbyte単位で取得する
+ * メモリの確保状態を取得する
  */
-u32 getAllocatedHeapBytes() {
-    return gAllocatedBytes;
+void getAllocatedInfo(AllocatedHeapInfo *result) {
+    assert(result);
+
+    pthread_mutex_lock(&alloc_mutex);
+    {
+        (*result) = gHeapInfo;
+    }
+    pthread_mutex_unlock(&alloc_mutex);
 }
 
-/**
- * ヒープに確保したメモリを個数単位で取得する
- */
-u32 getAllocatedHeapObjects() {
-    return gAllocatedObjects;
 }
-
-}
-
 }

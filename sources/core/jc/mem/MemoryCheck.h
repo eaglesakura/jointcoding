@@ -16,6 +16,51 @@ extern void* operator new[](size_t size) throw (std::bad_alloc);
 extern void operator delete(void* p) throw ();
 extern void operator delete[](void* p) throw ();
 
+// for debug
+extern void* operator new(size_t size, char * const file, int line) throw (std::bad_alloc);
+extern void* operator new[](size_t size, char * const file, int line) throw (std::bad_alloc);
+
+#define mark_new new(__FILE__, __LINE__)
+
+namespace jc {
+
+namespace debug {
+
+/**
+ * ヒープの現在の情報を取得する
+ *
+ */
+struct AllocatedHeapInfo {
+    /**
+     * 現在生きているヒープ容量
+     */
+    u32 heap_bytes;
+
+    /**
+     * 生きているヒープオブジェクト数
+     */
+    u32 objects;
+
+    /**
+     * マークが付いているオブジェクト数
+     */
+    u32 objects_marked;
+
+    /**
+     * マークが付いていないオブジェクト数
+     */
+    u32 objects_nomarked;
+};
+
+/**
+ * メモリの確保状態を取得する
+ */
+void getAllocatedInfo(AllocatedHeapInfo *result);
+
+}
+
+}
+
 namespace jc {
 
 class Object;
