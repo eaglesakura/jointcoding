@@ -63,11 +63,11 @@ jstring JniIOException::getMessage_(jobject _this) {
 }
 
 jc_sp<JniIOException> JniIOException::wrap(jobject obj) {
-    return jc_sp<JniIOException>( new JniIOException(obj));
+    return jc_sp<JniIOException>( mark_new JniIOException(obj));
 }
 
 jc_sp<JniIOException> JniIOException::global(jobject obj) {
-    return jc_sp<JniIOException>( (JniIOException*)(new JniIOException(obj))->addGlobalRef());
+    return jc_sp<JniIOException>( (JniIOException*)(mark_new JniIOException(obj))->addGlobalRef());
 }
 
 jclass JniIOException::getClass() {

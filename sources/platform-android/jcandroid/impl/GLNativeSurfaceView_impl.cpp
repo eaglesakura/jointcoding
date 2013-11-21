@@ -96,8 +96,8 @@ JNIEXPORT jint JNICALL Java_com_eaglesakura_jc_android_view_GLNativeSurfaceView_
     // call env reset
     initJniEnv(env);
 
-    GLNativeSurfaceViewContext *viewContext = new GLNativeSurfaceViewContext(egl_flags);
-    return (jint) new jc_sp<GLNativeSurfaceViewContext>(viewContext);
+    GLNativeSurfaceViewContext *viewContext = mark_new GLNativeSurfaceViewContext(egl_flags);
+    return (jint) mark_new jc_sp<GLNativeSurfaceViewContext>(viewContext);
 }
 
 // main

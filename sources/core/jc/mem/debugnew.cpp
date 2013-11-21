@@ -33,7 +33,7 @@ static const u32 ARRAY_SYSTEM_BYTES = 4;
 /**
  * 排他制御を行った上でメモリを確保する
  */
-void* alloc_mem(const size_t size, const u32 systemSize, char * const file, int line) {
+void* alloc_mem(const size_t size, const u32 systemSize, const char * const file, const int line) {
     pthread_mutex_lock(&alloc_mutex);
 
     void* result = NULL;
@@ -41,7 +41,7 @@ void* alloc_mem(const size_t size, const u32 systemSize, char * const file, int 
     {
         AllocHeader *pHead = (AllocHeader*) malloc(size + sizeof(AllocHeader));
 
-        pHead->file = file;
+        pHead->file = (char*)file;
         pHead->line = line;
         pHead->size = (size - systemSize);
 
@@ -107,11 +107,11 @@ void* operator new[](size_t size) throw (std::bad_alloc) {
     return alloc_mem(size, ARRAY_SYSTEM_BYTES, NULL, 0);
 }
 
-void* operator new(size_t size, char * const file, int line) throw (std::bad_alloc) {
+void* operator new(size_t size, const char * const file, int line) throw (std::bad_alloc) {
     return alloc_mem(size, 0, __getFileName(file), line);
 }
 
-void* operator new[](size_t size, char * const file, int line) throw (std::bad_alloc) {
+void* operator new[](size_t size, const char * const file, int line) throw (std::bad_alloc) {
     return alloc_mem(size, ARRAY_SYSTEM_BYTES, __getFileName(file), line);
 }
 

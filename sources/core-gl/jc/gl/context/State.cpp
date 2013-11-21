@@ -100,7 +100,7 @@ jcboolean GLState::printShaderError(const GLuint shaderObject, const GLint statu
         // エラーメッセージを取得
         glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &infoLen);
         if (infoLen > 1) {
-            jc_sa<charactor> message(new charactor[infoLen]);
+            jc_sa<charactor> message(mark_new charactor[infoLen]);
             glGetShaderInfoLog(shaderObject, infoLen, NULL, message.get());
             jclogf("shader error :: %s", message.get());
         } else {
@@ -124,7 +124,7 @@ jcboolean GLState::printProgramError(const GLuint programObject, const GLint sta
         // エラーメッセージを取得
         glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
         if (infoLen > 1) {
-            jc_sa<charactor> message(new charactor[infoLen]);
+            jc_sa<charactor> message(mark_new charactor[infoLen]);
             glGetProgramInfoLog(programObject, infoLen, NULL, message.get());
             jclogf("shader error :: %s", message.get());
         }

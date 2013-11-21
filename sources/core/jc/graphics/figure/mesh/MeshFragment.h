@@ -81,7 +81,7 @@ private:
 
 public:
     _MeshFragment() {
-        material.reset( new MaterialType() );
+        material.reset( mark_new MaterialType() );
     }
 
     virtual ~_MeshFragment() {
@@ -110,7 +110,7 @@ public:
         for( u32 i = 0; i < num; ++i ) {
             jc_sp<DrawingContext> ctx = contexts[i];
             if(!ctx) {
-                contexts[i].reset(new DrawingContext());
+                contexts[i].reset(mark_new DrawingContext());
             }
         }
     }

@@ -24,13 +24,13 @@ ArchiveFigureDataFactory::~ArchiveFigureDataFactory() {
  * 初期化を行う
  */
 void ArchiveFigureDataFactory::initialize(const Uri &archive_uri) {
-    this->archives.reset(new FileArchiveImporter());
+    this->archives.reset(mark_new FileArchiveImporter());
 
     {
         MInputStream stream = Platform::getFileSystem()->openInputStream(archive_uri);
         raw_archive.buffer = InputStream::toByteArray(stream, &raw_archive.length);
     }
-    archives->initialize(MInputStream(new ByteArrayInputStream(raw_archive.buffer, raw_archive.length)));
+    archives->initialize(MInputStream(mark_new ByteArrayInputStream(raw_archive.buffer, raw_archive.length)));
 
     jclogf("archive files(%d)", archives->getFileCount());
 }
@@ -45,7 +45,7 @@ MBinaryInputStream ArchiveFigureDataFactory::makeStream(const String &name) {
     }
 
 //    jclogf("archive load(%s) %d -> %d", info.file_name, info.file_head, info.file_length);
-    return MBinaryInputStream(new BinaryInputStream(MInputStream(new ByteArrayInputStream(raw_archive.buffer, info.file_head, info.file_length))));
+    return MBinaryInputStream(mark_new BinaryInputStream(MInputStream(mark_new ByteArrayInputStream(raw_archive.buffer, info.file_head, info.file_length))));
 }
 
 /**

@@ -77,7 +77,7 @@ public:
      */
     static jc_sa<u8> createPixelBuffer(const PixelFormat_e fmt, const s32 pixels) {
         s32 bytes = getPixelBytes(fmt);
-        return jc_sa < u8 > (new u8[bytes * pixels]);
+        return jc_sa < u8 > (mark_new u8[bytes * pixels]);
     }
 
     /**

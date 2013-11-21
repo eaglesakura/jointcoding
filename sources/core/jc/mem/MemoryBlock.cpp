@@ -11,7 +11,7 @@
 namespace jc {
 
 MemoryBlock::MemoryBlock(const u32 bufferLength) {
-    this->block.reset(new u8[bufferLength + 1]);
+    this->block.reset(mark_new u8[bufferLength + 1]);
     this->block_size = bufferLength + 1;
     this->length = 0;
 }
@@ -31,7 +31,7 @@ static jc_sa<u8> request(const jc_sa<u8> buffer, const u32 buffer_size, u32 *new
 
     // バッファが足りない
     (*new_buffersize) = request_size + 1024;
-    jc_sa< u8 > result( new u8[(*new_buffersize)]);
+    jc_sa< u8 > result( mark_new u8[(*new_buffersize)]);
 
     // バッファをコピーする
     memcpy(result.get(), buffer.get(), buffer_size );
@@ -45,36 +45,36 @@ static jc_sa<u8> request(const jc_sa<u8> buffer, const u32 buffer_size, u32 *new
  * メモリを後ろに追加する。
  */
 void MemoryBlock::pushBack(const u8 *src, const u32 size) {
-    block = request(block, block_size, &block_size, (size + length));
+block = request(block, block_size, &block_size, (size + length));
 
-    // コピー
-    u8* head = block.get() + length;
-    memcpy((void*)head, src, size);
+// コピー
+u8* head = block.get() + length;
+memcpy((void*) head, src, size);
 
-    // サイズを足し込み
-    length += size;
+// サイズを足し込み
+length += size;
 }
 
 /**
  * バッファサイズを必要最低限に切り詰める
  */
 void MemoryBlock::compact() {
-    if (getLength() == block_size) {
-        // ちょうどのサイズだから必要ない
-        return;
-    }
+if (getLength() == block_size) {
+    // ちょうどのサイズだから必要ない
+    return;
+}
 
-    jc_sa<u8> nBuffer(new u8[getLength()]);
-    memcpy(nBuffer.get(), this->block.get(), getLength());
+jc_sa<u8> nBuffer(mark_new u8[getLength()]);
+memcpy(nBuffer.get(), this->block.get(), getLength());
 
-    this->block = nBuffer;
+this->block = nBuffer;
 }
 
 /**
  * バッファ本体を取得する。
  */
 u8* MemoryBlock::getBuffer() const {
-    return (u8*) &(block[0]);
+return (u8*) &(block[0]);
 }
 
 }

@@ -14,7 +14,7 @@ namespace ndk {
  * この時点でデバイスと画面は関連付けられていない。
  */
 MDevice EGLDeviceUtil::createInstance() {
-    MDevice result(new Device());
+    MDevice result(mark_new Device());
     result->setEGL(getEGLProtocol());
     return result;
 }
@@ -25,7 +25,7 @@ MDevice EGLDeviceUtil::createInstance() {
  * EGL資源はAndroidアプリ内で1つしか利用できない（必要がない）ため。
  */
 MEGLProtocol EGLDeviceUtil::getEGLProtocol() {
-    static jc_sp<EGLManager> g_eglManager( new EGLManager() );
+    static jc_sp<EGLManager> g_eglManager( mark_new EGLManager() );
     return g_eglManager;
 }
 

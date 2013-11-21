@@ -10,8 +10,8 @@ namespace jc {
 namespace gl {
 
 FigureRenderer::FigureRenderer() {
-    params.reset(new GLFigure::ShaderParams());
-    camera.reset(new Camera());
+    params.reset(mark_new GLFigure::ShaderParams());
+    camera.reset(mark_new Camera());
     unif_look_prj = UNIFORM_DISABLE_INDEX;
     unif_world = UNIFORM_DISABLE_INDEX;
 }

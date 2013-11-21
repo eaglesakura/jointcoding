@@ -23,7 +23,7 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
     }
 
     // ノード数だけ、アニメーションを読み込む
-    MAnimationGroup group(new AnimationGroup(node_num));
+    MAnimationGroup group(mark_new AnimationGroup(node_num));
 
     for (u32 i = 0; i < node_num; ++i) {
 
@@ -89,7 +89,7 @@ MAnimationClip AnimationDataLoader::load(const u32 clipNumber) {
     }
 
     // 全て読み込み終わったら生成する
-    result.reset(new AnimationClip(group));
+    result.reset(mark_new AnimationClip(group));
 
     return result;
 }

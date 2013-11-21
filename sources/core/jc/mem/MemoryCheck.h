@@ -17,8 +17,8 @@ extern void operator delete(void* p) throw ();
 extern void operator delete[](void* p) throw ();
 
 // for debug
-extern void* operator new(size_t size, char * const file, int line) throw (std::bad_alloc);
-extern void* operator new[](size_t size, char * const file, int line) throw (std::bad_alloc);
+extern void* operator new(size_t size, const char * const file, int line) throw (std::bad_alloc);
+extern void* operator new[](size_t size, const char * const file, int line) throw (std::bad_alloc);
 
 #define mark_new new(__FILE__, __LINE__)
 

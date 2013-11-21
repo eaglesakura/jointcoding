@@ -15,9 +15,9 @@ namespace jc {
  */ //
 jc_sa<u8> InputStream::toByteArray(jc_sp<InputStream> is, u32 *result_length) {
 
-    MMemoryBlock buffer(new MemoryBlock(is->available()));
+    MMemoryBlock buffer(mark_new MemoryBlock(is->available()));
     const u32 BUFFER_LENGTH = 1024 * 8;
-    jc_sa<u8> temp(new u8[BUFFER_LENGTH]);
+    jc_sa<u8> temp(mark_new u8[BUFFER_LENGTH]);
     s32 readed = 0;
 
     // 読み込めるだけ読み込む
@@ -42,9 +42,9 @@ jc_sa<u8> InputStream::toByteArray(jc_sp<InputStream> is, u32 *result_length) {
  */ //
 String InputStream::toText(MInputStream is) {
     const u32 BUFFER_LENGTH = 1024 * 8;
-    jc_sa<u8> temp(new u8[BUFFER_LENGTH]);
+    jc_sa<u8> temp(mark_new u8[BUFFER_LENGTH]);
     s32 readed = 0;
-    MMemoryBlock buffer(new MemoryBlock(BUFFER_LENGTH));
+    MMemoryBlock buffer(mark_new MemoryBlock(BUFFER_LENGTH));
 
     // 読み込めるだけ読み込む
     while ((readed = is->read(temp.get(), BUFFER_LENGTH)) > 0) {

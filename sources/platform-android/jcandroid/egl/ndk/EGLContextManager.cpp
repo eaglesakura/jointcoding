@@ -12,8 +12,8 @@ EGLContextManager::EGLContextManager(EGLContext context, EGLDisplay display, EGL
     this->display = display;
     this->config = config;
     this->context = context;
-    this->state.reset(new GLState());
-    this->vram.reset(new _VRAM());
+    this->state.reset(mark_new GLState());
+    this->vram.reset(mark_new _VRAM());
 }
 
 EGLContextManager::~EGLContextManager() {

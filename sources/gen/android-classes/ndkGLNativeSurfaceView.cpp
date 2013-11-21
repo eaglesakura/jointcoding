@@ -330,11 +330,11 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeSurfaceView_
 
 
 jc_sp<GLNativeSurfaceView> GLNativeSurfaceView::wrap(jobject obj) {
-    return jc_sp<GLNativeSurfaceView>( new GLNativeSurfaceView(obj));
+    return jc_sp<GLNativeSurfaceView>( mark_new GLNativeSurfaceView(obj));
 }
 
 jc_sp<GLNativeSurfaceView> GLNativeSurfaceView::global(jobject obj) {
-    return jc_sp<GLNativeSurfaceView>( (GLNativeSurfaceView*)(new GLNativeSurfaceView(obj))->addGlobalRef());
+    return jc_sp<GLNativeSurfaceView>( (GLNativeSurfaceView*)(mark_new GLNativeSurfaceView(obj))->addGlobalRef());
 }
 
 jclass GLNativeSurfaceView::getClass() {

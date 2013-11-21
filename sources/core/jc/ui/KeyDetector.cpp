@@ -27,7 +27,7 @@ MKeyData KeyDetector::getKeyData(const s32 keyCode) {
 
     if (itr == keyDatas.end()) {
         // キーが見つからなかったから新規生成
-        MKeyData data(new KeyData(keyCode));
+        MKeyData data(mark_new KeyData(keyCode));
 
         // 登録する
         keyDatas.insert(std::map<s32, MKeyData>::value_type(keyCode, data));

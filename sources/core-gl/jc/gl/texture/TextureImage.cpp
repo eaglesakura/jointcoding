@@ -357,7 +357,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             lock_time = Timer::currentTime();
 
             // テクスチャを作成する
-            result.reset(new TextureImage(texture_width, texture_width, device));
+            result.reset(mark_new TextureImage(texture_width, texture_width, device));
 
             result->size.img_width = origin_width;
             result->size.img_height = origin_height;
@@ -526,7 +526,7 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoa
     {
         DeviceLock lock(device, jctrue);
 
-        MTextureImage result(new TextureImage(width, height, device));
+        MTextureImage result(mark_new TextureImage(width, height, device));
         result->bind();
         {
             u32 length = 0;

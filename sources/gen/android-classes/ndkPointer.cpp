@@ -196,11 +196,11 @@ jint Pointer::getObjectPointer_(jobject _this) {
 }
 
 jc_sp<Pointer> Pointer::wrap(jobject obj) {
-    return jc_sp<Pointer>( new Pointer(obj));
+    return jc_sp<Pointer>( mark_new Pointer(obj));
 }
 
 jc_sp<Pointer> Pointer::global(jobject obj) {
-    return jc_sp<Pointer>( (Pointer*)(new Pointer(obj))->addGlobalRef());
+    return jc_sp<Pointer>( (Pointer*)(mark_new Pointer(obj))->addGlobalRef());
 }
 
 jclass Pointer::getClass() {

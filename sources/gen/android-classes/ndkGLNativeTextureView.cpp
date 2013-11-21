@@ -348,11 +348,11 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
 
 
 jc_sp<GLNativeTextureView> GLNativeTextureView::wrap(jobject obj) {
-    return jc_sp<GLNativeTextureView>( new GLNativeTextureView(obj));
+    return jc_sp<GLNativeTextureView>( mark_new GLNativeTextureView(obj));
 }
 
 jc_sp<GLNativeTextureView> GLNativeTextureView::global(jobject obj) {
-    return jc_sp<GLNativeTextureView>( (GLNativeTextureView*)(new GLNativeTextureView(obj))->addGlobalRef());
+    return jc_sp<GLNativeTextureView>( (GLNativeTextureView*)(mark_new GLNativeTextureView(obj))->addGlobalRef());
 }
 
 jclass GLNativeTextureView::getClass() {

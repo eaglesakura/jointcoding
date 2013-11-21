@@ -111,11 +111,11 @@ jlong JniInputStream::skip_(jobject _this, jlong byteCount) {
 }
 
 jc_sp<JniInputStream> JniInputStream::wrap(jobject obj) {
-    return jc_sp<JniInputStream>( new JniInputStream(obj));
+    return jc_sp<JniInputStream>( mark_new JniInputStream(obj));
 }
 
 jc_sp<JniInputStream> JniInputStream::global(jobject obj) {
-    return jc_sp<JniInputStream>( (JniInputStream*)(new JniInputStream(obj))->addGlobalRef());
+    return jc_sp<JniInputStream>( (JniInputStream*)(mark_new JniInputStream(obj))->addGlobalRef());
 }
 
 jclass JniInputStream::getClass() {

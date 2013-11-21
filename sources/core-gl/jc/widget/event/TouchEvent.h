@@ -40,8 +40,8 @@ public:
      * イベントを作成する
      */
     static MEvent createEvent( const jc_sp<TouchEventProtocol> event) {
-        jc_sp<TouchEventExtension> extension(new TouchEventExtension(event));
-        MEvent result(new Event(EventType_Touch, extension));
+        jc_sp<TouchEventExtension> extension(mark_new TouchEventExtension(event));
+        MEvent result(mark_new Event(EventType_Touch, extension));
         return result;
     }
 };

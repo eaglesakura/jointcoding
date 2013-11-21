@@ -81,8 +81,8 @@ public:
      * ドラッグ中イベントを作成する
      */
     static MEvent createEvent(const TouchPoint &point, const Vector2f beforePosition, const jc_sp<View> view) {
-        jc_sp<DragEventExtension> extension(new DragEventExtension(point, beforePosition, view));
-        MEvent result(new Event(BroadcastType_Drag, extension));
+        jc_sp<DragEventExtension> extension(mark_new DragEventExtension(point, beforePosition, view));
+        MEvent result(mark_new Event(BroadcastType_Drag, extension));
         result->setBroadcast(jctrue);
         return result;
     }
@@ -91,8 +91,8 @@ public:
      * ドラッグ終了イベントを作成する
      */
     static MEvent createDragEndEvent(const TouchPoint &point, const Vector2f beforePosition, const jc_sp<View> view) {
-        jc_sp<DragEventExtension> extension(new DragEventExtension(point, beforePosition, view));
-        MEvent result(new Event(BroadcastType_DragEnd, extension));
+        jc_sp<DragEventExtension> extension(mark_new DragEventExtension(point, beforePosition, view));
+        MEvent result(mark_new Event(BroadcastType_DragEnd, extension));
         result->setBroadcast(jctrue);
         return result;
     }

@@ -74,11 +74,11 @@ jobject AndroidUtil::getSurface_unsafe(jobject holder) {
 }
 
 jc_sp<AndroidUtil> AndroidUtil::wrap(jobject obj) {
-    return jc_sp<AndroidUtil>( new AndroidUtil(obj));
+    return jc_sp<AndroidUtil>( mark_new AndroidUtil(obj));
 }
 
 jc_sp<AndroidUtil> AndroidUtil::global(jobject obj) {
-    return jc_sp<AndroidUtil>( (AndroidUtil*)(new AndroidUtil(obj))->addGlobalRef());
+    return jc_sp<AndroidUtil>( (AndroidUtil*)(mark_new AndroidUtil(obj))->addGlobalRef());
 }
 
 jclass AndroidUtil::getClass() {

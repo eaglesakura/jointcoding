@@ -41,7 +41,7 @@ MInputStream NDKFileSystem::openAsset(const String fileName) {
 
     // 正常に処理が終了したかをチェックする
     if( is ) {
-        return MInputStream( new JavaJointInputStream( is ) );
+        return MInputStream( mark_new JavaJointInputStream( is ) );
     }
     else {
         throw create_exception(FileNotFoundException, "open assets failed");
@@ -72,7 +72,7 @@ MInputStream NDKFileSystem::openLocalStrageFile(const String fileName) {
 
     // 正常に処理が終了したかをチェックする
     if( is ) {
-        return MInputStream( new JavaJointInputStream( is ) );
+        return MInputStream( mark_new JavaJointInputStream( is ) );
     }
     else {
         throw create_exception(FileNotFoundException, "open local failed");

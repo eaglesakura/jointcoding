@@ -63,11 +63,11 @@ jstring JniRuntimeException::getMessage_(jobject _this) {
 }
 
 jc_sp<JniRuntimeException> JniRuntimeException::wrap(jobject obj) {
-    return jc_sp<JniRuntimeException>( new JniRuntimeException(obj));
+    return jc_sp<JniRuntimeException>( mark_new JniRuntimeException(obj));
 }
 
 jc_sp<JniRuntimeException> JniRuntimeException::global(jobject obj) {
-    return jc_sp<JniRuntimeException>( (JniRuntimeException*)(new JniRuntimeException(obj))->addGlobalRef());
+    return jc_sp<JniRuntimeException>( (JniRuntimeException*)(mark_new JniRuntimeException(obj))->addGlobalRef());
 }
 
 jclass JniRuntimeException::getClass() {

@@ -77,11 +77,11 @@ jobject AppFont::getImage_unsafe_(jobject _this) {
 }
 
 jc_sp<AppFont> AppFont::wrap(jobject obj) {
-    return jc_sp<AppFont>( new AppFont(obj));
+    return jc_sp<AppFont>( mark_new AppFont(obj));
 }
 
 jc_sp<AppFont> AppFont::global(jobject obj) {
-    return jc_sp<AppFont>( (AppFont*)(new AppFont(obj))->addGlobalRef());
+    return jc_sp<AppFont>( (AppFont*)(mark_new AppFont(obj))->addGlobalRef());
 }
 
 jclass AppFont::getClass() {

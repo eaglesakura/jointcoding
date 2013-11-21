@@ -30,16 +30,16 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_egl_DeviceManager_createN
     assert(jEGLContextWrapper);
 
     // マネージクラスを作成する
-    jc_sp<SdkEGLWrapper> eglWrapper( new SdkEGLWrapper( EGLWrapper::global(jEGLWrapper) ));
-    jc_sp<SdkEGLSurfaceWrapper> eglSurfaceWrapper( new SdkEGLSurfaceWrapper( EGLSurfaceWrapper::global(jEGLSurfaceWrapper) ));
-    jc_sp<SdkEGLContextWrapper> eglContextWrapper( new SdkEGLContextWrapper( EGLContextWrapper::global(jEGLContextWrapper) ));
+    jc_sp<SdkEGLWrapper> eglWrapper( mark_new SdkEGLWrapper( EGLWrapper::global(jEGLWrapper) ));
+    jc_sp<SdkEGLSurfaceWrapper> eglSurfaceWrapper( mark_new SdkEGLSurfaceWrapper( EGLSurfaceWrapper::global(jEGLSurfaceWrapper) ));
+    jc_sp<SdkEGLContextWrapper> eglContextWrapper( mark_new SdkEGLContextWrapper( EGLContextWrapper::global(jEGLContextWrapper) ));
 
-    MDevice device(new Device());
+    MDevice device(mark_new Device());
     device->setEGL(eglWrapper);
     device->setSurface(eglSurfaceWrapper);
     device->setContext(eglContextWrapper);
 
-    setJointContextPointer_Object(_this, Jointable::KEY_MAINCONTEXT, new SdkDeviceManagerContext(device));
+    setJointContextPointer_Object(_this, Jointable::KEY_MAINCONTEXT, mark_new SdkDeviceManagerContext(device));
 }
 
 // main

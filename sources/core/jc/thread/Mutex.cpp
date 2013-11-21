@@ -12,7 +12,7 @@
 namespace jc {
 
 Mutex::Mutex() {
-    mutex.reset(new ::boost::recursive_mutex());
+    mutex.reset(mark_new ::boost::recursive_mutex());
 
     jcmarkvoid(mutex.get());
     jcmarkvoid(this);

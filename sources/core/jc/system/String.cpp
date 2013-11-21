@@ -19,9 +19,9 @@ typedef std::string string_t;
 String::String(const charactor* str) {
 
     if (str) {
-        this->text.reset(new string_t(str));
+        this->text.reset(mark_new string_t(str));
     } else {
-        this->text.reset(new string_t());
+        this->text.reset(mark_new string_t());
     }
 
     jcmarkvoid(this);
@@ -168,7 +168,7 @@ String String::substring(const s32 begin, const s32 end) const {
  * 文字列として取得する
  */
 String String::format(const charactor *fmt, ...) {
-    jc_sa<charactor> temp(new charactor[strlen(fmt) + 256]);
+    jc_sa<charactor> temp(mark_new charactor[strlen(fmt) + 256]);
     va_list ap;
     va_start(ap, fmt);
     {

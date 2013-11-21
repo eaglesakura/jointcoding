@@ -51,11 +51,11 @@ void EGLContextWrapper::dispose_(jobject _this) {
 }
 
 jc_sp<EGLContextWrapper> EGLContextWrapper::wrap(jobject obj) {
-    return jc_sp<EGLContextWrapper>( new EGLContextWrapper(obj));
+    return jc_sp<EGLContextWrapper>( mark_new EGLContextWrapper(obj));
 }
 
 jc_sp<EGLContextWrapper> EGLContextWrapper::global(jobject obj) {
-    return jc_sp<EGLContextWrapper>( (EGLContextWrapper*)(new EGLContextWrapper(obj))->addGlobalRef());
+    return jc_sp<EGLContextWrapper>( (EGLContextWrapper*)(mark_new EGLContextWrapper(obj))->addGlobalRef());
 }
 
 jclass EGLContextWrapper::getClass() {

@@ -70,7 +70,7 @@ jcboolean GLNativeSurfaceViewContext::initialize() {
 
     // コンテキストを作成する
     {
-        jc_sp< EGLContextProtocol > contextProtocol( new ndk::EGLContextManager(context, display, config) );
+        jc_sp< EGLContextProtocol > contextProtocol( mark_new ndk::EGLContextManager(context, display, config) );
         this->device->setContext(contextProtocol);
     }
 
@@ -126,7 +126,7 @@ void GLNativeSurfaceViewContext::onSurfaceChanged(jobject surface, const s32 pix
         jclogf("window surface = %x", eglSurface);
 
         // サーフェイスを設定する
-        this->device->setSurface(MEGLSurfaceProtocol(new EGLSurfaceManager(display, eglSurface)));
+        this->device->setSurface(MEGLSurfaceProtocol(mark_new EGLSurfaceManager(display, eglSurface)));
     }
 }
 

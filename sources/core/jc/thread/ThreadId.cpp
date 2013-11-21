@@ -66,7 +66,7 @@ ThreadID::~ThreadID() {
 void ThreadID::swap(void* p) {
     if (p) {
         if (!threadId) {
-            threadId = (void*) new thread_id();
+            threadId = (void*) mark_new thread_id();
 
             jcmarkvoid(threadId);
         }

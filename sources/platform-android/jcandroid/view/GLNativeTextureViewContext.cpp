@@ -56,7 +56,7 @@ void GLNativeTextureViewContext::onGLInitialize(jobject surfaceTexture) {
 
 // コンテキストを作成する
     {
-        jc_sp< EGLContextProtocol > contextProtocol( new ndk::EGLContextManager(context, display, config) );
+        jc_sp< EGLContextProtocol > contextProtocol( mark_new ndk::EGLContextManager(context, display, config) );
         this->device->setContext(contextProtocol);
     }
 
@@ -66,7 +66,7 @@ void GLNativeTextureViewContext::onGLInitialize(jobject surfaceTexture) {
         EGLSurface eglPBuffer = eglCreatePbufferSurface(display, config, attr);
         assert(eglPBuffer);
 
-        pbufferSurface.reset(new EGLSurfaceManager(display, eglPBuffer));
+        pbufferSurface.reset(mark_new EGLSurfaceManager(display, eglPBuffer));
     }
     initialized = jctrue;
 }
@@ -118,7 +118,7 @@ void GLNativeTextureViewContext::onSurfaceSizeChanged(jobject surfaceTexture, co
         jclogf("window surface = %x", eglSurface);
 
         // サーフェイスを設定する
-        this->device->setSurface(MEGLSurfaceProtocol(new EGLSurfaceManager(display, eglSurface)));
+        this->device->setSurface(MEGLSurfaceProtocol(mark_new EGLSurfaceManager(display, eglSurface)));
     }
 
 }

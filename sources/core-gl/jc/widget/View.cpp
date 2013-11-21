@@ -34,14 +34,14 @@ View::~View() {
  * 遷移カウンターをイニシャライザリストに登録する
  */
 void View::addTransacationInitializer(const jc_selp<TransactionCounter> counter, const float transaction_sec, const LeapType_e type) {
-    addRegisteredInitializer(jc_sp<TransactionInitializer>( new TransactionInitializer(counter, transaction_sec, type)) );
+    addRegisteredInitializer(jc_sp<TransactionInitializer>( mark_new TransactionInitializer(counter, transaction_sec, type)) );
 }
 
 /**
  * タイマーをイニシャライザリストに登録する
  */
 void View::addTimerInitializer(const jc_selp<WindowTimer> timer, const u32 timeMilliSec) {
-    addRegisteredInitializer(jc_sp<RegisteredInitializer>(new TimerInitializer(timer, timeMilliSec)));
+    addRegisteredInitializer(jc_sp<RegisteredInitializer>(mark_new TimerInitializer(timer, timeMilliSec)));
 }
 
 /**

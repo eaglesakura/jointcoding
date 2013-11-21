@@ -51,11 +51,11 @@ jobject SurfaceHolder::getSurface_unsafe_(jobject _this) {
 }
 
 jc_sp<SurfaceHolder> SurfaceHolder::wrap(jobject obj) {
-    return jc_sp<SurfaceHolder>( new SurfaceHolder(obj));
+    return jc_sp<SurfaceHolder>( mark_new SurfaceHolder(obj));
 }
 
 jc_sp<SurfaceHolder> SurfaceHolder::global(jobject obj) {
-    return jc_sp<SurfaceHolder>( (SurfaceHolder*)(new SurfaceHolder(obj))->addGlobalRef());
+    return jc_sp<SurfaceHolder>( (SurfaceHolder*)(mark_new SurfaceHolder(obj))->addGlobalRef());
 }
 
 jclass SurfaceHolder::getClass() {

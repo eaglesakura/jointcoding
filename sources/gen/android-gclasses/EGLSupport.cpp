@@ -135,11 +135,11 @@ jint EGLSupport::eglCreateWindowSurfaceSupport(jint display, jint config, jobjec
 }
 
 jc_sp<EGLSupport> EGLSupport::wrap(jobject obj) {
-    return jc_sp<EGLSupport>( new EGLSupport(obj));
+    return jc_sp<EGLSupport>( mark_new EGLSupport(obj));
 }
 
 jc_sp<EGLSupport> EGLSupport::global(jobject obj) {
-    return jc_sp<EGLSupport>( (EGLSupport*)(new EGLSupport(obj))->addGlobalRef());
+    return jc_sp<EGLSupport>( (EGLSupport*)(mark_new EGLSupport(obj))->addGlobalRef());
 }
 
 jclass EGLSupport::getClass() {

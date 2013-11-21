@@ -245,11 +245,11 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_android_app_NativeContext_isN
 
 
 jc_sp<NativeContext> NativeContext::wrap(jobject obj) {
-    return jc_sp<NativeContext>( new NativeContext(obj));
+    return jc_sp<NativeContext>( mark_new NativeContext(obj));
 }
 
 jc_sp<NativeContext> NativeContext::global(jobject obj) {
-    return jc_sp<NativeContext>( (NativeContext*)(new NativeContext(obj))->addGlobalRef());
+    return jc_sp<NativeContext>( (NativeContext*)(mark_new NativeContext(obj))->addGlobalRef());
 }
 
 jclass NativeContext::getClass() {

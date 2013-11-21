@@ -21,7 +21,7 @@ FileArchiveImporter::~FileArchiveImporter() {
  */
 void FileArchiveImporter::initialize(MInputStream stream) {
     const s32 file_size = stream->available();
-    MBinaryInputStream reader(new BinaryInputStream(stream));
+    MBinaryInputStream reader(mark_new BinaryInputStream(stream));
 
     // まずはヘッダを読み込む
     {

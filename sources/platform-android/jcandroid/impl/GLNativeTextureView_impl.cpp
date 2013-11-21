@@ -61,7 +61,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_view_GLNativeTextureView_
     // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_android_view_GLNativeTextureView_onCreateNativeContext");
 
-    GLNativeTextureViewContext *nativeContext = new GLNativeTextureViewContext(egl_flags);
+    GLNativeTextureViewContext *nativeContext = mark_new GLNativeTextureViewContext(egl_flags);
     setJointContextPointer_Object(_this, Jointable::KEY_MAINCONTEXT, (Object*)nativeContext);
 }
 

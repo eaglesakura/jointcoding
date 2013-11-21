@@ -103,11 +103,11 @@ jfloat NativeTouchEvent::getEventPosY_(jobject _this) {
 }
 
 jc_sp<NativeTouchEvent> NativeTouchEvent::wrap(jobject obj) {
-    return jc_sp<NativeTouchEvent>( new NativeTouchEvent(obj));
+    return jc_sp<NativeTouchEvent>( mark_new NativeTouchEvent(obj));
 }
 
 jc_sp<NativeTouchEvent> NativeTouchEvent::global(jobject obj) {
-    return jc_sp<NativeTouchEvent>( (NativeTouchEvent*)(new NativeTouchEvent(obj))->addGlobalRef());
+    return jc_sp<NativeTouchEvent>( (NativeTouchEvent*)(mark_new NativeTouchEvent(obj))->addGlobalRef());
 }
 
 jclass NativeTouchEvent::getClass() {

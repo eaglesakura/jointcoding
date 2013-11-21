@@ -75,11 +75,11 @@ jboolean EGLWrapper::current_(jobject _this, jobject context, jobject surface) {
 }
 
 jc_sp<EGLWrapper> EGLWrapper::wrap(jobject obj) {
-    return jc_sp<EGLWrapper>( new EGLWrapper(obj));
+    return jc_sp<EGLWrapper>( mark_new EGLWrapper(obj));
 }
 
 jc_sp<EGLWrapper> EGLWrapper::global(jobject obj) {
-    return jc_sp<EGLWrapper>( (EGLWrapper*)(new EGLWrapper(obj))->addGlobalRef());
+    return jc_sp<EGLWrapper>( (EGLWrapper*)(mark_new EGLWrapper(obj))->addGlobalRef());
 }
 
 jclass EGLWrapper::getClass() {

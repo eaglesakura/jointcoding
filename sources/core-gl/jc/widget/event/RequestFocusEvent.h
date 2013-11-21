@@ -31,7 +31,7 @@ public:
     }
 
     static MEvent createInstance(const jcboolean hasFocus, const jc_sp<View> target) {
-        return Event::createEvent(EventType_RequestFocus, jc_sp<Object>(new RequestFocusEventExtension(hasFocus, target)) );
+        return Event::createEvent(EventType_RequestFocus, jc_sp<Object>(mark_new RequestFocusEventExtension(hasFocus, target)) );
     }
 };
 

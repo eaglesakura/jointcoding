@@ -122,11 +122,11 @@ void JavaNativeThread::start_(jobject _this) {
 }
 
 jc_sp<JavaNativeThread> JavaNativeThread::wrap(jobject obj) {
-    return jc_sp<JavaNativeThread>( new JavaNativeThread(obj));
+    return jc_sp<JavaNativeThread>( mark_new JavaNativeThread(obj));
 }
 
 jc_sp<JavaNativeThread> JavaNativeThread::global(jobject obj) {
-    return jc_sp<JavaNativeThread>( (JavaNativeThread*)(new JavaNativeThread(obj))->addGlobalRef());
+    return jc_sp<JavaNativeThread>( (JavaNativeThread*)(mark_new JavaNativeThread(obj))->addGlobalRef());
 }
 
 jclass JavaNativeThread::getClass() {

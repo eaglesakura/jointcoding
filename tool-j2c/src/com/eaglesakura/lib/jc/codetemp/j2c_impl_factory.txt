@@ -8,5 +8,5 @@ JNIEXPORT JCRESULTTYPE JNICALL Java_JCEXPORTCLASSNATIVEFUNCTIONNAME(JNIEnv *env,
     // call env reset
     initJniEnv(env);
     
-    return (jint)(new JCEXPORTCLASS_CALL);
+    return (jint)(mark_new JCEXPORTCLASS_CALL);
 }

@@ -72,11 +72,11 @@ jint NativeKeyEvent::getKeyCode_(jobject _this) {
 }
 
 jc_sp<NativeKeyEvent> NativeKeyEvent::wrap(jobject obj) {
-    return jc_sp<NativeKeyEvent>( new NativeKeyEvent(obj));
+    return jc_sp<NativeKeyEvent>( mark_new NativeKeyEvent(obj));
 }
 
 jc_sp<NativeKeyEvent> NativeKeyEvent::global(jobject obj) {
-    return jc_sp<NativeKeyEvent>( (NativeKeyEvent*)(new NativeKeyEvent(obj))->addGlobalRef());
+    return jc_sp<NativeKeyEvent>( (NativeKeyEvent*)(mark_new NativeKeyEvent(obj))->addGlobalRef());
 }
 
 jclass NativeKeyEvent::getClass() {

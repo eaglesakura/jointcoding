@@ -63,11 +63,11 @@ void PointerList::remove_(jobject _this, jstring key) {
 }
 
 jc_sp<PointerList> PointerList::wrap(jobject obj) {
-    return jc_sp<PointerList>( new PointerList(obj));
+    return jc_sp<PointerList>( mark_new PointerList(obj));
 }
 
 jc_sp<PointerList> PointerList::global(jobject obj) {
-    return jc_sp<PointerList>( (PointerList*)(new PointerList(obj))->addGlobalRef());
+    return jc_sp<PointerList>( (PointerList*)(mark_new PointerList(obj))->addGlobalRef());
 }
 
 jclass PointerList::getClass() {

@@ -53,11 +53,11 @@ void NativeAppUtil::printStackTrace(jobject e) {
 }
 
 jc_sp<NativeAppUtil> NativeAppUtil::wrap(jobject obj) {
-    return jc_sp<NativeAppUtil>( new NativeAppUtil(obj));
+    return jc_sp<NativeAppUtil>( mark_new NativeAppUtil(obj));
 }
 
 jc_sp<NativeAppUtil> NativeAppUtil::global(jobject obj) {
-    return jc_sp<NativeAppUtil>( (NativeAppUtil*)(new NativeAppUtil(obj))->addGlobalRef());
+    return jc_sp<NativeAppUtil>( (NativeAppUtil*)(mark_new NativeAppUtil(obj))->addGlobalRef());
 }
 
 jclass NativeAppUtil::getClass() {

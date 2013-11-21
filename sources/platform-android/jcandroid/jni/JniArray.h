@@ -170,11 +170,11 @@ public:
     }
 
     static jc_sp<JByteArray> wrap(jbyteArray array) {
-        return jc_sp<JByteArray>( new JByteArray(array));
+        return jc_sp<JByteArray>( mark_new JByteArray(array));
     }
 
     static jc_sp<JByteArray> global(jbyteArray array) {
-        return jc_sp<JByteArray>( (JByteArray*) (new JByteArray(array))->addGlobalRef());
+        return jc_sp<JByteArray>( (JByteArray*) (mark_new JByteArray(array))->addGlobalRef());
     }
 };
 #undef PRIMITIVE_TYPE
@@ -235,11 +235,11 @@ public:
     }
 
     static jc_sp<JIntArray> wrap(jintArray array) {
-        return jc_sp<JIntArray>(new JIntArray(array));
+        return jc_sp<JIntArray>(mark_new JIntArray(array));
     }
 
     static jc_sp<JIntArray> global(jintArray array) {
-        return jc_sp<JIntArray>( (JIntArray*) (new JIntArray(array))->addGlobalRef() );
+        return jc_sp<JIntArray>( (JIntArray*) (mark_new JIntArray(array))->addGlobalRef() );
     }
 };
 #undef PRIMITIVE_TYPE
@@ -300,11 +300,11 @@ public:
     }
 
     static jc_sp<JFloatArray> wrap(jfloatArray array) {
-        return jc_sp<JFloatArray>( new JFloatArray(array) );
+        return jc_sp<JFloatArray>( mark_new JFloatArray(array) );
     }
 
     static jc_sp<JFloatArray> global(jfloatArray array) {
-        return jc_sp<JFloatArray>((JFloatArray*) (new JFloatArray(array))->addGlobalRef());
+        return jc_sp<JFloatArray>((JFloatArray*) (mark_new JFloatArray(array))->addGlobalRef());
     }
 };
 #undef PRIMITIVE_TYPE
@@ -365,11 +365,11 @@ public:
     }
 
     static jc_sp<JDoubleArray> wrap(jdoubleArray array) {
-        return jc_sp<JDoubleArray>(new JDoubleArray(array));
+        return jc_sp<JDoubleArray>(mark_new JDoubleArray(array));
     }
 
     static jc_sp<JDoubleArray> global(jdoubleArray array) {
-        return jc_sp<JDoubleArray>((JDoubleArray*) (new JDoubleArray(array))->addGlobalRef());
+        return jc_sp<JDoubleArray>((JDoubleArray*) (mark_new JDoubleArray(array))->addGlobalRef());
     }
 };
 #undef PRIMITIVE_TYPE
@@ -438,11 +438,11 @@ public:
     }
 
     static jc_sp<JObjectArray> wrap(jobjectArray array) {
-        return jc_sp<JObjectArray>(new JObjectArray(array));
+        return jc_sp<JObjectArray>(mark_new JObjectArray(array));
     }
 
     static jc_sp<JObjectArray> global(jobjectArray array) {
-        return jc_sp<JObjectArray>((JObjectArray*) (new JObjectArray(array))->addGlobalRef());
+        return jc_sp<JObjectArray>((JObjectArray*) (mark_new JObjectArray(array))->addGlobalRef());
     }
 };
 #undef PRIMITIVE_TYPE

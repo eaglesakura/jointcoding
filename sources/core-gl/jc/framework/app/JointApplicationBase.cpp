@@ -62,7 +62,7 @@ void JointApplicationBase::dispatchDestroy() {
 void JointApplicationBase::dispatchInitialize() {
     // ウィンドウ生成
     {
-        windowManager.reset(new WindowManager());
+        windowManager.reset(mark_new WindowManager());
         // 30fps〜60fpsで扱う
         windowManager->setFramerateRange(30, 60);
         windowManager->setWindowEventHandler(this);

@@ -316,7 +316,7 @@ public:
         for (u32 i = 0; i < num; ++i) {
             MFigureNode node = nodes[i];
             if (!node) {
-                nodes[i].reset(new FigureNode());
+                nodes[i].reset(mark_new FigureNode());
             }
         }
     }

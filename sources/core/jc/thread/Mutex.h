@@ -63,7 +63,7 @@ private:
      * 実際にロックが行えるまで、このメソッドは返らない。
      */
     static jc_sp<MutexLock> reqeuestLock(Mutex &mtx) {
-        return jc_sp < MutexLock > (new MutexLock(mtx));
+        return jc_sp < MutexLock > (mark_new MutexLock(mtx));
     }
 };
 

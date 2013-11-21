@@ -89,11 +89,11 @@ jobject ImageDecoder::decodeFromBitmap_unsafe(jobject image, jboolean recycle) {
 }
 
 jc_sp<ImageDecoder> ImageDecoder::wrap(jobject obj) {
-    return jc_sp<ImageDecoder>( new ImageDecoder(obj));
+    return jc_sp<ImageDecoder>( mark_new ImageDecoder(obj));
 }
 
 jc_sp<ImageDecoder> ImageDecoder::global(jobject obj) {
-    return jc_sp<ImageDecoder>( (ImageDecoder*)(new ImageDecoder(obj))->addGlobalRef());
+    return jc_sp<ImageDecoder>( (ImageDecoder*)(mark_new ImageDecoder(obj))->addGlobalRef());
 }
 
 jclass ImageDecoder::getClass() {

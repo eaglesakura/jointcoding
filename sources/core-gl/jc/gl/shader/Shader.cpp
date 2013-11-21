@@ -76,7 +76,7 @@ MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charac
     }
 
     // エラーが発生していないから、オブジェクトを生成して返す
-    Shader *result = new Shader(shader);
+    Shader *result = mark_new Shader(shader);
     return MGLShader(result);
 }
 

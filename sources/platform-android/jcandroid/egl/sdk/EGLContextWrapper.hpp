@@ -28,8 +28,8 @@ public:
     SdkEGLContextWrapper(const jc_sp<EGLContextWrapper> eglContext) {
         this->eglContext = eglContext;
 
-        state.reset(new GLState());
-        vram.reset(new _VRAM());
+        state.reset(mark_new GLState());
+        vram.reset(mark_new _VRAM());
     }
 
     virtual ~SdkEGLContextWrapper() {

@@ -152,7 +152,7 @@ static MemoryMark* findMark(const char* file, const int line) {
     }
 
     // 新規にマークを作成する
-    MemoryMark *mark = new MemoryMark((char*) file, line);
+    MemoryMark *mark = mark_new MemoryMark((char*) file, line);
     marks.push_back(mark);
     return mark;
 }

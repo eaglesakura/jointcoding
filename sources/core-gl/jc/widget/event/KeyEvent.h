@@ -44,7 +44,7 @@ class KeyEventExtension: public Object {
 public:
     KeyEventExtension(const jc_sp<KeyEventProtocol> event) {
 //        this->event = event;
-        this->event.reset(new KeyEventPool(event.get()));
+        this->event.reset(mark_new KeyEventPool(event.get()));
 
         jcmark(this);
     }
@@ -64,8 +64,8 @@ public:
      * イベントを作成する
      */
     static MEvent createEvent( const jc_sp<KeyEventProtocol> event) {
-        jc_sp<KeyEventExtension> extension(new KeyEventExtension(event));
-        MEvent result(new Event(EventType_Key, extension));
+        jc_sp<KeyEventExtension> extension(mark_new KeyEventExtension(event));
+        MEvent result(mark_new Event(EventType_Key, extension));
         return result;
     }
 };

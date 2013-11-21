@@ -56,7 +56,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
         node.children_num = stream->readU16();
 
         if (node.children_num) {
-            node.children.reset(new s32[node.children_num]);
+            node.children.reset(mark_new s32[node.children_num]);
 
             // 子ノードの番号を取り出す
             for (u32 i = 0; i < node.children_num; ++i) {
@@ -95,7 +95,7 @@ void FigureDataLoader::loadNode(const s32 nodeNumber) {
             MBinaryInputStream stream = factory->openMeshInfo(nodeNumber);
             mesh.material_num = stream->readS8();
 
-            mesh.context_num.reset(new u32[mesh.material_num]);
+            mesh.context_num.reset(mark_new u32[mesh.material_num]);
             for (u32 i = 0; i < mesh.material_num; ++i) {
                 mesh.context_num[i] = stream->readS8();
             }

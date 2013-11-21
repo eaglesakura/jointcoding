@@ -58,11 +58,11 @@ jboolean ObjMonitoring::exist_(jobject _this) {
 }
 
 jc_sp<ObjMonitoring> ObjMonitoring::wrap(jobject obj) {
-    return jc_sp<ObjMonitoring>( new ObjMonitoring(obj));
+    return jc_sp<ObjMonitoring>( mark_new ObjMonitoring(obj));
 }
 
 jc_sp<ObjMonitoring> ObjMonitoring::global(jobject obj) {
-    return jc_sp<ObjMonitoring>( (ObjMonitoring*)(new ObjMonitoring(obj))->addGlobalRef());
+    return jc_sp<ObjMonitoring>( (ObjMonitoring*)(mark_new ObjMonitoring(obj))->addGlobalRef());
 }
 
 jclass ObjMonitoring::getClass() {

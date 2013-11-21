@@ -429,11 +429,11 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_android_fragment_NativeFragment_o
 
 
 jc_sp<NativeFragment> NativeFragment::wrap(jobject obj) {
-    return jc_sp<NativeFragment>( new NativeFragment(obj));
+    return jc_sp<NativeFragment>( mark_new NativeFragment(obj));
 }
 
 jc_sp<NativeFragment> NativeFragment::global(jobject obj) {
-    return jc_sp<NativeFragment>( (NativeFragment*)(new NativeFragment(obj))->addGlobalRef());
+    return jc_sp<NativeFragment>( (NativeFragment*)(mark_new NativeFragment(obj))->addGlobalRef());
 }
 
 jclass NativeFragment::getClass() {

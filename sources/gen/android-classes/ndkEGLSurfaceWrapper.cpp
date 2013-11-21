@@ -75,11 +75,11 @@ jint EGLSurfaceWrapper::getWidth_(jobject _this) {
 }
 
 jc_sp<EGLSurfaceWrapper> EGLSurfaceWrapper::wrap(jobject obj) {
-    return jc_sp<EGLSurfaceWrapper>( new EGLSurfaceWrapper(obj));
+    return jc_sp<EGLSurfaceWrapper>( mark_new EGLSurfaceWrapper(obj));
 }
 
 jc_sp<EGLSurfaceWrapper> EGLSurfaceWrapper::global(jobject obj) {
-    return jc_sp<EGLSurfaceWrapper>( (EGLSurfaceWrapper*)(new EGLSurfaceWrapper(obj))->addGlobalRef());
+    return jc_sp<EGLSurfaceWrapper>( (EGLSurfaceWrapper*)(mark_new EGLSurfaceWrapper(obj))->addGlobalRef());
 }
 
 jclass EGLSurfaceWrapper::getClass() {

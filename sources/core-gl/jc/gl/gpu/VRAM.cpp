@@ -136,7 +136,7 @@ static vram_id get(std::list<vram_id> *res, const VRAM_e type) {
         const vram_alloc_function alloc_func = function_tbl[type].alloc_func;
 
         jclogf("alloc object(type = %d[%d])", type, alloc_num);
-        jc_sa<u32> vram_obj(new u32[alloc_num]);
+        jc_sa<u32> vram_obj(mark_new u32[alloc_num]);
 
         // 指定数のオブジェクトを確保する
         alloc_func((s32) alloc_num, (u32*) vram_obj.get());
@@ -145,7 +145,7 @@ static vram_id get(std::list<vram_id> *res, const VRAM_e type) {
 
         // VRAMオブジェクトを追加する
         for (s32 i = 0; i < alloc_num; ++i) {
-            vram_id vram = new tagVramId();
+            vram_id vram = mark_new tagVramId();
             vram->obj = vram_obj[i];
             vram->type = type;
             vram->ref_count = 0;

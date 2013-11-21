@@ -39,7 +39,7 @@ jcboolean Device::makeCurrent(EGLMakeCurrent_e type) {
             egl->current(context, surface);
 
             // 現在のスレッドIDに割り当てる
-            setThreadId(MThreadID(new ThreadID()));
+            setThreadId(MThreadID(mark_new ThreadID()));
             return jctrue;
         case EGLMakeCurrent_Unbind:
             egl->current(EGL_NULL_CONTEXT, EGL_NULL_SURFACE);

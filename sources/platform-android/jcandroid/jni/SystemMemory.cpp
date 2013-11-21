@@ -48,7 +48,7 @@ void SystemMemory::addMonitor(jobject objMonitoring, jc_sp<Object> pointer ) {
 
     jc_sp<ObjMonitoring> monitor = ObjMonitoring::global(objMonitoring);
 
-    targets.push_back(gc_data(new _gc_data(monitor, pointer)));
+    targets.push_back(gc_data(mark_new _gc_data(monitor, pointer)));
 
 }
 

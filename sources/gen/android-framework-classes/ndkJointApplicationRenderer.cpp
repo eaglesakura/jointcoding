@@ -400,11 +400,11 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 
 
 jc_sp<JointApplicationRenderer> JointApplicationRenderer::wrap(jobject obj) {
-    return jc_sp<JointApplicationRenderer>( new JointApplicationRenderer(obj));
+    return jc_sp<JointApplicationRenderer>( mark_new JointApplicationRenderer(obj));
 }
 
 jc_sp<JointApplicationRenderer> JointApplicationRenderer::global(jobject obj) {
-    return jc_sp<JointApplicationRenderer>( (JointApplicationRenderer*)(new JointApplicationRenderer(obj))->addGlobalRef());
+    return jc_sp<JointApplicationRenderer>( (JointApplicationRenderer*)(mark_new JointApplicationRenderer(obj))->addGlobalRef());
 }
 
 jclass JointApplicationRenderer::getClass() {

@@ -60,11 +60,11 @@ jobject NativeIOUtil::openFromExternalStrage_unsafe(jstring path, jobject appCon
 }
 
 jc_sp<NativeIOUtil> NativeIOUtil::wrap(jobject obj) {
-    return jc_sp<NativeIOUtil>( new NativeIOUtil(obj));
+    return jc_sp<NativeIOUtil>( mark_new NativeIOUtil(obj));
 }
 
 jc_sp<NativeIOUtil> NativeIOUtil::global(jobject obj) {
-    return jc_sp<NativeIOUtil>( (NativeIOUtil*)(new NativeIOUtil(obj))->addGlobalRef());
+    return jc_sp<NativeIOUtil>( (NativeIOUtil*)(mark_new NativeIOUtil(obj))->addGlobalRef());
 }
 
 jclass NativeIOUtil::getClass() {
