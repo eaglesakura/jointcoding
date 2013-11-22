@@ -50,6 +50,21 @@ struct AllocatedHeapInfo {
      * マークが付いていないオブジェクト数
      */
     u32 objects_nomarked;
+
+    /**
+     * 確保済みのメモリノード数
+     */
+    u32 nodes_allocated;
+
+    /**
+     * 使用中のノード数
+     */
+    u32 nodes_using;
+
+    /**
+     * キャッシュ中のノード
+     */
+    u32 nodes_cache;
 };
 
 /**

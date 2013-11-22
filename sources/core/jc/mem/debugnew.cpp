@@ -80,15 +80,22 @@ static AllocChainNode* heapAlloc(size_t size) {
     if (!pResult) {
         // ノードが見つからなければ、新規にノードを作成する
         pResult = AllocChain_newNode(size);
-
+        // 確保済みノードをインクリメント
+        ++gHeapInfo.nodes_allocated;
         jclogf("hit allocated cache :: %x", pResult);
     } else {
         // ノードが見つかったら、見つかったノードを削除する
         AllocChain_remove(&allocatedChains[chainIndex], pResult);
+
+        // キャッシュをデクリメント
+        --gHeapInfo.nodes_cache;
     }
 
     // 使用済みノードに追加する
     usingChains[chainIndex] = AllocChain_pushFront(usingChains[chainIndex], pResult);
+
+    // 使用中ノードをインクリメント
+    ++gHeapInfo.nodes_using;
 
     // 確保したノードのヒープを返す
     return pResult;
@@ -106,6 +113,13 @@ static void heapFree(AllocChainNode *node) {
 
     // 使用可能ノードへ接続する
     allocatedChains[chainIndex] = AllocChain_pushFront(allocatedChains[chainIndex], node);
+
+    {
+        // キャッシュをインクリメント
+        ++gHeapInfo.nodes_cache;
+        // 使用中をデクリメント
+        --gHeapInfo.nodes_using;
+    }
 }
 
 /**
