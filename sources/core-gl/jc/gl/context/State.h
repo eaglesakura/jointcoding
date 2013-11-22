@@ -293,9 +293,9 @@ public:
         if (depthContext.enable != enable) {
             depthContext.enable = enable;
             if (enable) {
-                glEnable (GL_DEPTH_TEST);
+                glEnable(GL_DEPTH_TEST);
             } else {
-                glDisable (GL_DEPTH_TEST);
+                glDisable(GL_DEPTH_TEST);
             }
 
             assert_gl();
@@ -325,9 +325,9 @@ public:
         if (blendContext.enable != enable) {
             blendContext.enable = enable;
             if (enable) {
-                glEnable (GL_BLEND);
+                glEnable(GL_BLEND);
             } else {
-                glDisable (GL_BLEND);
+                glDisable(GL_BLEND);
             }
 
             assert_gl();
@@ -402,9 +402,9 @@ public:
         if (set != scissorContext.enable) {
 
             if (set) {
-                glEnable (GL_SCISSOR_TEST);
+                glEnable(GL_SCISSOR_TEST);
             } else {
-                glDisable (GL_SCISSOR_TEST);
+                glDisable(GL_SCISSOR_TEST);
             }
 
             scissorContext.enable = set;
@@ -572,8 +572,10 @@ public:
         if (currentTex != texture || currentTarget != target) {
             textureContext.textures[index] = texture;
             textureContext.targets[index] = target;
-            glBindTexture(target, texture);
             assert_gl();
+            glBindTexture(target, texture);
+
+            assert_gl_msg("active(%d) target(%x) texture(%u)", index, target, texture);
             return jctrue;
         }
 

@@ -4,7 +4,10 @@
  *  Created on: 2013/11/20
  */
 #include    "jointcoding.h"
+#include    "jc/math/Math.h"
 #include    "pthread.h"
+
+#include    "jc/mem/AllocChain.h"
 
 using namespace jc;
 
@@ -12,12 +15,23 @@ namespace {
 
 struct AllocHeader {
     /**
+     * 関連付けされているノード
+     */
+    AllocChainNode *node;
+
+    /**
      * 取得したいサイズ
      */
     u32 size;
 
+    /**
+     * タグ付けされているファイル
+     */
     char* file;
 
+    /**
+     * タグ付けされている行
+     */
     int line;
 };
 
@@ -31,19 +45,86 @@ static pthread_mutex_t alloc_mutex = PTHREAD_MUTEX_INITIALIZER;
 static const u32 ARRAY_SYSTEM_BYTES = 4;
 
 /**
+ * allocする際のバイト境界を設定する
+ */
+static const u32 BYTE_ALIGN = 32;
+
+/**
+ * alloc済みのメモリをキャッシュするノード数
+ */
+static const u32 ALLOC_CACHE_NODE_NUM = 256;
+
+/**
+ * alloc済みのヒープチェイン
+ */
+static AllocChainNode* allocatedChains[ALLOC_CACHE_NODE_NUM] { NULL };
+
+/**
+ * 使用済みのヒープチェイン
+ */
+static AllocChainNode* usingChains[ALLOC_CACHE_NODE_NUM] { NULL };
+
+/**
+ * ヒープを新規に確保する
+ */
+static AllocChainNode* heapAlloc(size_t size) {
+    // allocサイズを整える
+    size = ((size / BYTE_ALIGN) + 1) * BYTE_ALIGN;
+
+    // ノードチェイン番号を生成する
+    const u32 chainIndex = jc::min(size / BYTE_ALIGN, ALLOC_CACHE_NODE_NUM - 1);
+
+    // 返却可能なサイズのノードを探す
+    AllocChainNode* pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
+
+    if (!pResult) {
+        // ノードが見つからなければ、新規にノードを作成する
+        pResult = AllocChain_newNode(size);
+
+        jclogf("hit allocated cache :: %x", pResult);
+    } else {
+        // ノードが見つかったら、見つかったノードを削除する
+        AllocChain_remove(&allocatedChains[chainIndex], pResult);
+    }
+
+    // 使用済みノードに追加する
+    usingChains[chainIndex] = AllocChain_pushFront(usingChains[chainIndex], pResult);
+
+    // 確保したノードのヒープを返す
+    return pResult;
+}
+
+/**
+ * ノードを利用可能状態にする
+ */
+static void heapFree(AllocChainNode *node) {
+    // ノードチェイン番号を生成する
+    const u32 chainIndex = jc::min(node->heapSize / BYTE_ALIGN, ALLOC_CACHE_NODE_NUM - 1);
+
+    // 使用済みノードから切り離す
+    AllocChain_remove(&usingChains[chainIndex], node);
+
+    // 使用可能ノードへ接続する
+    allocatedChains[chainIndex] = AllocChain_pushFront(allocatedChains[chainIndex], node);
+}
+
+/**
  * 排他制御を行った上でメモリを確保する
  */
-void* alloc_mem(const size_t size, const u32 systemSize, const char * const file, const int line) {
+void* alloc_mem(size_t size, const u32 systemSize, const char * const file, const int line) {
+
     pthread_mutex_lock(&alloc_mutex);
 
     void* result = NULL;
 
     {
-        AllocHeader *pHead = (AllocHeader*) malloc(size + sizeof(AllocHeader));
+        AllocChainNode *pNode = heapAlloc(size + sizeof(AllocHeader));
+        AllocHeader *pHead = (AllocHeader*) AllocChain_getUserMemory(pNode);
 
-        pHead->file = (char*)file;
+        pHead->file = (char*) file;
         pHead->line = line;
         pHead->size = (size - systemSize);
+        pHead->node = pNode;
 
         // 確保済みbytesをインクリメント
         {
@@ -85,7 +166,8 @@ void free_mem(void* p, const u32 systemSize) {
                 --gHeapInfo.objects_nomarked;
             }
         }
-        free(pHead);
+
+        heapFree(pHead->node);
     }
 
     pthread_mutex_unlock(&alloc_mutex);
