@@ -575,7 +575,18 @@ public:
             assert_gl();
             glBindTexture(target, texture);
 
+#ifdef DEBUG
+#ifdef GL_TEXTURE_EXTERNAL_OES
+            if (target != GL_TEXTURE_EXTERNAL_OES) {
+                assert_gl_msg("active(%d) target(%x) texture(%u)", index, target, texture);
+            } else {
+                // GL_TEXTURE_EXTERNAL_OESは外部的な要因でエラーを吐く場合がある
+                print_glerror();
+            }
+#else
             assert_gl_msg("active(%d) target(%x) texture(%u)", index, target, texture);
+#endif
+#endif
             return jctrue;
         }
 

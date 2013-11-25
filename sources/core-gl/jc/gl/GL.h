@@ -64,6 +64,8 @@ inline s32 /* GLfixed */float2fixed(float f) {
 
 #define     assert_gl_msg(fmt, ...) { if(::jc::gl::GLState::printGLHasError(__FILE__, __LINE__)){  jclogf(fmt, __VA_ARGS__);  assert(false); } }
 
+#define     print_glerror(...)  {::jc::gl::GLState::printGLHasError(__FILE__, __LINE__);}
+
 #else
 // release
 #define     assert_gl(...)          { }
