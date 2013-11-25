@@ -47,18 +47,22 @@ static const u32 ARRAY_SYSTEM_BYTES = 4;
 /**
  * allocする際のバイト境界を設定する
  */
-static const u32 BYTE_ALIGN = 64;
+static const u32 BYTE_ALIGN = 32;
 
 /**
  * ノードキャッシュの分解能最大値
  * これ以上大きい値のキャッシュは全て最大値キャッシュとして利用される
  */
-static const u32 CACHE_NODE_SIZE_MAX = 2048;
+static const u32 CACHE_NODE_SIZE_MAX = 512 + 128;
 
 /**
  * alloc済みのメモリをキャッシュするノード数
  */
 static const u32 ALLOC_CACHE_NODE_NUM = CACHE_NODE_SIZE_MAX / BYTE_ALIGN;
+/**
+ * キャシュノードの最終インデックス
+ */
+static const u32 ALLOC_CACHE_NODE_LASTINDEX = ALLOC_CACHE_NODE_NUM - 1;
 
 /**
  * alloc済みのヒープチェイン
@@ -84,6 +88,11 @@ static AllocChainNode* heapAlloc(size_t size) {
     AllocChainNode* pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
 
     if (!pResult) {
+        // 最終ノードだったら、大きめに確保して使い回しやすくする
+        if (chainIndex == ALLOC_CACHE_NODE_LASTINDEX) {
+            size <<= 1;
+        }
+
         // ノードが見つからなければ、新規にノードを作成する
         pResult = AllocChain_newNode(size);
         // 確保済みノードをインクリメント

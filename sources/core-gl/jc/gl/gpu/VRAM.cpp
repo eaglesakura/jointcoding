@@ -143,6 +143,8 @@ static vram_id get(std::list<vram_id> *res, const VRAM_e type) {
         // GL動作検証
         assert_gl();
 
+        // memory clean
+        res->clear();
         // VRAMオブジェクトを追加する
         for (s32 i = 0; i < alloc_num; ++i) {
             vram_id vram = mark_new tagVramId();

@@ -19,7 +19,7 @@ typedef std::string string_t;
 String::String(const charactor* str) {
 
     if (str) {
-        this->text.reset(mark_new string_t(str));
+        this->text.reset(mark_new string_t(str, strlen(str)));
     } else {
         this->text.reset(mark_new string_t());
     }

@@ -149,6 +149,9 @@ void WindowManager::handleEvents() {
         dispatchEvent(event);
     }
 
+    // memory clean
+    events->clear();
+
     // 押しっぱなしチェックを行う
     {
         keyDetector->onHandleEvent();
