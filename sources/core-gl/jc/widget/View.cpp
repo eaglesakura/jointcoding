@@ -579,7 +579,7 @@ void View::registerWindow() {
 
     // 初期化実行を行う
     {
-        std::list<MRegisteredInitializer>::iterator itr = windowRegisteredInitializer.begin(), end = windowRegisteredInitializer.end();
+        initializer_container::iterator itr = windowRegisteredInitializer.begin(), end = windowRegisteredInitializer.end();
         while (itr != end) {
             (*itr)->onRegisteredWindow(this, windowContext);
             ++itr;

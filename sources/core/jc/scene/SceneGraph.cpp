@@ -84,6 +84,7 @@ void SceneGraph::removeChild(MSceneGraph child) {
         while (itr != end) {
             if ((*itr) == child) {
                 itr = childs.erase(itr);
+                end = childs.end();
             } else {
                 ++itr;
             }

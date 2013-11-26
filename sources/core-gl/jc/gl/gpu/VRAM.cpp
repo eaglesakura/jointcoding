@@ -157,7 +157,8 @@ static vram_id get(_VRAM::alloc_list *res, const VRAM_e type) {
 
     // 一番手前にあるオブジェクトを返す
     vram_id result = res->front();
-    res->pop_front();
+//    res->pop_front();
+    res->erase(res->begin());
     return result;
 }
 
@@ -227,7 +228,7 @@ void _VRAM::dispose() {
     MutexLock lock(mutex);
 
     for (s32 i = 0; i < VRAM_e_num; ++i) {
-        std::list<vram_id>::iterator itr = alloc_pool[i].begin(), end = alloc_pool[i].end();
+        alloc_list::iterator itr = alloc_pool[i].begin(), end = alloc_pool[i].end();
         while (itr != end) {
             // オブジェクトを解放する
             {

@@ -181,7 +181,7 @@ class GLState;
  */
 class _VRAM {
 public:
-    typedef typename std::list<vram_id, StlAllocator<vram_id> > alloc_list;
+    typedef typename std::vector<vram_id, StlAllocator<vram_id> > alloc_list;
     typedef typename std::vector<u32, StlAllocator<u32> > dealloc_list;
 private:
 

@@ -135,7 +135,7 @@ void TextView::onRegisteredWindow() {
  * フォントの描画領域の領域サイズを取得する
  */
 Vector2f TextView::getFontAreaSize() const {
-    std::list<MFontTexture>::const_iterator itr = fontTextures.begin(), end = fontTextures.end();
+    font_container::const_iterator itr = fontTextures.begin(), end = fontTextures.end();
 
     Vector2f result;
     s32 index = 0;
@@ -201,7 +201,7 @@ void TextView::onSelfRendering() {
     float y = textArea.top;
     const float AREA_WIDTH = textArea.width();
     // 全テクスチャの描画
-    std::list<MFontTexture>::const_iterator itr = fontTextures.begin(), end = fontTextures.end();
+    font_container::const_iterator itr = fontTextures.begin(), end = fontTextures.end();
 
     const Color color = getTextColorWithVisible();
     while (itr != end) {

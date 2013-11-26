@@ -31,6 +31,9 @@ enum TextMultilineGravity_e {
 };
 
 class TextView: public View {
+public:
+    typedef typename std::vector<MFontTexture, StlAllocator<MFontTexture> > font_container;
+
 protected:
     /**
      * エリアに対してテキストをどのように配置するか
@@ -66,7 +69,7 @@ protected:
     /**
      * 生成されたテクスチャリスト
      */
-    std::list<MFontTexture> fontTextures;
+    font_container fontTextures;
 
     /**
      * テクスチャが生成済みならtrue
