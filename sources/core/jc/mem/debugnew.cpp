@@ -136,6 +136,7 @@ static void heapFree(AllocChainNode *node) {
     const u32 chainIndex = jc::min(node->heapSize / BYTE_ALIGN, ALLOC_CACHE_NODE_NUM - 1);
 
     // 使用済みノードから切り離す
+//    jclogf("node info(%x) prev(%x) next(%x)", node, node->prev, node->next);
     AllocChain_remove(&usingChains[chainIndex], node);
 
     // 使用可能ノードへ接続する
@@ -148,6 +149,10 @@ static void heapFree(AllocChainNode *node) {
         --gHeapInfo.nodes_using;
     }
 }
+
+}
+
+namespace jc {
 
 /**
  * 排他制御を行った上でメモリを確保する
@@ -192,6 +197,10 @@ void* alloc_mem(size_t size, const u32 systemSize, const char * const file, cons
  * 排他制御を行った上でメモリを解放する
  */
 void free_mem(void* p, const u32 systemSize) {
+    if (!p) {
+        return;
+    }
+
     pthread_mutex_lock(&alloc_mutex);
     {
         AllocHeader* pHead = (((AllocHeader*) (((u8*) p) - 0)) - 1);

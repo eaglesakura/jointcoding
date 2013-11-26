@@ -15,7 +15,7 @@ namespace view {
 void Window::broadCastEvent(MView view, MEvent event) {
     view->dispatchEvent(event);
 
-    std::list<MSceneGraph>::iterator itr = view->childs.begin(), end = view->childs.end();
+    container::iterator itr = view->childs.begin(), end = view->childs.end();
 
     while (itr != end) {
         MView child = downcast<View>(*itr);
@@ -31,7 +31,7 @@ void Window::broadCastEvent(MView view, MEvent event) {
  */
 void Window::broadcastEvent(MEvent event) {
     // 子をチェックする
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    container::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
         MView child = downcast<View>(*itr);

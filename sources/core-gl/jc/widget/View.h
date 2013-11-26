@@ -719,7 +719,7 @@ public:
     virtual jc_sp<View> findTouchedView( const Vector2f &global) const {
         assert(isRegisteredWindow());
 
-        std::list<MSceneGraph>::const_reverse_iterator itr = childs.rbegin(), end = childs.rend();
+        container::const_reverse_iterator itr = childs.rbegin(), end = childs.rend();
 
         // 全チェックを行う
             while(itr != end) {
@@ -772,7 +772,7 @@ public:
          * 子 -> 子の子孫 -> 次の子 -> 子の子孫 の順番で探索される
          */
         virtual jc_sp<View> findFocusableView() const {
-            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            container::const_iterator itr = childs.begin(), end = childs.end();
 
             // 全チェックを行う
             while(itr != end) {
@@ -805,7 +805,7 @@ public:
          * フォーカスを持っているViewを取得する
          */
         virtual jc_sp<View> findFocusedView() const {
-            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            container::const_iterator itr = childs.begin(), end = childs.end();
 
             // 全チェックを行う
             while(itr != end) {
@@ -838,7 +838,7 @@ public:
          * 一致するIDを全て列挙して返す
          */
         virtual s32 findViewListById(const scene_id id, std::list< jc_sp<View> > *result) const {
-            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            container::const_iterator itr = childs.begin(), end = childs.end();
             while(itr != end) {
                 jc_sp<View> view = downcast<View>(*itr);
                 if(view) {
@@ -858,7 +858,7 @@ public:
          * 一致するIDで有効なViewを全て列挙して返す
          */
         virtual s32 findEnableViewListById(const scene_id id, std::list< jc_sp<View> > *result) const {
-            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            container::const_iterator itr = childs.begin(), end = childs.end();
             while(itr != end) {
                 jc_sp<View> view = downcast<View>(*itr);
                 if(view) {
@@ -879,7 +879,7 @@ public:
          */
         template<typename ViewClass>
         jc_sp<ViewClass> findViewByClass() const {
-            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            container::const_iterator itr = childs.begin(), end = childs.end();
             while(itr != end) {
                 jc_sp<View> view = downcast<View>(*itr);
                 jc_sp<ViewClass> classView = downcast<ViewClass>(*itr);
@@ -902,7 +902,7 @@ public:
          * 有効なViewを探して返す
          */
         virtual jc_sp<View> findEnableViewById(const scene_id id) const {
-            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            container::const_iterator itr = childs.begin(), end = childs.end();
             while(itr != end) {
                 jc_sp<View> view = downcast<View>(*itr);
                 if(view) {
@@ -927,7 +927,7 @@ public:
          * 有効なViewを探して返す
          */
         virtual jc_sp<View> findDisableViewById(const scene_id id) const {
-            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            container::const_iterator itr = childs.begin(), end = childs.end();
             while(itr != end) {
                 jc_sp<View> view = downcast<View>(*itr);
                 if(view) {
@@ -952,7 +952,7 @@ public:
          * 自分の子からフォーカスのインデックスを取得する
          */
         virtual s32 getFocusChildViewIndex(const jcboolean recursive) const {
-            std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+            container::const_iterator itr = childs.begin(), end = childs.end();
 
             s32 index = 0;
             while(itr != end) {
@@ -986,7 +986,7 @@ public:
             this->enableRenderingPass |= (0x1 << set);
 
             if(nest) {
-                std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+                container::iterator itr = childs.begin(), end = childs.end();
                 while(itr != end) {
                     jc_sp<View> view = downcast<View>(*itr);
                     if(view) {
@@ -1011,7 +1011,7 @@ public:
             this->enableRenderingPass = 0;
 
             if(nest) {
-                std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+                container::iterator itr = childs.begin(), end = childs.end();
                 while(itr != end) {
                     jc_sp<View> view = downcast<View>(*itr);
                     if(view) {

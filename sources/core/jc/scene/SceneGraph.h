@@ -33,6 +33,9 @@ enum ScenePassType_e {
 };
 
 class SceneGraph: public Object {
+public:
+    typedef typename std::vector<MSceneGraph, StlAllocator<MSceneGraph> > container;
+private:
     /**
      * 識別子
      * デフォルトはランダムで設定される
@@ -61,7 +64,7 @@ protected:
     /**
      * 子参照
      */
-    std::list<MSceneGraph> childs;
+    container childs;
 
     /**
      * 現在の処理パスを取得する
@@ -101,7 +104,7 @@ public:
         assert(pass >= 0);
         currentPass = pass;
 
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        container::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
             (*itr)->beginPass(passType, pass);
             ++itr;
@@ -116,7 +119,7 @@ public:
         const s32 finished_pass = jc::max(0, currentPass);
         currentPass = -1;
 
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        container::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
             (*itr)->endPass(passType);
             ++itr;

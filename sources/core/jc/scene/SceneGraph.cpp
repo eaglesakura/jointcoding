@@ -23,7 +23,7 @@ SceneGraph::~SceneGraph() {
  */
 u32 SceneGraph::getChildNum(const jcboolean recursion) {
     u32 result = childs.size();
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    container::iterator itr = childs.begin(), end = childs.end();
 
     if (recursion) {
         while (itr != end) {
@@ -66,7 +66,7 @@ void SceneGraph::removeChild(MSceneGraph child) {
 
     // 違う親が設定されていたら何もしない
     if (child->parent != this) {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        container::iterator itr = childs.begin(), end = childs.end();
 
         // 子を探索する
         while (itr != end) {
@@ -79,7 +79,16 @@ void SceneGraph::removeChild(MSceneGraph child) {
 
 //    jclogf("detatch (%x)", child.get());
     child->parent = NULL;
-    childs.remove(child);
+    {
+        container::iterator itr = childs.begin(), end = childs.end();
+        while (itr != end) {
+            if ((*itr) == child) {
+                itr = childs.erase(itr);
+            } else {
+                ++itr;
+            }
+        }
+    }
 
     // send message
     child->onSceneUnbinded();
@@ -89,7 +98,7 @@ void SceneGraph::removeChild(MSceneGraph child) {
  * すべての子を外す
  */
 void SceneGraph::removeChilds() {
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    container::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
         MSceneGraph child = (*itr);
@@ -117,8 +126,8 @@ void SceneGraph::removeChilds() {
 MSceneGraph SceneGraph::findScene(const scene_id uniqueId) const {
     assert(uniqueId != this->uniqueId);
 
-    std::list<MSceneGraph> *target_list = (std::list<MSceneGraph>*) &childs;
-    std::list<MSceneGraph>::iterator itr = target_list->begin(), end = target_list->end();
+    container *target_list = (container*) &childs;
+    container::iterator itr = target_list->begin(), end = target_list->end();
 
     while (itr != end) {
         if ((*itr)->getUniqueId() == uniqueId) {
@@ -142,7 +151,7 @@ void SceneGraph::removeFromParent() {
         return;
     }
 
-    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+    container::iterator itr = parent->childs.begin(), end = parent->childs.end();
 
     while (itr != end) {
         // リストの中から自分を見つけた！
@@ -167,7 +176,7 @@ void SceneGraph::removeFromParent() {
  * 更新作業を行う
  */
 jcboolean SceneGraph::update() {
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    container::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
         if ((*itr)->update()) {

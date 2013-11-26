@@ -121,7 +121,7 @@ jcboolean View::hasFocus(const jcboolean recursive) {
     }
 
     if (recursive) {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        container::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
 
             MView view = downcast<View>(*itr);
@@ -148,7 +148,7 @@ s32 View::getViewIndex() {
     assert(parent != NULL);
 
     s32 result = 0;
-    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+    container::iterator itr = parent->childs.begin(), end = parent->childs.end();
 
     while (itr != end) {
         MView view = downcast<View>(*itr);
@@ -197,7 +197,7 @@ jc_sp<View> View::findSibling(const s32 offset) {
     // インデックスを探す
 
     s32 check_index = 0;
-    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+    container::iterator itr = parent->childs.begin(), end = parent->childs.end();
 
     while (itr != end) {
         MView view = downcast<View>(*itr);
@@ -222,7 +222,7 @@ jc_sp<View> View::findSibling(const s32 offset) {
 MView View::getChildViewAt(const s32 index) {
     // インデックスを探す
     s32 check_index = 0;
-    std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+    container::iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
         MView view = downcast<View>(*itr);
@@ -517,7 +517,7 @@ MView View::getSelfManagedObject() {
     View *parent = getParentTo<View>();
     assert(parent != NULL);
 
-    std::list<MSceneGraph>::iterator itr = parent->childs.begin(), end = parent->childs.end();
+    container::iterator itr = parent->childs.begin(), end = parent->childs.end();
     while (itr != end) {
         if ((*itr).get() == (SceneGraph*) this) {
             return downcast<View>(*itr);
@@ -561,7 +561,7 @@ void View::registerWindow() {
 
 // 子も登録させる
     {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
+        container::iterator itr = childs.begin(), end = childs.end();
         while (itr != end) {
             MView view = downcast<View>(*itr);
             if (view) {
@@ -771,7 +771,7 @@ jcboolean View::isAllFocusWeightZero(const jcboolean recursive) const {
         return jcfalse;
     }
 
-    std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+    container::const_iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
         MView view = downcast<View>(*itr);
@@ -807,7 +807,7 @@ RectF View::getLocalLayoutAreaNest() const {
 RectF View::getGlobalLayoutAreaNest() const {
     RectF result = getGlobalLayoutArea();
 
-    std::list<MSceneGraph>::const_iterator itr = childs.begin(), end = childs.end();
+    container::const_iterator itr = childs.begin(), end = childs.end();
 
     while (itr != end) {
 
