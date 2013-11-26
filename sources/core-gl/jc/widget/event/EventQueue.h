@@ -18,6 +18,10 @@ namespace view {
  * イベントを待ち行列として管理する
  */
 class EventQueue: public Object {
+public:
+    typedef typename std::vector<MEvent, StlAllocator<MEvent> > container;
+
+private:
     /**
      * 複数スレッドアクセス用のmutex
      */
@@ -26,7 +30,7 @@ class EventQueue: public Object {
     /**
      * 貯めこまれたイベント
      */
-    std::list<MEvent> events;
+    container events;
 public:
     EventQueue() {
         jcmark(this);
@@ -49,7 +53,10 @@ public:
      */
     virtual void pushFrontEvent(const MEvent event) {
         MutexLock lock(mutex);
-        events.push_front(event);
+//        events.push_front(event);
+        events.insert(events.begin(), event);
+
+        assert((*events.begin()) == event);
     }
 
     /**
@@ -71,7 +78,7 @@ public:
         }
 
         MEvent result = events.front();
-        events.pop_front();
+        events.erase(events.begin());
 
         return result;
     }
@@ -89,7 +96,7 @@ public:
      */
     virtual void clear(const s32 eventType) {
         MutexLock lock(mutex);
-        std::list<MEvent>::iterator itr = events.begin(), end = events.end();
+        container::iterator itr = events.begin(), end = events.end();
         while (itr != end) {
             if ((*itr)->getType() == eventType) {
                 // イベントタイプがヒットしたら削除する
