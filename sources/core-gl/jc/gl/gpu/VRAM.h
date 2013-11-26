@@ -180,6 +180,10 @@ class GLState;
  * 各変数を別クラス化して、shareできるようにすれば問題ない
  */
 class _VRAM {
+public:
+    typedef typename std::list<vram_id, StlAllocator<vram_id> > alloc_list;
+    typedef typename std::vector<u32, StlAllocator<u32> > dealloc_list;
+private:
 
     /**
      * 今までに確保した合計量を保存しておく
@@ -191,15 +195,16 @@ class _VRAM {
      */
     s32 deleted_num[VRAM_e_num];
 
+
     /**
      * 生成済みのvram_id一覧
      */
-    std::list<vram_id> alloc_pool[VRAM_e_num];
+    alloc_list alloc_pool[VRAM_e_num];
 
     /**
      * 廃棄用のVRAM領域
      */
-    std::vector<u32> dealloc_pool[VRAM_e_num];
+    dealloc_list dealloc_pool[VRAM_e_num];
 
     jcmutex mutex;
 public:

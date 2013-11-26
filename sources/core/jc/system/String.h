@@ -11,14 +11,18 @@
 #include    <vector>
 #include    <string>
 
+#include    "jc/system/StlAllocator.hpp"
+
 namespace jc {
+
+typedef std::basic_string<charactor, std::char_traits<charactor>, StlAllocator<charactor> > string_t;
 
 class String {
 
     /**
      * ネイティブ実装の文字列
      */
-    jc_sp<std::string> text;
+    jc_sp<string_t> text;
 public:
     String(const charactor* str = NULL);
 
@@ -111,14 +115,14 @@ public:
      * ネイティブクラスに変換して取得する
      * 変換は必ずJC_NATIVE_STRINGを利用しなければならない。
      */
-    std::string& get() {
+    string_t& get() {
         return *text.get();
     }
 
     /**
      * ネイティブクラスに変換して取得する
      */
-    const std::string& get() const {
+    const string_t& get() const {
         return *text.get();
     }
 

@@ -127,7 +127,7 @@ _VRAM::~_VRAM() {
 
 }
 
-static vram_id get(std::list<vram_id> *res, const VRAM_e type) {
+static vram_id get(_VRAM::alloc_list *res, const VRAM_e type) {
     if (!res->empty()) {
         jclogf("cache object(type = %d num(%d))", type, res->size());
     } else {
@@ -260,7 +260,7 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
 
                     switch (i) {
                         case VRAM_Texture: {
-                            std::vector<u32>::iterator itr = dealloc_pool[i].begin(), end = dealloc_pool[i].end();
+                            dealloc_list::iterator itr = dealloc_pool[i].begin(), end = dealloc_pool[i].end();
                             while (itr != end) {
                                 // テクスチャを外す
                                 state->unbindTexture((*itr));
@@ -299,6 +299,8 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
  * 確保済みのVRAMオブジェクト数を取得する
  */
 _VRAM::Infomation _VRAM::getInfo(const VRAM_e vramType) {
+    MutexLock lock(mutex);
+
     Infomation result;
 
     result.allocated = alloced_num[vramType];

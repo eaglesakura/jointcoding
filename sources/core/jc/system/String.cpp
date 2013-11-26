@@ -10,12 +10,6 @@
 
 namespace jc {
 
-/**
- * ネイティブの文字列型。
- * 基本的にはstd::string。対応してなければ、適宜書き換える。
- */
-typedef std::string string_t;
-
 String::String(const charactor* str) {
 
     if (str) {

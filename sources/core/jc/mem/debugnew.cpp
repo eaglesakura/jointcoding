@@ -67,12 +67,12 @@ static const u32 ALLOC_CACHE_NODE_LASTINDEX = ALLOC_CACHE_NODE_NUM - 1;
 /**
  * alloc済みのヒープチェイン
  */
-static AllocChainNode* allocatedChains[ALLOC_CACHE_NODE_NUM] { NULL };
+static AllocChainNode* allocatedChains[ALLOC_CACHE_NODE_NUM] = { NULL };
 
 /**
  * 使用済みのヒープチェイン
  */
-static AllocChainNode* usingChains[ALLOC_CACHE_NODE_NUM] { NULL };
+static AllocChainNode* usingChains[ALLOC_CACHE_NODE_NUM] = { NULL };
 
 /**
  * ヒープを新規に確保する
@@ -82,12 +82,21 @@ static AllocChainNode* heapAlloc(size_t size) {
     size = ((size / BYTE_ALIGN) + 1) * BYTE_ALIGN;
 
     // ノードチェイン番号を生成する
-    const u32 chainIndex = jc::min(size / BYTE_ALIGN, ALLOC_CACHE_NODE_NUM - 1);
+    const u32 selectChainIndex = jc::min(size / BYTE_ALIGN, ALLOC_CACHE_NODE_NUM - 1);
+    u32 chainIndex = selectChainIndex;
 
     // 返却可能なサイズのノードを探す
     AllocChainNode* pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
 
+    // 見つからなかったら大サイズノードを探す
+    if (!pResult && chainIndex != ALLOC_CACHE_NODE_LASTINDEX) {
+        ++chainIndex;
+        pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
+    }
+
     if (!pResult) {
+        // 初期Indexに戻す
+        chainIndex = selectChainIndex;
         // 最終ノードだったら、大きめに確保して使い回しやすくする
         if (chainIndex == ALLOC_CACHE_NODE_LASTINDEX) {
             size <<= 1;
