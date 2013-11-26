@@ -53,7 +53,7 @@ static const u32 BYTE_ALIGN = 32;
  * ノードキャッシュの分解能最大値
  * これ以上大きい値のキャッシュは全て最大値キャッシュとして利用される
  */
-static const u32 CACHE_NODE_SIZE_MAX = 512 + 128;
+static const u32 CACHE_NODE_SIZE_MAX = 64;
 
 /**
  * alloc済みのメモリをキャッシュするノード数
@@ -75,6 +75,13 @@ static AllocChainNode* allocatedChains[ALLOC_CACHE_NODE_NUM] = { NULL };
 static AllocChainNode* usingChains[ALLOC_CACHE_NODE_NUM] = { NULL };
 
 /**
+ * 大容量ヒープを要求している場合はtrueを返す
+ */
+inline bool isLargeHeap(size_t size) {
+    return size > CACHE_NODE_SIZE_MAX;
+}
+
+/**
  * ヒープを新規に確保する
  */
 static AllocChainNode* heapAlloc(size_t size) {
@@ -82,32 +89,36 @@ static AllocChainNode* heapAlloc(size_t size) {
     size = ((size / BYTE_ALIGN) + 1) * BYTE_ALIGN;
 
     // ノードチェイン番号を生成する
-    const u32 selectChainIndex = jc::min(size / BYTE_ALIGN, ALLOC_CACHE_NODE_NUM - 1);
+    const u32 selectChainIndex = jc::min(size / BYTE_ALIGN, ALLOC_CACHE_NODE_LASTINDEX);
     u32 chainIndex = selectChainIndex;
 
     // 返却可能なサイズのノードを探す
     AllocChainNode* pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
 
+#if 0
     // 見つからなかったら大サイズノードを探す
     if (!pResult && chainIndex != ALLOC_CACHE_NODE_LASTINDEX) {
         ++chainIndex;
         pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
     }
+#endif
 
     if (!pResult) {
         // 初期Indexに戻す
         chainIndex = selectChainIndex;
+#if 0
         // 最終ノードだったら、大きめに確保して使い回しやすくする
         if (chainIndex == ALLOC_CACHE_NODE_LASTINDEX) {
             size <<= 1;
         }
+#endif
 
         // ノードが見つからなければ、新規にノードを作成する
         pResult = AllocChain_newNode(size);
         // 確保済みノードをインクリメント
         ++gHeapInfo.nodes_allocated;
 
-        jclogf("alloc newnode %d bytes :: %x", pResult->heapSize, pResult);
+//        jclogf("alloc newnode %d bytes :: %x", pResult->heapSize, pResult);
     } else {
         // ノードが見つかったら、見つかったノードを削除する
         AllocChain_remove(&allocatedChains[chainIndex], pResult);
@@ -137,16 +148,22 @@ static void heapFree(AllocChainNode *node) {
 
     // 使用済みノードから切り離す
 //    jclogf("node info(%x) prev(%x) next(%x)", node, node->prev, node->next);
-    AllocChain_remove(&usingChains[chainIndex], node);
-
-    // 使用可能ノードへ接続する
-    allocatedChains[chainIndex] = AllocChain_pushFront(allocatedChains[chainIndex], node);
-
     {
-        // キャッシュをインクリメント
-        ++gHeapInfo.nodes_cache;
+        AllocChain_remove(&usingChains[chainIndex], node);
         // 使用中をデクリメント
         --gHeapInfo.nodes_using;
+    }
+
+    // 使用可能ノードへ接続する
+    if (isLargeHeap(node->heapSize)) {
+        // 大サイズノードは直接解放する
+        ::free(node);
+        // alloc済みを減らす
+        --gHeapInfo.nodes_allocated;
+    } else {
+        allocatedChains[chainIndex] = AllocChain_pushFront(allocatedChains[chainIndex], node);
+        // キャッシュをインクリメント
+        ++gHeapInfo.nodes_cache;
     }
 }
 
@@ -158,6 +175,13 @@ namespace jc {
  * 排他制御を行った上でメモリを確保する
  */
 void* alloc_mem(size_t size, const u32 systemSize, const char * const file, const int line) {
+    // debug info
+#ifdef DEBUG
+    if (size > 1024) {
+        // 1kb以上の大ヒープを要求したら犯人を出力する
+        jclogf("request large heap(%d bytes) from(%s) L %d", size, file ? file : "Unknown Source", line);
+    }
+#endif
 
     pthread_mutex_lock(&alloc_mutex);
 
