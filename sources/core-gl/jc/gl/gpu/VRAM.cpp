@@ -7,6 +7,7 @@
 #include    "jc/gl/GL.h"
 #include    "jc/gl/gpu/VRAM.h"
 #include    "jc/gl/context/State.h"
+#include    <map>
 
 //     #define PRINT_VRAM
 
@@ -140,6 +141,25 @@ static vram_id get(_VRAM::alloc_list *res, const VRAM_e type) {
 
         // 指定数のオブジェクトを確保する
         alloc_func((s32) alloc_num, (u32*) vram_obj.get());
+
+#ifdef  DEBUG
+        if (type == VRAM_Texture) {
+            static std::map<u32, u32> texture_allocated;
+
+            for (int i = 0; i < alloc_num; ++i) {
+                const u32 id = vram_obj[i];
+                // まだallocされていないIDだったら
+                if (texture_allocated.find(id) == texture_allocated.end()) {
+                    texture_allocated.insert(std::pair<u32, u32>(id, id));
+                    jclogf("new allocated texture id(%d)", id);
+                } else {
+                    jclogf("reuse allocated texture id(%d)", id);
+                }
+            }
+
+        }
+#endif
+
         // GL動作検証
         assert_gl();
 
@@ -261,13 +281,7 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
 
                     switch (i) {
                         case VRAM_Texture: {
-                            dealloc_list::iterator itr = dealloc_pool[i].begin(), end = dealloc_pool[i].end();
-                            while (itr != end) {
-                                // テクスチャを外す
-                                state->unbindTexture((*itr));
-
-                                ++itr;
-                            }
+                            state->unbindTextures(dealloc_pool[i].size(), &(dealloc_pool[i][0]));
                         }
                             break;
                     }
@@ -276,11 +290,12 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
                 state->finish();
                 assert_gl();
                 // 解放ビットフラグを含んでいたら、解放を行う
-                for (u32 k = 0; k < dealloc_pool[i].size(); ++k) {
-                    function_tbl[i].delete_func(1, (u32*) &(dealloc_pool[i][k]));
-                    assert_gl();
-                    state->flush();
-                }
+//                for (u32 k = 0; k < dealloc_pool[i].size(); ++k) {
+//                    function_tbl[i].delete_func(1, (u32*) &(dealloc_pool[i][k]));
+//                    assert_gl();
+//                    state->flush();
+//                }
+                function_tbl[i].delete_func(dealloc_pool[i].size(), &(dealloc_pool[i][0]));
                 state->finish();
 
                 assert_gl();

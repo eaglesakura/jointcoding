@@ -15,9 +15,9 @@ namespace jc {
 template<typename TextureType>
 class TextureTable: public Object {
 
-    std::vector<jc_sp<TextureType> > value_array;
+    std::vector<jc_sp<TextureType>, StlAllocator<jc_sp<TextureType> > > value_array;
 
-    std::vector<String> key_array;
+    std::vector<String, StlAllocator<String> > key_array;
 
 public:
     TextureTable() {
@@ -60,6 +60,10 @@ public:
             ++itr;
         }
         return jc_sp<TextureType>();
+    }
+
+    virtual size_t size() {
+        return key_array.size();
     }
 };
 

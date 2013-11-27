@@ -497,21 +497,31 @@ public:
     }
 
     /**
-     * 引数のテクスチャがどれかにバインドされている場合、バインドを解除する。
+     * バインドされているテクスチャを一括で解放する
      */
-    inline void unbindTexture(const GLuint texture) {
+    inline void unbindTextures(const u32 num, const u32* textures) {
         const s32 active = toTextureIndex(textureContext.active);
         assert(active >= 0);
 
-        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
-            if (textureContext.textures[i] == texture) {
-                // テクスチャが一致したからunbind
-                activeTexture(i);
-                bindTexture(textureContext.targets[i], 0);
+        for (int n = 0; n < num; ++n) {
+            const u32 texture = textures[n];
+            for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
+                if (textureContext.textures[i] == texture) {
+                    // テクスチャが一致したからunbind
+                    activeTexture(i);
+                    bindTexture(textureContext.targets[i], 0);
+                }
             }
         }
 
         activeTexture(active);
+    }
+
+    /**
+     * 引数のテクスチャがどれかにバインドされている場合、バインドを解除する。
+     */
+    inline void unbindTexture(const GLuint texture) {
+        unbindTextures(1, &texture);
     }
 
     /**
@@ -572,9 +582,7 @@ public:
         if (currentTex != texture || currentTarget != target) {
             textureContext.textures[index] = texture;
             textureContext.targets[index] = target;
-            assert_gl();
             glBindTexture(target, texture);
-
 #ifdef DEBUG
 #ifdef GL_TEXTURE_EXTERNAL_OES
             if (target != GL_TEXTURE_EXTERNAL_OES) {

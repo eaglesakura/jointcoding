@@ -69,7 +69,8 @@ inline s32 /* GLfixed */float2fixed(float f) {
 #else
 // release
 #define     assert_gl(...)          { }
-#define     assert_gl_msg(fmt, ...) {}
+#define     print_glerror(...)      { }
+#define     assert_gl_msg(fmt, ...) { }
 #endif
 
 /**
