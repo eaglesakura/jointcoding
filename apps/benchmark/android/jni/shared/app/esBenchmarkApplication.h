@@ -21,6 +21,11 @@ class BenchmarkApplication: public JointApplicationBase, public RenderingContext
          * テクスチャ読込を行わせるタスク
          */
         BenchmarkTask_LoadTexture,
+
+        /**
+         * リソースロード用タスク
+         */
+        BenchmarkTask_LoadResources,
     };
 
     /**
@@ -73,11 +78,15 @@ class BenchmarkApplication: public JointApplicationBase, public RenderingContext
      * シャドウマップ用テクスチャ
      */
     MTextureImage shadowmapTexture;
+
+    jcboolean initialized;
 public:
     BenchmarkApplication();
     virtual ~BenchmarkApplication();
 
     virtual void loadTexture(MDevice subDevice);
+
+    virtual void loadResource(MDevice subDevice);
 
 protected:
 
@@ -86,7 +95,6 @@ protected:
      * 可能な限りリクエストに沿ったサーフェイスを作成する。
      */
     virtual SurfaceSpecs getRenderingSurfaceSpecs() const;
-
 
     /**
      * レンダリングサーフェイスが変更された

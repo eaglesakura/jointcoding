@@ -132,6 +132,11 @@ typedef Handle<GLuint> vram_handle;
  */
 typedef struct _vram_id {
     /**
+     * VRAMの種類
+     */
+    VRAM_e type;
+
+    /**
      * 管理ID
      */
     GLuint id;
@@ -144,6 +149,7 @@ typedef struct _vram_id {
     _vram_id() {
         id = 0;
         ref = 0;
+        type = VRAM_e_NULL;
     }
 
     ~_vram_id() {
@@ -152,7 +158,6 @@ typedef struct _vram_id {
     }
 }* vram_id;
 
-
 /**
  * Shared Contextを前提としたVRAMクラス
  * 共有可能なものは共有し、それ以外は独自でハンドル管理する
@@ -160,17 +165,30 @@ typedef struct _vram_id {
  * 複数スレッドからアクセスされる危険性があるため、生成時・廃棄時にはmutexを使った排他処理を行う
  */
 class SharedVRAM: public Object {
+public:
+    typedef typename std::vector<vram_id, StlAllocator<vram_id> > alloc_list;
+    typedef typename std::vector<u32, StlAllocator<u32> > dealloc_list;
+private:
     /**
      * VRAMのアクセス用テーブル
      */
     jc_sp<vram_table> vram_tables[VRAM_e_num];
 
-
-
     /**
      * 生成時のミューテックス
      */
-    jcmutex mtx;
+    jcmutex mutex;
+
+    /**
+     * 生成済みのvram_id一覧
+     */
+    alloc_list alloc_pool[VRAM_e_num];
+
+    /**
+     * 廃棄用のVRAM領域
+     */
+    dealloc_list dealloc_pool[VRAM_e_num];
+
 public:
     SharedVRAM();
 
@@ -187,6 +205,16 @@ public:
      * 領域確保を行う
      */
     vram_handle alloc(const VRAM_e type);
+
+    /**
+     * 参照カウンタを1つ上げる
+     */
+    vram_id retain(vram_id id);
+
+    /**
+     * 参照カウンタを1つ下げる
+     */
+    void release(vram_id id);
 
     /**
      * 不要なオブジェクトの掃除を行う

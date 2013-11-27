@@ -17,6 +17,7 @@ namespace es {
 
 BenchmarkApplication::BenchmarkApplication() {
     rotate = 0;
+    initialized = jcfalse;
 }
 
 BenchmarkApplication::~BenchmarkApplication() {
@@ -102,64 +103,10 @@ void BenchmarkApplication::onAppInitialize() {
         loader->load();
     }
 
-    // フィギュアのインスタンスを確保する
-    {
-        // シェーダー読込
-        MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
-        assert(shader);
-
-        basicShader = shader;
-        renderer.reset(new BasicFigureRenderer());
-        renderer->initialize(getWindowDevice(), shader);
-
-        worldEnv.reset(new EnvironmentInstanceState());
-
-        {
-            susanow_instance.reset(renderer->createInstanceState(susanow));
-            susanow_instance->setEnvironmentState(worldEnv);
-        }
-
-        {
-            antan_instance.reset(renderer->createInstanceState(antan));
-            antan_instance->setEnvironmentState(worldEnv);
-        }
-    }
-    // シャドウ用のレンダラを確保する
-    {
-        // シェーダー読込
-        MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("shadow.vert"), Uri::fromAssets("shadow.frag"));
-        assert(shader);
-
-        shadowRenderer.reset(new ShadowmapRenderer());
-        shadowRenderer->initialize(getWindowDevice(), shader);
-    }
-
-    // オフスクリーンターゲットを生成
-    {
-        MDevice device = getWindowDevice();
-
-        const s32 width = 2048;
-        const s32 height = width;
-        shadowmap.reset(new FrameBufferObject(device));
-        // オフスクリーンのリサイズを行う
-        shadowmap->resize(device->getState(), width, height);
-
-        if (shadowmap->allocDepthRenderTexture(device)) {
-            shadowmapTexture = shadowmap->getDepthTexture();
-        } else {
-            shadowmap->allocColorRenderTexture(device, PixelFormat_LuminanceF16);
-            shadowmap->allocDepthRenderbuffer(device, 24);
-
-            shadowmapTexture = shadowmap->getColorTexture();
-        }
-        // オフスクリーンテクスチャの確保を行う
-//        shadowmap->allocDepthRenderTexture(device);
-        shadowmap->checkFramebufferStatus();
-        shadowmap->unbind(device->getState());
-    }
 
 //    // テクスチャロードを開始する
     startNewtask(BenchmarkTask_LoadTexture, 0);
+    startNewtask(BenchmarkTask_LoadResources, 0);
 }
 
 void BenchmarkApplication::loadTexture(MDevice subDevice) {
@@ -173,9 +120,74 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
         texture->unbind();
 
         Thread::sleep(500);
-        subDevice->getVRAM()->gc();
+//        subDevice->getVRAM()->gc();
 
         jclog("load finish");
+    } catch (Exception &e) {
+        jcloge(e);
+    }
+}
+
+void BenchmarkApplication::loadResource(MDevice subDevice) {
+    try {
+        DeviceLock lock(subDevice, jctrue);
+
+        // フィギュアのインスタンスを確保する
+        {
+            // シェーダー読込
+            MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
+            assert(shader);
+
+            basicShader = shader;
+            renderer.reset(new BasicFigureRenderer());
+            renderer->initialize(getWindowDevice(), shader);
+
+            worldEnv.reset(new EnvironmentInstanceState());
+
+            {
+                susanow_instance.reset(renderer->createInstanceState(susanow));
+                susanow_instance->setEnvironmentState(worldEnv);
+            }
+
+            {
+                antan_instance.reset(renderer->createInstanceState(antan));
+                antan_instance->setEnvironmentState(worldEnv);
+            }
+        }
+        // シャドウ用のレンダラを確保する
+        {
+            // シェーダー読込
+            MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("shadow.vert"), Uri::fromAssets("shadow.frag"));
+            assert(shader);
+
+            shadowRenderer.reset(new ShadowmapRenderer());
+            shadowRenderer->initialize(getWindowDevice(), shader);
+        }
+
+        // オフスクリーンターゲットを生成
+        {
+            MDevice device = getWindowDevice();
+
+            const s32 width = 2048;
+            const s32 height = width;
+            shadowmap.reset(new FrameBufferObject(device));
+            // オフスクリーンのリサイズを行う
+            shadowmap->resize(device->getState(), width, height);
+
+            if (shadowmap->allocDepthRenderTexture(device)) {
+                shadowmapTexture = shadowmap->getDepthTexture();
+            } else {
+                shadowmap->allocColorRenderTexture(device, PixelFormat_LuminanceF16);
+                shadowmap->allocDepthRenderbuffer(device, 24);
+
+                shadowmapTexture = shadowmap->getColorTexture();
+            }
+            // オフスクリーンテクスチャの確保を行う
+    //        shadowmap->allocDepthRenderTexture(device);
+            shadowmap->checkFramebufferStatus();
+            shadowmap->unbind(device->getState());
+        }
+        initialized = jctrue;
     } catch (Exception &e) {
         jcloge(e);
     }
@@ -194,6 +206,10 @@ void BenchmarkApplication::onAppSurfaceResized(const s32 width, const s32 height
  * メソッド呼び出し時点でデバイスロック済み
  */
 void BenchmarkApplication::onAppMainUpdate() {
+    if (!initialized) {
+        return;
+    }
+
     MDevice device = getWindowDevice();
     MGLState state = device->getState();
     {
@@ -206,7 +222,7 @@ void BenchmarkApplication::onAppMainUpdate() {
     {
         state->depthTestEnable(jcfalse);
         renderingContext->viewportVirtual();
-        spriteManager->setSurfaceAspect((u32)renderingContext->getVirtualDisplaySize().x, (u32)renderingContext->getVirtualDisplaySize().y);
+        spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
         spriteManager->renderingRect(0, 0, renderingContext->getVirtualDisplaySize().x, renderingContext->getVirtualDisplaySize().y, 0x7FFFFFFF);
     }
 //    {
@@ -329,6 +345,9 @@ jcboolean BenchmarkApplication::onAppTask(const ApplicationTaskContext &task) {
         case BenchmarkTask_LoadTexture:
             loadTexture(platformContext->createSlaveDevice());
             return jctrue;
+        case BenchmarkTask_LoadResources:
+            loadResource(platformContext->createSlaveDevice());
+            return true;
         default:
             // ハンドル出来なかった
             return jcfalse;
