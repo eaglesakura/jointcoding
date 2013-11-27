@@ -29,7 +29,7 @@ ThreadID::ThreadID() {
 /**
  * 指定したIDから作成する
  */
-ThreadID::ThreadID(NativeThreadIdPtr _id) {
+ThreadID::ThreadID(void* _id) {
     this->threadId = NULL;
     swap(_id);
 }
@@ -44,20 +44,22 @@ ThreadID::ThreadID(const ThreadID &origin) {
 
 ThreadID::~ThreadID() {
     swap(NULL);
+
+    assert(threadId == NULL);
 }
 
 /**
  * 持っているポインタと交換する
  */
-void ThreadID::swap(NativeThreadIdPtr p) {
+void ThreadID::swap(void* p) {
     if (p) {
         if (!threadId) {
-            threadId = (NativeThreadIdPtr) new thread_id();
+            threadId = (void*) mark_new thread_id();
         }
         thread_id* pId = (thread_id*) (threadId);
 
         // ポインタを持っているなら代入する
-        (*pId) = *((thread::id*) p);
+        (*pId) = *((thread_id*) p);
     } else {
         thread_id *pId = (thread_id*) (threadId);
         SAFE_DELETE(pId);
@@ -69,10 +71,10 @@ void ThreadID::swap(NativeThreadIdPtr p) {
  * 文字列に直す
  */
 jc::String ThreadID::toString() const {
-    s32 rawId = *((s32*) threadId);
+    const u64 rawId = *((u64*) threadId);
 //    jclogf("rawId = %d", rawId);
-    charactor str[25] = { 0 };
-    sprintf(str, "thread_%u", rawId);
+    charactor str[40] = { 0 };
+    sprintf(str, "thread_%llu", rawId);
     return str;
 }
 
@@ -94,21 +96,21 @@ bool ThreadID::operator==(const ThreadID &id) {
  * 比較
  */
 bool ThreadID::operator!=(const ThreadID &id) {
-    thread_id*_this = (thread_id*) (threadId);
-    thread_id*_id = (thread_id*) (id.threadId);
+    const thread_id*_this = (thread_id*) (threadId);
+    const thread_id*_id = (thread_id*) (id.threadId);
 
-    if (_this == NULL || _id == NULL) {
-        return jcfalse;
+    if (_this && _id) {
+        return (*_this) != (*_id);
     }
 
-    return (*_this) != (*_id);
+    return jcfalse;
 }
 
 /**
  * 現在実行されているスレッドとThreadIDが一致した場合、trueを返す。
  */
 jcboolean ThreadID::isCurrent() {
-    thread_id *id = (thread_id*) threadId;
+    const thread_id *id = (thread_id*) threadId;
     if (id == NULL) {
         return jcfalse;
     }
@@ -122,8 +124,8 @@ jcboolean ThreadID::equals(const ThreadID *id) {
     if (!id) {
         return jcfalse;
     }
-    thread_id*_this = (thread_id*) (threadId);
-    thread_id*_id = (thread_id*) (id->threadId);
+    const thread_id*_this = (thread_id*) (threadId);
+    const thread_id*_id = (thread_id*) (id->threadId);
 
     if (_this == NULL || _id == NULL) {
         return jcfalse;

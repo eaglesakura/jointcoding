@@ -3,6 +3,7 @@
  *
  *  Created on: 2012/07/21
  */
+#include    "jointcoding.h"
 #include    "jc/system/Macro.h"
 #include    "jc/thread/Mutex.h"
 
@@ -14,11 +15,16 @@ namespace jc {
 
 MutexLock::MutexLock(const jc::Mutex &mtx) {
     this->mutex = mtx.mutex;
-    nativeLock = (new native_lock(mtx.mutex.as<native_mutex>()));
+    this->lock = (void*) mark_new native_lock(*this->mutex.get());
 }
 
 MutexLock::~MutexLock() {
-    IMPL_SAFE_DELETE(nativeLock, native_lock);
+    {
+        native_lock *pLock = (native_lock*)this->lock;
+        SAFE_DELETE(pLock);
+        this->lock = NULL;
+    }
+    mutex.reset();
 }
 
 }
