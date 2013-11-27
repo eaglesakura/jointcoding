@@ -7,6 +7,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.eaglesakura.jc.android.app.NativeContext;
+import com.eaglesakura.jc.android.resource.jni.Jointable;
 import com.eaglesakura.jc.android.resource.jni.Pointer;
 import com.eaglesakura.jc.android.resource.jni.Pointer.Mode;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -26,8 +27,7 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
  */
 @JCClass(
          cppNamespace = "ndk")
-@Deprecated
-public final class GLNativeSurfaceView extends SurfaceView {
+public final class GLNativeSurfaceView extends SurfaceView implements Jointable {
     /**
      * デバイスポインタ
      */
@@ -115,6 +115,18 @@ public final class GLNativeSurfaceView extends SurfaceView {
     @JCMethod(
               nativeMethod = true)
     native void onDestroyNative();
+
+    @Override
+    @JCMethod
+    public Pointer getNativePointer(int key) {
+        return nativeContext;
+    }
+
+    @Override
+    @JCMethod
+    public void setNativePointer(int key, Pointer ptr) {
+        nativeContext = ptr;
+    }
 
     private GLNativeSurfaceView view() {
         return this;

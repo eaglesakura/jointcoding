@@ -139,6 +139,7 @@ public:
 
         if(throw_error) {
             if(!isLockCompleted()) {
+                unlockDevice();
                 if(device->hasFlags(DeviceFlag_RequestDestroy)) {
                     throw create_exception_mt(EGLException, EGLException_DeviceHasDestroyFlag, "Abort Rendering...");
                 } else {
