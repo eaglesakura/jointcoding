@@ -10,51 +10,51 @@
 
 namespace jc {
 
-/**
- * ネイティブの文字列型。
- * 基本的にはstd::string。対応してなければ、適宜書き換える。
- */
-typedef std::string string_t;
-
-#define _native     (native_string.get<string_t>())
-
 String::String(const charactor* str) {
     if (str) {
-        // 文字列が設定されているなら、それに従う
-        native_string = ImplCapsule(new string_t(str), JC_CAPSULE_RELEAE(string_t) );
+        this->text.reset(mark_new string_t(str, strlen(str)));
     } else {
-        // それ以外は共有にnilオブジェクトを利用する
-        native_string = ImplCapsule(new string_t(""), JC_CAPSULE_RELEAE(string_t) );
+        this->text.reset(mark_new string_t());
     }
+}
+
+/**
+ * 内部コピーする
+ */
+String::String(const String &origin) {
+    this->text = origin.text;
+}
+
+String::~String() {
 }
 
 /**
  * 文字列の長さを取得する
  */
 const s32 String::length() const {
-    return _native->length();
+    return text->length();
 }
 
 /**
  * 空文字だった場合、trueを返す
  */
 jcboolean String::empty() const {
-    return _native->empty();
+    return text->empty();
 }
 
 /**
  * C文字列を取得する
  */
 charactor const* String::c_str() const {
-    return _native->c_str();
+    return text->c_str();
 }
 
 /**
  * 文字列加算
  */
 String String::operator+(const String &str) const {
-    const string_t &a = this->native_string.as<string_t>();
-    const string_t &b = str.native_string.as<string_t>();
+    const string_t &a = this->get();
+    const string_t &b = str.get();
 
     return String((a + b).c_str());
 }
@@ -63,8 +63,8 @@ String String::operator+(const String &str) const {
  * 文字列加算
  */
 String& String::operator+=(const String &str) {
-    string_t &a = this->native_string.as<string_t>();
-    const string_t &b = str.native_string.as<string_t>();
+    string_t &a = this->get();
+    const string_t &b = str.get();
 
     a += b;
 
@@ -75,7 +75,7 @@ String& String::operator+=(const String &str) {
  * 文字列加算
  */
 String& String::operator+=(const charactor* str) {
-    string_t &a = this->native_string.as<string_t>();
+    string_t &a = this->get();
 
     a += str;
 
@@ -86,7 +86,7 @@ String& String::operator+=(const charactor* str) {
  * 代入を行う
  */
 String& String::operator=(const charactor* origin) {
-    string_t &a = this->native_string.as<string_t>();
+    string_t &a = this->get();
 
     a = origin;
 
@@ -97,8 +97,8 @@ String& String::operator=(const charactor* origin) {
  * 比較を行う
  */
 bool String::operator==(const String &str) const {
-    const string_t &a = this->native_string.as<string_t>();
-    const string_t &b = str.native_string.as<string_t>();
+    const string_t &a = this->get();
+    const string_t &b = str.get();
 
     return a == b;
 }
@@ -107,8 +107,8 @@ bool String::operator==(const String &str) const {
  * 比較を行う
  */
 bool String::operator!=(const String &str) const {
-    const string_t &a = this->native_string.as<string_t>();
-    const string_t &b = str.native_string.as<string_t>();
+    const string_t &a = this->get();
+    const string_t &b = str.get();
 
     return a != b;
 }
@@ -117,8 +117,8 @@ bool String::operator!=(const String &str) const {
  * map比較演算子
  */
 bool String::operator<(const String &str) const {
-    const string_t &a = this->native_string.as<string_t>();
-    const string_t &b = str.native_string.as<string_t>();
+    const string_t &a = this->get();
+    const string_t &b = str.get();
 
     return a < b;
 }
@@ -127,30 +127,24 @@ bool String::operator<(const String &str) const {
  * 文字列のindexOfを求める
  */
 s32 String::indexOf(const String &str) const {
-    return _native->find(str.c_str());
+    return text->find(str.c_str());
 }
 
 /**
  * 文字列のindexOfを求める
  */
 s32 String::indexOf(const charactor *str) const {
-    return _native->find(str);
+    return text->find(str);
 }
 
 /**
  * 文字列の一部を切り取る
  */
 String String::substring(const s32 begin, const s32 end) const {
-    string_t str = _native->substr(begin, end);
+    const string_t str = text->substr(begin, end);
     return String(str.c_str());
 }
-/**
- * 文字列をセパレーターに従って分割する
- */std::vector<String> String::split(const charactor *sep) const {
-    std::vector<String> result;
-    jc::split((*this), String(sep), &result);
-    return result;
-}
+
 /**
  * 文字列のハッシュコードを求める
  */
@@ -170,10 +164,19 @@ s32 String::hashCode() const {
 }
 
 /**
+ * 文字列をセパレーターに従って分割する
+ */
+std::vector<String, StlAllocator<String> > String::split(const charactor *sep) const {
+    std::vector<String, StlAllocator<String> > result;
+    jc::split((*this), String(sep), &result);
+    return result;
+}
+
+/**
  * 文字列として取得する
  */
 String String::format(const charactor *fmt, ...) {
-    jc_sa<charactor> temp(new charactor[strlen(fmt) + 256]);
+    jc_sa<charactor> temp(mark_new charactor[strlen(fmt) + 256]);
     va_list ap;
     va_start(ap, fmt);
     {

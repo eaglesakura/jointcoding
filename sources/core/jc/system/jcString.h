@@ -7,27 +7,31 @@
 #ifndef JCSTRING_H_
 #define JCSTRING_H_
 
-#include    "jointcoding.h"
 #include    "jc/system/Macro.h"
-#include    "jc/util/ImplCapsule.h"
 #include    <vector>
+#include    <string>
+
+#include    "jc/system/StlAllocator.hpp"
 
 namespace jc {
 
+typedef std::basic_string<charactor, std::char_traits<charactor>, StlAllocator<charactor> > string_t;
+
 class String {
+
     /**
      * ネイティブ実装の文字列
      */
-    ImplCapsule native_string;
+    jc_sp<string_t> text;
 public:
     String(const charactor* str = NULL);
 
     /**
      * 内部コピーする
      */
-    String(const String &origin) {
-        this->native_string = origin.native_string;
-    }
+    String(const String &origin);
+
+    ~String();
 
     /**
      * 文字列の長さを取得する
@@ -43,7 +47,7 @@ public:
      * 代入を行う
      */
     String& operator=(const String &cpy) {
-        native_string = cpy.native_string;
+        text = cpy.text;
         return *this;
     }
 
@@ -105,7 +109,15 @@ public:
     /**
      * 文字列をセパレーターに従って分割する
      */
-    std::vector<String> split(const charactor *sep) const;
+    std::vector<String, StlAllocator<String> > split(const charactor *sep) const;
+
+    /**
+     * ネイティブクラスに変換して取得する
+     * 変換は必ずJC_NATIVE_STRINGを利用しなければならない。
+     */
+    string_t& get() {
+        return *text.get();
+    }
 
     /**
      * 文字列のハッシュコードを求める
@@ -114,19 +126,9 @@ public:
 
     /**
      * ネイティブクラスに変換して取得する
-     * 変換は必ずJC_NATIVE_STRINGを利用しなければならない。
      */
-    template<typename T>
-    T& get_native() {
-        return native_string.as<T>();
-    }
-
-    /**
-     * ネイティブクラスに変換して取得する
-     */
-    template<typename T>
-    const T& get_native() const {
-        return native_string.as<T>();
+    const string_t& get() const {
+        return *text.get();
     }
 
     /**

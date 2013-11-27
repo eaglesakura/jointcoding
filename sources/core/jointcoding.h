@@ -10,6 +10,7 @@
 
 // macro
 #include    "jc/system/Macro.h"
+#include    "jc/mem/jcnew.h"
 
 // C library
 /*

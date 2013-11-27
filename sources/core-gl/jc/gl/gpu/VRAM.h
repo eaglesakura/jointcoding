@@ -108,7 +108,6 @@ enum VRAM_GC_e {
      */
     VRAM_GC_ShaderProgram = 0x1 << VRAM_ShaderProgram,
 
-
     /**
      * リンクされたシェーダーを解放する
      */
@@ -129,6 +128,32 @@ typedef handle_table<GLuint> vram_table;
 typedef Handle<GLuint> vram_handle;
 
 /**
+ * VRAM管理構造体
+ */
+typedef struct _vram_id {
+    /**
+     * 管理ID
+     */
+    GLuint id;
+
+    /**
+     * ref counter
+     */
+    s32 ref;
+
+    _vram_id() {
+        id = 0;
+        ref = 0;
+    }
+
+    ~_vram_id() {
+        // refが残ったまま解放することは出来ない
+        assert(ref <= 0);
+    }
+}* vram_id;
+
+
+/**
  * Shared Contextを前提としたVRAMクラス
  * 共有可能なものは共有し、それ以外は独自でハンドル管理する
  *
@@ -139,6 +164,8 @@ class SharedVRAM: public Object {
      * VRAMのアクセス用テーブル
      */
     jc_sp<vram_table> vram_tables[VRAM_e_num];
+
+
 
     /**
      * 生成時のミューテックス

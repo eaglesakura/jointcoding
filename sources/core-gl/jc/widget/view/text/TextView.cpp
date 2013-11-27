@@ -55,9 +55,9 @@ void TextView::createTexture(MDevice device) {
     jclogf("create texture y(%d) [%s]", getTextHeightPixel(), text.c_str());
 
     // 改行で分割する
-    std::vector<String> lines = text.split("\n");
+    std::vector<String, StlAllocator<String> > lines = text.split("\n");
 
-    std::vector<String>::const_iterator itr = lines.begin(), end = lines.end();
+    std::vector<String, StlAllocator<String> >::const_iterator itr = lines.begin(), end = lines.end();
 
     while (itr != end) {
         // フォントを生成する

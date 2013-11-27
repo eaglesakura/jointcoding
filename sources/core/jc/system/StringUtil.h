@@ -22,7 +22,7 @@ namespace jc {
  * @param delim 分割用の文字列
  * @param result 格納先のベクター
  */
-s32 split(const String &origin, const String &delim, ::std::vector<String> *result);
+s32 split(const String &origin, const String &delim, ::std::vector<String, StlAllocator<String> > *result);
 
 /**
  * パスを分解し、ファイル名を取り出す。

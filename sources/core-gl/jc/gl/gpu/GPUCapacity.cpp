@@ -34,7 +34,7 @@ static String version;
 /**
  * 保持しているエクステンション
  */
-static std::vector<String> extensions;
+static std::vector<String, StlAllocator<String> > extensions;
 
 /**
  * 頂点属性の最大数
@@ -215,7 +215,7 @@ void GPUCapacity::initialize() {
 
 // エクステンション一覧を出力する
         {
-            std::vector<String>::iterator itr = extensions.begin(), end = extensions.end();
+            std::vector<String, StlAllocator<String> >::iterator itr = extensions.begin(), end = extensions.end();
 
             while (itr != end) {
                 if ((*itr).length()) {

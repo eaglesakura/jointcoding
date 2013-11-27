@@ -30,10 +30,10 @@ namespace jc {
  * @param delim 分割用の文字列
  * @param result 格納先のベクター
  */
-::jc::s32 split(const String &origin, const String &delim, jc_varray<String> *result) {
-    const std::string &str = origin.get_native<std::string>();
-    const std::string &dlm = delim.get_native<std::string>();
-    jc_varray<std::string> temp;
+::jc::s32 split(const String &origin, const String &delim, jc_varray<String, StlAllocator<String> > *result) {
+    const string_t &str = origin.get();
+    const string_t &dlm = delim.get();
+    jc_varray<string_t, StlAllocator<string_t> > temp;
 
     // 分割はboostを利用する
         boost::split(temp, str, boost::is_any_of(dlm));

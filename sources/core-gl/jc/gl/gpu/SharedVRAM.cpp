@@ -10,6 +10,14 @@
 
 namespace jc {
 namespace gl {
+
+namespace {
+/**
+ * 複数のContext間で共有するmutex
+ */
+static jcmutex shared_mutex;
+}
+
 /**
  * テクスチャ用コールバック関数
  */
@@ -260,6 +268,7 @@ vram_handle SharedVRAM::alloc(const VRAM_e type) {
     vram_handle result;
     result.reset(vram_tables[type]);
     result.alloc();
+
     return result;
 }
 
