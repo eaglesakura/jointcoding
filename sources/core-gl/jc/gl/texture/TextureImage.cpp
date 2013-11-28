@@ -45,7 +45,7 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     size.img_width = size.tex_width = width;
     size.img_height = size.tex_height = height;
     this->target = GL_TEXTURE_2D;
-    texture = device->getVRAM()->alloc(VRAM_Texture);
+    texture.alloc(device->getVRAM(VRAM_Texture));
 
     {
         this->bind(device->getState());
@@ -72,7 +72,7 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     size.img_width = size.tex_width = width;
     size.img_height = size.tex_height = height;
     this->target = target;
-    texture = device->getVRAM()->alloc(VRAM_Texture);
+    texture.alloc(device->getVRAM(VRAM_Texture));
 
     {
         this->bind(device->getState());
@@ -275,7 +275,7 @@ jcboolean TextureImage::isBinded(s32 *resultIndex, MGLState state) {
  * 管理している資源を開放する
  */
 void TextureImage::dispose() {
-    texture.reset();
+    texture.release();
 }
 
 /**

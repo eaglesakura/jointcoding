@@ -278,6 +278,13 @@ public:
     }
 
     /**
+     * 現在のContextの対応するVRAMを取得する
+     */
+    virtual MVideoMemory getVRAM(const VRAM_e type) {
+        return context->getVRAM(type);
+    }
+
+    /**
      * ロックが可能だったらtrue
      */
     virtual jcboolean lockEnable() const {

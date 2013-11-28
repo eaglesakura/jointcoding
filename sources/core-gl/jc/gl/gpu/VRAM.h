@@ -388,6 +388,20 @@ public:
     }
 
     /**
+     * 有効な場合はtrueを返す
+     */
+    operator bool() const {
+        return id != 0;
+    }
+
+    /**
+     * 無効な場合はtrueを返す
+     */
+    bool operator!() const {
+        return id == 0;
+    }
+
+    /**
      * VRAM上のオブジェクトIDを取得する
      */
     GLuint get() const {

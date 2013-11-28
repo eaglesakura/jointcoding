@@ -129,7 +129,7 @@ class TextureImage: public Object {
     /**
      * テクスチャユニット本体
      */
-    vram_handle texture;
+    GLObject texture;
 
     /**
      * テクスチャ領域を確保済みならtrue
@@ -187,14 +187,14 @@ public:
      * 画像としての幅を取得する。
      */
     virtual s32 getWidth() const {
-        return (s32)size.img_width;
+        return (s32) size.img_width;
     }
 
     /**
      * 画像としての高さを取得する
      */
     virtual s32 getHeight() const {
-        return (s32)size.img_height;
+        return (s32) size.img_height;
     }
 
     /**
@@ -209,7 +209,7 @@ public:
      * POT変換を行う場合がある。
      */
     virtual s32 getTextureWidth() const {
-        return (s32)size.tex_width;
+        return (s32) size.tex_width;
     }
 
     /**
@@ -217,7 +217,7 @@ public:
      * POT変換を行う場合がある。
      */
     virtual s32 getTextureHeight() const {
-        return (s32)size.tex_height;
+        return (s32) size.tex_height;
     }
 
     /**
@@ -314,20 +314,23 @@ public:
     virtual jcboolean isBinded(s32 *resultIndex, MGLState state);
 
     /**
-     * テクスチャ名を取得する
-     * 名称は一意の32bit整数になる。
-     */
-    virtual u32 getName() const {
-        if (!texture.exist()) {
-            return 0;
-        }
-        return texture.get();
-    }
-
-    /**
      * テクスチャをユニットから切り離す
      */
     virtual void unbind(MGLState state);
+
+    /**
+     * GLのnativeオブジェクトを取得する
+     */
+    virtual GLObject getObject() const {
+        return texture;
+    }
+
+    /**
+     * テクスチャ名を直接取得する
+     */
+    virtual GLuint getName() const {
+        return texture.get();
+    }
 
     /**
      * 管理している資源を開放する
