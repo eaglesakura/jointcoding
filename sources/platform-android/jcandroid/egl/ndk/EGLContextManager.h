@@ -81,6 +81,13 @@ public:
     }
 
     /**
+     * Context内のgcを行う
+     */
+    virtual void gc() {
+
+    }
+
+    /**
      * 資源の開放を行う
      */
     virtual void dispose();

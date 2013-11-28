@@ -68,6 +68,23 @@ public:
     }
 
     /**
+     * Context内のgcを行う
+     */
+    virtual void gc() {
+        // テクスチャのバインドを外す
+        {
+            unsafe_array<u32> target;
+            rams[VRAM_Texture]->getGcTargets(&target);
+            state->unbindTextures(target.length, target.ptr);
+        }
+
+        // 全VRAMのGCを行う
+        for(int i = 0; i < VRAM_e_num; ++i) {
+            rams[i]->gc();
+        }
+    }
+
+    /**
      * 握っている資源を明示的に開放する
      */
     virtual void dispose() {

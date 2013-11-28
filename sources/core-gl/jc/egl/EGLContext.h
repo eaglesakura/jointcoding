@@ -39,6 +39,11 @@ public:
     virtual MVideoMemory getVRAM(const VRAM_e type) = 0;
 
     /**
+     * Context内のgcを行う
+     */
+    virtual void gc() = 0;
+
+    /**
      * 握っている資源を明示的に開放する
      */
     virtual void dispose() = 0;

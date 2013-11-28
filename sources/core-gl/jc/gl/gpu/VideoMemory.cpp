@@ -187,13 +187,32 @@ void VideoMemory::gc() {
 
     // 解放関数を呼び出す
     if (!dealloc_pool.empty()) {
+        const u32 length = dealloc_pool.size();
+
         // 取得済み残量が残っていない
         vram_delete_function dealloc_func = function_tbl[type].delete_func;
-        dealloc_func(dealloc_pool.size(), &(dealloc_pool[0]));
+        dealloc_func(length, &(dealloc_pool[0]));
         glFinish();
 
         dealloc_pool.clear();
+
+        jclogf("gc[%s][%d objects]", function_tbl[type].type_name, length);
     }
+}
+
+/**
+ * 開放処理を行う
+ */
+void VideoMemory::dispose() {
+    MutexLock lock(mutex);
+
+    // 残っているGLオブエジェクトを解放リストに乗せる
+    while (iterator) {
+        dealloc_pool.push_back(*iterator);
+        ++iterator;
+    }
+
+    gc();
 }
 
 }

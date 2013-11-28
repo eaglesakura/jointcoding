@@ -289,9 +289,22 @@ public:
     virtual void release(vram_id id);
 
     /**
+     * GC対象を取得する
+     */
+    virtual void getGcTargets(unsafe_array<u32> *result) {
+        result->length = dealloc_pool.size();
+        result->ptr = &(dealloc_pool[0]);
+    }
+
+    /**
      * GCを行う
      */
     virtual void gc();
+
+    /**
+     * 開放処理を行う
+     */
+    virtual void dispose();
 };
 
 /**
