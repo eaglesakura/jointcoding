@@ -70,6 +70,15 @@ inline s32 rand32() {
 }
 
 /**
+ * 0.0〜1.0で乱数を取得する
+ */
+inline double randDouble() {
+    const s32 word = rand32();
+
+    return (double) (word & 0xFFFFFF) / (double) (0xFFFFFF);
+}
+
+/**
  * 2つの値をブレンドする。
  * 0.0 = before
  * 1.0 = after

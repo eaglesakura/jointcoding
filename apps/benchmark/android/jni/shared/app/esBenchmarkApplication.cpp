@@ -53,8 +53,9 @@ void BenchmarkApplication::onAppInitialize() {
         renderingContext->getVirtualDisplay()->setVirtualDisplaySize(DISPLAYSIZE_RETINA_iP5.x, DISPLAYSIZE_RETINA_iP5.y);
     }
 
-    getWindowDevice()->getState()->blendEnable(jctrue);
-    getWindowDevice()->getState()->blendFunc(GLBlendType_Alpha);
+    MDevice device = getWindowDevice();
+    device->getState()->blendEnable(jctrue);
+    device->getState()->blendFunc(GLBlendType_Alpha);
 
     {
         spriteManager = SpriteManager::createInstance(getRenderingContext()->getDevice());
@@ -73,7 +74,7 @@ void BenchmarkApplication::onAppInitialize() {
 
         factory->initialize(Uri::fromAssets("susanow.archive"));
 
-        jc_sp<FigureLoader> loader(new FigureLoader(getWindowDevice(), factory, texFactory));
+        jc_sp<FigureLoader> loader(new FigureLoader(device, factory, texFactory));
 
         // 読み込み対象を指定する
         loader->setLoadTarget(susanow);
@@ -94,7 +95,7 @@ void BenchmarkApplication::onAppInitialize() {
 
         factory->initialize(Uri::fromAssets("antan.archive"));
 
-        jc_sp<FigureLoader> loader(new FigureLoader(getWindowDevice(), factory, texFactory));
+        jc_sp<FigureLoader> loader(new FigureLoader(device, factory, texFactory));
 
         // 読み込み対象を指定する
         loader->setLoadTarget(antan);
@@ -103,6 +104,37 @@ void BenchmarkApplication::onAppInitialize() {
         loader->load();
     }
 
+    // フィギュアのインスタンスを確保する
+    {
+        // シェーダー読込
+        MGLShaderProgram shader = ShaderProgram::buildFromUri(device, Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
+        assert(shader);
+
+        basicShader = shader;
+        renderer.reset(new BasicFigureRenderer());
+        renderer->initialize(device, shader);
+
+        worldEnv.reset(new EnvironmentInstanceState());
+
+        {
+            susanow_instance.reset(renderer->createInstanceState(susanow));
+            susanow_instance->setEnvironmentState(worldEnv);
+        }
+
+        {
+            antan_instance.reset(renderer->createInstanceState(antan));
+            antan_instance->setEnvironmentState(worldEnv);
+        }
+    }
+    // シャドウ用のレンダラを確保する
+    {
+        // シェーダー読込
+        MGLShaderProgram shader = ShaderProgram::buildFromUri(device, Uri::fromAssets("shadow.vert"), Uri::fromAssets("shadow.frag"));
+        assert(shader);
+
+        shadowRenderer.reset(new ShadowmapRenderer());
+        shadowRenderer->initialize(device, shader);
+    }
 
 //    // テクスチャロードを開始する
     startNewtask(BenchmarkTask_LoadTexture, 0);
@@ -123,6 +155,7 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
 //        subDevice->getVRAM()->gc();
 
         jclog("load finish");
+        glFinish();
     } catch (Exception &e) {
         jcloge(e);
     }
@@ -131,43 +164,12 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
 void BenchmarkApplication::loadResource(MDevice subDevice) {
     try {
         DeviceLock lock(subDevice, jctrue);
+        Thread::sleep(500);
 
-        // フィギュアのインスタンスを確保する
-        {
-            // シェーダー読込
-            MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
-            assert(shader);
-
-            basicShader = shader;
-            renderer.reset(new BasicFigureRenderer());
-            renderer->initialize(getWindowDevice(), shader);
-
-            worldEnv.reset(new EnvironmentInstanceState());
-
-            {
-                susanow_instance.reset(renderer->createInstanceState(susanow));
-                susanow_instance->setEnvironmentState(worldEnv);
-            }
-
-            {
-                antan_instance.reset(renderer->createInstanceState(antan));
-                antan_instance->setEnvironmentState(worldEnv);
-            }
-        }
-        // シャドウ用のレンダラを確保する
-        {
-            // シェーダー読込
-            MGLShaderProgram shader = ShaderProgram::buildFromUri(getWindowDevice(), Uri::fromAssets("shadow.vert"), Uri::fromAssets("shadow.frag"));
-            assert(shader);
-
-            shadowRenderer.reset(new ShadowmapRenderer());
-            shadowRenderer->initialize(getWindowDevice(), shader);
-        }
+        MDevice device = subDevice;
 
         // オフスクリーンターゲットを生成
         {
-            MDevice device = getWindowDevice();
-
             const s32 width = 2048;
             const s32 height = width;
             shadowmap.reset(new FrameBufferObject(device));
@@ -183,10 +185,11 @@ void BenchmarkApplication::loadResource(MDevice subDevice) {
                 shadowmapTexture = shadowmap->getColorTexture();
             }
             // オフスクリーンテクスチャの確保を行う
-    //        shadowmap->allocDepthRenderTexture(device);
+            //        shadowmap->allocDepthRenderTexture(device);
             shadowmap->checkFramebufferStatus();
             shadowmap->unbind(device->getState());
         }
+        glFinish();
         initialized = jctrue;
     } catch (Exception &e) {
         jcloge(e);
@@ -206,12 +209,16 @@ void BenchmarkApplication::onAppSurfaceResized(const s32 width, const s32 height
  * メソッド呼び出し時点でデバイスロック済み
  */
 void BenchmarkApplication::onAppMainUpdate() {
+    MDevice device = getWindowDevice();
+    MGLState state = device->getState();
     if (!initialized) {
+        state->clearColorf(1, (float) (jc::randDouble()), 0, 1);
+        state->clearSurface();
+
+        device->postFrontBuffer();
         return;
     }
 
-    MDevice device = getWindowDevice();
-    MGLState state = device->getState();
     {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
         state->clearColorf(0, 1, 1, 1);
@@ -347,7 +354,7 @@ jcboolean BenchmarkApplication::onAppTask(const ApplicationTaskContext &task) {
             return jctrue;
         case BenchmarkTask_LoadResources:
             loadResource(platformContext->createSlaveDevice());
-            return true;
+            return jctrue;
         default:
             // ハンドル出来なかった
             return jcfalse;
