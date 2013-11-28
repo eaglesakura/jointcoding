@@ -16,6 +16,7 @@ Device::Device() {
 
 Device::~Device() {
     jclogf("Device dispose %x", this);
+    this->dispose();
 }
 
 /**
@@ -60,8 +61,17 @@ void Device::dispose() {
     {
         // 二度とロックできなくする
         flags.enable(DeviceFlag_NoLock);
-        // 排他制御待ちを行う
-        MutexLock lock(gpuMutex);
+    }
+    // 排他制御待ちを行う
+    MutexLock lock(gpuMutex);
+
+    {
+        makeCurrent(EGLMakeCurrent_Bind);
+        // gc待ちその他を解放する
+        if (context) {
+            context->dispose();
+        }
+        makeCurrent(EGLMakeCurrent_Unbind);
     }
 
     // レンダリング用サーフェイスも強制廃棄
@@ -71,10 +81,7 @@ void Device::dispose() {
     }
 
     // レンダリング用コンテキストは強制廃棄
-    if (context) {
-        context->dispose();
-        context.reset();
-    }
+    context.reset();
 
     if (egl) {
         egl->dispose();

@@ -89,6 +89,15 @@ public:
      */
     virtual void dispose() {
         vram.reset();
+
+        // 全VRAMのdisposeを行う
+        for(int i = 0; i < VRAM_e_num; ++i) {
+            if(rams[i]) {
+                rams[i]->dispose();
+                rams[i].reset();
+            }
+        }
+
         state.reset();
         if(eglContext) {
             eglContext->dispose();

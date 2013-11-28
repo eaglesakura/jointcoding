@@ -61,9 +61,13 @@ void SdkEGLWrapper::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceP
 
         assert(jEGLContext);
         assert(jEGLSurface);
+    } else {
+        // カレントから外れる前にfinish待ちを行う
+        glFinish();
     }
 
     completed = eglWrapper->current(jEGLContext, jEGLSurface);
+
     if(!completed) {
         // eglMakeCurrentに失敗した
         EGLint error = eglGetError();
@@ -81,17 +85,17 @@ void SdkEGLWrapper::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceP
             threadId.reset(new ThreadID());
 
 #ifdef  EGL_TRIPLEBUFFER_MODE
-        {
-            // トリプルバッファ対応させる
-            eglSwapInterval(eglGetCurrentDisplay(), 2);
-        }
+            {
+                // トリプルバッファ対応させる
+                eglSwapInterval(eglGetCurrentDisplay(), 2);
+            }
 #endif
 
-    } else {
-        // カレント情報を解除する
-        threadId.reset();
+        } else {
+            // カレント情報を解除する
+            threadId.reset();
+        }
     }
-}
 }
 
 /**
