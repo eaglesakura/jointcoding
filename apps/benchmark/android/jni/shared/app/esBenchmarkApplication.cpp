@@ -149,7 +149,7 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
         Thread::sleep(1000);
         jclog("load start");
         texture = TextureImage::decode(subDevice, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
-        texture->unbind();
+        texture->unbind(subDevice->getState());
 
         Thread::sleep(500);
 //        subDevice->getVRAM()->gc();

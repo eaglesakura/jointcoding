@@ -58,12 +58,12 @@ void SpriteManager::initialize(MDevice device) {
 
     {
         whiteTexture.reset(new TextureImage(1, 1, device));
-        whiteTexture->bind(windowDevice->getState());
+        whiteTexture->bind(device->getState());
         {
             const u16 rgb565 = 0xFFFF;
-            whiteTexture->copyPixelLine(&rgb565, PixelFormat_RGB565, 0, 0, 1);
+            whiteTexture->copyPixelLine(&rgb565, PixelFormat_RGB565, 0, 0, 1, device->getState());
         }
-        whiteTexture->unbind();
+        whiteTexture->unbind(device->getState());
     }
 
     // default shader context

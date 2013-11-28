@@ -22,6 +22,12 @@ using namespace jc::gl;
 class SdkEGLContextWrapper: public Object, public EGLContextProtocol {
     MGLState state;
     VRAM vram;
+
+    /**
+     * 管理対象のVRAM
+     */
+    MVideoMemory rams[VRAM_e_num];
+
 public:
     jc_sp<EGLContextWrapper> eglContext;
 public:
@@ -30,6 +36,10 @@ public:
 
         state.reset(new GLState());
         vram.reset(new SharedVRAM());
+
+        for (int i = 0; i < VRAM_e_num; ++i) {
+            this->rams[i].reset(new VideoMemory((VRAM_e) i));
+        }
     }
 
     virtual ~SdkEGLContextWrapper() {
@@ -48,6 +58,13 @@ public:
      */
     virtual VRAM getVRAM() {
         return vram;
+    }
+
+    /**
+     * VRAM取得
+     */
+    virtual MVideoMemory getVRAM(const VRAM_e type) {
+        return rams[type];
     }
 
     /**

@@ -165,34 +165,14 @@ class TextureImage: public Object {
         GLint wrapT;
     } context;
 
-    /**
-     * GLのステート保持
-     */
-    MGLState state;
-
-    /**
-     * バインドしたユニット番号
-     */
-    s32 bindUnit;
-
 protected:
-    virtual s32 getFreeTextureUnitIndex();
+    virtual s32 getFreeTextureUnitIndex(MGLState state);
 
     static u32 toTextureSize(const TextureLoadOption *option, const u32 size) {
         if (option && option->convert_pot) {
             return jc::toPowerOfTwo(size);
         } else {
             return size;
-        }
-    }
-
-    /**
-     * 配下にあるデバイスを移動する
-     */
-    virtual void resetState(MGLState state) {
-        if (this->state != state) {
-            this->state = state;
-            bindUnit = state->getBindedTextureUnit(target, texture.get());
         }
     }
 
@@ -293,13 +273,13 @@ public:
      * @param lineHeader 転送を行うY位置
      * @param lineNum 転送を行う量
      */
-    virtual void copyPixelLine(const void* src, const PixelFormat_e pixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum);
+    virtual void copyPixelLine(const void* src, const PixelFormat_e pixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum, MGLState state);
 
     /**
      * テクスチャピクセル用のメモリを確保する
      * @param pixelFormat 確保するピクセルのビット配置(RGB565、RGBA5551、RGB8、RGBA8、BGRA8）
      */
-    virtual void allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel);
+    virtual void allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel, MGLState state);
 
     /**
      * 外部要因でallocを行った（拡張機能とか）場合に呼び出す
@@ -311,7 +291,7 @@ public:
     /**
      * テクスチャをindex番のユニットに関連付ける
      */
-    virtual void bind(s32 index, MGLState state);
+    virtual void bind(const s32 index, MGLState state);
 
     /**
      * 空いているテクスチャユニットにバインドする。
@@ -322,8 +302,8 @@ public:
     /**
      * バインドされたテクスチャユニットの番号を取得する。
      */
-    virtual s32 getBindTextureUnitIndex() {
-        return bindUnit;
+    virtual s32 getBindTextureUnitIndex(MGLState state) {
+        return state->getBindedTextureUnit(target, texture.get());
     }
 
     /**
@@ -331,7 +311,7 @@ public:
      * バインドされている場合jctrueを返す。
      * resultIndexが設定されている場合、bindedならインデックスを返す。
      */
-    virtual jcboolean isBinded(s32 *resultIndex);
+    virtual jcboolean isBinded(s32 *resultIndex, MGLState state);
 
     /**
      * テクスチャ名を取得する
@@ -347,20 +327,12 @@ public:
     /**
      * テクスチャをユニットから切り離す
      */
-    virtual void unbind();
+    virtual void unbind(MGLState state);
 
     /**
      * 管理している資源を開放する
      */
     virtual void dispose();
-
-    /**
-     * 配下にあるデバイスを移動する
-     */
-    virtual void resetDevice(MDevice device) {
-        this->state = device->getState();
-        bindUnit = state->getBindedTextureUnit(target, texture.get());
-    }
 
     /**
      * テクスチャへのデコードを行う。

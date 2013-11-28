@@ -43,6 +43,11 @@ class EGLContextManager: public jc::Object, public EGLContextProtocol {
      */
     VRAM vram;
 
+    /**
+     * 管理対象のVRAM
+     */
+    MVideoMemory rams[VRAM_e_num];
+
 public:
     EGLContextManager(EGLContext context, EGLDisplay display, EGLConfig config);
     virtual ~EGLContextManager();
@@ -67,6 +72,12 @@ public:
      */
     virtual VRAM getVRAM() {
         return vram;
+    }
+    /**
+     * VRAM取得
+     */
+    virtual MVideoMemory getVRAM(const VRAM_e type) {
+        return rams[type];
     }
 
     /**

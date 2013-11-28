@@ -44,7 +44,7 @@ public:
 
         s32 texUnit = -1;
         // バインドされていなければ、テクスチャをバインドする
-        if (!tex->isBinded(&texUnit)) {
+        if (!tex->isBinded(&texUnit, state)) {
             texUnit = tex->bind(state);
         }
         if (bindUnit != texUnit) {

@@ -45,7 +45,6 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
     size.img_width = size.tex_width = width;
     size.img_height = size.tex_height = height;
     this->target = GL_TEXTURE_2D;
-    bindUnit = -1;
     texture = device->getVRAM()->alloc(VRAM_Texture);
 
     {
@@ -64,7 +63,7 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
 
             assert_gl();
         }
-        this->unbind();
+        this->unbind(device->getState());
     }
 }
 
@@ -73,7 +72,6 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     size.img_width = size.tex_width = width;
     size.img_height = size.tex_height = height;
     this->target = target;
-    bindUnit = -1;
     texture = device->getVRAM()->alloc(VRAM_Texture);
 
     {
@@ -92,7 +90,7 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
 
             assert_gl();
         }
-        this->unbind();
+        this->unbind(device->getState());
     }
 }
 
@@ -100,17 +98,17 @@ TextureImage::~TextureImage() {
     this->dispose();
 }
 
-s32 TextureImage::getFreeTextureUnitIndex() {
+s32 TextureImage::getFreeTextureUnitIndex(MGLState state) {
     assert(state);
     return state->getFreeTextureUnitIndex(jctrue);
 }
 
-void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum) {
-    assert(isBinded(NULL) == jctrue);
+void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum, MGLState state) {
+    assert(isBinded(NULL, state) == jctrue);
 
     // 領域の確保が済んでいなければ確保する
     if (!this->alloced) {
-        allocPixelMemory(pixelFormat, mipLevel);
+        allocPixelMemory(pixelFormat, mipLevel, state);
     }
 
     // 部分転送を行う
@@ -121,8 +119,8 @@ void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelForma
 /**
  * テクスチャピクセル用のメモリを確保する
  */
-void TextureImage::allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel) {
-    assert(isBinded(NULL) == jctrue);
+void TextureImage::allocPixelMemory(const PixelFormat_e pixelFormat, const s32 miplevel, MGLState state) {
+    assert(isBinded(NULL, state) == jctrue);
 
     if (!this->alloced) {
         this->alloced = jctrue;
@@ -136,8 +134,6 @@ void TextureImage::allocPixelMemory(const PixelFormat_e pixelFormat, const s32 m
  * Minフィルタを変更する
  */
 void TextureImage::setMinFilter(GLint filter) {
-    assert(isBinded(NULL) == jctrue);
-
     if (context.minFilter == filter) {
         return;
     }
@@ -151,8 +147,6 @@ void TextureImage::setMinFilter(GLint filter) {
  * Magフィルタを変更する
  */
 void TextureImage::setMagFilter(GLint filter) {
-    assert(isBinded(NULL) == jctrue);
-
     if (context.magFilter == filter) {
         return;
     }
@@ -166,7 +160,6 @@ void TextureImage::setMagFilter(GLint filter) {
  * ラップモードを設定する
  */
 void TextureImage::setWrapS(GLint wrap) {
-    assert(isBinded(NULL) == jctrue);
     if (context.wrapS == wrap) {
         return;
     }
@@ -179,7 +172,6 @@ void TextureImage::setWrapS(GLint wrap) {
  * ラップモードを設定する
  */
 void TextureImage::setWrapT(GLint wrap) {
-    assert(isBinded(NULL) == jctrue);
     if (context.wrapT == wrap) {
         return;
     }
@@ -199,7 +191,6 @@ void TextureImage::genMipmaps() {
         jclogf("texture is non power of two %d x %d", size.tex_width, size.tex_height);
         return;
     }
-    assert(isBinded(NULL) == jctrue);
     glGenerateMipmap(target);
 }
 
@@ -217,62 +208,47 @@ jcboolean TextureImage::isPowerOfTwoTexture() {
 s32 TextureImage::bind(MGLState state) {
     assert(state);
 
-    // 制御下のステートを変更する
-    resetState(state);
-
+    const s32 bindUnit = getBindTextureUnitIndex(state);
     if (bindUnit >= 0) {
-        assert(bindUnit >= 0 && bindUnit < GPUCapacity::getMaxTextureUnits());
-
-        // バインドキャッシュがある場合は、まだバインドが有効かをチェックする
-        if (state->isBindedTexture(bindUnit, target, texture.get())) {
-            // まだバインドされていたらactiveへ切り替える
-            state->activeTexture(bindUnit);
-            return bindUnit;
-        }
-        bindUnit = -1;
+        // まだバインドされていたらactiveへ切り替える
+        state->activeTexture(bindUnit);
+        return bindUnit;
+    } else {
+        // 空いているUnitに切り替える
+        const s32 unitIndex = getFreeTextureUnitIndex(state);
+        this->bind(unitIndex, state);
+        return unitIndex;
     }
 
-    s32 unitIndex = getFreeTextureUnitIndex();
-//    unitIndex = 0;
-    this->bind(unitIndex, state);
-    return unitIndex;
 }
 
 /**
  * テクスチャをindex番のユニットに関連付ける
  */
-void TextureImage::bind(s32 index, MGLState state) {
+void TextureImage::bind(const s32 index, MGLState state) {
     assert(state);
     assert(index >= 0 && index < GPUCapacity::getMaxTextureUnits());
 
-    // 制御下のステートを変更する
-    resetState(state);
-
-    if (bindUnit == index) {
-        if (state->isBindedTexture(bindUnit, target, texture.get())) {
-            state->activeTexture(bindUnit);
-            return;
-        }
-    } else if (bindUnit >= 0) {
-        unbind();
+    if (state->isBindedTexture(index, target, texture.get())) {
+        // 指定したIndexに既にバインドされていたら、activeだけを切り替えて何もしない
+        state->activeTexture(index);
+        return;
+    } else {
+        // 指定したIndexにバインドされていないため、activeとbindの両方を切り替える
+        state->activeTexture(index);
+        state->bindTexture(target, texture.get());
     }
-    bindUnit = index;
-    this->state->activeTexture(index);
-    this->state->bindTexture(target, texture.get());
 }
 
 /**
  * テクスチャをユニットから切り離す
  */
-void TextureImage::unbind() {
-    if (!texture || !isBinded(NULL)) {
+void TextureImage::unbind(MGLState state) {
+    assert(state);
+    if (!texture) {
         return;
     }
-
-    assert(state);
-    this->state->unbindTexture(texture.get());
-    bindUnit = -1;
-    state.reset();
+    state->unbindTexture(texture.get());
 }
 
 /**
@@ -280,7 +256,10 @@ void TextureImage::unbind() {
  * バインドされている場合jctrueを返す。
  * resultIndexが設定されている場合、bindedならインデックスを返す。
  */
-jcboolean TextureImage::isBinded(s32 *resultIndex) {
+jcboolean TextureImage::isBinded(s32 *resultIndex, MGLState state) {
+    assert(state);
+
+    const s32 bindUnit = getBindTextureUnitIndex(state);
     if (bindUnit < 0) {
         // テクスチャがバインドされていない
         return jcfalse;
@@ -296,10 +275,7 @@ jcboolean TextureImage::isBinded(s32 *resultIndex) {
  * 管理している資源を開放する
  */
 void TextureImage::dispose() {
-    if (texture.exist()) {
-        this->unbind();
-        texture.reset();
-    }
+    texture.reset();
 }
 
 /**
@@ -379,7 +355,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
 
             // テクスチャ用メモリを確保する
             result->bind(device->getState());
-            result->allocPixelMemory(pixelFormat, 0);
+            result->allocPixelMemory(pixelFormat, 0, device->getState());
 
             // glTexImage2D用にパッキングを行う
             // この呼出を行わない場合、テクセル境界が4byteとなってしまう
@@ -436,7 +412,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
                 assert((pixel_y + LOAD_HEIGHT) <= origin_height);
 
                 result->bind(device->getState());
-                result->copyPixelLine(pixelBuffer->getPixelHeader(), pixelFormat, 0, pixel_y, LOAD_HEIGHT);
+                result->copyPixelLine(pixelBuffer->getPixelHeader(), pixelFormat, 0, pixel_y, LOAD_HEIGHT, device->getState());
                 // テクスチャロードはfinish待ちを行う
                 glFinish();
 
@@ -540,7 +516,7 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoa
             glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, header->getWidth(), header->getHeight(), 0, length, (void*) temp.get());
             assert_gl();
         }
-        result->unbind();
+        result->unbind(device->getState());
 
         // オリジナルサイズに合わせて補正する
         result->size.img_width = header->getOriginalWidth();

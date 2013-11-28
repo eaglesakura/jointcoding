@@ -322,13 +322,14 @@ public:
         bind(device->getState());
 
         colorTexture.reset(new TextureImage(GL_TEXTURE_2D, width, height, device));
-        colorTexture->bind(device->getState());
-        colorTexture->allocPixelMemory(texturePixelFormat, 0);
+        MGLState state = device->getState();
+        colorTexture->bind(state);
+        colorTexture->allocPixelMemory(texturePixelFormat, 0, state);
         {
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture->getName(), 0);
             assert_gl();
         }
-        colorTexture->unbind();
+        colorTexture->unbind(state);
     }
 
     /**
@@ -359,7 +360,7 @@ public:
             assert_gl();
         }
         depthTexture->onAllocated();
-        depthTexture->unbind();
+        depthTexture->unbind(device->getState());
         return jctrue;
     }
 

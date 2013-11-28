@@ -34,6 +34,11 @@ public:
     virtual VRAM getVRAM() = 0;
 
     /**
+     * 指定した種類のVRAMを取得する
+     */
+    virtual MVideoMemory getVRAM(const VRAM_e type) = 0;
+
+    /**
      * 握っている資源を明示的に開放する
      */
     virtual void dispose() = 0;

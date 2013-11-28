@@ -10,6 +10,7 @@
 #include    "jc/system/Macro.h"
 #include    "jc/mem/SmartPtr.h"
 #include    "jc/collection/ArrayHandle.hpp"
+#include    "jc/system/StlAllocator.hpp"
 #include    <vector>
 #include    <list>
 #include    "jc/gl/GL.h"
@@ -132,11 +133,6 @@ typedef Handle<GLuint> vram_handle;
  */
 typedef struct _vram_id {
     /**
-     * VRAMの種類
-     */
-    VRAM_e type;
-
-    /**
      * 管理ID
      */
     GLuint id;
@@ -149,7 +145,6 @@ typedef struct _vram_id {
     _vram_id() {
         id = 0;
         ref = 0;
-        type = VRAM_e_NULL;
     }
 
     ~_vram_id() {
@@ -231,6 +226,184 @@ public:
  * managed
  */
 typedef jc_sp<SharedVRAM> VRAM;
+
+class VideoMemory: public Object {
+public:
+    typedef void (*vram_alloc_function)(s32 size, u32 *result_array);
+    typedef void (*vram_delete_function)(s32 size, u32 *obj_array);
+
+    /**
+     * 解放コンテナ
+     */
+    typedef typename std::vector<GLuint, StlAllocator<GLuint> > dealloc_container;
+private:
+    /**
+     * 排他制御
+     */
+    jcmutex mutex;
+
+    /**
+     * 管理しているメモリタイプ
+     */
+    VRAM_e type;
+
+    /**
+     * 確保済みのプール
+     */
+    safe_array<GLuint> alloc_pool;
+
+    /**
+     * 現在アクセス用のイテレータ
+     */
+    unsafe_array<GLuint> iterator;
+
+    /**
+     * 解放プール
+     */
+    dealloc_container dealloc_pool;
+public:
+    VideoMemory(const VRAM_e type);
+
+    virtual ~VideoMemory();
+
+    /**
+     * 確保するRAMの種類を取得する
+     */
+    virtual VRAM_e getType() const {
+        return type;
+    }
+
+    /**
+     * 指定したリソースを獲得する
+     */
+    virtual vram_id alloc();
+
+    /**
+     * 参照カウンタをインクリメントする
+     */
+    virtual vram_id retain(vram_id id);
+
+    /**
+     * 参照カウンタをデクリメントする
+     */
+    virtual void release(vram_id id);
+
+    /**
+     * GCを行う
+     */
+    virtual void gc();
+};
+
+/**
+ * managed
+ */
+typedef jc_sp<VideoMemory> MVideoMemory;
+
+/**
+ * VRAM上に展開されているオブジェクト
+ */
+class GLObject {
+    /**
+     * 確保したID
+     */
+    vram_id id;
+
+    /**
+     * RAM
+     */
+    MVideoMemory ram;
+
+    void set(const GLObject &cpy) {
+        release();
+
+        if (cpy.id) {
+            assert(cpy.ram);
+            this->ram = cpy.ram;
+            this->id = ram->retain(cpy.id);
+        }
+    }
+
+public:
+    GLObject() {
+        id = NULL;
+    }
+
+    GLObject(const GLObject &cpy) {
+        id = NULL;
+
+        set(cpy);
+    }
+
+    ~GLObject() {
+        release();
+    }
+
+    /**
+     * VRAMのメモリ確保を行う
+     */
+    void alloc(MVideoMemory ram) {
+        // 既存メモリの解放
+        release();
+
+        assert(ram);
+        assert(!id);
+
+        this->ram = ram;
+        this->id = ram->retain(ram->alloc());
+    }
+
+    /**
+     * 管理しているメモリの解放を行う
+     */
+    void release() {
+        if (id) {
+            assert(ram);
+
+            ram->release(id);
+            id = NULL;
+            ram.reset();
+        }
+    }
+
+    /**
+     * コピー対策
+     */
+    GLObject& operator=(const GLObject &cpy) {
+        set(cpy);
+        return (*this);
+    }
+
+    /**
+     * IDが同じであれば許可する
+     */
+    bool operator==(const GLObject &o) {
+        return this->id == o.id;
+    }
+
+    /**
+     * IDが違う
+     */
+    bool operator!=(const GLObject &o) {
+        return this->id != o.id;
+    }
+
+    /**
+     * VRAM上のオブジェクトIDを取得する
+     */
+    GLuint get() const {
+        if (id) {
+            return id->id;
+        }
+        return 0;
+    }
+
+    /**
+     * プール対象のRAMを取得する
+     */
+    MVideoMemory getRAM() const {
+        return ram;
+    }
+};
 
 }
 }
