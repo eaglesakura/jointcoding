@@ -271,13 +271,6 @@ public:
     }
 
     /**
-     * 現在のコンテキストのVRAMを取得する。
-     */
-    virtual VRAM getVRAM() {
-        return context->getVRAM();
-    }
-
-    /**
      * 現在のContextの対応するVRAMを取得する
      */
     virtual MVideoMemory getVRAM(const VRAM_e type) {

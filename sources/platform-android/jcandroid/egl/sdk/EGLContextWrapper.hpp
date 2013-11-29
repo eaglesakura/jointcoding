@@ -21,7 +21,6 @@ using namespace jc::gl;
 
 class SdkEGLContextWrapper: public Object, public EGLContextProtocol {
     MGLState state;
-    VRAM vram;
 
     /**
      * 管理対象のVRAM
@@ -35,7 +34,6 @@ public:
         this->eglContext = eglContext;
 
         state.reset(new GLState());
-        vram.reset(new SharedVRAM());
 
         for (int i = 0; i < VRAM_e_num; ++i) {
             this->rams[i].reset(new VideoMemory((VRAM_e) i));
@@ -53,12 +51,6 @@ public:
         return state;
     }
 
-    /**
-     * vramを取得する。
-     */
-    virtual VRAM getVRAM() {
-        return vram;
-    }
 
     /**
      * VRAM取得
@@ -88,8 +80,6 @@ public:
      * 握っている資源を明示的に開放する
      */
     virtual void dispose() {
-        vram.reset();
-
         // 全VRAMのdisposeを行う
         for(int i = 0; i < VRAM_e_num; ++i) {
             if(rams[i]) {

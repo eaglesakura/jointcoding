@@ -233,11 +233,6 @@ void JointApplicationBase::dispatchDestroy() {
     // 各種解放処理を行う
     {
         renderingContext.reset();
-        {
-            MDevice windowDevice = getWindowDevice();
-            // VRAMを一括解放する
-            windowDevice->getVRAM()->dispose();
-        }
     }
 }
 

@@ -13,7 +13,6 @@ EGLContextManager::EGLContextManager(EGLContext context, EGLDisplay display, EGL
     this->config = config;
     this->context = context;
     this->state.reset(new GLState());
-    this->vram.reset(new SharedVRAM());
 
     for (int i = 0; i < VRAM_e_num; ++i) {
         this->rams[i].reset(new VideoMemory((VRAM_e) i));
@@ -28,8 +27,6 @@ EGLContextManager::~EGLContextManager() {
  * 資源の開放を行う
  */
 void EGLContextManager::dispose() {
-    vram.reset();
-
     if (context) {
         jclogf("destroy context = %x", context);
         if (!eglDestroyContext(display, context)) {

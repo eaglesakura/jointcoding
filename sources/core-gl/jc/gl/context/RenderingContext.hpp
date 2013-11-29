@@ -98,6 +98,7 @@ public:
 
     /**
      * 初期化を行う
+     * デバイスの移行を行う場合も設定し直す
      */
     virtual void initialize(MDevice device) {
         assert(device);
@@ -110,9 +111,8 @@ public:
         }
     }
 
-    virtual VRAM getVRAM() const {
-        assert(device);
-        return device->getVRAM();
+    virtual MVideoMemory getVRAM(const VRAM_e type) const {
+        return device->getVRAM(type);
     }
 
     virtual MGLState getState() const {

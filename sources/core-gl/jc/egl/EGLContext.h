@@ -29,11 +29,6 @@ public:
     virtual MGLState getState() = 0;
 
     /**
-     * vramを取得する。
-     */
-    virtual VRAM getVRAM() = 0;
-
-    /**
      * 指定した種類のVRAMを取得する
      */
     virtual MVideoMemory getVRAM(const VRAM_e type) = 0;

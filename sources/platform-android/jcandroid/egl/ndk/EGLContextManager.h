@@ -39,11 +39,6 @@ class EGLContextManager: public jc::Object, public EGLContextProtocol {
     MGLState state;
 
     /**
-     * VRAM管理
-     */
-    VRAM vram;
-
-    /**
      * 管理対象のVRAM
      */
     MVideoMemory rams[VRAM_e_num];
@@ -67,12 +62,6 @@ public:
         return state;
     }
 
-    /**
-     * VRAMを取得する。
-     */
-    virtual VRAM getVRAM() {
-        return vram;
-    }
     /**
      * VRAM取得
      */

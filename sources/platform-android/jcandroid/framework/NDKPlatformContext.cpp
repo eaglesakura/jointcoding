@@ -59,9 +59,6 @@ MDevice NDKPlatformContext::createSlaveDevice() const {
         env->DeleteLocalRef(jDeviceManager);
     }
 
-    // デバイスの隷属を行う
-    device->getVRAM()->sharedFrom(device->getVRAM());
-
     // 残ったデバイスを返す
     return device;
 }

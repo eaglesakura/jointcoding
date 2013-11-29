@@ -52,14 +52,9 @@ typedef VertexAttribute<QuadVertex, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2f)> Qua
  */
 class Quad: public Object {
     /**
-     * 保存するステート
-     */
-    MGLState state;
-
-    /**
      * 頂点バッファ
      */
-    vram_handle vertices;
+    GLObject vertices;
 
     struct {
         /**
@@ -76,7 +71,7 @@ class Quad: public Object {
     /**
      * 初期化を行う
      */
-    void initialize();
+    void initialize(MGLState state);
 
     /**
      * レンダリングモード
@@ -118,13 +113,13 @@ public:
      * 描画を行う。
      * レンダリング環境はバインド元に従う。
      */
-    virtual void rendering();
+    virtual void rendering(MGLState state);
 
     /**
      * 頂点情報を更新する。
      * 4頂点を設定しなければならない。
      */
-    virtual void updateVertices(const QuadVertex *vertices);
+    virtual void updateVertices(MGLState state, const QuadVertex *vertices);
 
 };
 

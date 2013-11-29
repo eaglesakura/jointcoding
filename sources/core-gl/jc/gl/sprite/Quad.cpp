@@ -54,10 +54,10 @@ const static QuadVertex g_vertices[] = {
  * 矩形を構築する
  */
 Quad::Quad(MDevice device) {
-    this->state = device->getState();
-    this->vertices = device->getVRAM()->alloc(VRAM_VertexBufferObject);
+    this->vertices.alloc(device->getVRAM(VRAM_VertexBufferObject));
+    assert(vertices);
     this->primitiveType = GL_TRIANGLE_FAN;
-    this->initialize();
+    this->initialize(device->getState());
 
 //    glLineWidth(2);
 //    primitiveType = GL_LINE_LOOP;
@@ -66,11 +66,11 @@ Quad::Quad(MDevice device) {
 /**
  * 初期化を行う。
  */
-void Quad::initialize() {
+void Quad::initialize(MGLState state) {
     jclogf("quad initialize : %x", this);
     jclogf("quad id = %d", vertices.get());
 
-    updateVertices(g_vertices);
+    updateVertices(state, g_vertices);
 
 }
 
@@ -84,7 +84,7 @@ Quad::~Quad() {
  * 描画を行う。
  * レンダリング環境はバインド元に従う。
  */
-void Quad::rendering() {
+void Quad::rendering(MGLState state) {
     state->bindBuffer(GL_ARRAY_BUFFER, vertices.get());
 
     // 位置属性が存在しないならレンダリングできない
@@ -104,7 +104,7 @@ void Quad::rendering() {
  * 頂点情報を更新する。
  * 4頂点を設定しなければならない。
  */
-void Quad::updateVertices(const QuadVertex *vertices) {
+void Quad::updateVertices(MGLState state, const QuadVertex *vertices) {
     // ステートの割り当て
     state->bindBuffer(GL_ARRAY_BUFFER, this->vertices.get());
 

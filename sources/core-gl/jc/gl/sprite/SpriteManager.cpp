@@ -130,7 +130,7 @@ void SpriteManager::rendering(const float x, const float y, const float width, c
     }
 
     // レンダリングを行う
-    quad->rendering();
+    quad->rendering(windowDevice->getState());
 }
 
 /**
@@ -199,7 +199,7 @@ MSpriteManager SpriteManager::createExternalInstance(MDevice device) {
     MGLShaderProgram program = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_EXTERNAL_SHADER_SOURCE, FRAGMENT_EXTERNAL_SHADER_SOURCE);
     assert(program.get() != NULL);
     MSpriteManager result(new SpriteManager(device, program));
-    result->getRenderingQuad()->updateVertices(g_revert_vertices);
+    result->getRenderingQuad()->updateVertices(device->getState(), g_revert_vertices);
     return result;
 }
 
