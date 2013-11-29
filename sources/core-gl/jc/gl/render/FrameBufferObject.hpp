@@ -62,6 +62,7 @@ protected:
      * バッファ高
      */
     s32 height;
+
 public:
     FrameBufferObject(MDevice device) {
         assert(device);
@@ -89,7 +90,10 @@ public:
      * バインドを行う
      */
     virtual void bind(MGLState state) {
+        assert(framebuffer);
+
         state->bindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+        assert(glIsFramebuffer(framebuffer.get()));
     }
 
     /**
@@ -110,6 +114,34 @@ public:
 
         if (stencil) {
             stencil->unbind(state);
+        }
+    }
+
+    /**
+     * @param attachment  GL_DEPTH_ATTACHMENT
+     */
+    virtual void attach(MGLState state, const GLenum attachment, MTextureImage texture) {
+        bind(state);
+
+        texture->bind(state);
+        {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture->getName(), 0);
+            assert_gl();
+        }
+        texture->unbind(state);
+
+
+        // アタッチメントの種類によって保存先を変更する
+        switch (attachment) {
+            case GL_COLOR_ATTACHMENT0:
+                this->colorTexture = texture;
+                break;
+            case GL_DEPTH_ATTACHMENT:
+                this->depthTexture = texture;
+                break;
+            default:
+                assert(false);
+                break;
         }
     }
 
@@ -369,6 +401,22 @@ public:
         depthTexture->onAllocated();
         depthTexture->unbind(device->getState());
         return jctrue;
+    }
+
+    /**
+     * レンダリングデバイスを移譲する場合に呼び出す必要がある
+     * このメソッドを呼び出さない場合、Nexus10で問題が生じる場合がある。
+     */
+    virtual void setRenderDevice(MDevice device) {
+        MGLState state = device->getState();
+        bind(state);
+
+        if(colorTexture) {
+            attach(state, GL_COLOR_ATTACHMENT0, colorTexture);
+        }
+        if (depthTexture) {
+            attach(state, GL_DEPTH_ATTACHMENT, depthTexture);
+        }
     }
 
     /**

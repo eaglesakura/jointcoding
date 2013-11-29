@@ -62,7 +62,6 @@ void BenchmarkApplication::onAppInitialize() {
         spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
     }
 
-
 //    // テクスチャロードを開始する
     startNewtask(BenchmarkTask_LoadTexture, 0);
     startNewtask(BenchmarkTask_LoadResources, 0);
@@ -75,7 +74,6 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
 
         texture = TextureImage::decode(subDevice, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
         texture->unbind(subDevice->getState());
-
 
         jclog("load finish");
         glFinish();
@@ -169,6 +167,7 @@ void BenchmarkApplication::loadResource(MDevice subDevice) {
             const s32 height = width;
             shadowmap.reset(new FrameBufferObject(device));
             // オフスクリーンのリサイズを行う
+            shadowmap->bind(device->getState());
             shadowmap->resize(device->getState(), width, height);
 
             if (shadowmap->allocDepthRenderTexture(device)) {
@@ -185,11 +184,24 @@ void BenchmarkApplication::loadResource(MDevice subDevice) {
             //        shadowmap->allocDepthRenderTexture(device);
             shadowmap->checkFramebufferStatus();
             shadowmap->unbind(device->getState());
+
+            assert(glIsFramebuffer(shadowmap->getName()));
         }
-        initialized = jctrue;
+    } catch (Exception &e) {
+        jcloge(e);
+        throw;
+    }
+
+    try {
+        DeviceLock lock(getWindowDevice(), jctrue);
+
+        // デバイスを委譲する
+        shadowmap->setRenderDevice(getWindowDevice());
     } catch (Exception &e) {
         jcloge(e);
     }
+
+    initialized = jctrue;
 }
 
 /**
