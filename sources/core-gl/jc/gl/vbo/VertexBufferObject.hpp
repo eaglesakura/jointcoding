@@ -26,12 +26,12 @@ class VertexBufferObject: public Object {
     /**
      * 確保したVBO
      */
-    vram_handle vertices;
+    GLObject vertices;
 
 public:
     VertexBufferObject(MDevice device) {
         assert(device);
-        vertices = device->getVRAM()->alloc(VRAM_VertexBufferObject);
+        vertices.alloc(device->getVRAM(VRAM_VertexBufferObject));
     }
 
     virtual ~VertexBufferObject() {

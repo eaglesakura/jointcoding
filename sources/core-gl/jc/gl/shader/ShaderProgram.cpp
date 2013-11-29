@@ -12,9 +12,8 @@
 namespace jc {
 namespace gl {
 
-ShaderProgram::ShaderProgram(const vram_handle &program, const MGLState state, const MGLShader vertexShader, const MGLShader fragmentShader) {
+ShaderProgram::ShaderProgram(const GLObject &program, const MGLShader vertexShader, const MGLShader fragmentShader) {
     this->program = program;
-    this->state = state;
     glGetProgramiv(program.get(), GL_ACTIVE_ATTRIBUTES, (GLint*) &attributes);
     glGetProgramiv(program.get(), GL_ACTIVE_ATTRIBUTES, (GLint*) &uniforms);
     assert_gl();
@@ -29,14 +28,14 @@ ShaderProgram::~ShaderProgram() {
 /**
  * GLと関連付ける
  */
-void ShaderProgram::bind() {
+void ShaderProgram::bind(MGLState state) {
     state->useProgram(program.get());
 }
 
 /**
  * GLと切り離す
  */
-void ShaderProgram::unbind() {
+void ShaderProgram::unbind(MGLState state) {
     if (state->isUseProgram(program.get())) {
         state->useProgram(0);
     }
@@ -46,12 +45,7 @@ void ShaderProgram::unbind() {
  * 管理しているリソースの解放を行う
  */
 void ShaderProgram::dispose() {
-    if (program.exist()) {
-        unbind();
-        // 各々のシェーダーのデタッチと削除を行う
-        program.reset();
-    }
-
+    program.release();
     vertexShader.reset();
     fragmentShader.reset();
 }
@@ -67,7 +61,7 @@ GLint ShaderProgram::getAttribLocation(const charactor* name) const {
  * uniform変数のロケーションを取得する
  */
 GLint ShaderProgram::getUniformLocation(const charactor *name) const {
-    return  glGetUniformLocation(program.get(), name);
+    return glGetUniformLocation(program.get(), name);
 }
 
 /**
@@ -80,7 +74,7 @@ MGLShaderProgram ShaderProgram::buildFromUri(MDevice device, const Uri &vertexSh
 
     // 頂点シェーダを作成
     try {
-        vertexShader = Shader::compileFromUri(ShaderType_Vertex, device->getVRAM(), vertexShaderUri);
+        vertexShader = Shader::compileFromUri(device, ShaderType_Vertex, vertexShaderUri);
         if (!vertexShader) {
             return result;
         }
@@ -90,7 +84,7 @@ MGLShaderProgram ShaderProgram::buildFromUri(MDevice device, const Uri &vertexSh
     }
     // フラグメントシェーダを作成
     try {
-        fragmentShader = Shader::compileFromUri(ShaderType_Fragment, device->getVRAM(), fragmentShaderUri);
+        fragmentShader = Shader::compileFromUri(device, ShaderType_Fragment, fragmentShaderUri);
         if (!fragmentShader) {
             return result;
         }
@@ -113,7 +107,7 @@ MGLShaderProgram ShaderProgram::buildFromSource(MDevice device, const charactor 
 
     // 頂点シェーダを作成
     try {
-        vertexShader = Shader::compile(ShaderType_Vertex, device->getVRAM(), vertex_shader_source);
+        vertexShader = Shader::compile(device, ShaderType_Vertex, vertex_shader_source);
         if (!vertexShader) {
             return result;
         }
@@ -123,7 +117,7 @@ MGLShaderProgram ShaderProgram::buildFromSource(MDevice device, const charactor 
     }
     // フラグメントシェーダを作成
     try {
-        fragmentShader = Shader::compile(ShaderType_Fragment, device->getVRAM(), fragment_shader_source);
+        fragmentShader = Shader::compile(device, ShaderType_Fragment, fragment_shader_source);
         if (!fragmentShader) {
             return result;
         }
@@ -136,7 +130,6 @@ MGLShaderProgram ShaderProgram::buildFromSource(MDevice device, const charactor 
     return link(device, vertexShader, fragmentShader);
 }
 
-
 /**
  * 実行用にシェーダーをリンクさせる。
  */ //
@@ -146,27 +139,28 @@ jc_sp<ShaderProgram> ShaderProgram::link(MDevice device, const MGLShader vertexS
     assert(fragmentShader);
     assert(fragmentShader->getType() == ShaderType_Fragment);
 
-
     const MGLState state = device->getState();
 
-    vram_handle program = device->getVRAM()->alloc(VRAM_ShaderProgram);
+    GLObject program;
+    program.alloc(device->getVRAM(VRAM_ShaderProgram));
+    assert(program);
 
     // 頂点シェーダを対応付ける
-    glAttachShader(program.get(), vertexShader->getShader().get());
+    glAttachShader(program.get(), vertexShader->getName());
     // フラグメントシェーダを対応付ける
-    glAttachShader(program.get(), fragmentShader->getShader().get());
+    glAttachShader(program.get(), fragmentShader->getName());
     // シェーダをリンクさせる
     glLinkProgram(program.get());
     assert_gl();
 
     if (GLState::printProgramError(program.get(), GL_LINK_STATUS)) {
         // リンクに失敗したからエラーを返す
-        program.reset();
+        program.release();
         return MGLShaderProgram();
     }
 
     // リンクに成功した
-    ShaderProgram *result = new ShaderProgram(program, device->getState(), vertexShader, fragmentShader);
+    ShaderProgram *result = new ShaderProgram(program, vertexShader, fragmentShader);
     return MGLShaderProgram(result);
 }
 

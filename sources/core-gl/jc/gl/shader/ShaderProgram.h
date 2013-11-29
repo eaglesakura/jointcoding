@@ -24,11 +24,6 @@ namespace gl {
 class ShaderProgram: public Object {
 protected:
     /**
-     * ステート保持
-     */
-    MGLState state;
-
-    /**
      * 関連付けられた頂点シェーダ
      */
     MGLShader vertexShader;
@@ -51,9 +46,9 @@ protected:
     /**
      * Fragment/VertexShaderをまとめているシェーダプログラム
      */
-    vram_handle program;
+    GLObject program;
 
-    ShaderProgram(const vram_handle &program, const MGLState state, const MGLShader vertexShader, const MGLShader fragmentShader);
+    ShaderProgram(const GLObject &program, const MGLShader vertexShader, const MGLShader fragmentShader);
 public:
     virtual ~ShaderProgram();
 
@@ -61,13 +56,6 @@ public:
      * 管理しているリソースの解放を行う
      */
     virtual void dispose();
-//
-//    /**
-//     * プログラムオブジェクトを取得する。
-//     */
-//    virtual SharedResource& getProgram() {
-//        return program;
-//    }
 
     /**
      * プログラム属性変数のロケーションを取得する
@@ -96,12 +84,12 @@ public:
     /**
      * GLと関連付ける
      */
-    virtual void bind();
+    virtual void bind(MGLState state);
 
     /**
      * GLと切り離す
      */
-    virtual void unbind();
+    virtual void unbind(MGLState state);
 
     /**
      * URIを利用してテキストファイルからシェーダーを作成する

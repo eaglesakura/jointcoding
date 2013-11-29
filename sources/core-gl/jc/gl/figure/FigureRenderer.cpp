@@ -46,8 +46,8 @@ void FigureRenderer::initialize( MDevice device, const Uri &vertexShader, const 
 /**
  * 描画用のカメラをセットアップする
  */
-void FigureRenderer::bindCamera() {
-    shader->bind();
+void FigureRenderer::bindCamera(MGLState state) {
+    shader->bind(state);
 
     Matrix4x4 m_camera;
     camera->getMatrix(&m_camera);

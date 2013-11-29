@@ -37,21 +37,28 @@ protected:
     /**
      * ビルドしたシェーダー
      */
-    vram_handle shader;
+    GLObject shader;
 
     /**
      * タイプ
      */
     ShaderType_e type;
 
-    Shader(const ShaderType_e type, const vram_handle &shader_handle);
+    Shader(const ShaderType_e type, const GLObject &shader_handle);
 public:
     virtual ~Shader();
 
     /**
      * シェーダーオブジェクトを取得する。
      */
-    virtual vram_handle& getShader() {
+    virtual GLuint getName() const {
+        return shader.get();
+    }
+
+    /**
+     *
+     */
+    virtual const GLObject& getObject() const {
         return shader;
     }
 
@@ -67,12 +74,12 @@ public:
     /**
      * シェーダーの作成を行う。
      */
-    static jc_sp<Shader> compile(const ShaderType_e type, const VRAM vram, const charactor* sourceCode);
+    static jc_sp<Shader> compile(MDevice device, const ShaderType_e type, const charactor* sourceCode);
 
     /**
      * シェーダーのコンパイルを行う
      */
-    static jc_sp<Shader> compileFromUri(const ShaderType_e type, const VRAM vram, const Uri &uri);
+    static jc_sp<Shader> compileFromUri(MDevice device, const ShaderType_e type, const Uri &uri);
 };
 
 /**

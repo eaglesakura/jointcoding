@@ -62,79 +62,6 @@ void BenchmarkApplication::onAppInitialize() {
         spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
     }
 
-    // スキニングなしフィギュアをロード
-    {
-        susanow.reset(new Figure());
-
-        // フィギュアロード
-        jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
-        jc_sp<UriTextureFactory> texFactory(new UriTextureFactory());
-        texFactory->fromAssets("");
-        texFactory->setFilenameExt(".png");
-
-        factory->initialize(Uri::fromAssets("susanow.archive"));
-
-        jc_sp<FigureLoader> loader(new FigureLoader(device, factory, texFactory));
-
-        // 読み込み対象を指定する
-        loader->setLoadTarget(susanow);
-
-        // 読込を行う
-        loader->load();
-    }
-
-    // スキニング付きフィギュアをロード
-    {
-        antan.reset(new Figure());
-
-        // フィギュアロード
-        jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
-        jc_sp<UriTextureFactory> texFactory(new UriTextureFactory());
-        texFactory->fromAssets("");
-        texFactory->setFilenameExt(".jpg");
-
-        factory->initialize(Uri::fromAssets("antan.archive"));
-
-        jc_sp<FigureLoader> loader(new FigureLoader(device, factory, texFactory));
-
-        // 読み込み対象を指定する
-        loader->setLoadTarget(antan);
-
-        // 読込を行う
-        loader->load();
-    }
-
-    // フィギュアのインスタンスを確保する
-    {
-        // シェーダー読込
-        MGLShaderProgram shader = ShaderProgram::buildFromUri(device, Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
-        assert(shader);
-
-        basicShader = shader;
-        renderer.reset(new BasicFigureRenderer());
-        renderer->initialize(device, shader);
-
-        worldEnv.reset(new EnvironmentInstanceState());
-
-        {
-            susanow_instance.reset(renderer->createInstanceState(susanow));
-            susanow_instance->setEnvironmentState(worldEnv);
-        }
-
-        {
-            antan_instance.reset(renderer->createInstanceState(antan));
-            antan_instance->setEnvironmentState(worldEnv);
-        }
-    }
-    // シャドウ用のレンダラを確保する
-    {
-        // シェーダー読込
-        MGLShaderProgram shader = ShaderProgram::buildFromUri(device, Uri::fromAssets("shadow.vert"), Uri::fromAssets("shadow.frag"));
-        assert(shader);
-
-        shadowRenderer.reset(new ShadowmapRenderer());
-        shadowRenderer->initialize(device, shader);
-    }
 
 //    // テクスチャロードを開始する
     startNewtask(BenchmarkTask_LoadTexture, 0);
@@ -146,12 +73,9 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
         jclog("lock start");
         DeviceLock lock(subDevice, jctrue);
 
-        Thread::sleep(5000);
-        jclog("load start");
+        Thread::sleep(500);
         texture = TextureImage::decode(subDevice, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
-        jclog("decode finish");
         texture->unbind(subDevice->getState());
-        jclog("unbind finish");
 
         Thread::sleep(500);
 //        subDevice->getVRAM()->gc();
@@ -165,10 +89,83 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
 
 void BenchmarkApplication::loadResource(MDevice subDevice) {
     try {
-        DeviceLock lock(subDevice, jctrue);
+        MDevice device = subDevice;
+        DeviceLock lock(device, jctrue);
         Thread::sleep(500);
 
-        MDevice device = subDevice;
+        // スキニングなしフィギュアをロード
+        {
+            susanow.reset(new Figure());
+
+            // フィギュアロード
+            jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
+            jc_sp<UriTextureFactory> texFactory(new UriTextureFactory());
+            texFactory->fromAssets("");
+            texFactory->setFilenameExt(".png");
+
+            factory->initialize(Uri::fromAssets("susanow.archive"));
+
+            jc_sp<FigureLoader> loader(new FigureLoader(device, factory, texFactory));
+
+            // 読み込み対象を指定する
+            loader->setLoadTarget(susanow);
+
+            // 読込を行う
+            loader->load();
+        }
+
+        // スキニング付きフィギュアをロード
+        {
+            antan.reset(new Figure());
+
+            // フィギュアロード
+            jc_sp<ArchiveFigureDataFactory> factory(new ArchiveFigureDataFactory());
+            jc_sp<UriTextureFactory> texFactory(new UriTextureFactory());
+            texFactory->fromAssets("");
+            texFactory->setFilenameExt(".jpg");
+
+            factory->initialize(Uri::fromAssets("antan.archive"));
+
+            jc_sp<FigureLoader> loader(new FigureLoader(device, factory, texFactory));
+
+            // 読み込み対象を指定する
+            loader->setLoadTarget(antan);
+
+            // 読込を行う
+            loader->load();
+        }
+        // シャドウ用のレンダラを確保する
+        {
+            // シェーダー読込
+            MGLShaderProgram shader = ShaderProgram::buildFromUri(device, Uri::fromAssets("shadow.vert"), Uri::fromAssets("shadow.frag"));
+            assert(shader);
+
+            shadowRenderer.reset(new ShadowmapRenderer());
+            shadowRenderer->initialize(device, shader);
+        }
+
+        // フィギュアのインスタンスを確保する
+        {
+            // シェーダー読込
+            MGLShaderProgram shader = ShaderProgram::buildFromUri(device, Uri::fromAssets("basic.vert"), Uri::fromAssets("basic.frag"));
+            assert(shader);
+
+            basicShader = shader;
+            renderer.reset(new BasicFigureRenderer());
+            renderer->initialize(device, shader);
+
+            worldEnv.reset(new EnvironmentInstanceState());
+
+            {
+                susanow_instance.reset(renderer->createInstanceState(susanow));
+                susanow_instance->setEnvironmentState(worldEnv);
+            }
+
+            {
+                antan_instance.reset(renderer->createInstanceState(antan));
+                antan_instance->setEnvironmentState(worldEnv);
+            }
+        }
 
         // オフスクリーンターゲットを生成
         {
@@ -179,8 +176,10 @@ void BenchmarkApplication::loadResource(MDevice subDevice) {
             shadowmap->resize(device->getState(), width, height);
 
             if (shadowmap->allocDepthRenderTexture(device)) {
+                jclog("alloc depth texture");
                 shadowmapTexture = shadowmap->getDepthTexture();
             } else {
+                jclog("bad alloc depth texture");
                 shadowmap->allocColorRenderTexture(device, PixelFormat_LuminanceF16);
                 shadowmap->allocDepthRenderbuffer(device, 24);
 
@@ -191,7 +190,6 @@ void BenchmarkApplication::loadResource(MDevice subDevice) {
             shadowmap->checkFramebufferStatus();
             shadowmap->unbind(device->getState());
         }
-        glFinish();
         initialized = jctrue;
     } catch (Exception &e) {
         jcloge(e);
@@ -306,7 +304,7 @@ void BenchmarkApplication::onAppMainUpdate() {
     // 通常レンダリング
     {
         renderingContext->viewportVirtual();
-        basicShader->bind();
+        basicShader->bind(device->getState());
         {
             TextureUniform unif;
             unif.setLocation(basicShader, "unif_shadowmap");

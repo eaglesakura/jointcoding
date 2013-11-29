@@ -106,7 +106,7 @@ public:
     /**
      * 描画用のカメラをセットアップする
      */
-    virtual void bindCamera();
+    virtual void bindCamera(MGLState state);
 };
 
 /**

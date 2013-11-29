@@ -31,7 +31,7 @@ protected:
         MGLState state = device->getState();
         // シェーダーのバインドを行う
         {
-            shader->bind();
+            shader->bind(state);
 
             // 深度バッファをONに切り替える
             state->depthTestEnable(jctrue);

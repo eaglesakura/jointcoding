@@ -23,7 +23,10 @@ namespace gl {
  */
 class FrameBufferObject: public Object, public IRenderingSurface {
 protected:
-    vram_handle fbo;
+    /**
+     * フレームバッファ
+     */
+    GLObject framebuffer;
 
     /**
      * カラーバッファ
@@ -64,8 +67,8 @@ public:
         assert(device);
 
         width = height = 0;
-        fbo = device->getVRAM()->alloc(VRAM_FrameBuffer);
-        assert(fbo.get());
+        framebuffer.alloc(device->getVRAM(VRAM_FrameBuffer));
+        assert(framebuffer);
     }
 
     virtual ~FrameBufferObject() {
@@ -75,21 +78,25 @@ public:
      * 管理名を取得する
      */
     virtual GLuint getName() const {
-        return fbo.get();
+        return framebuffer.get();
+    }
+
+    virtual const GLObject& getObject() const {
+        return framebuffer;
     }
 
     /**
      * バインドを行う
      */
     virtual void bind(MGLState state) {
-        state->bindFramebuffer(GL_FRAMEBUFFER, fbo.get());
+        state->bindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
     }
 
     /**
      * バインドされていたら、バインド解除を行う
      */
     virtual void unbind(MGLState state) {
-        if (state->isBindedFramebuffer(fbo.get())) {
+        if (state->isBindedFramebuffer(framebuffer.get())) {
             state->bindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 

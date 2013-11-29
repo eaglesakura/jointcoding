@@ -56,7 +56,7 @@ void BasicFigureRenderer::bindMaterial(MDevice device, const Figure *pFigure, co
 
     // シェーダーのバインドを行う
     {
-        shader->bind();
+        shader->bind(state);
 
         // 深度バッファをONに切り替える
         state->depthTestEnable(jctrue);

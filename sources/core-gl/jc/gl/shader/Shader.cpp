@@ -14,7 +14,7 @@
 namespace jc {
 namespace gl {
 
-Shader::Shader(const ShaderType_e type, const vram_handle &shader_handle) {
+Shader::Shader(const ShaderType_e type, const GLObject &shader_handle) {
     this->type = type;
     this->shader = shader_handle;
 }
@@ -24,13 +24,13 @@ Shader::~Shader() {
 }
 
 void Shader::dispose() {
-    shader.reset();
+    shader.release();
 }
 
 /**
  * シェーダーのコンパイルを行う
  */
-MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const Uri &uri) {
+MGLShader Shader::compileFromUri(MDevice device, const ShaderType_e type, const Uri &uri) {
     MInputStream is = Platform::getFileSystem()->openInputStream(uri);
     MGLShader result;
     if (!is) {
@@ -42,7 +42,7 @@ MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const
         jclog("------ shader source ------");
         jclogf("%s", fileText.c_str());
         jclog("------ shader source ------");
-        return compile(type, vram, fileText.c_str());
+        return compile(device, type, fileText.c_str());
     } catch (const Exception &e) {
         jcloge(e);
     }
@@ -52,9 +52,10 @@ MGLShader Shader::compileFromUri(const ShaderType_e type, const VRAM vram, const
 /**
  * シェーダーの作成を行う。
  */
-MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charactor* sourceCode) {
+MGLShader Shader::compile(MDevice device, const ShaderType_e type, const charactor* sourceCode) {
     // シェーダオブジェクトを作成
-    vram_handle shader = vram->alloc(type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader);
+    GLObject shader;
+    shader.alloc(device->getVRAM(type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader));
     assert(shader.get());
 
     // シェーダソースを設定
@@ -67,7 +68,7 @@ MGLShader Shader::compile(const ShaderType_e type, const VRAM vram, const charac
 
     // エラーチェック
     if (GLState::printShaderError(shader.get(), GL_COMPILE_STATUS)) {
-        shader.reset();
+        shader.release();
         jclogf("shader(%s) comple error!!", type == ShaderType_Fragment ? "FRAGMENT" : "VERTEX");
         return MGLShader();
     }

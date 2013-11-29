@@ -42,8 +42,8 @@ jcboolean Showcase::nextAnimation(const MLoopController controller) {
 /**
  * 描画を行う
  */
-void Showcase::rendering(FigureRenderer *render) const {
-    render->getShader()->bind();
+void Showcase::rendering(MGLState state, FigureRenderer *render) const {
+    render->getShader()->bind(state);
 
     if (animation.clip) {
         // ポーズの設定を行う

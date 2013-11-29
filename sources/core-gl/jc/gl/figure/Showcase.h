@@ -121,7 +121,7 @@ public:
     /**
      * 描画を行う
      */
-    virtual void rendering(FigureRenderer *render) const;
+    virtual void rendering(MGLState state, FigureRenderer *render) const;
 };
 
 /**

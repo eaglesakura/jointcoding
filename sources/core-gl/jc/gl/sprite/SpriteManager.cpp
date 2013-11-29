@@ -95,7 +95,7 @@ SpriteManager::~SpriteManager() {
  * テクスチャ用行列を設定する
  */
 void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
-    shader->bind();
+    shader->bind(windowDevice->getState());
     uniform.texture_matrix.upload(m);
 }
 
@@ -103,7 +103,7 @@ void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
  * サーフェイスのアスペクト比を設定する
  */
 void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_height) {
-    shader->bind();
+    shader->bind(windowDevice->getState());
     assert(uniform.aspect.valid());
     surfaceSize.set(surface_width, surface_height);
     uniform.aspect.upload((float) surface_width / (float) surface_height);
@@ -145,7 +145,7 @@ void SpriteManager::renderingRect(const float x, const float y, const float w, c
  */
 void SpriteManager::renderingImage(MTextureImage image, const float srcX, const float srcY, const float srcW, const float srcH, const float dstX, const float dstY, const float dstWidth, const float dstHeight, const float degree, const u32 rgba) {
 // シェーダーを切り替える
-    shader->bind();
+    shader->bind(windowDevice->getState());
     // テクスチャを転送する
     uniform.texture.upload(windowDevice->getState(), image);
     // ブレンド色を設定する

@@ -321,7 +321,7 @@ public:
     /**
      * GLのnativeオブジェクトを取得する
      */
-    virtual GLObject getObject() const {
+    virtual const GLObject& getObject() const {
         return texture;
     }
 

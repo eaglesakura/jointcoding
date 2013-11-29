@@ -18,7 +18,10 @@ namespace gl {
  * オフスクリーンレンダリング用のレンダリングバッファを管理する
  */
 class RenderBufferObject: public Object {
-    vram_handle buffer;
+    /**
+     * レンダリングバッファ
+     */
+    GLObject buffer;
 
     GLenum internalformat;
 
@@ -30,7 +33,7 @@ public:
     RenderBufferObject(MDevice device, const GLenum internalformat) {
         assert(device);
 
-        buffer = device->getVRAM()->alloc(VRAM_RenderBuffer);
+        buffer.alloc(device->getVRAM(VRAM_RenderBuffer));
         assert(buffer.get());
 
         this->internalformat = internalformat;
@@ -42,8 +45,15 @@ public:
     /**
      *
      */
-    virtual GLuint getName() {
+    virtual GLuint getName() const {
         return buffer.get();
+    }
+
+    /**
+     *
+     */
+    virtual const GLObject& getObject() const {
+        return buffer;
     }
 
     /**

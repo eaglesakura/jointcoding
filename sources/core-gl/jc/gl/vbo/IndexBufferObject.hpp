@@ -25,19 +25,19 @@ class IndexBufferObject: public Object {
     /**
      * 確保したインデックスバッファ
      */
-    vram_handle indices;
+    GLObject indices;
 
     /**
      * インデックスバッファの配列長
      */
-    u32 indices_length;
+    u32 length;
 
 public:
     IndexBufferObject(MDevice device) {
         assert(device);
 
-        indices = device->getVRAM()->alloc(VRAM_Indices);
-        this->indices_length = 0;
+        indices.alloc(device->getVRAM(VRAM_Indices));
+        this->length = 0;
     }
 
     virtual ~IndexBufferObject() {
@@ -67,7 +67,7 @@ public:
      * @param suage GL_STATIC_DRAW | GL_STREAM_DRAW | GL_DYNAMIC_DRAW
      */
     virtual void bufferData(const u16 *indices, const u32 indices_length, const GLenum usage) {
-        this->indices_length = indices_length;
+        this->length = indices_length;
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_length * sizeof(u16), (GLvoid*) indices, usage);
         assert_gl();
     }
@@ -77,7 +77,7 @@ public:
      * @param mode レンダリングモードを指定する デフォルトはGL_TRIANGLES
      */
     virtual void rendering(const GLenum mode) {
-        glDrawElements(mode, indices_length, GL_UNSIGNED_SHORT, NULL);
+        glDrawElements(mode, length, GL_UNSIGNED_SHORT, NULL);
         assert_gl();
     }
 
