@@ -8,7 +8,6 @@
 #include    "jc/mem/AllocChain.hpp"
 #include    "jc/mem/jcnew.h"
 
-
 #include    <pthread.h>
 using namespace jc;
 
@@ -76,7 +75,7 @@ inline bool isLargeHeap(size_t size) {
  */
 static AllocChainNode* heapAlloc(size_t size) {
     // allocサイズを整える
-    size = (((size-1) / JC_MEMNEW_BYTE_ALIGNMENT) + 1) * JC_MEMNEW_BYTE_ALIGNMENT;
+    size = (((size - 1) / JC_MEMNEW_BYTE_ALIGNMENT) + 1) * JC_MEMNEW_BYTE_ALIGNMENT;
 
     // ノードチェイン番号を生成する
     const u32 selectChainIndex = jc::min(size / JC_MEMNEW_BYTE_ALIGNMENT, ALLOC_CACHE_NODE_LASTINDEX);
@@ -84,7 +83,6 @@ static AllocChainNode* heapAlloc(size_t size) {
 
     // 返却可能なサイズのノードを探す
     AllocChainNode* pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
-
 
     if (!pResult) {
         // 初期Indexに戻す
@@ -219,6 +217,24 @@ void free_mem(void* p, const u32 systemSize) {
         }
 
         heapFree(pHead->node);
+    }
+
+    pthread_mutex_unlock(&alloc_mutex);
+}
+
+/**
+ * メモリキャッシュをクリーンアップする
+ */
+void gc_mem() {
+    pthread_mutex_lock(&alloc_mutex);
+
+    for (int i = 0; i < ALLOC_CACHE_NODE_NUM; ++i) {
+        while (allocatedChains[i]) {
+            AllocChainNode *pFront = allocatedChains[i];
+            allocatedChains[i] = AllocChain_popFront(allocatedChains[i]);
+
+            free(pFront);
+        }
     }
 
     pthread_mutex_unlock(&alloc_mutex);
