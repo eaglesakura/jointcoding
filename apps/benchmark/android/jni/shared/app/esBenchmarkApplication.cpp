@@ -73,12 +73,9 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
         jclog("lock start");
         DeviceLock lock(subDevice, jctrue);
 
-        Thread::sleep(500);
         texture = TextureImage::decode(subDevice, Uri::fromAssets("images/test.png"), PixelFormat_RGBA8888);
         texture->unbind(subDevice->getState());
 
-        Thread::sleep(500);
-//        subDevice->getVRAM()->gc();
 
         jclog("load finish");
         glFinish();
@@ -91,7 +88,6 @@ void BenchmarkApplication::loadResource(MDevice subDevice) {
     try {
         MDevice device = subDevice;
         DeviceLock lock(device, jctrue);
-        Thread::sleep(500);
 
         // スキニングなしフィギュアをロード
         {
