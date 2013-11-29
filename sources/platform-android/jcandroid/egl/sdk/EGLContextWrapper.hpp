@@ -25,7 +25,7 @@ class SdkEGLContextWrapper: public Object, public EGLContextProtocol {
     /**
      * 管理対象のVRAM
      */
-    MVideoMemory rams[VRAM_e_num];
+    VideoMemory rams[VRAM_e_num];
 
 public:
     jc_sp<EGLContextWrapper> eglContext;
@@ -36,7 +36,7 @@ public:
         state.reset(new GLState());
 
         for (int i = 0; i < VRAM_e_num; ++i) {
-            this->rams[i].reset(new VideoMemory((VRAM_e) i));
+            this->rams[i].reset(new _VideoMemory((VRAM_e) i));
         }
     }
 
@@ -51,11 +51,10 @@ public:
         return state;
     }
 
-
     /**
      * VRAM取得
      */
-    virtual MVideoMemory getVRAM(const VRAM_e type) {
+    virtual VideoMemory getVRAM(const VRAM_e type) {
         return rams[type];
     }
 
@@ -81,8 +80,8 @@ public:
      */
     virtual void dispose() {
         // 全VRAMのdisposeを行う
-        for(int i = 0; i < VRAM_e_num; ++i) {
-            if(rams[i]) {
+        if(rams[0]) {
+            for(int i = 0; i < VRAM_e_num; ++i) {
                 rams[i]->dispose();
                 rams[i].reset();
             }

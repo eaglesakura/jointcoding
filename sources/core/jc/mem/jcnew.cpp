@@ -235,8 +235,10 @@ void gc_mem() {
 
             free(pFront);
         }
+
     }
 
+    gHeapInfo.nodes_cache = 0;
     pthread_mutex_unlock(&alloc_mutex);
 }
 

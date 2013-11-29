@@ -111,7 +111,7 @@ public:
         }
     }
 
-    virtual MVideoMemory getVRAM(const VRAM_e type) const {
+    virtual VideoMemory getVRAM(const VRAM_e type) const {
         return device->getVRAM(type);
     }
 

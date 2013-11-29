@@ -31,7 +31,7 @@ public:
     /**
      * 指定した種類のVRAMを取得する
      */
-    virtual MVideoMemory getVRAM(const VRAM_e type) = 0;
+    virtual VideoMemory getVRAM(const VRAM_e type) = 0;
 
     /**
      * Context内のgcを行う

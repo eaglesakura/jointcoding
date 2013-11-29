@@ -100,7 +100,7 @@ typedef struct _vram_id {
     }
 }* vram_id;
 
-class VideoMemory: public Object {
+class _VideoMemory: public Object {
 public:
     typedef void (*vram_alloc_function)(s32 size, u32 *result_array);
     typedef void (*vram_delete_function)(s32 size, u32 *obj_array);
@@ -135,9 +135,9 @@ private:
      */
     dealloc_container dealloc_pool;
 public:
-    VideoMemory(const VRAM_e type);
+    _VideoMemory(const VRAM_e type);
 
-    virtual ~VideoMemory();
+    virtual ~_VideoMemory();
 
     /**
      * 確保するRAMの種類を取得する
@@ -183,7 +183,7 @@ public:
 /**
  * managed
  */
-typedef jc_sp<VideoMemory> MVideoMemory;
+typedef jc_sp<_VideoMemory> VideoMemory;
 
 /**
  * VRAM上に展開されているオブジェクト
@@ -197,7 +197,7 @@ class GLObject {
     /**
      * RAM
      */
-    MVideoMemory ram;
+    VideoMemory ram;
 
     void set(const GLObject &cpy) {
         release();
@@ -227,7 +227,7 @@ public:
     /**
      * VRAMのメモリ確保を行う
      */
-    void alloc(MVideoMemory ram) {
+    void alloc(VideoMemory ram) {
         // 既存メモリの解放
         release();
 
@@ -300,7 +300,7 @@ public:
     /**
      * プール対象のRAMを取得する
      */
-    MVideoMemory getRAM() const {
+    VideoMemory getRAM() const {
         return ram;
     }
 };

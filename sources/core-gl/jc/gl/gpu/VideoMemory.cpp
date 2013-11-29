@@ -114,21 +114,21 @@ static VramFunction function_tbl[VRAM_e_num] = {
 
 // end
 
-VideoMemory::VideoMemory(const VRAM_e type) {
+_VideoMemory::_VideoMemory(const VRAM_e type) {
     this->type = type;
 
     // 一括取得量を設定する
     this->alloc_pool.reserve(function_tbl[type].once_alloc);
 }
 
-VideoMemory::~VideoMemory() {
+_VideoMemory::~_VideoMemory() {
 
 }
 
 /**
  * 指定したリソースを獲得する
  */
-vram_id VideoMemory::alloc() {
+vram_id _VideoMemory::alloc() {
     MutexLock lock(mutex);
 
     vram_id result = mark_new _vram_id();
@@ -154,7 +154,7 @@ vram_id VideoMemory::alloc() {
 /**
  * 参照カウンタをインクリメントする
  */
-vram_id VideoMemory::retain(vram_id id) {
+vram_id _VideoMemory::retain(vram_id id) {
     assert(id);
     MutexLock lock(mutex);
     ++id->ref;
@@ -165,7 +165,7 @@ vram_id VideoMemory::retain(vram_id id) {
 /**
  * 参照カウンタをデクリメントする
  */
-void VideoMemory::release(vram_id id) {
+void _VideoMemory::release(vram_id id) {
     assert(id);
     MutexLock lock(mutex);
 
@@ -173,6 +173,8 @@ void VideoMemory::release(vram_id id) {
 
     // 誰からも参照されなくなったら解放プールへ追加
     if (id->ref <= 0) {
+        jclogf("dealloc type[%s] id(%d)", function_tbl[type].type_name, id->id);
+
         dealloc_pool.push_back(id->id);
         // メモリ解放
         SAFE_DELETE(id);
@@ -182,7 +184,7 @@ void VideoMemory::release(vram_id id) {
 /**
  * GCを行う
  */
-void VideoMemory::gc() {
+void _VideoMemory::gc() {
     MutexLock lock(mutex);
 
     // 解放関数を呼び出す
@@ -203,7 +205,7 @@ void VideoMemory::gc() {
 /**
  * 開放処理を行う
  */
-void VideoMemory::dispose() {
+void _VideoMemory::dispose() {
     MutexLock lock(mutex);
 
     // 残っているGLオブエジェクトを解放リストに乗せる
