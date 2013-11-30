@@ -15,6 +15,8 @@
 #include    "protocol/jcJointApplicationProtocol.h"
 #include    "jc/gl/context/RenderingContext.hpp"
 
+#include    "jc/framework/fragment/ApplicationFragmentController.hpp"
+
 namespace jc {
 namespace gl {
 
@@ -245,6 +247,10 @@ private:
      */
     Vector2i surfaceSize;
 
+    /**
+     * フラグメント管理クラス
+     */
+    MApplicationFragmentController fragmentController;
 protected:
     /**
      * バインドされているプラットフォーム情報
@@ -371,6 +377,13 @@ public:
         return renderingContext;
     }
 
+    /**
+     * フラグメント管理クラスを取得する
+     */
+    virtual MApplicationFragmentController getFragmentController() const {
+        return fragmentController;
+    }
+
 protected:
     /* フレームワークライフサイクル */
 
@@ -459,7 +472,6 @@ public:
      * 実行される度に新たなスレッドとして呼び出される。
      */
     virtual void dispatchTask(const ApplicationTaskContext &task);
-
 
     /**
      * タッチイベントが呼び出された

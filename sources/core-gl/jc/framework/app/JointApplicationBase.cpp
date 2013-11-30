@@ -14,6 +14,8 @@ JointApplicationBase::JointApplicationBase() {
     appState = JointApplicationProtocol::State_Initializing;
     // 保留ステートを無効化する
     pendingState = -1;
+
+    fragmentController.reset(new ApplicationFragmentController(this));
 }
 
 JointApplicationBase::~JointApplicationBase() {
@@ -212,6 +214,7 @@ void JointApplicationBase::dispatchSurfaceResized() {
 
     // アプリに処理を任せる
     onAppSurfaceResized(surfaceSize.x, surfaceSize.y);
+    fragmentController->onSurfaceResized(surfaceSize.x, surfaceSize.y);
 }
 
 /**
@@ -228,6 +231,7 @@ void JointApplicationBase::dispatchDestroy() {
     {
         // アプリの解放を行う
         onAppDestroy();
+        fragmentController->onDestroy();
     }
 
     // 各種解放処理を行う
@@ -278,6 +282,7 @@ jcboolean JointApplicationBase::dispatchOnStateChangeRequest(const ApplicationQu
  */
 void JointApplicationBase::dispatchPause() {
     onAppPause();
+    fragmentController->onPause();
 }
 
 /**
@@ -286,6 +291,7 @@ void JointApplicationBase::dispatchPause() {
  */
 void JointApplicationBase::dispatchResume() {
     onAppResume();
+    fragmentController->onResume();
 }
 
 /**
@@ -318,7 +324,6 @@ void JointApplicationBase::dispatchTouchEvent(jc_sp<TouchEventProtocol> event) {
     jclogf("dispatchTouchEvent type(%d) pos(%f, %f)", event->getEventType(), event->getEventPosX(), event->getEventPosY());
 }
 
-
 /**
  * メインループの外部呼び出しを行う
  */
@@ -345,6 +350,11 @@ void JointApplicationBase::dispatchMainloop() {
 
                     // フレーム定形処理を行う
                     onAppMainUpdate();
+                    // フラグメント処理
+                    {
+                        fragmentController->commit();
+                        fragmentController->onUpdate();
+                    }
                 }
             } catch (EGLException &e) {
                 jcloge(e);
