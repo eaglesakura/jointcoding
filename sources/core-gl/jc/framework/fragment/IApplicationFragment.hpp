@@ -7,12 +7,14 @@
 #define IAPPLICATIONFRAGMENT_HPP_
 
 #include    "jointcoding.h"
+#include    "jc/gl/gpu/Device.h"
 
 namespace jc {
 namespace gl {
 
 class JointApplicationBase;
 class ApplicationFragmentController;
+
 /**
  * アプリの子要素としてコントローラーを追加する
  */
@@ -83,6 +85,8 @@ public:
         return controller;
     }
 
+    virtual MDevice getWindowDevice() const;
+
     virtual s32 getId() const {
         return id;
     }
@@ -90,6 +94,14 @@ public:
     virtual String getTag() const {
         return tag;
     }
+
+    /**
+     *
+     */
+//    template<typename T>
+//    T* getApplicationTo() const {
+//        return dynamic_cast<T*>(getApplication());
+//    }
 
 };
 

@@ -6,6 +6,7 @@
 
 #include    "jc/framework/fragment/IApplicationFragment.hpp"
 #include    "jc/framework/fragment/ApplicationFragmentController.hpp"
+#include    "jc/framework/app/JointApplicationBase.h"
 
 namespace jc {
 namespace gl {
@@ -17,6 +18,11 @@ JointApplicationBase* IApplicationFragment::getApplication() const {
     assert(controller);
     return controller->getApplication();
 }
+
+MDevice IApplicationFragment::getWindowDevice() const {
+    return  getApplication()->getWindowDevice();
+}
+
 
 }
 }
