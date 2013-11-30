@@ -63,7 +63,15 @@ public class CameraWrapper {
      */
     boolean open() {
         try {
-            camera = Camera.open();
+            final int numberOfCameras = Camera.getNumberOfCameras();
+
+            if (CameraDeviceProtocol_TYPE == CameraDeviceProtocol.TYPE_MAIN || numberOfCameras == 1) {
+                camera = Camera.open();
+            } else if (numberOfCameras > 1 && CameraDeviceProtocol_TYPE == CameraDeviceProtocol.TYPE_FRONT) {
+                camera = Camera.open(1);
+            } else {
+                camera = Camera.open();
+            }
 
             if (camera == null) {
                 return false;
@@ -280,7 +288,19 @@ public class CameraWrapper {
 
         textureMatrix = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         float[] temp = new float[4 * 4];
+
         previewSurface.getTransformMatrix(temp);
+
+        boolean ok = false;
+        for (float f : temp) {
+            if (f != 0) {
+                ok = true;
+            }
+        }
+        // 0行列であれば0を返す
+        if (!ok) {
+            return null;
+        }
 
         textureMatrix.put(temp);
         textureMatrix.position(0);
@@ -321,7 +341,7 @@ public class CameraWrapper {
     /**
      * プレビュー用のサーフェイスを示す
      */
-    class PreviewSurface extends SurfaceTexture implements OnFrameAvailableListener {
+    private class PreviewSurface extends SurfaceTexture implements OnFrameAvailableListener {
         /**
          * キャプチャの準備が出来たらtrue
          */
@@ -363,7 +383,7 @@ public class CameraWrapper {
     /**
      * オートフォーカス用
      */
-    final Camera.AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
+    private final Camera.AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
             synchronized (lock) {

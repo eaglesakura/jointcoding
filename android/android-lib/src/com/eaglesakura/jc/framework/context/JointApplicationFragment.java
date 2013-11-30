@@ -254,4 +254,23 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
         result.setArguments(args);
         return result;
     }
+
+    /**
+     * Fragmentクラスを指定して生成する
+     * @param fragmentClass
+     * @param renderingClass
+     * @return
+     */
+    public static JointApplicationFragment createInstance(Class<JointApplicationFragment> fragmentClass,
+            Class<? extends JointApplicationRenderer> renderingClass) {
+        try {
+            Bundle args = new Bundle();
+            args.putSerializable(ARG_RENDERING_CLASS, renderingClass);
+            JointApplicationFragment result = fragmentClass.newInstance();
+            result.setArguments(args);
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
