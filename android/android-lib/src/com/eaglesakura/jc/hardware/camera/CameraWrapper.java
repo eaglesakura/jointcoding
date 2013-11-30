@@ -217,7 +217,8 @@ public class CameraWrapper {
      */
     @JCMethod
     public void requestPreviewSize(int width, int height, int minWidth, int minHeight, boolean fripWH) {
-        final float TARGET_ASPECT = (float) width / (float) height;
+        AndroidUtil.log(String.format("request preview(%d, %d) frip(%s)", width, height, Boolean.toString(fripWH)));
+        final float TARGET_ASPECT = (float) Math.max(1, width) / (float) Math.max(1, height);
 
         try {
             List<Size> previewSizes = cameraParams.getSupportedPreviewSizes();
@@ -239,13 +240,15 @@ public class CameraWrapper {
 
             if (target != null) {
                 if (fripWH) {
-                    AndroidUtil.log(String.format("change preview size(%d x %d)", target.height, target.width));
+                    AndroidUtil.log(String.format("change preview size(%d x %d) frip", target.height, target.width));
                     cameraParams.setPreviewSize(target.height, target.width);
                 } else {
-                    AndroidUtil.log(String.format("change preview size(%d x %d)", target.width, target.height));
+                    AndroidUtil.log(String.format("change preview size(%d x %d) no-frip", target.width, target.height));
                     cameraParams.setPreviewSize(target.width, target.height);
                 }
                 camera.setParameters(cameraParams);
+
+                cameraParams = camera.getParameters();
             }
         } catch (Exception e) {
             AndroidUtil.log(e);

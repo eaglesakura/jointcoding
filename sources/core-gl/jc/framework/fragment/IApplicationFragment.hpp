@@ -98,10 +98,10 @@ public:
     /**
      *
      */
-//    template<typename T>
-//    T* getApplicationTo() const {
-//        return dynamic_cast<T*>(getApplication());
-//    }
+    template<typename T>
+    T* getApplicationTo() const {
+        return dynamic_cast<T*>(getApplication());
+    }
 
 };
 
