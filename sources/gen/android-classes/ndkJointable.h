@@ -15,10 +15,10 @@ public:
     }
 
     static const ::jc::charactor* CLASS_SIGNATURE;
-    virtual void setNativePointer(jint int_0, jobject pointer_1);
-    static void setNativePointer_(jobject _this, jint int_0, jobject pointer_1);
     virtual jobject getNativePointer_unsafe(jint int_0);
     static jobject getNativePointer_unsafe_(jobject _this, jint int_0);
+    virtual void setNativePointer(jint int_0, jobject pointer_1);
+    static void setNativePointer_(jobject _this, jint int_0, jobject pointer_1);
 
     static const ::jc::s32 KEY_MAINCONTEXT;
 

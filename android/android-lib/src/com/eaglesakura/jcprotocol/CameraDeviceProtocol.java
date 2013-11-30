@@ -21,6 +21,30 @@ public interface CameraDeviceProtocol {
     public static final int TYPE_FRONT = 1;
 
     /**
+     * 
+     */
+    @JCField
+    public static final int ORIENTATION_ROTATE_0 = 0;
+
+    /**
+     * 
+     */
+    @JCField
+    public static final int ORIENTATION_ROTATE_90 = 1;
+
+    /**
+     * 
+     */
+    @JCField
+    public static final int ORIENTATION_ROTATE_180 = 2;
+
+    /**
+     * 
+     */
+    @JCField
+    public static final int ORIENTATION_ROTATE_270 = 3;
+
+    /**
      * オートフォーカス動いていない
      */
     @JCField

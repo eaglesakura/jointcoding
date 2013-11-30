@@ -31,8 +31,8 @@ static void initialize_Jointable() {
 
     // load methods
     {
-        methods_Jointable[0] = ::ndk::JniWrapper::loadMethod(class_Jointable, "setNativePointer", "(ILcom/eaglesakura/jc/jni/Pointer;)V", false);
-        methods_Jointable[1] = ::ndk::JniWrapper::loadMethod(class_Jointable, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
+        methods_Jointable[0] = ::ndk::JniWrapper::loadMethod(class_Jointable, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
+        methods_Jointable[1] = ::ndk::JniWrapper::loadMethod(class_Jointable, "setNativePointer", "(ILcom/eaglesakura/jc/jni/Pointer;)V", false);
 
     }
 }
@@ -41,26 +41,26 @@ Jointable::Jointable(jobject obj): ::ndk::JniWrapper(obj){
     initialize_Jointable();
 }
 
-void Jointable::setNativePointer(jint int_0, jobject pointer_1) {
-    CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_Jointable[0], int_0, pointer_1);
-}
-
-void Jointable::setNativePointer_(jobject _this, jint int_0, jobject pointer_1) {
-    CALL_JNIENV();
-    initialize_Jointable();
-    env->CallVoidMethod(_this, methods_Jointable[0], int_0, pointer_1);
-}
-
 jobject Jointable::getNativePointer_unsafe(jint int_0) {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_Jointable[1], int_0);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_Jointable[0], int_0);
 }
 
 jobject Jointable::getNativePointer_unsafe_(jobject _this, jint int_0) {
     CALL_JNIENV();
     initialize_Jointable();
-    return (jobject) env->CallObjectMethod(_this, methods_Jointable[1], int_0);
+    return (jobject) env->CallObjectMethod(_this, methods_Jointable[0], int_0);
+}
+
+void Jointable::setNativePointer(jint int_0, jobject pointer_1) {
+    CALL_JNIENV();
+    env->CallVoidMethod(this->getObject(), methods_Jointable[1], int_0, pointer_1);
+}
+
+void Jointable::setNativePointer_(jobject _this, jint int_0, jobject pointer_1) {
+    CALL_JNIENV();
+    initialize_Jointable();
+    env->CallVoidMethod(_this, methods_Jointable[1], int_0, pointer_1);
 }
 
 jc_sp<Jointable> Jointable::wrap(jobject obj) {

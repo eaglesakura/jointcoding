@@ -66,7 +66,7 @@ public class CameraWrapper {
             final int numberOfCameras = Camera.getNumberOfCameras();
 
             if (CameraDeviceProtocol_TYPE == CameraDeviceProtocol.TYPE_MAIN || numberOfCameras == 1) {
-                camera = Camera.open();
+                camera = Camera.open(0);
             } else if (numberOfCameras > 1 && CameraDeviceProtocol_TYPE == CameraDeviceProtocol.TYPE_FRONT) {
                 camera = Camera.open(1);
             } else {
@@ -78,6 +78,39 @@ public class CameraWrapper {
             }
 
             cameraParams = camera.getParameters();
+
+            return true;
+        } catch (Exception e) {
+            AndroidUtil.log(e);
+            return false;
+        }
+    }
+
+    /**
+     * カメラの回転角を設定する
+     * @param CameraDeviceProtocol_ORIENTATION
+     */
+    @JCMethod
+    public boolean requestOrientation(int CameraDeviceProtocol_ORIENTATION) {
+        try {
+            int degree = 0;
+            switch (CameraDeviceProtocol_ORIENTATION) {
+                case CameraDeviceProtocol.ORIENTATION_ROTATE_0:
+                    degree = 0;
+                    break;
+                case CameraDeviceProtocol.ORIENTATION_ROTATE_90:
+                    degree = 90;
+                    break;
+                case CameraDeviceProtocol.ORIENTATION_ROTATE_180:
+                    degree = 180;
+                    break;
+                case CameraDeviceProtocol.ORIENTATION_ROTATE_270:
+                    degree = 270;
+                    break;
+            }
+
+            // 回転角を設定する
+            camera.setDisplayOrientation(degree);
 
             return true;
         } catch (Exception e) {
@@ -183,7 +216,7 @@ public class CameraWrapper {
      * @param minHeight
      */
     @JCMethod
-    public void requestPreviewSize(int width, int height, int minWidth, int minHeight) {
+    public void requestPreviewSize(int width, int height, int minWidth, int minHeight, boolean fripWH) {
         final float TARGET_ASPECT = (float) width / (float) height;
 
         try {
@@ -205,8 +238,13 @@ public class CameraWrapper {
             }
 
             if (target != null) {
-                AndroidUtil.log(String.format("change preview size(%d x %d)", target.width, target.height));
-                cameraParams.setPreviewSize(target.width, target.height);
+                if (fripWH) {
+                    AndroidUtil.log(String.format("change preview size(%d x %d)", target.height, target.width));
+                    cameraParams.setPreviewSize(target.height, target.width);
+                } else {
+                    AndroidUtil.log(String.format("change preview size(%d x %d)", target.width, target.height));
+                    cameraParams.setPreviewSize(target.width, target.height);
+                }
                 camera.setParameters(cameraParams);
             }
         } catch (Exception e) {
@@ -278,15 +316,13 @@ public class CameraWrapper {
      */
     @JCMethod
     public FloatBuffer getTextureMatrix() {
-        if (textureMatrix != null) {
-            return textureMatrix;
-        }
-
         if (previewSurface == null) {
             return null;
         }
 
-        textureMatrix = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        if (textureMatrix == null) {
+            textureMatrix = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        }
         float[] temp = new float[4 * 4];
 
         previewSurface.getTransformMatrix(temp);

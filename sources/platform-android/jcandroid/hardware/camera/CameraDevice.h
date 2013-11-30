@@ -75,7 +75,7 @@ public:
     /**
      * プレビュー状態を更新する
      */
-    virtual void updatePreview();
+    virtual void updatePreview(MGLState state);
 
     /**
      * プレビューを終了する
@@ -105,6 +105,11 @@ public:
      * プレビューサイズを要求するする
      */
     virtual void requestPreviewSize(const s32 width, const s32 height, const s32 minWidth, const s32 minHeight);
+
+    /**
+     * 回転角を設定する
+     */
+    virtual void requestRotation(const s32 CameraDeviceProtocol_ORIENTATION);
 
     /**
      * カメラを明示的に解放する

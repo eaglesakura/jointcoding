@@ -7,6 +7,10 @@ namespace jc {
 
 const ::jc::s32 CameraDeviceProtocol::TYPE_MAIN = 0;
 const ::jc::s32 CameraDeviceProtocol::TYPE_FRONT = 1;
+const ::jc::s32 CameraDeviceProtocol::ORIENTATION_ROTATE_0 = 0;
+const ::jc::s32 CameraDeviceProtocol::ORIENTATION_ROTATE_90 = 1;
+const ::jc::s32 CameraDeviceProtocol::ORIENTATION_ROTATE_180 = 2;
+const ::jc::s32 CameraDeviceProtocol::ORIENTATION_ROTATE_270 = 3;
 const ::jc::s32 CameraDeviceProtocol::FOCUSMODE_NONE = 0;
 const ::jc::s32 CameraDeviceProtocol::FOCUSMODE_PROCESSING = 1;
 const ::jc::s32 CameraDeviceProtocol::FOCUSMODE_COMPLETED = 2;

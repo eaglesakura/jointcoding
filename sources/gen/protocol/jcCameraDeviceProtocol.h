@@ -14,6 +14,10 @@ public:
 
     static const ::jc::s32 TYPE_MAIN;
     static const ::jc::s32 TYPE_FRONT;
+    static const ::jc::s32 ORIENTATION_ROTATE_0;
+    static const ::jc::s32 ORIENTATION_ROTATE_90;
+    static const ::jc::s32 ORIENTATION_ROTATE_180;
+    static const ::jc::s32 ORIENTATION_ROTATE_270;
     static const ::jc::s32 FOCUSMODE_NONE;
     static const ::jc::s32 FOCUSMODE_PROCESSING;
     static const ::jc::s32 FOCUSMODE_COMPLETED;
