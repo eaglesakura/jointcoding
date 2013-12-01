@@ -15,6 +15,8 @@ public:
     }
 
     static const ::jc::charactor* CLASS_SIGNATURE;
+    virtual jboolean isAspectFrip();
+    static jboolean isAspectFrip_(jobject _this);
     virtual jint getPreviewHeight();
     static jint getPreviewHeight_(jobject _this);
     virtual jboolean requestOrientation(jint CameraDeviceProtocol_ORIENTATION);
@@ -27,10 +29,12 @@ public:
     static jboolean startAutofocus_(jobject _this);
     virtual jboolean startPreview(jint textureName);
     static jboolean startPreview_(jobject _this, jint textureName);
-    virtual void requestPreviewSize(jint width, jint height, jint minWidth, jint minHeight, jboolean fripWH);
-    static void requestPreviewSize_(jobject _this, jint width, jint height, jint minWidth, jint minHeight, jboolean fripWH);
     virtual void dispose();
     static void dispose_(jobject _this);
+    virtual jint getOrientationType();
+    static jint getOrientationType_(jobject _this);
+    virtual void requestPreviewSize(jint width, jint height, jint minWidth, jint minHeight, jboolean fripWH);
+    static void requestPreviewSize_(jobject _this, jint width, jint height, jint minWidth, jint minHeight, jboolean fripWH);
     virtual jint getPreviewWidth();
     static jint getPreviewWidth_(jobject _this);
     virtual jint popFocusMode();

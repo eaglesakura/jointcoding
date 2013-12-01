@@ -39,6 +39,11 @@ public class CameraWrapper {
     int CameraDeviceProtocol_FOCUSMODE = CameraDeviceProtocol.FOCUSMODE_NONE;
 
     /**
+     * カメラの回転タイプ
+     */
+    int CameraDeviceProtocol_ORIENTATION = CameraDeviceProtocol.ORIENTATION_ROTATE_0;
+
+    /**
      * プレビュー用サーフェイス
      */
     PreviewSurface previewSurface = null;
@@ -111,7 +116,7 @@ public class CameraWrapper {
 
             // 回転角を設定する
             camera.setDisplayOrientation(degree);
-
+            this.CameraDeviceProtocol_ORIENTATION = CameraDeviceProtocol_ORIENTATION;
             return true;
         } catch (Exception e) {
             AndroidUtil.log(e);
@@ -148,6 +153,29 @@ public class CameraWrapper {
             }
             return false;
         }
+    }
+
+    /**
+     * 回転を取得する
+     * @return
+     */
+    @JCMethod
+    public int getOrientationType() {
+        return CameraDeviceProtocol_ORIENTATION;
+    }
+
+    /**
+     * アスペクト比をフリッピングする場合はtrue
+     * @return
+     */
+    @JCMethod
+    public boolean isAspectFrip() {
+        switch (CameraDeviceProtocol_ORIENTATION) {
+            case CameraDeviceProtocol.ORIENTATION_ROTATE_90:
+            case CameraDeviceProtocol.ORIENTATION_ROTATE_270:
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -239,14 +267,23 @@ public class CameraWrapper {
             }
 
             if (target != null) {
-                if (fripWH) {
-                    AndroidUtil.log(String.format("change preview size(%d x %d) frip", target.height, target.width));
-                    cameraParams.setPreviewSize(target.height, target.width);
-                } else {
-                    AndroidUtil.log(String.format("change preview size(%d x %d) no-frip", target.width, target.height));
+                try {
+                    if (fripWH) {
+                        AndroidUtil
+                                .log(String.format("change preview size(%d x %d) frip", target.height, target.width));
+                        cameraParams.setPreviewSize(target.height, target.width);
+                    } else {
+                        AndroidUtil.log(String.format("change preview size(%d x %d) no-frip", target.width,
+                                target.height));
+                        cameraParams.setPreviewSize(target.width, target.height);
+                    }
+                    camera.setParameters(cameraParams);
+                } catch (Exception e) {
+                    AndroidUtil.log(e);
+
                     cameraParams.setPreviewSize(target.width, target.height);
+                    camera.setParameters(cameraParams);
                 }
-                camera.setParameters(cameraParams);
 
                 cameraParams = camera.getParameters();
             }

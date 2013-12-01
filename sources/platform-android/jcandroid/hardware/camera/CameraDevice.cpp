@@ -40,7 +40,11 @@ s32 CameraDevice::getPreviewWidth() const {
         return 0;
     }
 
-    return nativeCamera->getPreviewWidth();
+    if (nativeCamera->isAspectFrip()) {
+        return nativeCamera->getPreviewHeight();
+    } else {
+        return nativeCamera->getPreviewWidth();
+    }
 }
 
 /**
@@ -50,8 +54,11 @@ s32 CameraDevice::getPreviewHeight() const {
     if (!previewTexture) {
         return 0;
     }
-
-    return nativeCamera->getPreviewHeight();
+    if (nativeCamera->isAspectFrip()) {
+        return nativeCamera->getPreviewWidth();
+    } else {
+        return nativeCamera->getPreviewHeight();
+    }
 }
 
 /**
