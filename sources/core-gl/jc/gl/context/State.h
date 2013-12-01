@@ -313,9 +313,9 @@ public:
         if (depthContext.enable != enable) {
             depthContext.enable = enable;
             if (enable) {
-                glEnable (GL_DEPTH_TEST);
+                glEnable(GL_DEPTH_TEST);
             } else {
-                glDisable (GL_DEPTH_TEST);
+                glDisable(GL_DEPTH_TEST);
             }
 
             assert_gl();
@@ -345,9 +345,9 @@ public:
         if (blendContext.enable != enable) {
             blendContext.enable = enable;
             if (enable) {
-                glEnable (GL_BLEND);
+                glEnable(GL_BLEND);
             } else {
-                glDisable (GL_BLEND);
+                glDisable(GL_BLEND);
             }
 
             assert_gl();
@@ -431,9 +431,9 @@ public:
         if (set != scissorContext.enable) {
 
             if (set) {
-                glEnable (GL_SCISSOR_TEST);
+                glEnable(GL_SCISSOR_TEST);
             } else {
-                glDisable (GL_SCISSOR_TEST);
+                glDisable(GL_SCISSOR_TEST);
             }
 
             scissorContext.enable = set;
@@ -552,7 +552,6 @@ public:
     inline void unbindTexture(const GLuint texture) {
         unbindTextures(1, &texture);
     }
-
 
     /**
      * 空いているテクスチャユニット番号を取得する
@@ -727,9 +726,9 @@ public:
         if (enable != cullfaceContext.enabled) {
             cullfaceContext.enabled = enable;
             if (enable) {
-                glEnable (GL_CULL_FACE);
+                glEnable(GL_CULL_FACE);
             } else {
-                glDisable (GL_CULL_FACE);
+                glDisable(GL_CULL_FACE);
             }
             return jctrue;
         }
@@ -867,6 +866,11 @@ private:
      * ピクセルマスク状態のスタック
      */
     std::list<ColormaskContext> colormask_stack;
+
+    /**
+     * ビューポートスタック
+     */
+    std::list<RectI> viewport_stack;
 public:
     /**
      * 現在のシザーパラメータを保存する
@@ -887,6 +891,13 @@ public:
      */
     inline void pushColorMask() {
         colormask_stack.push_front(maskContext);
+    }
+
+    /**
+     * 現在のViewportを保存する
+     */
+    inline void pushViewport() {
+        viewport_stack.push_back(viewportContext);
     }
 
     /**
@@ -937,6 +948,20 @@ public:
         {
             colorMask(back_context.r, back_context.g, back_context.b, back_context.a);
         }
+    }
+
+    /**
+     * 直帰に保存したViewportを取り出す
+     */
+    inline void popViewport() {
+        assert(!viewport_stack.empty());
+
+        // 一番上のパラメータを取り出す
+        RectI back_context = viewport_stack.front();
+        viewport_stack.pop_front();
+
+        // 現在の状態を再設定する
+        viewport(back_context.left, back_context.top, back_context.width(), back_context.height());
     }
 
     /**

@@ -73,6 +73,13 @@ public:
     }
 
     /**
+     * 配列の長さを取得する
+     */
+    virtual u32 getLength() {
+        return length;
+    }
+
+    /**
      * レンダリングを行う
      * @param mode レンダリングモードを指定する デフォルトはGL_TRIANGLES
      */

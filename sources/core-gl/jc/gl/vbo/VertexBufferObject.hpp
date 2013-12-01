@@ -47,6 +47,7 @@ public:
      */
     virtual void bufferData(const void *vertices, const s32 sizeof_vertex, const u32 vertices_length, const GLenum usage) {
         glBufferData(GL_ARRAY_BUFFER, sizeof_vertex * vertices_length, (GLvoid*) vertices, usage);
+        assert_gl();
     }
 
     /**

@@ -10,6 +10,7 @@
 #include    "jointcoding.h"
 #include    "jc/gl/gpu/Device.h"
 #include    "jc/gl/surface/IRenderingSurface.hpp"
+#include    "jc/gl/render/FrameBufferObject.hpp"
 
 namespace jc {
 namespace gl {
@@ -202,6 +203,26 @@ public:
 
         onRenderingSurfaceChanged(old, renderStack->getCurrentRenderingTarget());
         return old;
+    }
+
+    /**
+     * オフスクリーンレンダリング準備を行う
+     */
+    virtual void pushOffscreenFramebuffer(MGLState state, MFrameBufferObject framebuffer) {
+        MRenderingSurface surface = pushSurface(framebuffer);
+        state->pushViewport();
+        framebuffer->bind(state);
+        state->viewport(0, 0, framebuffer->getWidth(), framebuffer->getHeight());
+    }
+
+    /**
+     * オフスクリーンレンダリングを完了する
+     */
+    virtual void popOffscreenFramebuffer(MGLState state) {
+        MRenderingSurface surface = popSurface();
+        MFrameBufferObject  framebuffer = downcast<FrameBufferObject>(surface);
+        framebuffer->unbind(state);
+        state->popViewport();
     }
 
     /**
