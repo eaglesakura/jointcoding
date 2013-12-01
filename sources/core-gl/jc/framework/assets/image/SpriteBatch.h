@@ -37,6 +37,16 @@ struct BatchVertex {
      * 頂点カラー
      */
     Color color;
+
+    /**
+     * テクスチャインデックス
+     */
+    float textureIndex;
+
+    /**
+     * 色ブレンディング用データ
+     */
+//    float colorBlend;
 };
 
 /**
@@ -120,12 +130,37 @@ private:
         VertexAttribute<BatchVertex, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4> move;
         VertexAttribute<BatchVertex, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 6> rotate;
         VertexAttribute<BatchVertex, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(float) * 7> color;
+        VertexAttribute<BatchVertex, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 7 + sizeof(Color)> textureIndex;
     }attribute;
+
+    struct {
+        /**
+         * テクスチャUniform
+         */
+        TextureArrayUniform textures;
+    }uniform;
 
     /**
      * レンダリング用シェーダー
      */
     MGLShaderProgram shader;
+
+    struct {
+        /**
+         * 描画対象のテクスチャリスト
+         */
+        texture_array textures;
+
+        /**
+         * 現在設定対象のテクスチャ
+         */
+        s32 textureIndex;
+
+        /**
+         * 白テクスチャ
+         */
+        MTextureImage white;
+    }context;
 public:
     SpriteBatch(MDevice device);
 
@@ -145,6 +180,21 @@ public:
      * 四角形を描画する
      */
     virtual void nextRect(const float x, const float y, const float w, const float h, const Color color);
+
+    /**
+     * テクスチャ描画を開始する
+     */
+    virtual void beginTexture(MTextureImage texture);
+
+    /**
+     * 四角形を描画する
+     */
+    virtual void nextRect(const float imgX, const float imgY, const float imgW, const float imgH, const float x, const float y, const float w, const float h, const float rotate, const Color color);
+
+    /**
+     * テクスチャ描画を終了する
+     */
+    virtual void endTexture();
 
     /**
      * ストリームをGPUへ書き込む

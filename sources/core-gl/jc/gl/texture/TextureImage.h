@@ -370,6 +370,8 @@ protected:
  */
 typedef jc_sp<TextureImage> MTextureImage;
 
+typedef std::vector<MTextureImage, StlAllocator<MTextureImage> > texture_array;
+
 /**
  * GLで利用するテクスチャテーブル
  */

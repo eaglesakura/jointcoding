@@ -57,6 +57,46 @@ public:
     }
 };
 
+/**
+ * テクスチャのUniformをサポートする
+ * 無効なUniform値（コンパイラ最適化で削除された等）の場合はアップロードを無視する
+ */
+class TextureArrayUniform: public UniformBase {
+    safe_array<s32> bindUnits;
+public:
+    TextureArrayUniform() {
+        bindUnits.alloc(GPUCapacity::getMaxTextureUnits());
+        for(int i = 0; i < bindUnits.length; ++i) {
+            bindUnits[i] = i;
+        }
+    }
+
+    TextureArrayUniform(MGLShaderProgram program, const charactor *name) {
+        setLocation(program, name);
+    }
+
+    ~TextureArrayUniform() {
+    }
+
+    /**
+     * アップロードを行う
+     */
+    jcboolean upload(MGLState state, MTextureImage *textures, const u32 num) {
+        if (!valid()) {
+            return jcfalse;
+        }
+
+        assert(textures);
+
+        for (int i = 0; i < num; ++i) {
+            textures[i]->bind(i, state);
+        }
+
+        glUniform1iv(getLocation(), num, bindUnits.ptr);
+        return jctrue;
+    }
+};
+
 }
 }
 
