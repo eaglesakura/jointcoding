@@ -33,13 +33,13 @@ public:
     static void dispose_(jobject _this);
     virtual jint getOrientationType();
     static jint getOrientationType_(jobject _this);
-    virtual void requestPreviewSize(jint width, jint height, jint minWidth, jint minHeight, jboolean fripWH);
-    static void requestPreviewSize_(jobject _this, jint width, jint height, jint minWidth, jint minHeight, jboolean fripWH);
     virtual jint getPreviewWidth();
     static jint getPreviewWidth_(jobject _this);
     virtual jint popFocusMode();
     static jint popFocusMode_(jobject _this);
     static jobject createInstance_unsafe(jint CameraDeviceProtocol_TYPE);
+    virtual void requestPreviewSize(jint width, jint height, jint minWidth, jint minHeight);
+    static void requestPreviewSize_(jobject _this, jint width, jint height, jint minWidth, jint minHeight);
     virtual jboolean stopPreview();
     static jboolean stopPreview_(jobject _this);
     virtual jobject getTextureMatrix_unsafe();

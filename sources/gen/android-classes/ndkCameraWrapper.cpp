@@ -39,10 +39,10 @@ static void initialize_CameraWrapper() {
         methods_CameraWrapper[6] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "startPreview", "(I)Z", false);
         methods_CameraWrapper[7] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "dispose", "()V", false);
         methods_CameraWrapper[8] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "getOrientationType", "()I", false);
-        methods_CameraWrapper[9] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "requestPreviewSize", "(IIIIZ)V", false);
-        methods_CameraWrapper[10] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "getPreviewWidth", "()I", false);
-        methods_CameraWrapper[11] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "popFocusMode", "()I", false);
-        methods_CameraWrapper[12] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "createInstance", "(I)Lcom/eaglesakura/jc/hardware/camera/CameraWrapper;", true);
+        methods_CameraWrapper[9] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "getPreviewWidth", "()I", false);
+        methods_CameraWrapper[10] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "popFocusMode", "()I", false);
+        methods_CameraWrapper[11] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "createInstance", "(I)Lcom/eaglesakura/jc/hardware/camera/CameraWrapper;", true);
+        methods_CameraWrapper[12] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "requestPreviewSize", "(IIII)V", false);
         methods_CameraWrapper[13] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "stopPreview", "()Z", false);
         methods_CameraWrapper[14] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "getTextureMatrix", "()Ljava/nio/FloatBuffer;", false);
         methods_CameraWrapper[15] = ::ndk::JniWrapper::loadMethod(class_CameraWrapper, "isAutofocusProcessing", "()Z", false);
@@ -153,43 +153,43 @@ jint CameraWrapper::getOrientationType_(jobject _this) {
     return (jint) env->CallIntMethod(_this, methods_CameraWrapper[8]);
 }
 
-void CameraWrapper::requestPreviewSize(jint width, jint height, jint minWidth, jint minHeight, jboolean fripWH) {
-    CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_CameraWrapper[9], width, height, minWidth, minHeight, fripWH);
-}
-
-void CameraWrapper::requestPreviewSize_(jobject _this, jint width, jint height, jint minWidth, jint minHeight, jboolean fripWH) {
-    CALL_JNIENV();
-    initialize_CameraWrapper();
-    env->CallVoidMethod(_this, methods_CameraWrapper[9], width, height, minWidth, minHeight, fripWH);
-}
-
 jint CameraWrapper::getPreviewWidth() {
     CALL_JNIENV();
-    return (jint) env->CallIntMethod(this->getObject(), methods_CameraWrapper[10]);
+    return (jint) env->CallIntMethod(this->getObject(), methods_CameraWrapper[9]);
 }
 
 jint CameraWrapper::getPreviewWidth_(jobject _this) {
     CALL_JNIENV();
     initialize_CameraWrapper();
-    return (jint) env->CallIntMethod(_this, methods_CameraWrapper[10]);
+    return (jint) env->CallIntMethod(_this, methods_CameraWrapper[9]);
 }
 
 jint CameraWrapper::popFocusMode() {
     CALL_JNIENV();
-    return (jint) env->CallIntMethod(this->getObject(), methods_CameraWrapper[11]);
+    return (jint) env->CallIntMethod(this->getObject(), methods_CameraWrapper[10]);
 }
 
 jint CameraWrapper::popFocusMode_(jobject _this) {
     CALL_JNIENV();
     initialize_CameraWrapper();
-    return (jint) env->CallIntMethod(_this, methods_CameraWrapper[11]);
+    return (jint) env->CallIntMethod(_this, methods_CameraWrapper[10]);
 }
 
 jobject CameraWrapper::createInstance_unsafe(jint CameraDeviceProtocol_TYPE) {
     CALL_JNIENV();
     initialize_CameraWrapper();
-    return (jobject) env->CallStaticObjectMethod(class_CameraWrapper, methods_CameraWrapper[12], CameraDeviceProtocol_TYPE);
+    return (jobject) env->CallStaticObjectMethod(class_CameraWrapper, methods_CameraWrapper[11], CameraDeviceProtocol_TYPE);
+}
+
+void CameraWrapper::requestPreviewSize(jint width, jint height, jint minWidth, jint minHeight) {
+    CALL_JNIENV();
+    env->CallVoidMethod(this->getObject(), methods_CameraWrapper[12], width, height, minWidth, minHeight);
+}
+
+void CameraWrapper::requestPreviewSize_(jobject _this, jint width, jint height, jint minWidth, jint minHeight) {
+    CALL_JNIENV();
+    initialize_CameraWrapper();
+    env->CallVoidMethod(_this, methods_CameraWrapper[12], width, height, minWidth, minHeight);
 }
 
 jboolean CameraWrapper::stopPreview() {

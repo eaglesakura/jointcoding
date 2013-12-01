@@ -4,22 +4,24 @@
  *  Created on: 2013/06/27
  */
 
-#include "CameraDevice.h"
+#include    "jointcoding-android.h"
+#include    "android-classes/ndkCameraWrapper.h"
+#include    "CameraDevice.h"
 
-#include "/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include/assert.h"
-#include "/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include/GLES2/gl2ext.h"
-#include "/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include/jni.h"
-#include "/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include/string.h"
-#include "../../../../core/boost/smart_ptr/shared_ptr.hpp"
-#include "../../../../core/jc/math/Matrix.h"
-#include "../../../../core/jc/mem/SmartPtr.h"
-#include "../../../../core/jc/system/Log.h"
-#include "../../../../core/jc/system/Macro.h"
-#include "../../../../core-gl/jc/gl/context/State.h"
-#include "../../../../core-gl/jc/gl/gpu/Device.h"
-#include "../../../../core-gl/jc/gl/texture/TextureImage.h"
-#include "../../../../gen/android-classes/ndkCameraWrapper.h"
-#include "../../ndk-support.h"
+//#include "/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include/assert.h"
+//#include "/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include/GLES2/gl2ext.h"
+//#include "/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include/jni.h"
+//#include "/dev-home/android/ndk/platforms/android-14/arch-arm/usr/include/string.h"
+//#include "../../../../core/boost/smart_ptr/shared_ptr.hpp"
+//#include "../../../../core/jc/math/Matrix.h"
+//#include "../../../../core/jc/mem/SmartPtr.h"
+//#include "../../../../core/jc/system/Log.h"
+//#include "../../../../core/jc/system/Macro.h"
+//#include "../../../../core-gl/jc/gl/context/State.h"
+//#include "../../../../core-gl/jc/gl/gpu/Device.h"
+//#include "../../../../core-gl/jc/gl/texture/TextureImage.h"
+//#include "../../../../gen/"
+//#include "../../ndk-support.h"
 
 namespace ndk {
 
@@ -115,7 +117,7 @@ void CameraDevice::stopPreview() {
  * プレビューサイズを要求するする
  */
 void CameraDevice::requestPreviewSize(const s32 width, const s32 height, const s32 minWidth, const s32 minHeight) {
-    nativeCamera->requestPreviewSize(width, height, minWidth, minHeight, (height > width));
+    nativeCamera->requestPreviewSize(width, height, minWidth, minHeight);
 }
 
 /**
