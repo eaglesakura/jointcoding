@@ -18,8 +18,7 @@ namespace view {
 class Window: public View {
     static void broadCastEvent(MView view, MEvent event);
 public:
-    Window(const MWindowContext windowContext) {
-        this->windowContext = windowContext;
+    Window(const MWindowContext windowContext) : View(windowContext) {
     }
 
     virtual ~Window() {

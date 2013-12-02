@@ -79,7 +79,7 @@ protected:
     virtual void createTexture(MDevice device);
 
 public:
-    TextView();
+    TextView(MWindowContext context);
 
     virtual ~TextView();
 

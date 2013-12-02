@@ -15,6 +15,31 @@ namespace jc {
 namespace gl {
 
 /**
+ * VGA = 640x480
+ */
+static const Vector2i DISPLAYSIZE_VGA(640, 480);
+
+/**
+ * WVGA = 800x480
+ */
+static const Vector2i DISPLAYSIZE_WVGA(800, 480);
+
+/**
+ * iPhone5世代のRetinaディスプレイ
+ */
+static const Vector2i DISPLAYSIZE_RETINA_iP5(1136, 640);
+
+/**
+ * HD = 1280x720
+ */
+static const Vector2i DISPLAYSIZE_720p(1280, 720);
+
+/**
+ * FULL-HD = 1920x1020
+ */
+static const Vector2i DISPLAYSIZE_1080p(1920, 1020);
+
+/**
  * レンダリング用サーフェイスを定義する
  */
 class IRenderingSurface {

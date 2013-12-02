@@ -10,7 +10,7 @@
 namespace jc {
 namespace view {
 
-TextView::TextView() {
+TextView::TextView(MWindowContext context) : View(context) {
     lineMargin = 0;
     textureCreated = jcfalse;
     textGravity = LayoutGravity_Left | LayoutGravity_Top;

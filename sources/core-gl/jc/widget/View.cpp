@@ -12,7 +12,10 @@
 namespace jc {
 namespace view {
 
-View::View() {
+View::View(MWindowContext context) {
+    assert(context);
+
+    this->windowContext = context;
     this->enableRenderingPass = 0x1;
     this->down = this->down_inc = this->focus = jcfalse;
     this->enable = this->focusable = this->touchable = jctrue;
@@ -26,20 +29,6 @@ View::View() {
 
 View::~View() {
 
-}
-
-/**
- * 遷移カウンターをイニシャライザリストに登録する
- */
-void View::addTransacationInitializer(const jc_selp<TransactionCounter> counter, const float transaction_sec, const LeapType_e type) {
-    addRegisteredInitializer(jc_sp<TransactionInitializer>( new TransactionInitializer(counter, transaction_sec, type)) );
-}
-
-/**
- * タイマーをイニシャライザリストに登録する
- */
-void View::addTimerInitializer(const jc_selp<WindowTimer> timer, const u32 timeMilliSec) {
-    addRegisteredInitializer(jc_sp<RegisteredInitializer>(new TimerInitializer(timer, timeMilliSec)));
 }
 
 /**
@@ -529,75 +518,10 @@ MView View::getSelfManagedObject() {
 }
 
 /**
- * ウィンドウとViewを関連付ける。
- * 必ずWindow（もしくは子View）にaddされた後に呼び出す。
- * 関連付けない場合、WindowContextを得られない。
- */
-void View::registerWindow() {
-
-    jcboolean sendMessage = jcfalse;
-// 登録されていなければ登録を行う
-    if (!windowContext && getParent()) {
-        // 元をたどればWindowを手に入れられるはずである
-        Window *window = getRootSceneTo<Window>();
-        assert(window != NULL);
-
-        // ウィンドウからコンテキストをコピーする
-        this->windowContext = window->windowContext;
-
-        // コントローラーを作成する
-        {
-            setWeightCounter(0.2f);
-        }
-        // 非表示なら表示を消す
-        if (isInvisible()) {
-            visibleCounter.setValueDirect(0);
-        }
-
-        sendMessage = jctrue;
-    }
-
-// 子も登録させる
-    {
-        std::list<MSceneGraph>::iterator itr = childs.begin(), end = childs.end();
-        while (itr != end) {
-            MView view = downcast<View>(*itr);
-            if (view) {
-                view->registerWindow();
-            }
-            ++itr;
-        }
-    }
-
-// 登録完了したことを通知する
-    if (sendMessage) {
-        // 登録が完了した
-        onRegisteredWindow();
-    }
-
-    // 初期化実行を行う
-    {
-        std::list<MRegisteredInitializer>::iterator itr = windowRegisteredInitializer.begin(), end = windowRegisteredInitializer.end();
-        while (itr != end) {
-            (*itr)->onRegisteredWindow(this, windowContext);
-            ++itr;
-        }
-
-        // 既存のイニシャライザリストを解放する
-        windowRegisteredInitializer.clear();
-    }
-}
-
-/**
  * 子Viewを追加する
  */
-void View::addSubView(const jc_sp<View> subView, const jcboolean withRegisterWindow ) {
+void View::addSubView(const jc_sp<View> subView) {
     pushBackChild(subView);
-
-    if(withRegisterWindow) {
-        assert(isRegisteredWindow());
-        subView->registerWindow();
-    }
 }
 
 /**

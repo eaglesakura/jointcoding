@@ -14,7 +14,7 @@
 #include    "jc/gl/GL2D.h"
 #include    "protocol/jcJointApplicationProtocol.h"
 #include    "jc/gl/context/RenderingContext.hpp"
-
+#include    "jc/system/StlAllocator.hpp"
 #include    "jc/framework/fragment/ApplicationFragmentController.hpp"
 
 namespace jc {

@@ -11,7 +11,7 @@
 namespace jc {
 namespace view {
 
-ImageView::ImageView() {
+ImageView::ImageView(MWindowContext context) : View(context) {
     setTouchable(jcfalse);
     setFocusable(jcfalse);
 }

@@ -12,31 +12,6 @@
 namespace jc {
 
 /**
- * VGA = 640x480
- */
-static const Vector2i DISPLAYSIZE_VGA(640, 480);
-
-/**
- * WVGA = 800x480
- */
-static const Vector2i DISPLAYSIZE_WVGA(800, 480);
-
-/**
- * iPhone5世代のRetinaディスプレイ
- */
-static const Vector2i DISPLAYSIZE_RETINA_iP5(1136, 640);
-
-/**
- * HD = 1280x720
- */
-static const Vector2i DISPLAYSIZE_720p(1280, 720);
-
-/**
- * FULL-HD = 1920x1020
- */
-static const Vector2i DISPLAYSIZE_1080p(1920, 1020);
-
-/**
  * ディスプレイサイズに関わる補正を行う。<BR>
  * <BR>
  * 基本的に、画面はスケーリング＆センタリングされる。<BR>
@@ -183,6 +158,31 @@ public:
     }
 
     /**
+     * 仮想ディスプレイ座標を上端に合わせる
+     */
+    void fitVirtualToTop() {
+        drawingArea.moveToTop(0);
+    }
+
+    void fitVirtualToBottom() {
+        drawingArea.moveToBottom(realDisplaySize.y);
+    }
+
+    /**
+     * 左端に合わせる
+     */
+    void fitVirtualToLeft() {
+        drawingArea.moveToLeft(0);
+    }
+
+    /**
+     * 右端に合わせる
+     */
+    void fitVirtualToRight() {
+        drawingArea.moveToRight(realDisplaySize.x);
+    }
+
+    /**
      * 実際の描画エリアを取得する
      * レンダリングサーフェイスに対し、この値をviewportする。
      */
@@ -313,6 +313,15 @@ public:
      */
     Vector2f projectionPixelPosition(const Vector2f &realPos) const {
         Vector2f result((realPos.x - drawingArea.left) / scaling, (realPos.y - drawingArea.top) / scaling);
+        return result;
+    }
+
+    /**
+     *
+     */
+    Vector2f projectionRealDisplayPosition(const Vector2f &virtualPos) const {
+        assert(false); // not impl
+        Vector2f result;
         return result;
     }
 

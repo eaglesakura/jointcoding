@@ -60,7 +60,7 @@ class ImageView: public View {
      */
     BitFlags<ImageViewFlag_Num> imageViewFlags;
 public:
-    ImageView();
+    ImageView(MWindowContext context);
     virtual ~ImageView();
 
     /**
