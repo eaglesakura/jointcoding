@@ -83,7 +83,31 @@ MInputStream NDKFileSystem::openLocalStrageFile(const String fileName) {
  * SDカードからファイルを開く
  */
 MInputStream NDKFileSystem::openExternalStrageFile(const String fileName) {
-    return MInputStream();
+
+    CALL_JNIENV();
+
+    jobject is = NULL;
+    jstring jFileName = env->NewStringUTF(fileName.c_str());
+    {
+        jobject local_context = context->getAppContext_unsafe();
+        is = NativeIOUtil::openFromExternalStrage_unsafe(jFileName, local_context);
+        env->DeleteLocalRef(local_context);
+    }
+    env->DeleteLocalRef(jFileName);
+
+    context->throwHasException();
+
+#ifdef LOG_JAVAJOINTINPUTSTREAM
+    jclogf("inputstream = %x", is);
+#endif
+
+    // 正常に処理が終了したかをチェックする
+    if( is ) {
+        return MInputStream( mark_new JavaJointInputStream( is ) );
+    }
+    else {
+        throw create_exception(FileNotFoundException, "open local failed");
+    }
 }
 
 }
