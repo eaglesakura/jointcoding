@@ -59,11 +59,6 @@ struct AllocatedHeapInfo {
     u32 heap_bytes;
 
     /**
-     * 生きているヒープオブジェクト数
-     */
-    u32 objects;
-
-    /**
      * マークが付いているオブジェクト数
      */
     u32 objects_marked;
@@ -72,11 +67,6 @@ struct AllocatedHeapInfo {
      * マークが付いていないオブジェクト数
      */
     u32 objects_nomarked;
-
-    /**
-     * 確保済みのメモリノード数
-     */
-    u32 nodes_allocated;
 
     /**
      * 使用中のノード数
