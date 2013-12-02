@@ -33,13 +33,11 @@ public:
         this->header = (u8*)env->GetDirectBufferAddress(byteBuffer->getObject());
         assert(header);
 
-        jcmarkvoid((u8*)env->GetDirectBufferAddress(byteBuffer->getObject()));
     }
 
     virtual ~NDKPixelBuffer() {
         {
             CALL_JNIENV();
-            jcunmarkvoid((u8*)env->GetDirectBufferAddress(byteBuffer->getObject()));
         }
         byteBuffer.reset();
     }

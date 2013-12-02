@@ -90,7 +90,9 @@ inline AllocChainNode* AllocChain_pushFront(AllocChainNode *list, AllocChainNode
  */
 inline AllocChainNode* AllocChain_popFront(AllocChainNode *list) {
     AllocChainNode *result = list->next;
-    result->prev = NULL;
+    if (result) {
+        result->prev = NULL;
+    }
     list->next = NULL;
 
     assert(list->prev == NULL);

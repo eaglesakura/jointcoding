@@ -5,10 +5,10 @@
  */
 #include    "jointcoding.h"
 #include    "jc/math/Math.h"
-#include    "pthread.h"
+#include    "jc/mem/AllocChain.hpp"
+#include    "jc/mem/jcnew.h"
 
-#include    "jc/mem/AllocChain.h"
-
+#include    <pthread.h>
 using namespace jc;
 
 namespace {
@@ -45,20 +45,9 @@ static pthread_mutex_t alloc_mutex = PTHREAD_MUTEX_INITIALIZER;
 static const u32 ARRAY_SYSTEM_BYTES = 4;
 
 /**
- * allocする際のバイト境界を設定する
- */
-static const u32 BYTE_ALIGN = 32;
-
-/**
- * ノードキャッシュの分解能最大値
- * これ以上大きい値のキャッシュは全て最大値キャッシュとして利用される
- */
-static const u32 CACHE_NODE_SIZE_MAX = 64;
-
-/**
  * alloc済みのメモリをキャッシュするノード数
  */
-static const u32 ALLOC_CACHE_NODE_NUM = CACHE_NODE_SIZE_MAX / BYTE_ALIGN;
+static const u32 ALLOC_CACHE_NODE_NUM = JC_MEMNEW_CACHE_NODESIZE / JC_MEMNEW_BYTE_ALIGNMENT;
 /**
  * キャシュノードの最終インデックス
  */
@@ -78,7 +67,7 @@ static AllocChainNode* usingChains[ALLOC_CACHE_NODE_NUM] = { NULL };
  * 大容量ヒープを要求している場合はtrueを返す
  */
 inline bool isLargeHeap(size_t size) {
-    return size > CACHE_NODE_SIZE_MAX;
+    return size > JC_MEMNEW_CACHE_NODESIZE;
 }
 
 /**
@@ -86,38 +75,21 @@ inline bool isLargeHeap(size_t size) {
  */
 static AllocChainNode* heapAlloc(size_t size) {
     // allocサイズを整える
-    size = ((size / BYTE_ALIGN) + 1) * BYTE_ALIGN;
+    size = (((size - 1) / JC_MEMNEW_BYTE_ALIGNMENT) + 1) * JC_MEMNEW_BYTE_ALIGNMENT;
 
     // ノードチェイン番号を生成する
-    const u32 selectChainIndex = jc::min(size / BYTE_ALIGN, ALLOC_CACHE_NODE_LASTINDEX);
+    const u32 selectChainIndex = jc::min(size / JC_MEMNEW_BYTE_ALIGNMENT, ALLOC_CACHE_NODE_LASTINDEX);
     u32 chainIndex = selectChainIndex;
 
     // 返却可能なサイズのノードを探す
     AllocChainNode* pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
 
-#if 0
-    // 見つからなかったら大サイズノードを探す
-    if (!pResult && chainIndex != ALLOC_CACHE_NODE_LASTINDEX) {
-        ++chainIndex;
-        pResult = AllocChain_findNodeLarge(allocatedChains[chainIndex], size);
-    }
-#endif
-
     if (!pResult) {
         // 初期Indexに戻す
         chainIndex = selectChainIndex;
-#if 0
-        // 最終ノードだったら、大きめに確保して使い回しやすくする
-        if (chainIndex == ALLOC_CACHE_NODE_LASTINDEX) {
-            size <<= 1;
-        }
-#endif
 
         // ノードが見つからなければ、新規にノードを作成する
         pResult = AllocChain_newNode(size);
-        // 確保済みノードをインクリメント
-        ++gHeapInfo.nodes_allocated;
-
 //        jclogf("alloc newnode %d bytes :: %x", pResult->heapSize, pResult);
     } else {
         // ノードが見つかったら、見つかったノードを削除する
@@ -144,7 +116,7 @@ static AllocChainNode* heapAlloc(size_t size) {
  */
 static void heapFree(AllocChainNode *node) {
     // ノードチェイン番号を生成する
-    const u32 chainIndex = jc::min(node->heapSize / BYTE_ALIGN, ALLOC_CACHE_NODE_NUM - 1);
+    const u32 chainIndex = jc::min(node->heapSize / JC_MEMNEW_BYTE_ALIGNMENT, ALLOC_CACHE_NODE_NUM - 1);
 
     // 使用済みノードから切り離す
 //    jclogf("node info(%x) prev(%x) next(%x)", node, node->prev, node->next);
@@ -158,8 +130,6 @@ static void heapFree(AllocChainNode *node) {
     if (isLargeHeap(node->heapSize)) {
         // 大サイズノードは直接解放する
         ::free(node);
-        // alloc済みを減らす
-        --gHeapInfo.nodes_allocated;
     } else {
         allocatedChains[chainIndex] = AllocChain_pushFront(allocatedChains[chainIndex], node);
         // キャッシュをインクリメント
@@ -174,7 +144,7 @@ namespace jc {
 /**
  * 排他制御を行った上でメモリを確保する
  */
-void* alloc_mem(size_t size, const u32 systemSize, const char * const file, const int line) {
+void* heap_alloc(size_t size, const u32 systemSize, const char * const file, const int line) {
     // debug info
 #ifdef DEBUG
     if (size > 1024) {
@@ -199,8 +169,6 @@ void* alloc_mem(size_t size, const u32 systemSize, const char * const file, cons
         // 確保済みbytesをインクリメント
         {
             gHeapInfo.heap_bytes += pHead->size;
-            ++gHeapInfo.objects;
-
             if (file) {
                 ++gHeapInfo.objects_marked;
             } else {
@@ -220,7 +188,7 @@ void* alloc_mem(size_t size, const u32 systemSize, const char * const file, cons
 /**
  * 排他制御を行った上でメモリを解放する
  */
-void free_mem(void* p, const u32 systemSize) {
+void heap_free(void* p, const u32 systemSize) {
     if (!p) {
         return;
     }
@@ -232,8 +200,6 @@ void free_mem(void* p, const u32 systemSize) {
         // 確保済みbytesをデクリメント
         {
             gHeapInfo.heap_bytes -= pHead->size;
-            --gHeapInfo.objects;
-
             if (pHead->file) {
                 --gHeapInfo.objects_marked;
             } else {
@@ -247,42 +213,75 @@ void free_mem(void* p, const u32 systemSize) {
     pthread_mutex_unlock(&alloc_mutex);
 }
 
+/**
+ * メモリキャッシュをクリーンアップする
+ */
+void heap_cleanup() {
+    jclog("start heap cache clean");
+
+    pthread_mutex_lock(&alloc_mutex);
+
+    int cleanBytes = 0;
+    int cleanNum = 0;
+    int savedNum = 0;
+    savedNum = gHeapInfo.nodes_cache;
+
+    for (int i = 0; i < ALLOC_CACHE_NODE_NUM; ++i) {
+        while (allocatedChains[i]) {
+            AllocChainNode *pFront = allocatedChains[i];
+            allocatedChains[i] = AllocChain_popFront(allocatedChains[i]);
+
+            ++cleanNum;
+            cleanBytes += pFront->heapSize;
+            free(pFront);
+        }
+
+    }
+
+    assert(cleanNum == savedNum);
+
+    gHeapInfo.nodes_cache = 0;
+    pthread_mutex_unlock(&alloc_mutex);
+
+    jclogf("finish heap cache clean [%d nodes][%d bytes]", cleanNum, cleanBytes);
+}
+
 }
 
 /**
  * メモリを単体確保する
  */
 void* operator new(size_t size) throw (std::bad_alloc) {
-    return alloc_mem(size, 0, NULL, 0);
+    return heap_alloc(size, 0, NULL, 0);
 }
 
 /**
  * メモリを配列確保する
  */
 void* operator new[](size_t size) throw (std::bad_alloc) {
-    return alloc_mem(size, ARRAY_SYSTEM_BYTES, NULL, 0);
+    return heap_alloc(size, ARRAY_SYSTEM_BYTES, NULL, 0);
 }
 
 void* operator new(size_t size, const char * const file, int line) throw (std::bad_alloc) {
-    return alloc_mem(size, 0, __getFileName(file), line);
+    return heap_alloc(size, 0, __getFileName(file), line);
 }
 
 void* operator new[](size_t size, const char * const file, int line) throw (std::bad_alloc) {
-    return alloc_mem(size, ARRAY_SYSTEM_BYTES, __getFileName(file), line);
+    return heap_alloc(size, ARRAY_SYSTEM_BYTES, __getFileName(file), line);
 }
 
 /**
  * メモリを単体解放する
  */
 void operator delete(void* p) throw () {
-    free_mem(p, 0);
+    heap_free(p, 0);
 }
 
 /**
  * メモリを配列解放する
  */
 void operator delete[](void* p) throw () {
-    free_mem(p, ARRAY_SYSTEM_BYTES);
+    heap_free(p, ARRAY_SYSTEM_BYTES);
 }
 
 namespace jc {

@@ -17,8 +17,6 @@ String::String(const charactor* str) {
     } else {
         this->text.reset(mark_new string_t());
     }
-
-    jcmarkvoid(this);
 }
 
 /**
@@ -27,11 +25,9 @@ String::String(const charactor* str) {
 String::String(const String &origin) {
     this->text = origin.text;
 
-    jcmarkvoid(this);
 }
 
 String::~String() {
-    jcunmarkvoid(this);
 }
 
 /**

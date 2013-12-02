@@ -18,7 +18,7 @@
 #include "stdarg.h"
 */
 // Debug Util
-#include "jc/mem/MemoryCheck.h"
+#include "jc/mem/jcnew.h"
 
 #include "jc/system/Log.h"
 #include "jc/mem/SmartPtr.h"

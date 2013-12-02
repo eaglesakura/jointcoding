@@ -14,11 +14,9 @@ FontTexture::FontTexture(const u32 width, const u32 height, MDevice device, cons
         TextureImage(width, height, device) {
     this->text = text;
 
-    jcmark(this);
 }
 
 FontTexture::~FontTexture() {
-    jcunmark(this);
 }
 
 }

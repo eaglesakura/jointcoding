@@ -13,8 +13,6 @@ namespace jc {
 namespace view {
 
 View::View() {
-    jcmark(this);
-
     this->enableRenderingPass = 0x1;
     this->down = this->down_inc = this->focus = jcfalse;
     this->enable = this->focusable = this->touchable = jctrue;
@@ -27,7 +25,6 @@ View::View() {
 }
 
 View::~View() {
-    jcunmark(this);
 }
 
 /**

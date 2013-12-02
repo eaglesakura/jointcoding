@@ -90,12 +90,9 @@ struct tagVramId {
         obj = 0;
         type = VRAM_e_NULL;
         ref_count = 0;
-
-        jcmarkvoid(this);
     }
 
     ~tagVramId() {
-        jcunmarkvoid(this);
     }
 };
 

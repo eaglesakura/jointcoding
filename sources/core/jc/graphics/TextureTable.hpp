@@ -21,11 +21,9 @@ class TextureTable: public Object {
 
 public:
     TextureTable() {
-        jcmark(this);
     }
 
     virtual ~TextureTable() {
-        jcunmark(this);
     }
 
     virtual void clear() {

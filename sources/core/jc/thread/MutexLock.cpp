@@ -17,8 +17,6 @@ MutexLock::MutexLock(const jc::Mutex &mtx) {
     this->mutex = mtx.mutex;
     this->lock = (void*) mark_new native_lock(*this->mutex.get());
 
-    jcmarkvoid(this);
-
 }
 
 MutexLock::~MutexLock() {
@@ -29,7 +27,6 @@ MutexLock::~MutexLock() {
     }
     mutex.reset();
 
-    jcunmarkvoid(this);
 }
 
 }

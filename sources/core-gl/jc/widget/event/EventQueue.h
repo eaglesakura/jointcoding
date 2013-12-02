@@ -33,11 +33,9 @@ private:
     container events;
 public:
     EventQueue() {
-        jcmark(this);
     }
 
     virtual ~EventQueue() {
-        jcunmark(this);
     }
 
     /**

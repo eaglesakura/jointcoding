@@ -24,8 +24,6 @@ ThreadID::ThreadID() {
     this->threadId = NULL;
     thread_id id = boost::this_thread::get_id();
     swap(&id);
-
-    jcmarkvoid(this);
 }
 
 /**
@@ -34,8 +32,6 @@ ThreadID::ThreadID() {
 ThreadID::ThreadID(void* _id) {
     this->threadId = NULL;
     swap(_id);
-
-    jcmarkvoid(this);
 }
 
 /**
@@ -44,8 +40,6 @@ ThreadID::ThreadID(void* _id) {
 ThreadID::ThreadID(const ThreadID &origin) {
     this->threadId = NULL;
     swap(origin.threadId);
-
-    jcmarkvoid(this);
 }
 
 ThreadID::~ThreadID() {
@@ -57,7 +51,6 @@ ThreadID::~ThreadID() {
 //    }
 
     assert(threadId == NULL);
-    jcunmarkvoid(this);
 }
 
 /**
@@ -68,15 +61,12 @@ void ThreadID::swap(void* p) {
         if (!threadId) {
             threadId = (void*) mark_new thread_id();
 
-            jcmarkvoid(threadId);
         }
         thread_id* pId = (thread_id*) (threadId);
 
         // ポインタを持っているなら代入する
         (*pId) = *((thread_id*) p);
     } else {
-        jcunmarkvoid(threadId);
-
         thread_id *pId = (thread_id*) (threadId);
         SAFE_DELETE(pId);
         threadId = NULL;

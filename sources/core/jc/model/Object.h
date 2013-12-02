@@ -18,11 +18,9 @@ class Object {
 
 public:
     Object() {
-        jcmark(this);
     }
 
     virtual ~Object() {
-        jcunmark(this);
     }
 };
 

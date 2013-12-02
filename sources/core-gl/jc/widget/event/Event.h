@@ -85,12 +85,9 @@ public:
         this->type = EventType_type;
         this->extension = extension;
         this->broadcast = jcfalse;
-
-        jcmark(this);
     }
 
     virtual ~Event() {
-        jcunmark(this);
     }
 
     /**

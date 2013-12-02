@@ -18,11 +18,9 @@ class InputStream : public Object {
 
 protected:
     InputStream() {
-        jcmark(this);
     }
 public:
     virtual ~InputStream() {
-        jcunmark(this);
     }
 
     /**

@@ -52,10 +52,8 @@ protected:
         this->message = message;
         this->type = type;
 
-        jcmarkvoid(this);
     }
     virtual ~Exception() {
-        jcunmarkvoid(this);
     }
 
 public:

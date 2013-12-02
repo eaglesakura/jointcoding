@@ -26,12 +26,9 @@ class KeyEventExtension: public Object {
         KeyEventPool(KeyEventProtocol *protocol) {
             this->eventType = protocol->getEventType();
             this->keyCode = protocol->getKeyCode();
-
-            jcmark(this);
         }
 
         virtual ~KeyEventPool() {
-            jcunmark(this);
         }
 
         virtual s32 getEventType() {
@@ -45,12 +42,9 @@ public:
     KeyEventExtension(const jc_sp<KeyEventProtocol> event) {
 //        this->event = event;
         this->event.reset(mark_new KeyEventPool(event.get()));
-
-        jcmark(this);
     }
 
     virtual ~KeyEventExtension() {
-        jcunmark(this);
     }
 
     /**
