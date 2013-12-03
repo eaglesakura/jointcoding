@@ -22,6 +22,7 @@
 #include    "jc/gl/gpu/DeviceLock.hpp"
 #include    "jc/gl/texture/TextureImage.h"
 #include    "jc/gl/vbo/IndexBufferObject.hpp"
+#include    "jc/gl/context/RenderingContext.hpp"
 #include    "jc/gl/vbo/VertexBufferObject.hpp"
 #include    "jc/gl/shader/VertexAttribute.hpp"
 #include    "jc/gl/shader/VectorUniform.hpp"

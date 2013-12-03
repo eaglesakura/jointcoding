@@ -67,19 +67,19 @@ void SpriteManager::initialize(MDevice device) {
     }
 }
 
-SpriteManager::SpriteManager(MRenderingContext context, MGLShaderProgram shader) {
+SpriteManager::SpriteManager(MRenderingContext context, MDevice device, MGLShaderProgram shader) {
     this->context = context;
     this->shader = shader;
 
 // シェーダーが設定されて無ければ、組み込みで起動する
     if (!shader) {
-        this->shader = jc::gl::ShaderProgram::buildFromSource(getDevice(), VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
+        this->shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
     }
     assert(this->shader.get() != NULL);
 
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
-    this->initialize(getDevice());
+    this->initialize(device);
 }
 
 SpriteManager::~SpriteManager() {
@@ -180,35 +180,32 @@ void SpriteManager::dispose() {
 /**
  * インスタンスを作成する
  */
-MSpriteManager SpriteManager::createInstance(MRenderingContext context) {
+MSpriteManager SpriteManager::createInstance(MRenderingContext context, MDevice device) {
     jclog("createInstance");
-    MSpriteManager result(new SpriteManager(context, MGLShaderProgram()));
+    MSpriteManager result(new SpriteManager(context, device, MGLShaderProgram()));
     return result;
 }
 
 /**
  * インスタンスを作成する
  */
-MSpriteManager SpriteManager::createExternalInstance(MRenderingContext context) {
+MSpriteManager SpriteManager::createExternalInstance(MRenderingContext context, MDevice device) {
     jclog("createExternalInstance");
 
-    MDevice device = context->getDevice();
     MGLShaderProgram program = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_EXTERNAL_SHADER_SOURCE, FRAGMENT_EXTERNAL_SHADER_SOURCE);
     assert(program.get() != NULL);
-    MSpriteManager result(new SpriteManager(context, program));
+    MSpriteManager result(new SpriteManager(context, device, program));
     result->getRenderingQuad()->updateVertices(device->getState(), g_revert_vertices);
     return result;
 }
 
-MSpriteManager SpriteManager::createInstance(MRenderingContext context, const Uri vertexShaderUri, const Uri fragmentShaderUri) {
-    MDevice device = context->getDevice();
-
+MSpriteManager SpriteManager::createInstance(MRenderingContext context, MDevice device, const Uri vertexShaderUri, const Uri fragmentShaderUri) {
     MGLShaderProgram program = ShaderProgram::buildFromUri(device, vertexShaderUri, fragmentShaderUri);
     if (!program) {
         return MSpriteManager();
     }
 
-    MSpriteManager result(new SpriteManager(context, program));
+    MSpriteManager result(new SpriteManager(context, device, program));
 
     return result;
 }

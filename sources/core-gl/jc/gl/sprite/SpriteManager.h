@@ -100,7 +100,7 @@ protected:
      */
     virtual void initialize(MDevice device);
 
-    SpriteManager(MRenderingContext context, MGLShaderProgram shader);
+    SpriteManager(MRenderingContext context, MDevice device, MGLShaderProgram shader);
 
     /**
      * 現在の環境にしたがってレンダリングさせる。
@@ -360,17 +360,17 @@ public:
     /**
      * インスタンスを作成する
      */
-    static jc_sp<SpriteManager> createInstance( MRenderingContext context);
+    static jc_sp<SpriteManager> createInstance( MRenderingContext context, MDevice device);
 
     /**
      * インスタンスを作成する
      */
-    static jc_sp<SpriteManager> createExternalInstance( MRenderingContext context);
+    static jc_sp<SpriteManager> createExternalInstance( MRenderingContext context, MDevice device);
 
     /**
      * インスタンスを作成する
      */
-    static jc_sp<SpriteManager> createInstance( MRenderingContext context, const Uri vertexShaderUri, const Uri fragmentShaderUri );
+    static jc_sp<SpriteManager> createInstance( MRenderingContext context, MDevice device, const Uri vertexShaderUri, const Uri fragmentShaderUri );
 };
 
 /**

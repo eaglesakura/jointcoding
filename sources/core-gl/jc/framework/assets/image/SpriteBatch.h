@@ -161,8 +161,13 @@ private:
          */
         MTextureImage white;
     }context;
+
+    /**
+     * レンダリング情報
+     */
+    MRenderingContext renderingContext;
 public:
-    SpriteBatch(MDevice device);
+    SpriteBatch(MRenderingContext context, MDevice device);
 
     virtual ~SpriteBatch();
 

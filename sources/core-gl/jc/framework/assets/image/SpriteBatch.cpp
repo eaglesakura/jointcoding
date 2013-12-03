@@ -11,9 +11,10 @@ namespace gl {
 
 #define stream (this->getCurrentVertices())
 
-SpriteBatch::SpriteBatch(MDevice device) {
+SpriteBatch::SpriteBatch(MRenderingContext renderContext, MDevice device) {
     commitStreamIndex = -1;
     renderingStreamIndex = -1;
+    this->renderingContext = renderContext;
 
     surfaceSize.x = device->getSurface()->getWidth();
     surfaceSize.y = device->getSurface()->getHeight();
