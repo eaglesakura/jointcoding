@@ -77,6 +77,13 @@ MPixelBuffer TextureImage::decodePixelsFromPlatformDecoder(MDevice device, const
     s32 imageWidth = ndk::ImageDecoder::getWidth_(jImageDecoder);
     s32 imageHeight = ndk::ImageDecoder::getHeight_(jImageDecoder);
 
+#ifdef DEBUG
+    if (imageWidth > 256 && imageHeight > 256) {
+        const jcboolean mipmap = (option && option->gen_mipmap);
+        jcalertf("large size image[%d x %d]->[%d x %d] mipmap(%s) uri(%s)", imageWidth, imageHeight, TextureImage::toTextureSize(option, imageWidth), TextureImage::toTextureSize(option, imageHeight), mipmap ? "true" : "false", uri.getUri().c_str());
+    }
+#endif
+
     // バッファを作成する
     result.reset(mark_new NDKPixelBuffer(jPixelBuffer, imageWidth, imageHeight));
 

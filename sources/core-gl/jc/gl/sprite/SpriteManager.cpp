@@ -52,16 +52,17 @@ void SpriteManager::initialize(MDevice device) {
         quad->setPositionAttribute(QuadPositionAttribute(shader, "vPosition"));
         quad->setCoordAttribute(QuadCoordAttribute(shader, "vTexCoord"));
     }
-
-    {
-        whiteTexture.reset(mark_new TextureImage(1, 1, device));
-        whiteTexture->bind();
-        {
-            const u16 rgb565 = 0xFFFF;
-            whiteTexture->copyPixelLine(&rgb565, PixelFormat_RGB565, 0, 0, 1);
-        }
-        whiteTexture->unbind();
-    }
+//
+//    {
+//        whiteTexture.reset(mark_new TextureImage(1, 1, device));
+//        whiteTexture->bind();
+//        {
+//            const u16 rgb565 = 0xFFFF;
+//            whiteTexture->copyPixelLine(&rgb565, PixelFormat_RGB565, 0, 0, 1);
+//        }
+//        whiteTexture->unbind();
+//    }
+    whiteTexture = TextureImage::createDotTexture2D(device, Color::fromRGBAi(255, 255, 255, 255));
 
     // default shader context
     setSurfaceAspect(device->getSurface()->getWidth(), device->getSurface()->getHeight());

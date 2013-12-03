@@ -327,6 +327,11 @@ public:
     virtual void dispose();
 
     /**
+     * 1x1dotのシンプルなテクスチャを生成する
+     */
+    static jc_sp<TextureImage> createDotTexture2D(MDevice device, const Color color);
+
+    /**
      * テクスチャへのデコードを行う。
      * uriにはJpegテクスチャへのURIを指定する。
      *

@@ -293,6 +293,28 @@ void TextureImage::dispose() {
 }
 
 /**
+ * 1x1dotのシンプルなテクスチャを生成する
+ */
+jc_sp<TextureImage> TextureImage::createDotTexture2D(MDevice device, const Color color) {
+
+    MTextureImage result(mark_new TextureImage(1, 1, device));
+    result->bind();
+    {
+        if(color.a() == 0xFF) {
+            // alphaが不要
+            // 頭3byte=RGBだけを使ってもらう
+            result->copyPixelLine(&color, PixelFormat_RGB888, 0, 0, 1);
+        } else {
+            // alphaが必要
+            result->copyPixelLine(&color, PixelFormat_RGBA8888, 0, 0, 1);
+        }
+    }
+    result->unbind();
+
+    return result;
+}
+
+/**
  * テクスチャへのデコードを行う。
  * uriにはJpegテクスチャへのURIを指定する。
  */ //
