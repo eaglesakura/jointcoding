@@ -80,7 +80,7 @@ protected:
                 RenderingContextListener *pListener = itr->get();
                 if (pListener) {
                     // コールバック
-                    pListener->onRenderingSurfaceChanged(this, old, renderStack->getCurrentRenderingTarget());
+                    pListener->onRenderingSurfaceChanged(this, old, now);
                     ++itr;
                 } else {
                     itr = listeners.erase(itr);
@@ -189,12 +189,12 @@ public:
      * レンダリングサーフェイスを更新する
      */
     virtual MRenderingSurface pushSurface(const MRenderingSurface surface) {
-        // Viewportを指定し直す
-        if (renderStack->getSurfaceDepth()) {
-            getState()->pushViewport();
-        }
         MRenderingSurface old = renderStack->pushSurface(surface);
-        viewportVirtual();
+        // Viewportを指定し直す
+        if (old) {
+            getState()->pushViewport();
+            viewportVirtual();
+        }
         onRenderingSurfaceChanged(old, surface);
         return old;
     }
@@ -204,8 +204,8 @@ public:
      */
     virtual MRenderingSurface popSurface() {
         MRenderingSurface old = renderStack->popSurface();
-        onRenderingSurfaceChanged(old, renderStack->getCurrentRenderingTarget());
         getState()->popViewport();
+        onRenderingSurfaceChanged(old, renderStack->getCurrentRenderingTarget());
         return old;
     }
 
@@ -235,6 +235,13 @@ public:
      */
     virtual MRenderingStack getRenderingStack() const {
         return renderStack;
+    }
+
+    /**
+     * 現在の描画対象が最下層サーフェイスに属している場合はtrue
+     */
+    virtual jcboolean isLowestSurface() const {
+        return renderStack->getSurfaceDepth() <= 1;
     }
 
     /**

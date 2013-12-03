@@ -102,7 +102,7 @@ struct ApplicationQueryKey {
 
     /**
      * サブキー
-     * 負荷状態を持たせたい場合に利用する
+     * 追加状態を持たせたい場合に利用する
      */
     s32 sub_key;
 

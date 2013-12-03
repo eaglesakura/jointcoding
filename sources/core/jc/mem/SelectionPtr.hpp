@@ -53,7 +53,7 @@ public:
      */
     template<typename T2>
     SelectionPtr(const T2 *p) {
-        this->raw = (T*)p;
+        this->raw = (T*) p;
     }
 
     /**
@@ -196,6 +196,13 @@ public:
 
     bool operator!() const {
         return !exist();
+    }
+
+    SelectionPtr<T>& operator=(const SelectionPtr<T> &cpy) {
+        this->raw = cpy.raw;
+        this->shared = cpy.shared;
+        this->weak = cpy.weak;
+        return (*this);
     }
 };
 }
