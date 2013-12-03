@@ -65,26 +65,21 @@ void SpriteManager::initialize(MDevice device) {
         }
         whiteTexture->unbind(device->getState());
     }
-
-    // default shader context
-    setSurfaceAspect(device->getSurface()->getWidth(), device->getSurface()->getHeight());
 }
 
-SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
-    this->windowDevice = device;
-
+SpriteManager::SpriteManager(MRenderingContext context, MGLShaderProgram shader) {
+    this->context = context;
     this->shader = shader;
-    this->surfaceSize.set(512, 512);
 
 // シェーダーが設定されて無ければ、組み込みで起動する
     if (!shader) {
-        this->shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
+        this->shader = jc::gl::ShaderProgram::buildFromSource(getDevice(), VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
     }
     assert(this->shader.get() != NULL);
 
     this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
     this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
-    this->initialize(device);
+    this->initialize(getDevice());
 }
 
 SpriteManager::~SpriteManager() {
@@ -95,18 +90,15 @@ SpriteManager::~SpriteManager() {
  * テクスチャ用行列を設定する
  */
 void SpriteManager::setTextureMatrix(const Matrix4x4 &m) {
-    shader->bind(windowDevice->getState());
+    shader->bind(getDevice()->getState());
     uniform.texture_matrix.upload(m);
 }
 
 /**
  * サーフェイスのアスペクト比を設定する
  */
-void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_height) {
-    shader->bind(windowDevice->getState());
-    assert(uniform.aspect.valid());
-    surfaceSize.set(surface_width, surface_height);
-    uniform.aspect.upload((float) surface_width / (float) surface_height);
+float SpriteManager::getSurfaceAspect() {
+    return  context->getVirtualDisplayAspect();
 }
 
 /**
@@ -114,15 +106,15 @@ void SpriteManager::setSurfaceAspect(const u32 surface_width, const u32 surface_
  */
 void SpriteManager::rendering(const float x, const float y, const float width, const float height) {
 
+    MGLState state = getState();
     {
         // ポリゴンのXYWH情報を生成する
-        const float displayWidth = (float) surfaceSize.x;
-        const float displayHeight = (float) surfaceSize.y;
+        const Vector2f  &vDisplaySize = context->getVirtualDisplaySize();
 
-        const float sizeX = width / displayWidth * 2;
-        const float sizeY = height / displayHeight * 2;
-        const float sx = x / displayWidth * 2;
-        const float sy = y / displayHeight * 2;
+        const float sizeX = width / vDisplaySize.x * 2;
+        const float sizeY = height / vDisplaySize.y * 2;
+        const float sx = x / vDisplaySize.x * 2;
+        const float sy = y / vDisplaySize.y * 2;
         const float translateX = -1.0f + sizeX / 2.0f + sx;
         const float translateY = 1.0f - sizeY / 2.0f - sy;
         // データを転送する
@@ -130,7 +122,7 @@ void SpriteManager::rendering(const float x, const float y, const float width, c
     }
 
     // レンダリングを行う
-    quad->rendering(windowDevice->getState());
+    quad->rendering(state);
 }
 
 /**
@@ -145,13 +137,16 @@ void SpriteManager::renderingRect(const float x, const float y, const float w, c
  */
 void SpriteManager::renderingImage(MTextureImage image, const float srcX, const float srcY, const float srcW, const float srcH, const float dstX, const float dstY, const float dstWidth, const float dstHeight, const float degree, const u32 rgba) {
 // シェーダーを切り替える
-    shader->bind(windowDevice->getState());
+    shader->bind(getState());
     // テクスチャを転送する
-    uniform.texture.upload(windowDevice->getState(), image);
+    uniform.texture.upload(getState(), image);
     // ブレンド色を設定する
     uniform.color.upload(rgba);
     // ポリゴン回転を設定する
     uniform.rotate.upload(jc::degree2radian(degree));
+    // アスペクト比を転送する
+    uniform.aspect.upload(getSurfaceAspect());
+
 
 //! テクスチャ描画位置を行列で操作する
     if (image != whiteTexture) {
@@ -179,37 +174,41 @@ void SpriteManager::dispose() {
     quad.reset();
     shader.reset();
     whiteTexture.reset();
-    windowDevice.reset();
+    context.reset();
 }
 
 /**
  * インスタンスを作成する
  */
-MSpriteManager SpriteManager::createInstance(MDevice device) {
+MSpriteManager SpriteManager::createInstance(MRenderingContext context) {
     jclog("createInstance");
-    MSpriteManager result(new SpriteManager(device, MGLShaderProgram()));
+    MSpriteManager result(new SpriteManager(context, MGLShaderProgram()));
     return result;
 }
 
 /**
  * インスタンスを作成する
  */
-MSpriteManager SpriteManager::createExternalInstance(MDevice device) {
+MSpriteManager SpriteManager::createExternalInstance(MRenderingContext context) {
     jclog("createExternalInstance");
+
+    MDevice device = context->getDevice();
     MGLShaderProgram program = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_EXTERNAL_SHADER_SOURCE, FRAGMENT_EXTERNAL_SHADER_SOURCE);
     assert(program.get() != NULL);
-    MSpriteManager result(new SpriteManager(device, program));
+    MSpriteManager result(new SpriteManager(context, program));
     result->getRenderingQuad()->updateVertices(device->getState(), g_revert_vertices);
     return result;
 }
 
-MSpriteManager SpriteManager::createInstance(MDevice device, const Uri vertexShaderUri, const Uri fragmentShaderUri) {
+MSpriteManager SpriteManager::createInstance(MRenderingContext context, const Uri vertexShaderUri, const Uri fragmentShaderUri) {
+    MDevice device = context->getDevice();
+
     MGLShaderProgram program = ShaderProgram::buildFromUri(device, vertexShaderUri, fragmentShaderUri);
     if (!program) {
         return MSpriteManager();
     }
 
-    MSpriteManager result(new SpriteManager(device, program));
+    MSpriteManager result(new SpriteManager(context, program));
 
     return result;
 }

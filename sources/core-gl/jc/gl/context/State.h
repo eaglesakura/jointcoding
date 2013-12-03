@@ -397,6 +397,27 @@ public:
     }
 
     /**
+     * Viewport上のAspectを取得する
+     */
+    inline float getViewportAspect() const {
+        return (float) viewportContext.width() / (float) viewportContext.height();
+    }
+
+    /**
+     * Viewportの幅を取得する
+     */
+    inline s32 getViewportWidth() const {
+        return viewportContext.width();
+    }
+
+    /**
+     * Viewportの高さを取得する
+     */
+    inline s32 getViewportHeight() const {
+        return viewportContext.height();
+    }
+
+    /**
      * glViewport
      * ステートを変更した場合trueを返す
      */

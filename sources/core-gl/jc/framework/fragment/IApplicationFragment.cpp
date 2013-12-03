@@ -19,10 +19,16 @@ JointApplicationBase* IApplicationFragment::getApplication() const {
     return controller->getApplication();
 }
 
-MDevice IApplicationFragment::getWindowDevice() const {
-    return  getApplication()->getWindowDevice();
+/**
+ * レンダリングデータを取得する
+ */
+MRenderingContext IApplicationFragment::getRenderingContext() const {
+    return getApplication()->getRenderingContext();
 }
 
+MDevice IApplicationFragment::getWindowDevice() const {
+    return getApplication()->getWindowDevice();
+}
 
 }
 }

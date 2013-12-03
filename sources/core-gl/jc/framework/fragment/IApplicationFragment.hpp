@@ -8,6 +8,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/gl/gpu/Device.h"
+#include    "jc/gl/context/RenderingContext.hpp"
 
 namespace jc {
 namespace gl {
@@ -84,6 +85,11 @@ public:
     virtual ApplicationFragmentController* getController() const {
         return controller;
     }
+
+    /**
+     * レンダリングデータを取得する
+     */
+    virtual MRenderingContext getRenderingContext() const;
 
     virtual MDevice getWindowDevice() const;
 

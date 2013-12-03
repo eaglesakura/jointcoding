@@ -16,6 +16,7 @@
 #include    "jc/gl/shader/VectorUniform.hpp"
 #include    "jc/gl/shader/TextureUniform.hpp"
 #include    "jc/gl/shader/ColorUniform.hpp"
+#include    "jc/gl/context/RenderingContext.hpp"
 
 namespace jc {
 namespace gl {
@@ -26,19 +27,14 @@ namespace gl {
 class SpriteManager: public Object {
 protected:
     /**
+     * レンダリング情報
+     */
+    MRenderingContext context;
+
+    /**
      * スプライト用シェーダー
      */
     MGLShaderProgram shader;
-
-    /**
-     * サーフェイスサイズ
-     */
-    Vector2i surfaceSize;
-
-    /**
-     * ステータス情報
-     */
-    MDevice windowDevice;
 
     /**
      * 頂点属性インデックス
@@ -104,7 +100,7 @@ protected:
      */
     virtual void initialize(MDevice device);
 
-    SpriteManager(MDevice device, MGLShaderProgram shader);
+    SpriteManager(MRenderingContext context, MGLShaderProgram shader);
 
     /**
      * 現在の環境にしたがってレンダリングさせる。
@@ -231,11 +227,7 @@ public:
     /**
      * サーフェイスのアスペクト比を設定する
      */
-    virtual void setSurfaceAspect(const u32 surface_width, const u32 surface_height);
-
-    virtual void setSurfaceAspect(const Vector2f &size) {
-        setSurfaceAspect((u32)size.x, (u32)size.y);
-    }
+    virtual float getSurfaceAspect();
 
     /**
      * レンダリング用の矩形を取得する
@@ -248,7 +240,11 @@ public:
      * レンダリングデバイスを取得する
      */
     virtual MDevice getDevice() const {
-        return windowDevice;
+        return context->getDevice();
+    }
+
+    virtual MGLState getState() const {
+        return getDevice()->getState();
     }
 
     /**
@@ -274,7 +270,7 @@ public:
      * 線レンダリングの幅を取得する
      */
     virtual void setLineWidth( const float width) {
-        windowDevice->getState()->lineWidth(2.0f);
+        getState()->lineWidth(2.0f);
     }
 
     /**
@@ -282,7 +278,7 @@ public:
      */
     virtual void startLineRendering() {
         quad->setPrimitiveType(GL_LINE_LOOP);
-        windowDevice->getState()->lineWidth(2.0f);
+        getState()->lineWidth(2.0f);
     }
 
     /**
@@ -313,11 +309,12 @@ public:
      * 設定はディスプレイ座標系（左上原点）で行う
      */
     virtual void setRenderArea( const s32 x, const s32 y, const s32 w, const s32 h ) {
-        MGLState state = windowDevice->getState();
+        MDevice device = getDevice();
+        MGLState state = device->getState();
         s32 view_x = 0, view_y = 0, view_w = 0, view_h = 0;
 
         // display -> viewport
-        windowDevice->convertViewportRect(createRectFromXYWH<s32>(x, y, w, h), &view_x, &view_y, &view_w, &view_h);
+        device->convertViewportRect(createRectFromXYWH<s32>(x, y, w, h), &view_x, &view_y, &view_w, &view_h);
 
         // enable scissor
         state->enableScissor(jctrue);
@@ -328,21 +325,21 @@ public:
      * シザーボックスを削除する
      */
     virtual void clearRenderArea() {
-        windowDevice->getState()->enableScissor(jcfalse);
+        getState()->enableScissor(jcfalse);
     }
 
     /**
      * レンダリングエリアを１段階保存する
      */
     virtual void pushRenderArea() {
-        windowDevice->getState()->pushScissor();
+        getState()->pushScissor();
     }
 
     /**
      * レンダリングエリアのpushと同時にクリアを行う
      */
     virtual void pushRenderArea(const jcboolean withClear) {
-        windowDevice->getState()->pushScissor();
+        getState()->pushScissor();
         if(withClear) {
             clearRenderArea();
         }
@@ -352,7 +349,7 @@ public:
      * レンダリングエリアを１段階取り出す
      */
     virtual void popRenderArea() {
-        windowDevice->getState()->popScissor();
+        getState()->popScissor();
     }
 
     /**
@@ -363,17 +360,17 @@ public:
     /**
      * インスタンスを作成する
      */
-    static jc_sp<SpriteManager> createInstance( MDevice device);
+    static jc_sp<SpriteManager> createInstance( MRenderingContext context);
 
     /**
      * インスタンスを作成する
      */
-    static jc_sp<SpriteManager> createExternalInstance( MDevice device);
+    static jc_sp<SpriteManager> createExternalInstance( MRenderingContext context);
 
     /**
      * インスタンスを作成する
      */
-    static jc_sp<SpriteManager> createInstance( MDevice device, const Uri vertexShaderUri, const Uri fragmentShaderUri );
+    static jc_sp<SpriteManager> createInstance( MRenderingContext context, const Uri vertexShaderUri, const Uri fragmentShaderUri );
 };
 
 /**
