@@ -9,13 +9,13 @@
 
 #include    "jointcoding.h"
 #include    "jc/gl/GL2D.h"
+#include    "jc/gl/context/RenderingContext.hpp"
 #include    "jc/scene/SceneGraph.h"
 
 #include    "jc/ui/TouchDetector.h"
 #include    "jc/ui/KeyDetector.h"
 #include    "jc/scene/LoopController.h"
 #include    "jc/widget/event/EventQueue.h"
-
 namespace jc {
 namespace view {
 
@@ -40,7 +40,7 @@ class WindowContext: public Object {
     jc_wp<View> touchTarget;
 
     /**
-     * レンダリング用のスプライトマネージャ
+     * レンダリング用の標準スプライトマネージャ
      */
     MSpriteManager spriteManager;
 
@@ -53,6 +53,11 @@ class WindowContext: public Object {
      * イベント管理
      */
     MEventQueue events;
+
+    /**
+     * 現在のレンダリング状態
+     */
+    MRenderingContext renderingContext;
 
     /**
      * WindowContextが管理するシステム時間
@@ -95,6 +100,20 @@ public:
     }
 
     /**
+     * レンダリングContextを設定する
+     */
+    virtual void setRenderingContext(MRenderingContext render) {
+        this->renderingContext = render;
+    }
+
+    /**
+     * レンダリングContextを取得する
+     */
+    virtual MRenderingContext getRenderingContext()const {
+        return renderingContext;
+    }
+
+    /**
      * イベントキュー管理クラスを設定する
      */
     virtual void setEventQueue(const MEventQueue events) {
@@ -112,7 +131,7 @@ public:
      * レンダリングデバイスを取得する
      */
     virtual MDevice getDevice() const {
-        return spriteManager->getDevice();
+        return renderingContext->getDevice();
     }
 
     /**

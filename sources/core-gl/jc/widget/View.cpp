@@ -6,7 +6,6 @@
 
 #include    "jc/widget/View.h"
 #include    "jc/widget/window/Window.h"
-#include    "jc/widget/RegisteredInitializer.h"
 #include    "jc/widget/event/RequestFocusEvent.h"
 
 namespace jc {
@@ -610,6 +609,14 @@ jcboolean View::update() {
 
     return SceneGraph::update();
 }
+
+/**
+ * 仮想ディスプレイ座標に基づいた位置設定を行う
+ */
+void View::layoutVirtaulArea(MVirtualDisplay display, const RectF &area) {
+    assert(false); //not impl
+}
+
 
 /**
  * レイアウトを更新する。

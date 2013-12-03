@@ -97,7 +97,11 @@ public:
      * @param height
      */
     void setImageAspect(const s32 width, const s32 height) {
-        aspect = (float) width / (float) height;
+        if (height && width) {
+            aspect = (float) width / (float) height;
+        } else {
+            aspect = 1;
+        }
         setDefaultFitting(Fittype_Long);
     }
 
@@ -229,7 +233,7 @@ public:
             result->left = viewport.left;
             result->right = viewport.right;
         }
-        if(jc::abs<float>(result->height() - viewport.height()) <= 2) {
+        if (jc::abs<float>(result->height() - viewport.height()) <= 2) {
             result->top = viewport.top;
             result->bottom = viewport.bottom;
         }

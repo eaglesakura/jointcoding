@@ -100,13 +100,13 @@ void SpriteBatch::nextRect(const float x, const float y, const float w, const fl
 /**
  * テクスチャ描画を開始する
  */
-void SpriteBatch::beginTexture(MTextureImage texture) {
+jcboolean SpriteBatch::beginTexture(MTextureImage texture) {
     if (context.textures.size() > GPUCapacity::getMaxTextureUnits()) {
         // テクスチャの能力を超えた
         context.textureIndex = 0;
 
         jcalert("over texture unit specs!!");
-        return;
+        return jcfalse;
     }
 
     s32 index = 0;
@@ -116,7 +116,7 @@ void SpriteBatch::beginTexture(MTextureImage texture) {
             // テクスチャが一致したらOK
             if (texture == (*itr)) {
                 context.textureIndex = index;
-                return;
+                return jctrue;
             }
 
             ++index;
@@ -127,6 +127,7 @@ void SpriteBatch::beginTexture(MTextureImage texture) {
         context.textures.push_back(texture);
         context.textureIndex = index;
     }
+    return jctrue;
 }
 
 /**

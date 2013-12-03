@@ -172,6 +172,28 @@ public:
     virtual void setShader(MGLState state, MGLShaderProgram shader);
 
     /**
+     * アタッチされているシェーダーを設定する
+     */
+    virtual MGLShaderProgram getShader() const {
+        return shader;
+    }
+
+    /**
+     * サーフェイス設定を変更する
+     */
+    virtual void setSurfaceAspect(const float width, const float height) {
+        surfaceSize.x = width;
+        surfaceSize.y = height;
+    }
+
+    /**
+     * サーフェイス設定を変更する
+     */
+    virtual void setSurfaceAspect(const Vector2f &size) {
+        surfaceSize = size;
+    }
+
+    /**
      * 描画の開始を行う
      */
     virtual void begin(MGLState state);
@@ -183,8 +205,9 @@ public:
 
     /**
      * テクスチャ描画を開始する
+     * テクスチャが能力限界を超えて描画開始に失敗したらfalseを返す
      */
-    virtual void beginTexture(MTextureImage texture);
+    virtual jcboolean beginTexture(MTextureImage texture);
 
     /**
      * 四角形を描画する

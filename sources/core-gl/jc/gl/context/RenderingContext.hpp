@@ -189,8 +189,12 @@ public:
      * レンダリングサーフェイスを更新する
      */
     virtual MRenderingSurface pushSurface(const MRenderingSurface surface) {
+        // Viewportを指定し直す
+        if (renderStack->getSurfaceDepth()) {
+            getState()->pushViewport();
+        }
         MRenderingSurface old = renderStack->pushSurface(surface);
-
+        viewportVirtual();
         onRenderingSurfaceChanged(old, surface);
         return old;
     }
@@ -200,8 +204,8 @@ public:
      */
     virtual MRenderingSurface popSurface() {
         MRenderingSurface old = renderStack->popSurface();
-
         onRenderingSurfaceChanged(old, renderStack->getCurrentRenderingTarget());
+        getState()->popViewport();
         return old;
     }
 
@@ -210,19 +214,20 @@ public:
      */
     virtual void pushOffscreenFramebuffer(MGLState state, MFrameBufferObject framebuffer) {
         MRenderingSurface surface = pushSurface(framebuffer);
-        state->pushViewport();
         framebuffer->bind(state);
-        state->viewport(0, 0, framebuffer->getWidth(), framebuffer->getHeight());
     }
 
     /**
      * オフスクリーンレンダリングを完了する
      */
-    virtual void popOffscreenFramebuffer(MGLState state) {
+    virtual MFrameBufferObject popOffscreenFramebuffer(MGLState state) {
         MRenderingSurface surface = popSurface();
-        MFrameBufferObject  framebuffer = downcast<FrameBufferObject>(surface);
+        MFrameBufferObject framebuffer = downcast<FrameBufferObject>(surface);
+        assert(framebuffer);
+
         framebuffer->unbind(state);
-        state->popViewport();
+
+        return framebuffer;
     }
 
     /**

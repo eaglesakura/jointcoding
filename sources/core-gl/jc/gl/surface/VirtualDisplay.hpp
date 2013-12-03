@@ -317,11 +317,10 @@ public:
     }
 
     /**
-     *
+     * 仮想ディスプレイ座標を実ディスプレイ座標に変換する
      */
     Vector2f projectionRealDisplayPosition(const Vector2f &virtualPos) const {
-        assert(false); // not impl
-        Vector2f result;
+        Vector2f result((result.x - drawingArea.left) * scaling, (result.y - drawingArea.top) * scaling);
         return result;
     }
 

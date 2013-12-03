@@ -233,6 +233,10 @@ public:
      */
     virtual void setSurfaceAspect(const u32 surface_width, const u32 surface_height);
 
+    virtual void setSurfaceAspect(const Vector2f &size) {
+        setSurfaceAspect((u32)size.x, (u32)size.y);
+    }
+
     /**
      * レンダリング用の矩形を取得する
      */

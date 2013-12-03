@@ -27,11 +27,6 @@ namespace jc {
 namespace view {
 
 class WindowManager;
-class RegisteredInitializer;
-/**
- * managed
- */
-typedef jc_sp<RegisteredInitializer> MRegisteredInitializer;
 
 /**
  * Viewの表示状態を取得する
@@ -475,6 +470,11 @@ public:
      * trueを返すと「処理完了」とみなして排除する
      */
     virtual jcboolean update();
+
+    /**
+     * 仮想ディスプレイ座標に基づいた位置設定を行う
+     */
+    void layoutVirtaulArea(MVirtualDisplay display, const RectF &area);
 
     /**
      * レイアウトを直接指定して更新する。
@@ -1180,12 +1180,38 @@ protected:
      */
     virtual jc_sp<View> getSelfManagedObject();
 
+    /**
+     * 自分自身を示す弱参照を取得する
+     */
+    virtual jc_wp<View> getSelfWeakObject() {
+        return jc_wp<View>(getSelfManagedObject());
+    }
+
 public: /* エミュレート */
 
     /**
      * ボタンが押されたときと同じアクションを行わせる
      */
     virtual void emulateButtonDown();
+
+public:
+    /**
+     * get
+     */
+
+    /**
+     * ウィンドウContextを取得する
+     */
+    virtual MWindowContext getWindowContext() const {
+        return windowContext;
+    }
+
+    /**
+     * レンダリング用文脈を取得する
+     */
+    virtual MRenderingContext getRenderingContext() const {
+        return windowContext->getRenderingContext();
+    }
 };
 
 /**
