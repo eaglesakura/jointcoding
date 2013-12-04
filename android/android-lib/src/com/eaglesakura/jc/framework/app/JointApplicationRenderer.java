@@ -192,17 +192,6 @@ public abstract class JointApplicationRenderer implements Jointable {
 
     /**
      * パラメータのpushを行う
-     * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
-     * @param sub_key サブキー。主キーによっては利用する
-     * @param params 書き込み値を格納する。POSTが要求する十分な長さが必要
-     * @return
-     */
-    @JCMethod(
-              nativeMethod = true)
-    public final native boolean postIntParams(int main_key, int sub_key, int[] params);
-
-    /**
-     * パラメータのpushを行う
      * Stringで受け渡すため、速度的に不利になるが多くのデータは問題なく渡せるはず
      * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
      * @param sub_key サブキー。主キーによっては利用する
@@ -232,8 +221,8 @@ public abstract class JointApplicationRenderer implements Jointable {
      */
     public void postSurfaceSize(int width, int height) {
         // 新しいサーフェイス値の書き込みを行う
-        postIntParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
-                width, height
+        postStringParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new String[] {
+                String.valueOf(width), String.valueOf(height),
         });
     }
 
@@ -241,10 +230,11 @@ public abstract class JointApplicationRenderer implements Jointable {
      * ステート変更リクエストを送る
      * @param JointApplicationProtocol_State
      */
-    public void postStateChangeRequest(int JointApplicationProtocol_State) {
+    public final void postStateChangeRequest(int JointApplicationProtocol_State) {
         if (appContext != null) {
-            postIntParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
-                JointApplicationProtocol_State
+            // string実装に変更
+            postStringParams(JointApplicationProtocol.PostKey_StateRequest, 0, new String[] {
+                String.valueOf(JointApplicationProtocol_State),
             });
         }
     }

@@ -487,14 +487,9 @@ public:
      * アプリ本体（Java側、Objective-C側）からのパラメータ受け取りを行う
      * Native系との簡単なやり取りに利用する。
      * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
+     * paramsに書き込んだ値はPlatform側クラスに反映されて戻される
      */
-    virtual jcboolean dispatchReceiveParams(const ApplicationQueryKey *key, const int_params &params);
-
-    /**
-     * ステータスの書き込みを行う
-     * Native系との簡単なやり取りに利用する
-     */
-    virtual jcboolean dispatchReceiveParams(const ApplicationQueryKey *key, const string_params &params);
+    virtual jcboolean dispatchReceiveParams(const ApplicationQueryKey *key, string_params &params);
 
 protected:
     /* アプリライフサイクル */

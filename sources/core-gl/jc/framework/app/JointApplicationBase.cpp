@@ -96,34 +96,79 @@ jcboolean JointApplicationBase::dispatchQueryParams(const ApplicationQueryKey *k
 
 /**
  * ステータスの書き込みを行う
+ * Native系との簡単なやり取りに利用する
  */
-jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey *key, const int_params &params) {
+jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey *key, string_params &params) {
     assert(key);
-    assert(params);
 
-    if (key->main_key == JointApplicationProtocol::PostKey_SurfaceSize) {
+    const s32 mainKey = key->main_key;
+    if (mainKey == JointApplicationProtocol::PostKey_QueryApplicationState) {
+        assert(params && params.length);
+        MutexLock lock(query_mutex);
+
+        params[0] = String::valueOfInt(getRunningState());
+        return jctrue;
+    } else if (mainKey == JointApplicationProtocol::PostKey_RequestSurfaceSpecs) {
+        assert(params && params.length >= JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
+
+        // サーフェイス性能を問い合わせる
+        SurfaceSpecs specs = getRenderingSurfaceSpecs();
+
+        s32 index = 0;
+        {
+            // フォーマット
+            switch (specs.surfaceFormat) {
+                case PixelFormat_RGB888:
+                    params[index] = String::valueOfInt(SurfacePixelFormatProtocol::RGB8);
+                    break;
+
+                case PixelFormat_RGBA8888:
+                    params[index] = String::valueOfInt(SurfacePixelFormatProtocol::RGBA8);
+                    break;
+                default:
+                    jcalertf("unsupported pixel format(%d)", specs.surfaceFormat)
+                    ;
+                    assert(false);
+                    break;
+            }
+            ++index;
+        }
+        {
+            // depth
+            params[index] = String::valueOfBoolean(specs.hasDepth);
+            ++index;
+        }
+        {
+            // ステンシルバッファ
+            params[index] = String::valueOfBoolean(specs.hasStencil);
+            ++index;
+        }
+        {
+            // TextureView request
+            // for Android
+            params[index] = String::valueOfBoolean(specs.extensions.isEnable(SurfaceSupecExtension_AndroidTextureView));
+            ++index;
+        }
+
+        // 正しくリクエストを書き込んでいることを検証する
+        assert(index == JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
+
+        return jctrue;
+    } else if (mainKey == JointApplicationProtocol::PostKey_SurfaceSize) {
         // サーフェイスサイズ変更のリクエストを送る
         assert(params && params.length >= 2);
         MutexLock lock(query_mutex);
 
-        surfaceSize.x = params[0];
-        surfaceSize.y = params[1];
+        surfaceSize.x = params[0].toInteger();
+        surfaceSize.y = params[1].toInteger();
         return jctrue;
-    } else if (key->main_key == JointApplicationProtocol::PostKey_StateRequest) {
+    } else if (mainKey == JointApplicationProtocol::PostKey_StateRequest) {
         assert(params.length);
-        return dispatchOnStateChangeRequest(params[0]);
+        jclogf("state request(%s)(%d)", params[0].c_str(), params[0].toInteger());
+        return dispatchOnStateChangeRequest(params[0].toInteger());
     }
-
     jclogf("drop receive main(%d) sub(%d)", key->main_key, key->sub_key);
-    return jcfalse;
-}
 
-/**
- * ステータスの書き込みを行う
- * Native系との簡単なやり取りに利用する
- */
-jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey *key, const string_params &params) {
-    jclogf("drop receive main(%d) sub(%d)", key->main_key, key->sub_key);
     return jcfalse;
 }
 

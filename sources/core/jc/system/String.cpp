@@ -63,12 +63,11 @@ s64 String::toLong() const {
     return atoll(text->c_str());
 }
 
-
 /**
  * floatに変換する
  */
 float String::toFloat() const {
-    return (float)atof(text->c_str());
+    return (float) atof(text->c_str());
 }
 
 /**
@@ -77,7 +76,6 @@ float String::toFloat() const {
 double String::toDouble() const {
     return atof(text->c_str());
 }
-
 
 /**
  * 文字列加算
@@ -214,6 +212,40 @@ String String::format(const charactor *fmt, ...) {
     }
     va_end(ap);
     return String(temp.get());
+}
+/**
+ * 値から生成する
+ */
+String String::valueOfDoble(const double value) {
+    charactor str[32] = "";
+    sprintf(str, "%f", value);
+    return String(str);
+}
+
+/**
+ * 値から生成する
+ */
+String String::valueOfInt(const s32 value) {
+    charactor str[32] = "";
+    sprintf(str, "%d", value);
+    return String(str);
+}
+
+/**
+ * 値から生成する
+ */
+String String::valueOfLong(const s64 value) {
+    charactor str[32] = "";
+    sprintf(str, "%lld", value);
+    return String(str);
+
+}
+
+/**
+ * 値から生成する
+ */
+String String::valueOfBoolean(const jcboolean value) {
+    return String(value ? "true" : "false");
 }
 
 }

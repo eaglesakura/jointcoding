@@ -85,25 +85,6 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
     joint_context(_this, JointApplicationBase)->dispatchTouchEvent(event);
 }
 
-// main
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postIntParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jintArray params) {
-// add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postIntParams");
-
-    jc_sp<JIntArray> array = JIntArray::wrap(params);
-
-    jint *pParams = array->lock();
-    ApplicationQueryKey query(main_key, sub_key);
-
-// 書き込みを行う
-    jcboolean result = joint_context(_this, JointApplicationBase)->dispatchReceiveParams(&query, unsafe_array<s32>(pParams, array->length()));
-
-    array->unlock(JniArrayUnlock_Abort);
-
-    return result;
-
-}
-
 JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jobjectArray params) {
 // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams");
@@ -116,13 +97,26 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
     for(int i = 0; i < array->length(); ++i) {
         jstring arg = (jstring)array->get(i);
         tempParams[i] = ndk::j2String(arg, jctrue);
-        jclogf("post param[%d] = [%s]", i, tempParams[i].c_str());
+        jclogf("sdk -> native param[%d] = [%s]", i, tempParams[i].c_str());
     }
 
     ApplicationQueryKey query(main_key, sub_key);
 
 // 書き込みを行う
-    jcboolean result = joint_context(_this, JointApplicationBase)->dispatchReceiveParams(&query, tempParams.iterator());
+    JointApplicationBase::string_params iterator = tempParams.iterator();
+    const jcboolean result = joint_context(_this, JointApplicationBase)->dispatchReceiveParams(&query, iterator);
+
+    if(result) {
+        CALL_JNIENV();
+        // ハンドリングに成功したらパラメータを書き戻す
+        for(int i = 0; i < tempParams.length; ++i) {
+            jobject jStr = (jobject)ndk::c2jstring(tempParams[i].c_str());
+            array->set(i, 1, &jStr);
+            env->DeleteLocalRef(jStr);
+
+            jclogf("native -> sdk param[%d] = [%s]", i, tempParams[i].c_str());
+        }
+    }
 
     return result;
 

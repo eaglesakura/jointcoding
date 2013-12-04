@@ -155,6 +155,26 @@ public:
      * フォーマットを指定してStringを作成する
      */
     static String format(const charactor *fmt, ...);
+
+    /**
+     * 値から生成する
+     */
+    static String valueOfDoble(const double value);
+
+    /**
+     * 値から生成する
+     */
+    static String valueOfLong(const s64 value);
+
+    /**
+     * 値から生成する
+     */
+    static String valueOfInt(const s32 value);
+
+    /**
+     * 値から生成する
+     */
+    static String valueOfBoolean(const jcboolean value);
 };
 }
 
