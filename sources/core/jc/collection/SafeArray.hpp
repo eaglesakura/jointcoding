@@ -27,15 +27,18 @@ struct unsafe_array {
         length = 0;
     }
 
-    unsafe_array(const value_type *p, const s32 length) {
+    template<typename value_type2>
+    unsafe_array(const value_type2 *p, const s32 length) {
         this->ptr = (value_type*)p;
         this->length = length;
     }
+
     template<typename value_type2>
     unsafe_array(const unsafe_array<value_type2> &cpy) {
         this->ptr = (value_type*)cpy.ptr;
         this->length = cpy.length;
     }
+
 
     /**
      * オペレータアクセスを提供する

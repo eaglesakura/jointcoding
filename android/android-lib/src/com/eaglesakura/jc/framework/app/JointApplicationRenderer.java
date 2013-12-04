@@ -190,7 +190,7 @@ public abstract class JointApplicationRenderer implements Jointable {
      * @return
      */
     @JCMethod
-    public boolean receiveStringParams(int main_key, int sub_key, String[] params) {
+    public boolean receiveParams(int main_key, int sub_key, String[] params) {
         return false;
     }
 
@@ -296,4 +296,14 @@ public abstract class JointApplicationRenderer implements Jointable {
      * どのようなApplicationがNative側で生成されるかはこの実装に任せる
      */
     protected abstract void createNativeContext();
+
+    /**
+     * パラメータ受け取り用String配列を生成する
+     * @param length
+     * @return
+     */
+    @JCMethod
+    static String[] newStringArray(int length) {
+        return new String[length];
+    }
 }

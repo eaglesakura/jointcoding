@@ -16,7 +16,6 @@
 namespace jc {
 
 typedef std::basic_string<charactor, std::char_traits<charactor>, StlAllocator<charactor> > string_t;
-
 class String {
 
     /**
@@ -176,6 +175,9 @@ public:
      */
     static String valueOfBoolean(const jcboolean value);
 };
+
+typedef std::vector<String, StlAllocator<String> > string_vector;
+
 }
 
 #endif /* JCSTRING_H_ */

@@ -13,6 +13,7 @@
  */
 #include "jointcoding.h"
 #include "jc/system/Macro.h"
+#include    "jc/collection/SafeArray.hpp"
 
 namespace ndk {
 using namespace jc;

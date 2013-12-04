@@ -196,6 +196,14 @@ public:
      * タスクはJointApplicationBase::dispatchNewtask()をコールし、その中で処理を行う
      */
     virtual void startNewtask(const s32 uniqueId, const s32 user_data) = 0;
+
+    /**
+     * プラットフォームへ明示的に値を送信する。
+     * プラットフォームで書き込まれた値はparamsへ反映される
+     *
+     * ハンドリングが行われなければfalseを返す
+     */
+    virtual jcboolean postParams(const s32 main_key, const s32 sub_key, unsafe_array<String> *params) = 0;
 };
 
 /**
@@ -468,7 +476,6 @@ public:
      * タッチイベントが呼び出された
      */
     virtual void dispatchTouchEvent(jc_sp<TouchEventProtocol> event);
-
 
     /**
      * ステータスの問い合わせを行う

@@ -61,11 +61,13 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams");
 
-    jc_sp<JObjectArray> array = JObjectArray::wrap(params);
 
     safe_array<String> tempParams;
-    tempParams.reserve(array->length());
+    tempParams.reserve(env->GetArrayLength(params));
+    JointApplicationBase::string_params iterator = tempParams.iterator();
+    j2stringArray(params, &iterator);
 
+#if 0
     for(int i = 0; i < array->length(); ++i) {
         jstring arg = (jstring)array->get(i);
         if(arg) {
@@ -73,14 +75,16 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
         }
         jclogf("sdk -> native param[%d] = [%s]", i, tempParams[i].c_str());
     }
+#endif
 
     ApplicationQueryKey query(main_key, sub_key);
 
 // 書き込みを行う
-    JointApplicationBase::string_params iterator = tempParams.iterator();
     const jcboolean result = joint_context(_this, JointApplicationBase)->dispatchReceiveParams(&query, iterator);
 
     if(result) {
+        c2stringArray(params, tempParams.ptr, tempParams.length);
+#if 0
         CALL_JNIENV();
         // ハンドリングに成功したらパラメータを書き戻す
         for(int i = 0; i < tempParams.length; ++i) {
@@ -90,6 +94,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 
             jclogf("native -> sdk param[%d] = [%s]", i, tempParams[i].c_str());
         }
+#endif
     }
 
     return result;
