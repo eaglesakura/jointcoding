@@ -26,7 +26,7 @@ JointApplicationBase::~JointApplicationBase() {
 /**
  * ステータスの問い合わせを行う
  */
-jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_length) const {
+jcboolean JointApplicationBase::dispatchQueryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_length) {
     assert(key);
 
     if (key->main_key == JointApplicationProtocol::QueryKey_ApplicationState) {
@@ -86,26 +86,44 @@ jcboolean JointApplicationBase::queryParams(const ApplicationQueryKey *key, s32 
 }
 
 /**
+ * ステータスの問い合わせを行う
+ * Native系との簡単なやり取りに利用する
+ */
+jcboolean JointApplicationBase::dispatchQueryParams(const ApplicationQueryKey *key, String *result, const s32 result_rength) {
+    jclogf("drop query main(%d) sub(%d)", key->main_key, key->sub_key);
+    return jcfalse;
+}
+
+/**
  * ステータスの書き込みを行う
  */
-jcboolean JointApplicationBase::postParams(const ApplicationQueryKey *key, const s32 *params, const s32 params_length) {
+jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey *key, const int_params &params) {
     assert(key);
     assert(params);
 
     if (key->main_key == JointApplicationProtocol::PostKey_SurfaceSize) {
         // サーフェイスサイズ変更のリクエストを送る
-        assert(params && params_length >= 2);
-
+        assert(params && params.length >= 2);
         MutexLock lock(query_mutex);
 
         surfaceSize.x = params[0];
         surfaceSize.y = params[1];
         return jctrue;
     } else if (key->main_key == JointApplicationProtocol::PostKey_StateRequest) {
-        return dispatchOnStateChangeRequest(key, params, params_length);
+        assert(params.length);
+        return dispatchOnStateChangeRequest(params[0]);
     }
 
-    jclogf("drop post main(%d) sub(%d)", key->main_key, key->sub_key);
+    jclogf("drop receive main(%d) sub(%d)", key->main_key, key->sub_key);
+    return jcfalse;
+}
+
+/**
+ * ステータスの書き込みを行う
+ * Native系との簡単なやり取りに利用する
+ */
+jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey *key, const string_params &params) {
+    jclogf("drop receive main(%d) sub(%d)", key->main_key, key->sub_key);
     return jcfalse;
 }
 
@@ -119,15 +137,14 @@ void JointApplicationBase::dispatchBindPlatform(const MPlatformContext context) 
     startNewtask(JointApplicationProtocol::SystemTask_Mainloop, 0);
 
     // 実行開始の予約を行う
-    ApplicationQueryKey key(JointApplicationProtocol::PostKey_StateRequest);
-    dispatchOnStateChangeRequest(&key, &JointApplicationProtocol::State_Running, 1);
+    dispatchOnStateChangeRequest(JointApplicationProtocol::State_Running);
 }
 
 /**
  * 新規タスクを実行する。
  * 実行される度に新たなスレッドとして呼び出される。
  */
-void JointApplicationBase::dispatchTask(const ApplicationTaskContext &task) {
+void JointApplicationBase::dispatchNewTask(const ApplicationTaskContext &task) {
     jclogf("start uid(0x%x) ud(0x%x) task(%s)", task.uniqueId, task.user_data, task.threadId.toString().c_str());
 
     // システムが予約したタスク
@@ -259,10 +276,8 @@ void JointApplicationBase::dispatchInitialize() {
 /**
  * ステート変更リクエストが送られた
  */
-jcboolean JointApplicationBase::dispatchOnStateChangeRequest(const ApplicationQueryKey *key, const s32 *params, const s32 params_length) {
+jcboolean JointApplicationBase::dispatchOnStateChangeRequest(const s32 nextState) {
     // ステート変更のリクエストを送る
-    assert(params && params_length >= 1);
-
     MutexLock lock(query_mutex);
 
     if (isStateDestroyed() || pendingState == JointApplicationProtocol::State_Destroyed) {
@@ -271,7 +286,7 @@ jcboolean JointApplicationBase::dispatchOnStateChangeRequest(const ApplicationQu
     }
 
     // 保留ステートに上書きする
-    pendingState = params[0];
+    pendingState = nextState;
 
     return jctrue;
 }

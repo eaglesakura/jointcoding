@@ -330,6 +330,8 @@ public class CameraWrapper {
      */
     @JCMethod
     public void dispose() {
+        stopPreview();
+
         if (previewSurface != null) {
             stopPreview();
         }

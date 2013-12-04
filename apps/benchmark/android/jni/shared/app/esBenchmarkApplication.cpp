@@ -38,7 +38,6 @@ SurfaceSpecs BenchmarkApplication::getRenderingSurfaceSpecs() const {
  * レンダリングサーフェイスが変更された
  */
 void BenchmarkApplication::onRenderingSurfaceChanged(RenderingContext *pContext, const MRenderingSurface old, const MRenderingSurface now) {
-    spriteManager->setSurfaceAspect(now->getWidth(), now->getHeight());
 }
 
 /**
@@ -58,8 +57,7 @@ void BenchmarkApplication::onAppInitialize() {
     device->getState()->blendFunc(GLBlendType_Alpha);
 
     {
-        spriteManager = SpriteManager::createInstance(getRenderingContext()->getDevice());
-        spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
+        spriteManager = SpriteManager::createInstance(getRenderingContext(), getWindowDevice());
     }
 
 //    // テクスチャロードを開始する
@@ -237,7 +235,6 @@ void BenchmarkApplication::onAppMainUpdate() {
     {
         state->depthTestEnable(jcfalse);
         renderingContext->viewportVirtual();
-        spriteManager->setSurfaceAspect((u32) renderingContext->getVirtualDisplaySize().x, (u32) renderingContext->getVirtualDisplaySize().y);
         spriteManager->renderingRect(0, 0, renderingContext->getVirtualDisplaySize().x, renderingContext->getVirtualDisplaySize().y, 0x7FFFFFFF);
     }
 //    {
@@ -346,7 +343,6 @@ void BenchmarkApplication::onAppMainUpdate() {
     {
         state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
         MTextureImage texture = shadowmapTexture;
-        spriteManager->setSurfaceAspect(getPlatformViewSize().x, getPlatformViewSize().y);
         spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 256, 256);
     }
     getWindowDevice()->postFrontBuffer();

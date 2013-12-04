@@ -31,9 +31,9 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 }
 
 // main
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jintArray params) {
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryIntParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jintArray params) {
     // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams");
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryIntParams");
 
     jc_sp<JIntArray> array = JIntArray::wrap(params);
 
@@ -41,10 +41,38 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
     ApplicationQueryKey query(main_key, sub_key);
 
     // クエリを行う
-    jcboolean result = joint_context(_this, JointApplicationBase)->queryParams(&query, pParams, array->length());
+    jcboolean result = joint_context(_this, JointApplicationBase)->dispatchQueryParams(&query, pParams, array->length());
 
     // クエリ結果を反映させる
     array->unlock(JniArrayUnlock_Commit);
+
+    return result;
+}
+
+// main
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryStringParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jobjectArray params) {
+    // add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryIntParams");
+
+    jc_sp<JObjectArray> array = JObjectArray::wrap(params);
+
+    ApplicationQueryKey query(main_key, sub_key);
+
+    // 一時的な格納先を用意する
+    safe_array<String> tempParams;
+    tempParams.reserve(array->length());
+
+    // クエリを行う
+    jcboolean result = joint_context(_this, JointApplicationBase)->dispatchQueryParams(&query, tempParams.ptr, tempParams.length);
+
+    // 書き込みを行う
+    for (int i = 0; i < tempParams.length; ++i) {
+        jobject str = (jobject) ndk::c2jstring(tempParams[i].c_str());
+        array->set(i, 1, &str);
+
+        CALL_JNIENV();
+        env->DeleteLocalRef(str);
+    }
 
     return result;
 }
@@ -53,24 +81,48 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_dispatchTouchEvent(JNIEnv *env, jobject _this, jobject toucheventprotocol_0) {
 
     jc_sp<ndk::NativeTouchEvent> event = ndk::NativeTouchEvent::global(toucheventprotocol_0);
-    // タッチイベント送信を行う
+// タッチイベント送信を行う
     joint_context(_this, JointApplicationBase)->dispatchTouchEvent(event);
 }
 
 // main
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jintArray params) {
-    // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams");
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postIntParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jintArray params) {
+// add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postIntParams");
 
     jc_sp<JIntArray> array = JIntArray::wrap(params);
 
-    const jint *pParams = array->lock();
+    jint *pParams = array->lock();
     ApplicationQueryKey query(main_key, sub_key);
 
-    // 書き込みを行う
-    jcboolean result = joint_context(_this, JointApplicationBase)->postParams(&query, pParams, array->length());
+// 書き込みを行う
+    jcboolean result = joint_context(_this, JointApplicationBase)->dispatchReceiveParams(&query, unsafe_array<s32>(pParams, array->length()));
 
     array->unlock(JniArrayUnlock_Abort);
+
+    return result;
+
+}
+
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jobjectArray params) {
+// add code.
+    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams");
+
+    jc_sp<JObjectArray> array = JObjectArray::wrap(params);
+
+    safe_array<String> tempParams;
+    tempParams.reserve(array->length());
+
+    for(int i = 0; i < array->length(); ++i) {
+        jstring arg = (jstring)array->get(i);
+        tempParams[i] = ndk::j2String(arg, jctrue);
+        jclogf("post param[%d] = [%s]", i, tempParams[i].c_str());
+    }
+
+    ApplicationQueryKey query(main_key, sub_key);
+
+// 書き込みを行う
+    jcboolean result = joint_context(_this, JointApplicationBase)->dispatchReceiveParams(&query, tempParams.iterator());
 
     return result;
 
@@ -80,7 +132,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
     ApplicationTaskContext task;
     task.uniqueId = uniqueId;
     task.user_data = user_data;
-    joint_context(_this, JointApplicationBase)->dispatchTask(task);
+    joint_context(_this, JointApplicationBase)->dispatchNewTask(task);
 }
 
 }

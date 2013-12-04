@@ -145,6 +145,7 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     @Override
     public void onResume() {
+        AndroidUtil.log("onResume");
         super.onResume();
 
         if (!isSurfaceSuspend()) {
@@ -157,6 +158,7 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     @Override
     public void onPause() {
+        AndroidUtil.log("onPause");
         renderer.onAppPause();
 
         // 明示的に廃棄を行う
@@ -172,6 +174,7 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      */
     @Override
     public void onDestroy() {
+        AndroidUtil.log("onDestroy");
         destroyAppContexts();
         super.onDestroy();
     }
@@ -216,7 +219,7 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
         int[] surfaceSpecs = new int[JointApplicationProtocol.QueryKey_RequestSurfaceSpecs_length];
 
         // サーフェイスを問い合わせる
-        renderer.queryParams(JointApplicationProtocol.QueryKey_RequestSurfaceSpecs, 0, surfaceSpecs);
+        renderer.queryIntParams(JointApplicationProtocol.QueryKey_RequestSurfaceSpecs, 0, surfaceSpecs);
 
         RenderingSurface surface = null;
         SurfaceColorSpec color = (surfaceSpecs[0] == SurfacePixelFormatProtocol.RGB8 ? SurfaceColorSpec.RGB8

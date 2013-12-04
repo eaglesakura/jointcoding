@@ -207,6 +207,9 @@ typedef jc_sp<PlatformContext> MPlatformContext;
  * マルチプラットフォーム共通アプリのベースクラス
  */
 class JointApplicationBase: public Object, public WindowEventHandler {
+public:
+    typedef unsafe_array<s32> int_params;
+    typedef unsafe_array<String> string_params;
 protected:
     enum ApplicationStateFlag_e {
         /**
@@ -283,21 +286,6 @@ public:
 
 public:
     /* アクセサ */
-
-    /**
-     * ステータスの問い合わせを行う
-     * Native系との簡単なやり取りに利用する。
-     * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
-     */
-    virtual jcboolean queryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_rength) const;
-
-    /**
-     * ステータスの書き込みを行う
-     * Native系との簡単なやり取りに利用する。
-     * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
-     */
-    virtual jcboolean postParams(const ApplicationQueryKey *key, const s32 *params, const s32 params_length);
-
     /**
      * 現在の実行状態を取得する
      */
@@ -460,6 +448,9 @@ protected:
     }
 
 public:
+    /**
+     * Nativeとの連携
+     */
 
     /**
      * プラットフォームの接続を行う
@@ -471,12 +462,40 @@ public:
      * 新規タスクを実行する。
      * 実行される度に新たなスレッドとして呼び出される。
      */
-    virtual void dispatchTask(const ApplicationTaskContext &task);
+    virtual void dispatchNewTask(const ApplicationTaskContext &task);
 
     /**
      * タッチイベントが呼び出された
      */
     virtual void dispatchTouchEvent(jc_sp<TouchEventProtocol> event);
+
+
+    /**
+     * ステータスの問い合わせを行う
+     * Native系との簡単なやり取りに利用する。
+     * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
+     */
+    virtual jcboolean dispatchQueryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_rength);
+
+    /**
+     * ステータスの問い合わせを行う
+     * Native系との簡単なやり取りに利用する
+     */
+    virtual jcboolean dispatchQueryParams(const ApplicationQueryKey *key, String *result, const s32 result_rength);
+
+    /**
+     * アプリ本体（Java側、Objective-C側）からのパラメータ受け取りを行う
+     * Native系との簡単なやり取りに利用する。
+     * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
+     */
+    virtual jcboolean dispatchReceiveParams(const ApplicationQueryKey *key, const int_params &params);
+
+    /**
+     * ステータスの書き込みを行う
+     * Native系との簡単なやり取りに利用する
+     */
+    virtual jcboolean dispatchReceiveParams(const ApplicationQueryKey *key, const string_params &params);
+
 protected:
     /* アプリライフサイクル */
 
@@ -532,7 +551,7 @@ protected:
     /**
      * ステート変更リクエストが送られた
      */
-    virtual jcboolean dispatchOnStateChangeRequest(const ApplicationQueryKey *key, const s32 *params, const s32 params_length);
+    virtual jcboolean dispatchOnStateChangeRequest(const s32 nextState);
 };
 
 }

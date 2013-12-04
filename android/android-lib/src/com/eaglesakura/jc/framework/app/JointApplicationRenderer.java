@@ -103,7 +103,7 @@ public abstract class JointApplicationRenderer implements Jointable {
     public int getRendererState() {
         if (appContext != null) {
             int[] param = new int[1];
-            queryParams(JointApplicationProtocol.QueryKey_ApplicationState, 0, param);
+            queryIntParams(JointApplicationProtocol.QueryKey_ApplicationState, 0, param);
             return param[0];
         } else {
             return JointApplicationProtocol.State_Destroyed;
@@ -177,7 +177,18 @@ public abstract class JointApplicationRenderer implements Jointable {
      */
     @JCMethod(
               nativeMethod = true)
-    public final native boolean queryParams(int main_key, int sub_key, int[] result);
+    public final native boolean queryIntParams(int main_key, int sub_key, int[] result);
+
+    /**
+     * パラメータの問い合わせを行う
+     * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
+     * @param sub_key サブキー。主キーによっては利用する
+     * @param result 戻り値の書き込み先。書き込みのために十分な長さが必要
+     * @return
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public final native boolean queryStringParams(int main_key, int sub_key, String[] result);
 
     /**
      * パラメータのpushを行う
@@ -188,7 +199,19 @@ public abstract class JointApplicationRenderer implements Jointable {
      */
     @JCMethod(
               nativeMethod = true)
-    public final native boolean postParams(int main_key, int sub_key, int[] params);
+    public final native boolean postIntParams(int main_key, int sub_key, int[] params);
+
+    /**
+     * パラメータのpushを行う
+     * Stringで受け渡すため、速度的に不利になるが多くのデータは問題なく渡せるはず
+     * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
+     * @param sub_key サブキー。主キーによっては利用する
+     * @param params 書き込み値を格納する。POSTが要求する十分な長さが必要
+     * @return
+     */
+    @JCMethod(
+              nativeMethod = true)
+    public final native boolean postStringParams(int main_key, int sub_key, String[] params);
 
     /**
      * サーフェイスサイズの変更通知を行う
@@ -197,7 +220,7 @@ public abstract class JointApplicationRenderer implements Jointable {
      */
     public void postSurfaceSize(int width, int height) {
         // 新しいサーフェイス値の書き込みを行う
-        postParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
+        postIntParams(JointApplicationProtocol.PostKey_SurfaceSize, 0, new int[] {
                 width, height
         });
     }
@@ -208,7 +231,7 @@ public abstract class JointApplicationRenderer implements Jointable {
      */
     public void postStateChangeRequest(int JointApplicationProtocol_State) {
         if (appContext != null) {
-            postParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
+            postIntParams(JointApplicationProtocol.PostKey_StateRequest, 0, new int[] {
                 JointApplicationProtocol_State
             });
         }
