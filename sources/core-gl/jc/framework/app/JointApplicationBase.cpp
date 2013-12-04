@@ -29,13 +29,13 @@ JointApplicationBase::~JointApplicationBase() {
 jcboolean JointApplicationBase::dispatchQueryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_length) {
     assert(key);
 
-    if (key->main_key == JointApplicationProtocol::QueryKey_ApplicationState) {
+    if (key->main_key == JointApplicationProtocol::PostKey_QueryApplicationState) {
         assert(result && result_length >= 1);
         MutexLock lock(query_mutex);
 
         *result = getRunningState();
         return jctrue;
-    } else if (key->main_key == JointApplicationProtocol::QueryKey_RequestSurfaceSpecs) {
+    } else if (key->main_key == JointApplicationProtocol::PostKey_RequestSurfaceSpecs) {
         assert(result && result_length >= JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
 
         // サーフェイス性能を問い合わせる

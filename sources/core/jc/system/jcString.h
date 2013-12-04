@@ -44,6 +44,26 @@ public:
     charactor const* c_str() const;
 
     /**
+     * s32に変換する
+     */
+    s32 toInteger() const;
+
+    /**
+     * s64に変換する
+     */
+    s64 toLong() const;
+
+    /**
+     * floatに変換する
+     */
+    float toFloat() const;
+
+    /**
+     * floatに変換する
+     */
+    double toDouble() const;
+
+    /**
      * 代入を行う
      */
     String& operator=(const String &cpy) {

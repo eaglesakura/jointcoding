@@ -50,6 +50,36 @@ charactor const* String::c_str() const {
 }
 
 /**
+ * s32に変換する
+ */
+s32 String::toInteger() const {
+    return atoi(text->c_str());
+}
+
+/**
+ * s64に変換する
+ */
+s64 String::toLong() const {
+    return atoll(text->c_str());
+}
+
+
+/**
+ * floatに変換する
+ */
+float String::toFloat() const {
+    return (float)atof(text->c_str());
+}
+
+/**
+ * floatに変換する
+ */
+double String::toDouble() const {
+    return atof(text->c_str());
+}
+
+
+/**
  * 文字列加算
  */
 String String::operator+(const String &str) const {

@@ -103,7 +103,7 @@ public abstract class JointApplicationRenderer implements Jointable {
     public int getRendererState() {
         if (appContext != null) {
             int[] param = new int[1];
-            queryIntParams(JointApplicationProtocol.QueryKey_ApplicationState, 0, param);
+            queryIntParams(JointApplicationProtocol.PostKey_QueryApplicationState, 0, param);
             return param[0];
         } else {
             return JointApplicationProtocol.State_Destroyed;
@@ -172,7 +172,7 @@ public abstract class JointApplicationRenderer implements Jointable {
      * パラメータの問い合わせを行う
      * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
      * @param sub_key サブキー。主キーによっては利用する
-     * @param result 戻り値の書き込み先。書き込みのために十分な長さが必要
+     * @param result 戻り値の書き込み先。書き込みのために十分な長さが必要。内容はそのまま渡されるため、引数としても利用できる
      * @return
      */
     @JCMethod(
@@ -183,7 +183,7 @@ public abstract class JointApplicationRenderer implements Jointable {
      * パラメータの問い合わせを行う
      * @param main_key 主キー。基本的に {@link com.eaglesakura.jcprotocol.framework.JointApplicationProtocol} のQuery_XXXを設定する。その他の拡張は自由
      * @param sub_key サブキー。主キーによっては利用する
-     * @param result 戻り値の書き込み先。書き込みのために十分な長さが必要
+     * @param result 戻り値の書き込み先。書き込みのために十分な長さが必要。内容はそのまま渡されるため、引数としても利用できる
      * @return
      */
     @JCMethod(
@@ -212,6 +212,18 @@ public abstract class JointApplicationRenderer implements Jointable {
     @JCMethod(
               nativeMethod = true)
     public final native boolean postStringParams(int main_key, int sub_key, String[] params);
+
+    /**
+     * Nativeからのパラメータを受け取る。書き込んだparamsはNativeへ返される。
+     * @param main_key
+     * @param sub_key
+     * @param params
+     * @return
+     */
+    @JCMethod
+    public boolean receiveStringParams(int main_key, int sub_key, String[] params) {
+        return false;
+    }
 
     /**
      * サーフェイスサイズの変更通知を行う

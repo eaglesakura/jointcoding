@@ -10,10 +10,10 @@ const ::jc::s32 JointApplicationRenderer::KEY_MAINCONTEXT = 0;
 
 static jclass class_JointApplicationRenderer = NULL;
 
-#define methods_JointApplicationRenderer_LENGTH 13
+#define methods_JointApplicationRenderer_LENGTH 14
 
 #if methods_JointApplicationRenderer_LENGTH
-static jmethodID methods_JointApplicationRenderer[13];
+static jmethodID methods_JointApplicationRenderer[14];
 #endif
 
 static void initialize_JointApplicationRenderer() {
@@ -37,13 +37,14 @@ static void initialize_JointApplicationRenderer() {
         methods_JointApplicationRenderer[3] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "setNativePointer", "(ILcom/eaglesakura/jc/jni/Pointer;)V", false);
         methods_JointApplicationRenderer[4] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "postStringParams", "(II[Ljava/lang/String;)Z", false);
         methods_JointApplicationRenderer[5] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "createSlaveDevice", "()Lcom/eaglesakura/jc/egl/DeviceManager;", false);
-        methods_JointApplicationRenderer[6] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "postIntParams", "(II[I)Z", false);
-        methods_JointApplicationRenderer[7] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "onNativeNewtask", "(II)V", false);
-        methods_JointApplicationRenderer[8] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "onNativeInitialize", "()V", false);
-        methods_JointApplicationRenderer[9] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "queryStringParams", "(II[Ljava/lang/String;)Z", false);
-        methods_JointApplicationRenderer[10] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
-        methods_JointApplicationRenderer[11] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getWindowDevice", "()Lcom/eaglesakura/jc/egl/DeviceManager;", false);
-        methods_JointApplicationRenderer[12] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "startNewtask", "(II)V", false);
+        methods_JointApplicationRenderer[6] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "receiveStringParams", "(II[Ljava/lang/String;)Z", false);
+        methods_JointApplicationRenderer[7] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "postIntParams", "(II[I)Z", false);
+        methods_JointApplicationRenderer[8] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "onNativeNewtask", "(II)V", false);
+        methods_JointApplicationRenderer[9] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "onNativeInitialize", "()V", false);
+        methods_JointApplicationRenderer[10] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "queryStringParams", "(II[Ljava/lang/String;)Z", false);
+        methods_JointApplicationRenderer[11] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
+        methods_JointApplicationRenderer[12] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getWindowDevice", "()Lcom/eaglesakura/jc/egl/DeviceManager;", false);
+        methods_JointApplicationRenderer[13] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "startNewtask", "(II)V", false);
 
     }
 }
@@ -286,9 +287,20 @@ jobject JointApplicationRenderer::createSlaveDevice_unsafe_(jobject _this) {
     return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[5]);
 }
 
+jboolean JointApplicationRenderer::receiveStringParams(jint main_key, jint sub_key, jobjectArray params) {
+    CALL_JNIENV();
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[6], main_key, sub_key, params);
+}
+
+jboolean JointApplicationRenderer::receiveStringParams_(jobject _this, jint main_key, jint sub_key, jobjectArray params) {
+    CALL_JNIENV();
+    initialize_JointApplicationRenderer();
+    return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[6], main_key, sub_key, params);
+}
+
 jboolean JointApplicationRenderer::postIntParams(jint int_0, jint int_1, jintArray int_array_2) {
     CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[6], int_0, int_1, int_array_2);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[7], int_0, int_1, int_array_2);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -315,7 +327,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 jboolean JointApplicationRenderer::postIntParams_(jobject _this, jint int_0, jint int_1, jintArray int_array_2) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[6], int_0, int_1, int_array_2);
+    return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[7], int_0, int_1, int_array_2);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -341,7 +353,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 
 void JointApplicationRenderer::onNativeNewtask(jint int_0, jint int_1) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_JointApplicationRenderer[7], int_0, int_1);
+    env->CallVoidMethod(this->getObject(), methods_JointApplicationRenderer[8], int_0, int_1);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -368,7 +380,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 void JointApplicationRenderer::onNativeNewtask_(jobject _this, jint int_0, jint int_1) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    env->CallVoidMethod(_this, methods_JointApplicationRenderer[7], int_0, int_1);
+    env->CallVoidMethod(_this, methods_JointApplicationRenderer[8], int_0, int_1);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -394,7 +406,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 
 void JointApplicationRenderer::onNativeInitialize() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_JointApplicationRenderer[8]);
+    env->CallVoidMethod(this->getObject(), methods_JointApplicationRenderer[9]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -421,7 +433,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 void JointApplicationRenderer::onNativeInitialize_(jobject _this) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    env->CallVoidMethod(_this, methods_JointApplicationRenderer[8]);
+    env->CallVoidMethod(_this, methods_JointApplicationRenderer[9]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -447,7 +459,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 
 jboolean JointApplicationRenderer::queryStringParams(jint int_0, jint int_1, jobjectArray string_array_2) {
     CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[9], int_0, int_1, string_array_2);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[10], int_0, int_1, string_array_2);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -474,7 +486,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 jboolean JointApplicationRenderer::queryStringParams_(jobject _this, jint int_0, jint int_1, jobjectArray string_array_2) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[9], int_0, int_1, string_array_2);
+    return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[10], int_0, int_1, string_array_2);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -500,35 +512,35 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 
 jobject JointApplicationRenderer::getNativePointer_unsafe(jint key) {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[10], key);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[11], key);
 }
 
 jobject JointApplicationRenderer::getNativePointer_unsafe_(jobject _this, jint key) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[10], key);
+    return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[11], key);
 }
 
 jobject JointApplicationRenderer::getWindowDevice_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[11]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[12]);
 }
 
 jobject JointApplicationRenderer::getWindowDevice_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[11]);
+    return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[12]);
 }
 
 void JointApplicationRenderer::startNewtask(jint taskId, jint userData) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_JointApplicationRenderer[12], taskId, userData);
+    env->CallVoidMethod(this->getObject(), methods_JointApplicationRenderer[13], taskId, userData);
 }
 
 void JointApplicationRenderer::startNewtask_(jobject _this, jint taskId, jint userData) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    env->CallVoidMethod(_this, methods_JointApplicationRenderer[12], taskId, userData);
+    env->CallVoidMethod(_this, methods_JointApplicationRenderer[13], taskId, userData);
 }
 
 jc_sp<JointApplicationRenderer> JointApplicationRenderer::wrap(jobject obj) {

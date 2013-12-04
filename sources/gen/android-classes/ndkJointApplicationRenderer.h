@@ -27,6 +27,8 @@ public:
     static jboolean postStringParams_(jobject _this, jint int_0, jint int_1, jobjectArray string_array_2);
     virtual jobject createSlaveDevice_unsafe();
     static jobject createSlaveDevice_unsafe_(jobject _this);
+    virtual jboolean receiveStringParams(jint main_key, jint sub_key, jobjectArray params);
+    static jboolean receiveStringParams_(jobject _this, jint main_key, jint sub_key, jobjectArray params);
     virtual jboolean postIntParams(jint int_0, jint int_1, jintArray int_array_2);
     static jboolean postIntParams_(jobject _this, jint int_0, jint int_1, jintArray int_array_2);
     virtual void onNativeNewtask(jint int_0, jint int_1);

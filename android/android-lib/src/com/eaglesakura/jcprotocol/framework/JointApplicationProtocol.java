@@ -42,7 +42,7 @@ public interface JointApplicationProtocol {
      * 現在の実行状態問い合わせ
      */
     @JCField
-    public static final int QueryKey_ApplicationState = QueryKey_Reserved + 0;
+    public static final int PostKey_QueryApplicationState = QueryKey_Reserved + 0;
 
     /**
      * 初期化時に必要なサーフェイスの組み合わせを問い合わせる
@@ -52,25 +52,25 @@ public interface JointApplicationProtocol {
      * result[3] = 0以外でTextureViewで利用
      */
     @JCField
-    public static final int QueryKey_RequestSurfaceSpecs = QueryKey_Reserved + 1;
+    public static final int PostKey_RequestSurfaceSpecs = QueryKey_Reserved + 1;
+
+    /**
+     * 現在のサーフェイスサイズを書き込む
+     */
+    @JCField
+    public static final int PostKey_SurfaceSize = QueryKey_Reserved + 2;
+
+    /**
+     * ステートの変更リクエストを送る
+     */
+    @JCField
+    public static final int PostKey_StateRequest = QueryKey_Reserved + 3;
 
     /**
      * {@value #QueryKey_RequestSurfaceSpecs}が要求する長さ
      */
     @JCField
     public static final int QueryKey_RequestSurfaceSpecs_length = 4;
-
-    /**
-     * 現在のサーフェイスサイズを書き込む
-     */
-    @JCField
-    public static final int PostKey_SurfaceSize = QueryKey_Reserved + 0;
-
-    /**
-     * ステートの変更リクエストを送る
-     */
-    @JCField
-    public static final int PostKey_StateRequest = QueryKey_Reserved + 1;
 
     /**
      * デフォルトで用意するタスク

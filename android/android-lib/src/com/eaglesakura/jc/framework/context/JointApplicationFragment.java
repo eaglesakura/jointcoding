@@ -219,7 +219,7 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
         int[] surfaceSpecs = new int[JointApplicationProtocol.QueryKey_RequestSurfaceSpecs_length];
 
         // サーフェイスを問い合わせる
-        renderer.queryIntParams(JointApplicationProtocol.QueryKey_RequestSurfaceSpecs, 0, surfaceSpecs);
+        renderer.queryIntParams(JointApplicationProtocol.PostKey_RequestSurfaceSpecs, 0, surfaceSpecs);
 
         RenderingSurface surface = null;
         SurfaceColorSpec color = (surfaceSpecs[0] == SurfacePixelFormatProtocol.RGB8 ? SurfaceColorSpec.RGB8

@@ -26,7 +26,14 @@ extern void operator delete[](void* p) throw ();
  * newしたメモリをキャッシュする最大サイズ
  */
 #ifndef JC_MEMNEW_CACHE_NODESIZE
-#define JC_MEMNEW_CACHE_NODESIZE   64
+#define JC_MEMNEW_CACHE_NODESIZE   128
+#endif
+
+/**
+ * キャッシュノードの合計最大容量
+ */
+#ifndef JC_MEMNEW_CACHE_MAXBYTES
+#define JC_MEMNEW_CACHE_MAXBYTES    (1024 * 8)
 #endif
 
 /**
@@ -45,6 +52,22 @@ extern void* operator new[](size_t size, const char * const file, int line) thro
 #endif
 
 namespace jc {
+
+/**
+ * 排他制御を行った上でメモリを確保する
+ */
+extern void* heap_alloc(size_t size, const u32 systemSize, const char * const file, const int line);
+
+/**
+ *
+ */
+extern void heap_free(void* p, const u32 systemSize);
+
+/**
+ *
+ */
+extern void heap_cleanup();
+
 
 namespace debug {
 
@@ -77,6 +100,11 @@ struct AllocatedHeapInfo {
      * キャッシュ中のノード
      */
     u32 nodes_cache;
+
+    /**
+     * キャッシュ中の容量
+     */
+    u32 nodes_cache_bytes;
 };
 
 /**

@@ -10,13 +10,6 @@
 
 namespace jc {
 
-/**
- * 排他制御を行った上でメモリを確保する
- */
-extern void* heap_alloc(size_t size, const u32 systemSize, const char * const file, const int line);
-
-extern void heap_free(void* p, const u32 systemSize);
-
 template<class T>
 class StlAllocator: public std::allocator<T> {
 public:
