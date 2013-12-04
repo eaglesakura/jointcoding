@@ -216,7 +216,6 @@ typedef jc_sp<PlatformContext> MPlatformContext;
  */
 class JointApplicationBase: public Object, public WindowEventHandler {
 public:
-    typedef unsafe_array<s32> int_params;
     typedef unsafe_array<String> string_params;
 protected:
     enum ApplicationStateFlag_e {
@@ -343,6 +342,15 @@ public:
     virtual MDevice getWindowDevice() const {
         assert(platformContext);
         return platformContext->getWindowDevice();
+    }
+
+    /**
+     * Platformへ明示的にパラメータを送信する。
+     * Platformコードがtrueを返却した場合、paramsの内容にも反映が行われる。
+     * paramsにNULLを渡した場合、Platform側にはString[0]が渡される
+     */
+    virtual jcboolean postParams(const s32 main_key, const s32 sub_key, string_params *params) {
+        return platformContext->postParams(main_key, sub_key, params);
     }
 
     /**
@@ -491,7 +499,7 @@ public:
     virtual jcboolean dispatchQueryParams(const ApplicationQueryKey *key, String *result, const s32 result_rength);
 
     /**
-     * アプリ本体（Java側、Objective-C側）からのパラメータ受け取りを行う
+     * Platform（Java側、Objective-C側）からのパラメータ受け取りを行う
      * Native系との簡単なやり取りに利用する。
      * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
      * paramsに書き込んだ値はPlatform側クラスに反映されて戻される

@@ -77,17 +77,20 @@ void NDKPlatformContext::startNewtask(const s32 uniqueId, const s32 user_data) {
  * ハンドリングが行われなければfalseを返す
  */
 jcboolean NDKPlatformContext::postParams(const s32 main_key, const s32 sub_key, unsafe_array<String> *params) {
-    assert(params);
-    jobjectArray array = JointApplicationRenderer::newStringArray_unsafe(params->length);
+
+    const s32 array_length = params ? params->length : 0;
+    jobjectArray array = JointApplicationRenderer::newStringArray_unsafe(array_length);
     assert(array);
 
     // 送信用パラメータを生成
-    c2stringArray(array, params->ptr, params->length);
+    if (array_length) {
+        c2stringArray(array, params->ptr, params->length);
+    }
 
     const jcboolean result = renderer->receiveParams(main_key, sub_key, array);
 
     // 生成された値を受け取る
-    if (result) {
+    if (result && array_length) {
         j2stringArray(array, params);
     }
 
