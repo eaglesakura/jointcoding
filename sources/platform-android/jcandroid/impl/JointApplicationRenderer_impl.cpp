@@ -49,34 +49,6 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
     return result;
 }
 
-// main
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryStringParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jobjectArray params) {
-    // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryIntParams");
-
-    jc_sp<JObjectArray> array = JObjectArray::wrap(params);
-
-    ApplicationQueryKey query(main_key, sub_key);
-
-    // 一時的な格納先を用意する
-    safe_array<String> tempParams;
-    tempParams.reserve(array->length());
-
-    // クエリを行う
-    jcboolean result = joint_context(_this, JointApplicationBase)->dispatchQueryParams(&query, tempParams.ptr, tempParams.length);
-
-    // 書き込みを行う
-    for (int i = 0; i < tempParams.length; ++i) {
-        jobject str = (jobject) ndk::c2jstring(tempParams[i].c_str());
-        array->set(i, 1, &str);
-
-        CALL_JNIENV();
-        env->DeleteLocalRef(str);
-    }
-
-    return result;
-}
-
 // タッチイベント処理を行う
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_dispatchTouchEvent(JNIEnv *env, jobject _this, jobject toucheventprotocol_0) {
 
@@ -85,7 +57,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
     joint_context(_this, JointApplicationBase)->dispatchTouchEvent(event);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jobjectArray params) {
+JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jobjectArray params) {
 // add code.
     jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams");
 
@@ -96,7 +68,9 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 
     for(int i = 0; i < array->length(); ++i) {
         jstring arg = (jstring)array->get(i);
-        tempParams[i] = ndk::j2String(arg, jctrue);
+        if(arg) {
+            tempParams[i] = ndk::j2String(arg, jctrue);
+        }
         jclogf("sdk -> native param[%d] = [%s]", i, tempParams[i].c_str());
     }
 

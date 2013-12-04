@@ -216,24 +216,30 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      * @return
      */
     protected RenderingSurface createRenderingView() {
-        int[] surfaceSpecs = new int[JointApplicationProtocol.QueryKey_RequestSurfaceSpecs_length];
+        String[] surfaceSpecs = new String[JointApplicationProtocol.QueryKey_RequestSurfaceSpecs_length];
 
         // サーフェイスを問い合わせる
-        renderer.queryIntParams(JointApplicationProtocol.PostKey_RequestSurfaceSpecs, 0, surfaceSpecs);
+        renderer.postParams(JointApplicationProtocol.PostKey_RequestSurfaceSpecs, 0, surfaceSpecs);
 
         RenderingSurface surface = null;
-        SurfaceColorSpec color = (surfaceSpecs[0] == SurfacePixelFormatProtocol.RGB8 ? SurfaceColorSpec.RGB8
+        SurfaceColorSpec color = (Integer.valueOf(surfaceSpecs[0]) == SurfacePixelFormatProtocol.RGB8 ? SurfaceColorSpec.RGB8
                 : SurfaceColorSpec.RGBA8);
-        boolean depth = surfaceSpecs[1] != 0;
-        boolean stencil = surfaceSpecs[2] != 0;
-        if (surfaceSpecs[3] != 0) {
-            AndroidUtil.log("Rendering toTextureView");
+        boolean depth = Boolean.valueOf(surfaceSpecs[1]);
+        boolean stencil = Boolean.valueOf(surfaceSpecs[2]);
+
+        AndroidUtil.log("Surface / color spec :: " + color.toString());
+        AndroidUtil.log("Surface / hasDepth:: " + depth);
+        AndroidUtil.log("Surface / hasStencil:: " + stencil);
+
+        // SurfaceView / TextureViewの切り分けを行う
+        if (Boolean.valueOf(surfaceSpecs[3])) {
+            AndroidUtil.log("Surface / TextureView");
             EGLTextureView view = new EGLTextureView(getActivity());
             view.initialize(color, depth, stencil, this);
 
             surface = view;
         } else {
-            AndroidUtil.log("Rendering to SurfaceView");
+            AndroidUtil.log("Surface / SurfaceView");
             EGLSurfaceView view = new EGLSurfaceView(getActivity());
             view.initialize(color, depth, stencil, this);
 
