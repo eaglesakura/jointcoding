@@ -97,6 +97,8 @@ static AllocChainNode* heapAlloc(size_t size) {
 
         // キャッシュをデクリメント
         --gHeapInfo.nodes_cache;
+        // キャッシュ容量を減らす
+        gHeapInfo.nodes_cache_bytes -= pResult->heapSize;
 
 //        jclogf("hit allocated cache %d bytes :: %x", pResult->heapSize, pResult);
     }
@@ -134,6 +136,10 @@ static void heapFree(AllocChainNode *node) {
         allocatedChains[chainIndex] = AllocChain_pushFront(allocatedChains[chainIndex], node);
         // キャッシュをインクリメント
         ++gHeapInfo.nodes_cache;
+
+        // キャッシュ容量を増やす
+        gHeapInfo.nodes_cache_bytes += node->heapSize;
+
     }
 }
 
@@ -211,39 +217,37 @@ void heap_free(void* p, const u32 systemSize) {
     }
 
     pthread_mutex_unlock(&alloc_mutex);
+
+
+    //MEMO メモリのクリーンアップを行う
+    if(gHeapInfo.nodes_cache_bytes > (JC_MEMNEW_CACHE_MAXBYTES)) {
+        jc::heap_cleanup();
+    }
 }
 
 /**
  * メモリキャッシュをクリーンアップする
  */
 void heap_cleanup() {
-    jclog("start heap cache clean");
+    jclogf("start heap cache clean(%d nodes -> %d bytes)", gHeapInfo.nodes_cache, gHeapInfo.nodes_cache_bytes);
 
     pthread_mutex_lock(&alloc_mutex);
-
-    int cleanBytes = 0;
-    int cleanNum = 0;
-    int savedNum = 0;
-    savedNum = gHeapInfo.nodes_cache;
 
     for (int i = 0; i < ALLOC_CACHE_NODE_NUM; ++i) {
         while (allocatedChains[i]) {
             AllocChainNode *pFront = allocatedChains[i];
             allocatedChains[i] = AllocChain_popFront(allocatedChains[i]);
 
-            ++cleanNum;
-            cleanBytes += pFront->heapSize;
             free(pFront);
         }
 
     }
 
-    assert(cleanNum == savedNum);
-
     gHeapInfo.nodes_cache = 0;
+    gHeapInfo.nodes_cache_bytes = 0;
     pthread_mutex_unlock(&alloc_mutex);
 
-    jclogf("finish heap cache clean [%d nodes][%d bytes]", cleanNum, cleanBytes);
+    jclog("finish heap cache clean");
 }
 
 }

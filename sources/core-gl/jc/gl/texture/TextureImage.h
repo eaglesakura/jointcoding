@@ -178,8 +178,12 @@ protected:
     virtual s32 getFreeTextureUnitIndex();
 
     static u32 toTextureSize(const TextureLoadOption *option, const u32 size) {
-        if (option && option->convert_pot) {
-            return jc::toPowerOfTwo(size);
+        if (option) {
+            if (option->convert_pot || option->gen_mipmap) {
+                return jc::toPowerOfTwo(size);
+            } else {
+                return size;
+            }
         } else {
             return size;
         }
