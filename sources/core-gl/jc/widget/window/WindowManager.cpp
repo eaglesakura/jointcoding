@@ -48,6 +48,15 @@ void WindowManager::handleTouchEvent(MEvent event) {
     jc_sp<TouchEventProtocol> touchEvent = ext->getPlatformEvent();
     assert(touchEvent.get() != NULL);
 
+    {
+        MVirtualDisplay display = windowContext->getRenderingContext()->getVirtualDisplay();
+        Vector2f realPos(touchEvent->getEventPosX(), touchEvent->getEventPosY());
+        Vector2f virtualPos = display->projectionVirtualDisplayPosition(realPos);
+        Vector2f revRealPos = display->projectionRealDisplayPosition(virtualPos);
+
+        jclogf("real(%f, %f) -> virtual(%f, %f) -> real(%f, %f)", realPos.x, realPos.y, virtualPos.x, virtualPos.y, revRealPos.x, revRealPos.y);
+    }
+
     // イベント通知
     touchDetector->onTouchEvent(touchEvent.get());
 }

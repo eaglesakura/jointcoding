@@ -311,7 +311,7 @@ public:
      * @param realPos Surface上の実座標
      * @return
      */
-    Vector2f projectionPixelPosition(const Vector2f &realPos) const {
+    Vector2f projectionVirtualDisplayPosition(const Vector2f &realPos) const {
         Vector2f result((realPos.x - drawingArea.left) / scaling, (realPos.y - drawingArea.top) / scaling);
         return result;
     }
@@ -320,7 +320,7 @@ public:
      * 仮想ディスプレイ座標を実ディスプレイ座標に変換する
      */
     Vector2f projectionRealDisplayPosition(const Vector2f &virtualPos) const {
-        Vector2f result((result.x - drawingArea.left) * scaling, (result.y - drawingArea.top) * scaling);
+        Vector2f result((virtualPos.x * scaling) + drawingArea.left, (virtualPos.y * scaling) + drawingArea.top);
         return result;
     }
 
@@ -332,7 +332,7 @@ public:
      * @return
      */
     Vector2f projectionNormalizePosition(const Vector2f &realPos) {
-        Vector2f result = projectionPixelPosition(realPos);
+        Vector2f result = projectionVirtualDisplayPosition(realPos);
         result.x /= virtualDisplaySize.x;
         result.y /= virtualDisplaySize.y;
         result.y = 1.0f - result.y;
@@ -348,7 +348,7 @@ public:
      * @return
      */
     Vector2f projectionNormalizePosition2D(const Vector2f realPos) {
-        Vector2f result = projectionPixelPosition(realPos);
+        Vector2f result = projectionVirtualDisplayPosition(realPos);
         result.x /= virtualDisplaySize.x;
         result.y /= virtualDisplaySize.y;
         return result;
