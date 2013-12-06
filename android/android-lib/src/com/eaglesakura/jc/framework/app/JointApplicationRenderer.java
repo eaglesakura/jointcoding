@@ -5,6 +5,7 @@ import com.eaglesakura.jc.egl.DeviceManager;
 import com.eaglesakura.jc.egl.WindowDeviceManager;
 import com.eaglesakura.jc.framework.app.thread.JointThread;
 import com.eaglesakura.jc.jni.Pointer;
+import com.eaglesakura.jc.util.DataBank;
 import com.eaglesakura.jcprotocol.TouchEventProtocol;
 import com.eaglesakura.jcprotocol.framework.JointApplicationProtocol;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
@@ -22,18 +23,23 @@ public abstract class JointApplicationRenderer implements Jointable {
     /**
      * GPU管理クラス
      */
-    WindowDeviceManager windowDevice = null;
+    protected WindowDeviceManager windowDevice = null;
 
     /**
      * 排他制御のためのロックオブジェクト
      */
-    final Object lock = new Object();
+    protected final Object lock = new Object();
 
     /**
      * アプリのメインコンテキスト
      * Native側で管理する
      */
-    Pointer appContext = null;
+    protected Pointer appContext = null;
+
+    /**
+     * データの預入を代理する
+     */
+    protected DataBank dataBank = new DataBank();
 
     public JointApplicationRenderer() {
     }
@@ -217,6 +223,17 @@ public abstract class JointApplicationRenderer implements Jointable {
                 String.valueOf(JointApplicationProtocol_State),
             });
         }
+    }
+
+    /**
+     * データIO用のクラスを取得する
+     * 簡易メッセージだけで入出力を行えない場合に利用する。
+     * これでも対応できない場合は独自にIOを追加していく。
+     * @return
+     */
+    @JCMethod
+    public DataBank getDataBank() {
+        return dataBank;
     }
 
     /**

@@ -10,10 +10,10 @@ const ::jc::s32 JointApplicationRenderer::KEY_MAINCONTEXT = 0;
 
 static jclass class_JointApplicationRenderer = NULL;
 
-#define methods_JointApplicationRenderer_LENGTH 12
+#define methods_JointApplicationRenderer_LENGTH 13
 
 #if methods_JointApplicationRenderer_LENGTH
-static jmethodID methods_JointApplicationRenderer[12];
+static jmethodID methods_JointApplicationRenderer[13];
 #endif
 
 static void initialize_JointApplicationRenderer() {
@@ -40,9 +40,10 @@ static void initialize_JointApplicationRenderer() {
         methods_JointApplicationRenderer[6] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "onNativeNewtask", "(II)V", false);
         methods_JointApplicationRenderer[7] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "onNativeInitialize", "()V", false);
         methods_JointApplicationRenderer[8] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getNativePointer", "(I)Lcom/eaglesakura/jc/jni/Pointer;", false);
-        methods_JointApplicationRenderer[9] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "receiveParams", "(II[Ljava/lang/String;)Z", false);
-        methods_JointApplicationRenderer[10] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getWindowDevice", "()Lcom/eaglesakura/jc/egl/DeviceManager;", false);
-        methods_JointApplicationRenderer[11] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "startNewtask", "(II)V", false);
+        methods_JointApplicationRenderer[9] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getDataBank", "()Lcom/eaglesakura/jc/util/DataBank;", false);
+        methods_JointApplicationRenderer[10] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "receiveParams", "(II[Ljava/lang/String;)Z", false);
+        methods_JointApplicationRenderer[11] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "getWindowDevice", "()Lcom/eaglesakura/jc/egl/DeviceManager;", false);
+        methods_JointApplicationRenderer[12] = ::ndk::JniWrapper::loadMethod(class_JointApplicationRenderer, "startNewtask", "(II)V", false);
 
     }
 }
@@ -355,37 +356,48 @@ jobject JointApplicationRenderer::getNativePointer_unsafe_(jobject _this, jint k
     return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[8], key);
 }
 
+jobject JointApplicationRenderer::getDataBank_unsafe() {
+    CALL_JNIENV();
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[9]);
+}
+
+jobject JointApplicationRenderer::getDataBank_unsafe_(jobject _this) {
+    CALL_JNIENV();
+    initialize_JointApplicationRenderer();
+    return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[9]);
+}
+
 jboolean JointApplicationRenderer::receiveParams(jint main_key, jint sub_key, jobjectArray params) {
     CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[9], main_key, sub_key, params);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_JointApplicationRenderer[10], main_key, sub_key, params);
 }
 
 jboolean JointApplicationRenderer::receiveParams_(jobject _this, jint main_key, jint sub_key, jobjectArray params) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[9], main_key, sub_key, params);
+    return (jboolean) env->CallBooleanMethod(_this, methods_JointApplicationRenderer[10], main_key, sub_key, params);
 }
 
 jobject JointApplicationRenderer::getWindowDevice_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[10]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_JointApplicationRenderer[11]);
 }
 
 jobject JointApplicationRenderer::getWindowDevice_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[10]);
+    return (jobject) env->CallObjectMethod(_this, methods_JointApplicationRenderer[11]);
 }
 
 void JointApplicationRenderer::startNewtask(jint taskId, jint userData) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_JointApplicationRenderer[11], taskId, userData);
+    env->CallVoidMethod(this->getObject(), methods_JointApplicationRenderer[12], taskId, userData);
 }
 
 void JointApplicationRenderer::startNewtask_(jobject _this, jint taskId, jint userData) {
     CALL_JNIENV();
     initialize_JointApplicationRenderer();
-    env->CallVoidMethod(_this, methods_JointApplicationRenderer[11], taskId, userData);
+    env->CallVoidMethod(_this, methods_JointApplicationRenderer[12], taskId, userData);
 }
 
 jc_sp<JointApplicationRenderer> JointApplicationRenderer::wrap(jobject obj) {

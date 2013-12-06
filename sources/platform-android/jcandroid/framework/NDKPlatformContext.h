@@ -8,6 +8,7 @@
 #include    "jc/framework/JointApplicationFramework.h"
 #include    "android-classes/ndkJointApplicationRenderer.h"
 #include    "android-classes/ndkWindowDeviceManager.h"
+#include    "jcandroid/framework/NDKDataBank.hpp"
 
 namespace ndk {
 
@@ -25,6 +26,7 @@ class NDKPlatformContext: public PlatformContext {
      */
     jc_sp<WindowDeviceManager> windowDeviceManager;
 
+    jc_sp<NDKDataBank> dataBank;
 public:
     NDKPlatformContext(jc_sp<JointApplicationRenderer> renderer);
 
@@ -48,6 +50,14 @@ public:
      * ハンドリングが行われなければfalseを返す
      */
     virtual jcboolean postParams(const s32 main_key, const s32 sub_key, unsafe_array<String> *params);
+
+    /**
+     * post/receive出来ないネイティブクラス等のIOに利用するデータバンク
+     * add/popのみが行える。適度にキャストして利用する。
+     */
+    virtual MDataBank getDataBank() {
+        return dataBank;
+    }
 };
 
 }

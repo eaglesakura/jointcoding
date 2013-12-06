@@ -20,6 +20,13 @@ NDKPlatformContext::NDKPlatformContext(jc_sp<JointApplicationRenderer> renderer)
     this->windowDeviceManager = WindowDeviceManager::global(renderer->getWindowDevice_unsafe());
     assert(windowDeviceManager);
 
+    // データバンクを取得する
+    {
+        jc_sp<DataBank> bank = DataBank::global(renderer->getDataBank_unsafe());
+        assert(bank);
+        this->dataBank.reset(new NDKDataBank(bank));
+    }
+
     {
         // レンダリングデバイスを得る
         const MDevice device = SdkDeviceManagerContext::getDeviceFromSdkDeviceManager(windowDeviceManager->getObject());

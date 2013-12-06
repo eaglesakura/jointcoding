@@ -129,7 +129,7 @@ public class CppImplExporter extends CppClassInfomationBase {
         // wrap
         {
             writer.add("jc_sp<").add(className).add("> ").add(className).add("::wrap(jobject obj) {").newline();
-            writer.indent().add("return jc_sp<").add(className).add(">( new ").add(className).add("(obj));").newline();
+            writer.indent().add("return jc_sp<").add(className).add(">( mark_new ").add(className).add("(obj));").newline();
             writer.add("}").newline();
         }
         writer.newline();
@@ -137,7 +137,7 @@ public class CppImplExporter extends CppClassInfomationBase {
         {
             writer.add("jc_sp<").add(className).add("> ").add(className).add("::global(jobject obj) {").newline();
             {
-                writer.indent().add("return jc_sp<").add(className).add(">( (").add(className).add("*)(new ")
+                writer.indent().add("return jc_sp<").add(className).add(">( (").add(className).add("*)(mark_new ")
                         .add(className).add("(obj))->addGlobalRef());").newline();
             }
             writer.add("}").newline();

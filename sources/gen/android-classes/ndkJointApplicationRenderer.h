@@ -32,6 +32,8 @@ public:
     static void onNativeInitialize_(jobject _this);
     virtual jobject getNativePointer_unsafe(jint key);
     static jobject getNativePointer_unsafe_(jobject _this, jint key);
+    virtual jobject getDataBank_unsafe();
+    static jobject getDataBank_unsafe_(jobject _this);
     virtual jboolean receiveParams(jint main_key, jint sub_key, jobjectArray params);
     static jboolean receiveParams_(jobject _this, jint main_key, jint sub_key, jobjectArray params);
     virtual jobject getWindowDevice_unsafe();

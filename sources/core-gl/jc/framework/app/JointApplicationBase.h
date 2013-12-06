@@ -16,6 +16,7 @@
 #include    "jc/gl/context/RenderingContext.hpp"
 #include    "jc/system/StlAllocator.hpp"
 #include    "jc/framework/fragment/ApplicationFragmentController.hpp"
+#include    "jc/framework/app/IDataBank.hpp"
 
 namespace jc {
 namespace gl {
@@ -204,6 +205,12 @@ public:
      * ハンドリングが行われなければfalseを返す
      */
     virtual jcboolean postParams(const s32 main_key, const s32 sub_key, unsafe_array<String> *params) = 0;
+
+    /**
+     * post/receive出来ないネイティブクラス等のIOに利用するデータバンク
+     * add/popのみが行える。適度にキャストして利用する。
+     */
+    virtual MDataBank getDataBank() = 0;
 };
 
 /**
