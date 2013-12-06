@@ -132,7 +132,7 @@ void TouchDetector::onTouchEvent(TouchEventProtocol *event) {
 
         // 最初のポイントが既に動いてる？
         Vector2f v(event->getEventPosX(), event->getEventPosY());
-        _point.reset(new TouchPoint(id, v));
+        _point.reset(mark_new TouchPoint(id, v));
 
         // ポイントを追加する
         points.push_back(_point);

@@ -36,7 +36,7 @@ jc_sp<FontTexture> FontTexture::createInstance(const String &text, const u32 hei
     jclogf("Font Image (%x) size(%d x %d)", pixelBuffer, imageWidth, imageHeight);
 
     // make texture
-    jc_sp<FontTexture> result(new FontTexture(imageWidth, imageHeight, device, text));
+    jc_sp<FontTexture> result(mark_new FontTexture(imageWidth, imageHeight, device, text));
     {
         void* raw_buffer = env->GetDirectBufferAddress(pixelBuffer);
         MGLState state = device->getState();

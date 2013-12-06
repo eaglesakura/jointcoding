@@ -24,7 +24,7 @@ protected:
 
 public:
     TextureFactory() {
-        cache.reset(new TextureCache());
+        cache.reset(mark_new TextureCache());
     }
 
     virtual ~TextureFactory() {

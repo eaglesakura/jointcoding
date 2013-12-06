@@ -11,15 +11,15 @@ namespace jc {
 namespace view {
 
 WindowManager::WindowManager() {
-    events.reset(new EventQueue());
-    windowContext.reset(new WindowContext());
-    window.reset(new Window(windowContext));
+    events.reset(mark_new EventQueue());
+    windowContext.reset(mark_new WindowContext());
+    window.reset(mark_new Window(windowContext));
     windowContext->setWindow(window);
     windowContext->setEventQueue(events);
-    windowEventListener.reset(new WindowEventListener(windowContext));
+    windowEventListener.reset(mark_new WindowEventListener(windowContext));
 
-    touchDetector.reset(new TouchDetector(windowEventListener));
-    keyDetector.reset(new KeyDetector(windowEventListener));
+    touchDetector.reset(mark_new TouchDetector(windowEventListener));
+    keyDetector.reset(mark_new KeyDetector(windowEventListener));
 
     // 可変フレームレート範囲を設定
     windowContext->loopController.setFrameRateRange(30, 60);
@@ -48,6 +48,7 @@ void WindowManager::handleTouchEvent(MEvent event) {
     jc_sp<TouchEventProtocol> touchEvent = ext->getPlatformEvent();
     assert(touchEvent.get() != NULL);
 
+#if 0
     {
         MVirtualDisplay display = windowContext->getRenderingContext()->getVirtualDisplay();
         Vector2f realPos(touchEvent->getEventPosX(), touchEvent->getEventPosY());
@@ -56,6 +57,7 @@ void WindowManager::handleTouchEvent(MEvent event) {
 
         jclogf("real(%f, %f) -> virtual(%f, %f) -> real(%f, %f)", realPos.x, realPos.y, virtualPos.x, virtualPos.y, revRealPos.x, revRealPos.y);
     }
+#endif
 
     // イベント通知
     touchDetector->onTouchEvent(touchEvent.get());

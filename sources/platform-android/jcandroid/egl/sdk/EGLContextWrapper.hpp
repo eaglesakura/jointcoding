@@ -33,10 +33,10 @@ public:
     SdkEGLContextWrapper(const jc_sp<EGLContextWrapper> eglContext) {
         this->eglContext = eglContext;
 
-        state.reset(new GLState());
+        state.reset(mark_new GLState());
 
         for (int i = 0; i < VRAM_e_num; ++i) {
-            this->rams[i].reset(new _VideoMemory((VRAM_e) i));
+            this->rams[i].reset(mark_new _VideoMemory((VRAM_e) i));
         }
     }
 

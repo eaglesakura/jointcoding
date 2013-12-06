@@ -115,7 +115,7 @@ public:
             currentSurface = surface;
         }
         {
-            MVirtualDisplay display(new VirtualDisplay());
+            MVirtualDisplay display(mark_new VirtualDisplay());
             display->setRealDisplaySize(surface->getWidth(), surface->getHeight());
             display->setVirtualDisplaySize(surface->getWidth(), surface->getHeight());
             display->updateViewport(VirtualDisplay::FitType_Auto);

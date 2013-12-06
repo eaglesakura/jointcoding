@@ -20,14 +20,14 @@ SpriteBatch::SpriteBatch(MRenderingContext renderContext, MDevice device) {
     surfaceSize.y = device->getSurface()->getHeight();
 
     for (int i = 0; i < BATCHBUFFER_NUM; ++i) {
-        vertices[i].gpuIndices.reset(new IndexBufferObject(device));
-        vertices[i].gpuVertices.reset(new VertexBufferObject<BatchVertex>(device));
+        vertices[i].gpuIndices.reset(mark_new IndexBufferObject(device));
+        vertices[i].gpuVertices.reset(mark_new VertexBufferObject<BatchVertex>(device));
     }
 
     // 白ポリゴン描画用
     {
         MTextureImage whiteTexture;
-        whiteTexture.reset(new TextureImage(1, 1, device));
+        whiteTexture.reset(mark_new TextureImage(1, 1, device));
         whiteTexture->bind(device->getState());
         {
             const u16 rgb565 = 0xFFFF;

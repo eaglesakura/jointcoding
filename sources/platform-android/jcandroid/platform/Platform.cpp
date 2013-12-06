@@ -38,7 +38,7 @@ s32 Platform::getPlatformVersionNumber() {
  * ファイルシステムアクセスクラスを取得する。
  */ //
 jc_sp<FileSystem> Platform::getFileSystem() {
-    static jc_sp<FileSystem> g_fileSystem( new ndk::NDKFileSystem(ndk::NativeContext_get()));
+    static jc_sp<FileSystem> g_fileSystem( mark_new ndk::NDKFileSystem(ndk::NativeContext_get()));
     return g_fileSystem;
 }
 
@@ -46,7 +46,7 @@ jc_sp<FileSystem> Platform::getFileSystem() {
  * ネイティブAPIコールが可能なスレッドを作成する。
  */
 Thread* Platform::newThread(MRunnable runnable) {
-    return new ndk::JavaJointThread(runnable);
+    return mark_new ndk::JavaJointThread(runnable);
 }
 
 /**

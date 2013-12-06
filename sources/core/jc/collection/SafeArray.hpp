@@ -131,7 +131,7 @@ public:
 
         value_type *pOldValues = ptr;
         if (newLength > 0) {
-            ptr = new value_type[newLength];
+            ptr = mark_new value_type[newLength];
         } else {
             ptr = NULL;
         }

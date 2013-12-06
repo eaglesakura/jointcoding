@@ -107,7 +107,7 @@ public:
 
         // レンダリングスタックの最初はEGLSurfaceである
         {
-            renderStack.reset(new RenderingStack());
+            renderStack.reset(mark_new RenderingStack());
             pushSurface(device->getSurface());
         }
     }

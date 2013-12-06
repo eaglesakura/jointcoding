@@ -121,7 +121,7 @@ class ShadowLight: public Light {
     MCamera shadowCamera;
 public:
     ShadowLight() {
-        shadowCamera.reset(new Camera());
+        shadowCamera.reset(mark_new Camera());
         shadowCamera->setPosition(position);
         shadowCamera->setLook(position + direction);
     }

@@ -25,7 +25,7 @@ struct AnimationGroup {
 
     AnimationGroup(const u32 length) {
         animations_length = length;
-        animations.reset(new Animator[length]);
+        animations.reset(mark_new Animator[length]);
     }
 };
 
@@ -84,7 +84,7 @@ public:
      * 現在のアニメーションを更に分割して、新しいアニメーションにする。
      */
     virtual jc_sp<AnimationClip> slice(const u32 start, const u32 end) const {
-        return jc_sp<AnimationClip>(new AnimationClip(animation, start, end));
+        return jc_sp<AnimationClip>(mark_new AnimationClip(animation, start, end));
     }
 
     /**

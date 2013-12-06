@@ -19,7 +19,7 @@ public:
      */
     template<typename T>
     static void asyncFunction(::jc::data_runnable_function func, jc_sp<T> data, String thread_name) {
-        MRunnable runnable((Runnable*) new DataRunnable<T>(func, data));
+        MRunnable runnable((Runnable*) mark_new DataRunnable<T>(func, data));
         Thread *thread = Platform::newThread(runnable)->autoRelease();
         thread->setName(thread_name);
         thread->start();

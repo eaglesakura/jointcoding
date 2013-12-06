@@ -40,7 +40,7 @@ protected:
      * マテリアルを新規に生成する
      */
     virtual MeshMaterial* createMaterial() {
-        return new MeshMaterial();
+        return mark_new MeshMaterial();
     }
 
 public:
@@ -56,8 +56,8 @@ public:
      * バッファの確保を行う
      */
     virtual void initialize(MDevice device, const u32 materialNum) {
-        vertices.reset(new FigureVertices(device));
-        indices.reset(new IndexBufferObject(device));
+        vertices.reset(mark_new FigureVertices(device));
+        indices.reset(mark_new IndexBufferObject(device));
 
         materials.alloc(materialNum);
         for(s32 i = 0; i < materialNum; ++i) {
@@ -196,14 +196,14 @@ protected:
      * 指定したインデックスのノードを生成する
      */
     virtual FigureNode* createNode(const s32 index) {
-        return new FigureNode(index);
+        return mark_new FigureNode(index);
     }
 
     /**
      * リソース管理クラスを生成する
      */
     virtual MeshResource* createResource() {
-        return new MeshResource();
+        return mark_new MeshResource();
     }
 
 public:

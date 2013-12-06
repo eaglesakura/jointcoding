@@ -10,8 +10,8 @@ namespace jc {
 namespace fw {
 
 EnvironmentInstanceState::EnvironmentInstanceState() {
-    mainCamera.reset(new Camera());
-    shadowmapLight.reset(new ShadowLight());
+    mainCamera.reset(mark_new Camera());
+    shadowmapLight.reset(mark_new ShadowLight());
 }
 
 EnvironmentInstanceState::~EnvironmentInstanceState() {

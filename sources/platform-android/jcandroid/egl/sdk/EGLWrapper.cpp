@@ -82,7 +82,7 @@ void SdkEGLWrapper::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceP
     } else {
         if(jEGLContext) {
             // 現在のスレッドIDを指定する
-            threadId.reset(new ThreadID());
+            threadId.reset(mark_new ThreadID());
 
 #ifdef  EGL_TRIPLEBUFFER_MODE
             {

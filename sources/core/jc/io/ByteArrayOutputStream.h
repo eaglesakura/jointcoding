@@ -24,7 +24,7 @@ public:
      * バッファの初期サイズを指定して作成する
      */
     ByteArrayOutputStream(const s32 bufferSize = 1024) {
-        buffer.reset(new MemoryBlock(bufferSize));
+        buffer.reset(mark_new MemoryBlock(bufferSize));
     }
     virtual ~ByteArrayOutputStream() {
         buffer.reset();

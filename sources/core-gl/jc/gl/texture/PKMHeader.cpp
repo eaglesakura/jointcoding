@@ -52,7 +52,7 @@ jc_sp<PKMHeader> PKMHeader::createInstance(MInputStream stream) {
         }
     }
 
-    result.reset(new PKMHeader());
+    result.reset(mark_new PKMHeader());
     {
         // check version
         stream->read((u8*)result->version, 2);

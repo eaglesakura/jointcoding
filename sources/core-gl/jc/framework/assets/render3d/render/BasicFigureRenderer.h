@@ -110,7 +110,7 @@ public:
      * レンダラーとはセットで運用され、このレンダラーから生成されたインスタンス以外の描画を保証しない。
      */
     virtual FigureInstanceState* createInstanceState(const jc_selp<Figure> figure) {
-        FigureInstanceState *result = new FigureInstanceState();
+        FigureInstanceState *result = mark_new FigureInstanceState();
         result->initialize(figure);
         return result;
     }

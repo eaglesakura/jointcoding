@@ -12,7 +12,7 @@ namespace jc {
  *
  */
 FileArchiveOutputStream::FileArchiveOutputStream(MOutputStream output) {
-    this->stream.reset(new BinaryOutputStream(output));
+    this->stream.reset(mark_new BinaryOutputStream(output));
     this->file_writing = jcfalse;
     this->write_pointer = 0;
 

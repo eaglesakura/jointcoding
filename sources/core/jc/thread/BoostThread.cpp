@@ -60,7 +60,7 @@ void BoostThread::runThread(BoostThread *_this) {
 #endif
         // IDを発行する
         thread::id _id = ((thread*) _this->pThread)->get_id();
-        _this->threadId.reset(new ThreadID(&_id));
+        _this->threadId.reset(mark_new ThreadID(&_id));
 
         // 本体を実行する
         {
@@ -90,7 +90,7 @@ void BoostThread::runThread(BoostThread *_this) {
 void BoostThread::start() {
     MutexLock lock(this->mtx);
     if (!pThread) {
-        pThread = (NativeThreadPtr) new boost::thread(boost::bind(runThread, this));
+        pThread = (NativeThreadPtr) mark_new boost::thread(boost::bind(runThread, this));
     }
 }
 

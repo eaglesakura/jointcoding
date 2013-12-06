@@ -21,7 +21,6 @@
 */
 #include "jc/system/Log.h"
 #include "jc/mem/SmartPtr.h"
-#include "jc/util/ImplCapsule.h"
 #include "jc/system/jcString.h"
 
 // joint code library

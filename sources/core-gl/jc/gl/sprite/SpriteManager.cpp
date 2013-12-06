@@ -51,13 +51,13 @@ void SpriteManager::initialize(MDevice device) {
 
     // attrを設定する
     {
-        this->quad.reset(new Quad(device));
+        this->quad.reset(mark_new Quad(device));
         quad->setPositionAttribute(QuadPositionAttribute(shader, "vPosition"));
         quad->setCoordAttribute(QuadCoordAttribute(shader, "vTexCoord"));
     }
 
     {
-        whiteTexture.reset(new TextureImage(1, 1, device));
+        whiteTexture.reset(mark_new TextureImage(1, 1, device));
         whiteTexture->bind(device->getState());
         {
             const u16 rgb565 = 0xFFFF;
@@ -182,7 +182,7 @@ void SpriteManager::dispose() {
  */
 MSpriteManager SpriteManager::createInstance(MRenderingContext context, MDevice device) {
     jclog("createInstance");
-    MSpriteManager result(new SpriteManager(context, device, MGLShaderProgram()));
+    MSpriteManager result(mark_new SpriteManager(context, device, MGLShaderProgram()));
     return result;
 }
 
@@ -194,7 +194,7 @@ MSpriteManager SpriteManager::createExternalInstance(MRenderingContext context, 
 
     MGLShaderProgram program = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_EXTERNAL_SHADER_SOURCE, FRAGMENT_EXTERNAL_SHADER_SOURCE);
     assert(program.get() != NULL);
-    MSpriteManager result(new SpriteManager(context, device, program));
+    MSpriteManager result(mark_new SpriteManager(context, device, program));
     result->getRenderingQuad()->updateVertices(device->getState(), g_revert_vertices);
     return result;
 }
@@ -205,7 +205,7 @@ MSpriteManager SpriteManager::createInstance(MRenderingContext context, MDevice 
         return MSpriteManager();
     }
 
-    MSpriteManager result(new SpriteManager(context, device, program));
+    MSpriteManager result(mark_new SpriteManager(context, device, program));
 
     return result;
 }

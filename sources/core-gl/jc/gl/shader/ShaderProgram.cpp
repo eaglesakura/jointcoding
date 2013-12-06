@@ -160,7 +160,7 @@ jc_sp<ShaderProgram> ShaderProgram::link(MDevice device, const MGLShader vertexS
     }
 
     // リンクに成功した
-    ShaderProgram *result = new ShaderProgram(program, vertexShader, fragmentShader);
+    ShaderProgram *result = mark_new ShaderProgram(program, vertexShader, fragmentShader);
     return MGLShaderProgram(result);
 }
 

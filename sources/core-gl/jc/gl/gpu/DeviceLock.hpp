@@ -70,7 +70,7 @@ class DeviceLock {
                 Thread::sleep(1);
             }
             // Mutex占有権を取得する
-            lock.reset(new MutexLock(device->getGPUMutex()));
+            lock.reset(mark_new MutexLock(device->getGPUMutex()));
 
             // リクエストを削除する
             device->unlockRequest(lock_request);

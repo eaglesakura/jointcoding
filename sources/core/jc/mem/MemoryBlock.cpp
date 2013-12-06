@@ -5,13 +5,14 @@
 
  */
 
+#include    "jointcoding.h"
 #include    "jc/mem/MemoryBlock.h"
 #include    "jc/system/Log.h"
 
 namespace jc {
 
 MemoryBlock::MemoryBlock(const u32 bufferLength) {
-    this->block.reset(new u8[bufferLength + 1]);
+    this->block.reset(mark_new u8[bufferLength + 1]);
     this->block_size = bufferLength + 1;
     this->length = 0;
 }
@@ -31,7 +32,7 @@ static jc_sa<u8> request(const jc_sa<u8> buffer, const u32 buffer_size, u32 *new
 
     // バッファが足りない
     (*new_buffersize) = request_size + 1024;
-    jc_sa< u8 > result( new u8[(*new_buffersize)]);
+    jc_sa< u8 > result( mark_new u8[(*new_buffersize)]);
 
     // バッファをコピーする
     memcpy(result.get(), buffer.get(), buffer_size );
@@ -64,7 +65,7 @@ void MemoryBlock::compact() {
         return;
     }
 
-    jc_sa<u8> nBuffer(new u8[getLength()]);
+    jc_sa<u8> nBuffer(mark_new u8[getLength()]);
     memcpy(nBuffer.get(), this->block.get(), getLength());
 
     this->block = nBuffer;

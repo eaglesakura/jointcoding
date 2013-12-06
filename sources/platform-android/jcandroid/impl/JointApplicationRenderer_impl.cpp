@@ -24,7 +24,7 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
     JointApplicationBase *application = joint_context(_this, JointApplicationBase);
 
     // プラットフォームを生成する
-    jc_sp<NDKPlatformContext> platform(new NDKPlatformContext( JointApplicationRenderer::global(_this) ));
+    jc_sp<NDKPlatformContext> platform(mark_new NDKPlatformContext( JointApplicationRenderer::global(_this) ));
 
     // プラットフォームとのバインドを行う
     application->dispatchBindPlatform(platform);

@@ -68,7 +68,7 @@ float BinaryInputStream::readFixed32(const s32 bits) {
  */
 String BinaryInputStream::readString() {
     u16 length = readU16();
-    jc_sa<charactor> temp( new charactor[length] );
+    jc_sa<charactor> temp( mark_new charactor[length] );
     jc::zeromemory(temp.get(), length);
 
     stream->read((u8*) temp.get(), length);
@@ -84,7 +84,7 @@ String BinaryInputStream::readString() {
  */
 u32 BinaryInputStream::readByteArray(jc_sa<u8> *result_data, u32 *result_data_length ) {
     u32 length = readU32();
-    u8* pData = new u8[length];
+    u8* pData = mark_new u8[length];
 
     // 指定された長さ分だけ読み込む
         stream->read(pData, length);
@@ -108,13 +108,13 @@ u32 BinaryInputStream::readByteArray(jc_sa<u8> *result_data, u32 *result_data_le
  */
 u32 BinaryInputStream::readFixed32Array(jc_sa<float> *result_data, u32 *result_data_length, const s32 bits ) {
     u32 length = readU32();
-    fixed32* pData = new fixed32[length];
+    fixed32* pData = mark_new fixed32[length];
 
     // 指定された長さ分だけ読み込む
         stream->read((u8*)pData, sizeof(fixed32) * length);
 
         // 戻り
-        float *pResult = new float[length];
+        float *pResult = mark_new float[length];
         for(u32 i = 0; i < length; ++i ) {
             pResult[i] = fixed2real<fixed32, float>( pData[i], bits );
         }

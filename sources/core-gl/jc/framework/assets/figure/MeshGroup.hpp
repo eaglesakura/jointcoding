@@ -36,7 +36,7 @@ class MeshGroup: public Object {
 protected:
 
     virtual MeshFragment* createMeshContext(MDevice device, const u32 index) {
-        return new MeshFragment();
+        return mark_new MeshFragment();
     }
 
 public:

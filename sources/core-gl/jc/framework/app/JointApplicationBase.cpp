@@ -15,7 +15,7 @@ JointApplicationBase::JointApplicationBase() {
     // 保留ステートを無効化する
     pendingState = -1;
 
-    fragmentController.reset(new ApplicationFragmentController(this));
+    fragmentController.reset(mark_new ApplicationFragmentController(this));
 }
 
 JointApplicationBase::~JointApplicationBase() {
@@ -308,7 +308,7 @@ void JointApplicationBase::dispatchDestroy() {
 void JointApplicationBase::dispatchInitialize() {
     // レンダリングコンテキストを生成する
     {
-        renderingContext.reset(new RenderingContext());
+        renderingContext.reset(mark_new RenderingContext());
         renderingContext->initialize(getWindowDevice());
     }
 

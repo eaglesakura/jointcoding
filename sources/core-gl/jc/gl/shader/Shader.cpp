@@ -74,7 +74,7 @@ MGLShader Shader::compile(MDevice device, const ShaderType_e type, const charact
     }
 
     // エラーが発生していないから、オブジェクトを生成して返す
-    Shader *result = new Shader(type, shader);
+    Shader *result = mark_new Shader(type, shader);
     return MGLShader(result);
 }
 

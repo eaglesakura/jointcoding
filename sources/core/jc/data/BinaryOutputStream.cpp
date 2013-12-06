@@ -85,7 +85,7 @@ void BinaryOutputStream::writeRawByteArray(const void* data, const u32 bytes) {
  * float -> fixed変換を行なって書き込む。
  */
 void BinaryOutputStream::writeFixed32Array(const float *data, const u32 data_length, const s32 bits) {
-    fixed32 *data_array = new s32[data_length];
+    fixed32 *data_array = mark_new s32[data_length];
 
     // 全てfixed変換を行う
     for (u32 i = 0; i < data_length; ++i) {

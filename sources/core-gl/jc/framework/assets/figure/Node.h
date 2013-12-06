@@ -53,7 +53,7 @@ protected:
      * フラグメントを生成する
      */
     virtual MeshGroup* createGroup(const s32 material) {
-        return new MeshGroup();
+        return mark_new MeshGroup();
     }
 
     /**

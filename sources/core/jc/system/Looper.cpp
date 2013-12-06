@@ -23,7 +23,7 @@ Looper::~Looper() {
  * 基本的にcancelされるまで実行が戻ることはない。
  */
 void Looper::execute() {
-    this->threadId.reset(new ThreadID());
+    this->threadId.reset(mark_new ThreadID());
     MLooperTask task;
     while (!isCanceled()) {
         if (hasTask()) {
@@ -51,7 +51,7 @@ jcboolean Looper::hasTask() {
 void Looper::postAtDelay(const MRunnable runnable, const s32 milliSec) {
     MutexLock lock(mutex);
 
-    MLooperTask ist(new LooperTask(runnable, Timer::delayTime(milliSec)));
+    MLooperTask ist(mark_new LooperTask(runnable, Timer::delayTime(milliSec)));
 
     std::list<MLooperTask>::iterator itr = runners.begin(), end = runners.end();
 

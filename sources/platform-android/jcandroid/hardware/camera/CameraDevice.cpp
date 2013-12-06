@@ -70,7 +70,7 @@ MTextureImage CameraDevice::startPreview(MDevice device) {
     // 既にプレビュー済みではいけない
     assert(!previewTexture);
 
-    previewTexture.reset(new TextureImage(GL_TEXTURE_EXTERNAL_OES, 1, 1, device));
+    previewTexture.reset(mark_new TextureImage(GL_TEXTURE_EXTERNAL_OES, 1, 1, device));
 
     // プレビュー開始を行わせる
     if (nativeCamera->startPreview(previewTexture->getName())) {
@@ -172,7 +172,7 @@ jc_sp<CameraDevice> CameraDevice::createInstance(const s32 CameraDeviceProtocol_
         return jc_sp<CameraDevice>();
     }
 
-    jc_sp<CameraDevice> result(new CameraDevice(CameraDeviceProtocol_TYPE));
+    jc_sp<CameraDevice> result(mark_new CameraDevice(CameraDeviceProtocol_TYPE));
     result->nativeCamera = nativeCamera;
 
     return result;

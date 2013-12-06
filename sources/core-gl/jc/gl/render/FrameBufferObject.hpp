@@ -269,7 +269,7 @@ public:
         GLenum format = formats[pixelFormat];
 
         // カラーバッファを生成する
-        MRenderBufferObject render(new RenderBufferObject(device, formats[pixelFormat]));
+        MRenderBufferObject render(mark_new RenderBufferObject(device, formats[pixelFormat]));
 
         // カラーとしてアタッチする
         attach(device->getState(), GL_COLOR_ATTACHMENT0, render);
@@ -296,7 +296,7 @@ public:
         }
 
         // 深度バッファを生成する
-        MRenderBufferObject render(new RenderBufferObject(device, internalformat));
+        MRenderBufferObject render(mark_new RenderBufferObject(device, internalformat));
         attach(device->getState(), GL_DEPTH_ATTACHMENT, render);
     }
 
@@ -305,7 +305,7 @@ public:
      */
     virtual void allocStencilRenderbuffer(MDevice device) {
         // 深度バッファを生成する
-        MRenderBufferObject render(new RenderBufferObject(device, GL_STENCIL_INDEX8));
+        MRenderBufferObject render(mark_new RenderBufferObject(device, GL_STENCIL_INDEX8));
         attach(device->getState(), GL_STENCIL_ATTACHMENT, render);
     }
 
@@ -318,7 +318,7 @@ public:
 
         if (GPUCapacity::isSupport(GPUExtension_Renderbuffer_PackedDepth24Stencil8)) {
             // パックが可能なので、同一バッファを割り当てる
-            MRenderBufferObject render(new RenderBufferObject(device, GL_DEPTH24_STENCIL8_OES));
+            MRenderBufferObject render(mark_new RenderBufferObject(device, GL_DEPTH24_STENCIL8_OES));
 
             attach(device->getState(), GL_DEPTH_ATTACHMENT, render);
             attach(device->getState(), GL_STENCIL_ATTACHMENT, render);
@@ -360,7 +360,7 @@ public:
 
         bind(device->getState());
 
-        colorTexture.reset(new TextureImage(GL_TEXTURE_2D, width, height, device));
+        colorTexture.reset(mark_new TextureImage(GL_TEXTURE_2D, width, height, device));
         MGLState state = device->getState();
         colorTexture->bind(state);
         colorTexture->allocPixelMemory(texturePixelFormat, 0, state);
@@ -387,7 +387,7 @@ public:
 
         bind(device->getState());
 
-        depthTexture.reset(new TextureImage(GL_TEXTURE_2D, width, height, device));
+        depthTexture.reset(mark_new TextureImage(GL_TEXTURE_2D, width, height, device));
         depthTexture->bind(device->getState());
         {
             // 深度テクスチャがサポートされているため、深度として直接関連付けられる

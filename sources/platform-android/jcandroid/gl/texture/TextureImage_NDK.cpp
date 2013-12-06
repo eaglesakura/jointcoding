@@ -26,7 +26,7 @@ class NDKPixelBuffer: public PixelBuffer {
     jc_sp<JObject> byteBuffer;
 public:
     NDKPixelBuffer(jobject jByteBuffer, const s32 width, const s32 height) : PixelBuffer(PixelFormat_NativeRGBA, width, height) {
-        byteBuffer.reset(new JObject(jByteBuffer));
+        byteBuffer.reset(mark_new JObject(jByteBuffer));
         byteBuffer->addGlobalRef();
 
         CALL_JNIENV();
@@ -74,7 +74,7 @@ MPixelBuffer TextureImage::decodePixelsFromPlatformDecoder(MDevice device, const
     s32 imageHeight = ndk::ImageDecoder::getHeight_(jImageDecoder);
 
     // バッファを作成する
-    result.reset(new NDKPixelBuffer(jPixelBuffer, imageWidth, imageHeight));
+    result.reset(mark_new NDKPixelBuffer(jPixelBuffer, imageWidth, imageHeight));
 
     // デコーダ本体を解放する
     env->DeleteLocalRef(jImageDecoder);
