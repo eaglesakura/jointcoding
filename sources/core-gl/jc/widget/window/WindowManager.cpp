@@ -10,9 +10,12 @@
 namespace jc {
 namespace view {
 
-WindowManager::WindowManager() {
+WindowManager::WindowManager(MRenderingContext context) {
     events.reset(mark_new EventQueue());
-    windowContext.reset(mark_new WindowContext());
+    {
+        windowContext.reset(mark_new WindowContext());
+        windowContext->setRenderingContext(context);
+    }
     window.reset(mark_new Window(windowContext));
     windowContext->setWindow(window);
     windowContext->setEventQueue(events);

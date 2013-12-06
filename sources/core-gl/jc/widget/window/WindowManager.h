@@ -124,7 +124,7 @@ protected:
      */
     virtual void handleTimerEvents();
 public:
-    WindowManager();
+    WindowManager(MRenderingContext context);
     virtual ~WindowManager();
 
     /**

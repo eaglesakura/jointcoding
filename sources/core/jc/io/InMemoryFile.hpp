@@ -6,41 +6,60 @@
 #ifndef INMEMORYFILE_HPP_
 #define INMEMORYFILE_HPP_
 
-#include    "jointcoding.h"
-#include    "jc/collection/SafeArray.hpp"
+#include    "jc/io/IFileMapper.hpp"
 
 namespace jc {
 
-typedef unsafe_array<u8> byte_array;
-
 /**
  * ファイルをシンプルに扱うためのクラス
- * メモリ空間にマッピング（load | mmap）するため、巨大なファイルは扱わない方がいい
+ * 物理メモリにロードするため、巨大なファイルは扱わない方がいい
  */
 class InMemoryFile: public Object {
 protected:
-    InMemoryFile() {
-    }
+    // 長さ
+    s32 _length;
+    // データ本体
+    jc_sa<u8> data;
+    // アクセスUri
+    Uri uri;
 public:
+    InMemoryFile(jc_sa<u8> data, const u32 data_length) {
+        this->data = data;
+        this->_length = data_length;
+    }
 
     virtual ~InMemoryFile() {
     }
 
     /**
-     * ファイルの長さを取得する
+     * 長さを取得する
      */
-    virtual s32 length() = 0;
+    virtual s32 length() {
+        return _length;
+    }
 
     /**
-     * 先頭ポインタを取得する
+     * 頭のポインタを取得する
      */
-    virtual u8* getHeadPointer() = 0;
+    virtual u8* getHead() {
+        return data.get();
+    }
+
+    virtual void setUri(const Uri set) {
+        this->uri = set;
+    }
 
     /**
-     * アクセス用イテレータを返す
+     * 元ファイルのUriを取得する
+     * 不明な場合はfalseを返す。
      */
-    virtual byte_array iterator() {
-        return byte_array(getHeadPointer(), length());
+    virtual jcboolean getUri(Uri *result) {
+        if(uri.getUri().length()) {
+            *result = uri;
+            return jctrue;
+        } else {
+            return jcfalse;
+        }
     }
 };
 
