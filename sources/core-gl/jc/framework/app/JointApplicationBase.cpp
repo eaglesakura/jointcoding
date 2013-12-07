@@ -7,6 +7,8 @@
 #include    "jc/framework/app/JointApplicationBase.h"
 #include    "protocol/jcSurfacePixelFormatProtocol.h"
 
+#include    "jc/framework/app/MessageBank.hpp"
+
 namespace jc {
 namespace gl {
 
@@ -16,6 +18,7 @@ JointApplicationBase::JointApplicationBase() {
     pendingState = -1;
 
     fragmentController.reset(mark_new ApplicationFragmentController(this));
+    messageBank.reset(new MessageBank());
 }
 
 JointApplicationBase::~JointApplicationBase() {
@@ -24,74 +27,18 @@ JointApplicationBase::~JointApplicationBase() {
 }
 
 /**
- * ステータスの問い合わせを行う
+ * バンクを指定して保留していたメッセージを設定する
+ * postされたメッセージを非同期に処理したい場合に呼び出し、後からポーリングする
  */
-jcboolean JointApplicationBase::dispatchQueryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_length) {
-    assert(key);
-
-    if (key->main_key == JointApplicationProtocol::PostKey_QueryApplicationState) {
-        assert(result && result_length >= 1);
-        MutexLock lock(query_mutex);
-
-        *result = getRunningState();
-        return jctrue;
-    } else if (key->main_key == JointApplicationProtocol::PostKey_RequestSurfaceSpecs) {
-        assert(result && result_length >= JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
-
-        // サーフェイス性能を問い合わせる
-        SurfaceSpecs specs = getRenderingSurfaceSpecs();
-
-        s32 index = 0;
-        {
-            // フォーマット
-            switch (specs.surfaceFormat) {
-                case PixelFormat_RGB888:
-                    result[index] = SurfacePixelFormatProtocol::RGB8;
-                    break;
-
-                case PixelFormat_RGBA8888:
-                    result[index] = SurfacePixelFormatProtocol::RGBA8;
-                    break;
-                default:
-                    jcalertf("unsupported pixel format(%d)", specs.surfaceFormat)
-                    ;
-                    assert(false);
-                    break;
-            }
-            ++index;
-        }
-        {
-            // depth
-            result[index] = specs.hasDepth;
-            ++index;
-        }
-        {
-            // ステンシルバッファ
-            result[index] = specs.hasStencil;
-            ++index;
-        }
-        {
-            // TextureView request
-            // for Android
-            result[index] = specs.extensions.isEnable(SurfaceSupecExtension_AndroidTextureView);
-            ++index;
-        }
-
-        // 正しくリクエストを書き込んでいることを検証する
-        assert(index == JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
-    }
-
-    jclogf("drop query main(%d) sub(%d)", key->main_key, key->sub_key);
-    return jcfalse;
+void JointApplicationBase::pushPendingMessage(const s32 bankId, const ApplicationQueryKey &key, const string_params &params) {
+    messageBank->push(bankId, key, params);
 }
 
 /**
- * ステータスの問い合わせを行う
- * Native系との簡単なやり取りに利用する
+ * バンクを指定して保留していたメッセージを取得する
  */
-jcboolean JointApplicationBase::dispatchQueryParams(const ApplicationQueryKey *key, String *result, const s32 result_rength) {
-    jclogf("drop query main(%d) sub(%d)", key->main_key, key->sub_key);
-    return jcfalse;
+jc_sp<PendingMessage> JointApplicationBase::popPendingMessage(const s32 bankId) {
+    return messageBank->pop(bankId);
 }
 
 /**
@@ -215,7 +162,7 @@ void JointApplicationBase::dispatchNewTask(const ApplicationTaskContext &task) {
         MutexLock lock(tasks.mutex);
         --tasks.num;
         // タスク数が0になったらクリーンアップを行わせる
-        if(tasks.num == 0) {
+        if (tasks.num == 0) {
             jclogf("task all killed :: last task uid(%d)", task.uniqueId);
             onTaskDestroyed(task);
         }

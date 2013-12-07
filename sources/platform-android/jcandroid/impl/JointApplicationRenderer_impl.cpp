@@ -30,25 +30,6 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
     application->dispatchBindPlatform(platform);
 }
 
-// main
-JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryIntParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jintArray params) {
-    // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_queryIntParams");
-
-    jc_sp<JIntArray> array = JIntArray::wrap(params);
-
-    jint *pParams = array->lock();
-    ApplicationQueryKey query(main_key, sub_key);
-
-    // クエリを行う
-    jcboolean result = joint_context(_this, JointApplicationBase)->dispatchQueryParams(&query, pParams, array->length());
-
-    // クエリ結果を反映させる
-    array->unlock(JniArrayUnlock_Commit);
-
-    return result;
-}
-
 // タッチイベント処理を行う
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_dispatchTouchEvent(JNIEnv *env, jobject _this, jobject toucheventprotocol_0) {
 

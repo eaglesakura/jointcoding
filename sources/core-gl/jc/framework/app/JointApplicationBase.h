@@ -19,6 +19,10 @@
 #include    "jc/framework/app/IDataBank.hpp"
 
 namespace jc {
+
+class PendingMessage;
+class MessageBank;
+
 namespace gl {
 
 using namespace jc::view;
@@ -284,6 +288,12 @@ private:
             num = 0;
         }
     } tasks;
+
+    /**
+     * メッセージの一時的な預入
+     * postされたメッセージをすぐに処理したくない場合に設定する
+     */
+    jc_sp<MessageBank> messageBank;
 protected:
     /**
      * バインドされているプラットフォーム情報
@@ -320,10 +330,24 @@ public:
     /**
      * 現在起動しているタスク数を取得する
      * メインループも含めるため、基本的には１以上になる。
+     * 0になったタイミングで onTaskDestroyed が呼び出される
      */
     virtual s32 getTaskNum() const {
         return tasks.num;
     }
+
+    /**
+     * バンクを指定して保留していたメッセージを設定する
+     * receiveされたメッセージを非同期に処理したい場合に呼び出し、後からポーリングする
+     * スレッドセーフに処理される
+     */
+    virtual void pushPendingMessage(const s32 bankId, const ApplicationQueryKey &key, const string_params &params);
+
+    /**
+     * バンクを指定して保留していたメッセージを取得する
+     * スレッドセーフに処理される
+     */
+    virtual jc_sp<PendingMessage> popPendingMessage(const s32 bankId);
 
     /**
      * 現在の実行状態を取得する
@@ -493,9 +517,9 @@ protected:
             // 復旧が不可能なエラー一覧
             case EGLException_OutOfMemory:
             case EGLException_InitializeFailed:
-                return ApplicationRestoreStatus_Abort;
+            return ApplicationRestoreStatus_Abort;
             default:
-                break;
+            break;
         }
 
         return ApplicationRestoreStatus_Running;
@@ -522,19 +546,6 @@ public:
      * タッチイベントが呼び出された
      */
     virtual void dispatchTouchEvent(jc_sp<TouchEventProtocol> event);
-
-    /**
-     * ステータスの問い合わせを行う
-     * Native系との簡単なやり取りに利用する。
-     * ちょっとしたパラメータやりとりのためにメソッドを追加するコストを避ける
-     */
-    virtual jcboolean dispatchQueryParams(const ApplicationQueryKey *key, s32 *result, const s32 result_rength);
-
-    /**
-     * ステータスの問い合わせを行う
-     * Native系との簡単なやり取りに利用する
-     */
-    virtual jcboolean dispatchQueryParams(const ApplicationQueryKey *key, String *result, const s32 result_rength);
 
     /**
      * Platform（Java側、Objective-C側）からのパラメータ受け取りを行う
