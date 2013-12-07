@@ -455,8 +455,8 @@ protected:
     virtual void onAppDestroy() = 0;
 
     /**
-     * 全てのタスクが終了し、タスク数が0に達した
-     * メモリのクリーンアップを行うことを想定し、必ずスレイブデバイスを入力する
+     * 全てのタスクが終了し、タスク数が0に達した場合に呼び出される。
+     * Deviceに関連づいたリソースの解放を想定する。
      */
     virtual void onTaskDestroyed(const ApplicationTaskContext &lastTask) = 0;
 

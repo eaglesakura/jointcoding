@@ -270,7 +270,7 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      * @param renderingClass
      * @return
      */
-    public static JointApplicationFragment createInstance(Class<JointApplicationFragment> fragmentClass,
+    public static JointApplicationFragment createInstance(Class<? extends JointApplicationFragment> fragmentClass,
             Class<? extends JointApplicationRenderer> renderingClass) {
         try {
             Bundle args = new Bundle();
