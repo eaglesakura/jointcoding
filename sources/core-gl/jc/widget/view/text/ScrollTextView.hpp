@@ -64,7 +64,7 @@ class ScrollTextView: public TextView {
     WindowTimer stateTimer;
 
 public:
-    ScrollTextView() {
+    ScrollTextView(MWindowContext context) : TextView(context) {
         fontOffset = 0;
         scrollSpeedPixelParSec = 15;
         headerStopSec = 5;

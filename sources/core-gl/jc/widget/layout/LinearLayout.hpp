@@ -61,7 +61,7 @@ protected:
      */
     LayoutOrientation_e orientation;
 public:
-    LinearLayout() {
+    LinearLayout(MWindowContext context) : View(context) {
         orientation = LayoutOrientation_Vertical;
 
         setFocusable(jcfalse);
@@ -93,7 +93,7 @@ public:
         } else {
             layout->moveTo(margin.x, lastArea.bottom + margin.y);
         }
-        addSubView(layout, isRegisteredWindow());
+        addSubView(layout);
 
         // 自身の大きさを調整する
         layoutDirect(getLocalLayoutAreaNest());
