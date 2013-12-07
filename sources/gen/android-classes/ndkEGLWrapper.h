@@ -17,10 +17,10 @@ public:
     static const ::jc::charactor* CLASS_SIGNATURE;
     virtual void dispose();
     static void dispose_(jobject _this);
-    virtual jboolean current(jobject context, jobject surface);
-    static jboolean current_(jobject _this, jobject context, jobject surface);
-    virtual jboolean postFrontBuffer(jobject surface);
-    static jboolean postFrontBuffer_(jobject _this, jobject surface);
+    virtual jboolean current(jobject eglSurface, jobject result);
+    static jboolean current_(jobject _this, jobject eglSurface, jobject result);
+    virtual jboolean postFrontBuffer(jobject currentSurface);
+    static jboolean postFrontBuffer_(jobject _this, jobject currentSurface);
 
 
     static jc_sp<EGLWrapper> wrap(jobject obj);

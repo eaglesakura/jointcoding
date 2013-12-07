@@ -47,8 +47,8 @@ public class EGLSurfaceView extends SurfaceView implements RenderingSurface {
     @Override
     public void dispose() {
         synchronized (lock) {
-            deviceManager.dispose();
-            deviceManager = null;
+            //            deviceManager.dispose();
+            //            deviceManager = null;
         }
     }
 

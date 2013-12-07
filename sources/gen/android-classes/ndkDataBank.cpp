@@ -56,70 +56,70 @@ jstring DataBank::popString_(jobject _this, jlong key) {
     return (jstring) env->CallObjectMethod(_this, methods_DataBank[0], key);
 }
 
-jdouble DataBank::popDouble(jlong key) {
+jdouble DataBank::popDouble(jlong e) {
     CALL_JNIENV();
-    return (jdouble) env->CallDoubleMethod(this->getObject(), methods_DataBank[1], key);
+    return (jdouble) env->CallDoubleMethod(this->getObject(), methods_DataBank[1], e);
 }
 
-jdouble DataBank::popDouble_(jobject _this, jlong key) {
+jdouble DataBank::popDouble_(jobject _this, jlong e) {
     CALL_JNIENV();
     initialize_DataBank();
-    return (jdouble) env->CallDoubleMethod(_this, methods_DataBank[1], key);
+    return (jdouble) env->CallDoubleMethod(_this, methods_DataBank[1], e);
 }
 
-jfloat DataBank::popFloat(jlong key) {
+jfloat DataBank::popFloat(jlong e) {
     CALL_JNIENV();
-    return (jfloat) env->CallFloatMethod(this->getObject(), methods_DataBank[2], key);
+    return (jfloat) env->CallFloatMethod(this->getObject(), methods_DataBank[2], e);
 }
 
-jfloat DataBank::popFloat_(jobject _this, jlong key) {
-    CALL_JNIENV();
-    initialize_DataBank();
-    return (jfloat) env->CallFloatMethod(_this, methods_DataBank[2], key);
-}
-
-jlong DataBank::popLong(jlong key) {
-    CALL_JNIENV();
-    return (jlong) env->CallLongMethod(this->getObject(), methods_DataBank[3], key);
-}
-
-jlong DataBank::popLong_(jobject _this, jlong key) {
+jfloat DataBank::popFloat_(jobject _this, jlong e) {
     CALL_JNIENV();
     initialize_DataBank();
-    return (jlong) env->CallLongMethod(_this, methods_DataBank[3], key);
+    return (jfloat) env->CallFloatMethod(_this, methods_DataBank[2], e);
 }
 
-jint DataBank::popInt(jlong key) {
+jlong DataBank::popLong(jlong e) {
     CALL_JNIENV();
-    return (jint) env->CallIntMethod(this->getObject(), methods_DataBank[4], key);
+    return (jlong) env->CallLongMethod(this->getObject(), methods_DataBank[3], e);
 }
 
-jint DataBank::popInt_(jobject _this, jlong key) {
-    CALL_JNIENV();
-    initialize_DataBank();
-    return (jint) env->CallIntMethod(_this, methods_DataBank[4], key);
-}
-
-jobject DataBank::pop_unsafe(jlong key) {
-    CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_DataBank[5], key);
-}
-
-jobject DataBank::pop_unsafe_(jobject _this, jlong key) {
+jlong DataBank::popLong_(jobject _this, jlong e) {
     CALL_JNIENV();
     initialize_DataBank();
-    return (jobject) env->CallObjectMethod(_this, methods_DataBank[5], key);
+    return (jlong) env->CallLongMethod(_this, methods_DataBank[3], e);
 }
 
-jlong DataBank::add(jobject obj) {
+jint DataBank::popInt(jlong e) {
     CALL_JNIENV();
-    return (jlong) env->CallLongMethod(this->getObject(), methods_DataBank[6], obj);
+    return (jint) env->CallIntMethod(this->getObject(), methods_DataBank[4], e);
 }
 
-jlong DataBank::add_(jobject _this, jobject obj) {
+jint DataBank::popInt_(jobject _this, jlong e) {
     CALL_JNIENV();
     initialize_DataBank();
-    return (jlong) env->CallLongMethod(_this, methods_DataBank[6], obj);
+    return (jint) env->CallIntMethod(_this, methods_DataBank[4], e);
+}
+
+jobject DataBank::pop_unsafe(jlong jlong0) {
+    CALL_JNIENV();
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_DataBank[5], jlong0);
+}
+
+jobject DataBank::pop_unsafe_(jobject _this, jlong jlong0) {
+    CALL_JNIENV();
+    initialize_DataBank();
+    return (jobject) env->CallObjectMethod(_this, methods_DataBank[5], jlong0);
+}
+
+jlong DataBank::add(jobject jobject0) {
+    CALL_JNIENV();
+    return (jlong) env->CallLongMethod(this->getObject(), methods_DataBank[6], jobject0);
+}
+
+jlong DataBank::add_(jobject _this, jobject jobject0) {
+    CALL_JNIENV();
+    initialize_DataBank();
+    return (jlong) env->CallLongMethod(_this, methods_DataBank[6], jobject0);
 }
 
 jc_sp<DataBank> DataBank::wrap(jobject obj) {

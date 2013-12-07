@@ -96,10 +96,10 @@ public abstract class JointApplicationRenderer implements Jointable {
             appContext.release();
             appContext = null;
         }
-        if (windowDevice != null) {
-            windowDevice.dispose();
-            windowDevice = null;
-        }
+        //        if (windowDevice != null) {
+        //            windowDevice.dispose();
+        //            windowDevice = null;
+        //        }
     }
 
     /**

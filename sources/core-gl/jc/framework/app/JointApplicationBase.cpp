@@ -192,6 +192,12 @@ void JointApplicationBase::dispatchBindPlatform(const MPlatformContext context) 
 void JointApplicationBase::dispatchNewTask(const ApplicationTaskContext &task) {
     jclogf("start uid(0x%x) ud(0x%x) task(%s)", task.uniqueId, task.user_data, task.threadId.toString().c_str());
 
+    // タスク数をインクリメント
+    {
+        MutexLock lock(tasks.mutex);
+        ++tasks.num;
+    }
+
     // システムが予約したタスク
     if (task.uniqueId == JointApplicationProtocol::SystemTask_Mainloop) {
         // メインループを実行させる
@@ -203,6 +209,18 @@ void JointApplicationBase::dispatchNewTask(const ApplicationTaskContext &task) {
             jcalertf("task handle error uid(0x%x) ud(0x%x) task(%s)", task.uniqueId, task.user_data, task.threadId.toString().c_str());
         }
     }
+
+    // タスク数をデクリメント
+    {
+        MutexLock lock(tasks.mutex);
+        --tasks.num;
+        // タスク数が0になったらクリーンアップを行わせる
+        if(tasks.num == 0) {
+            jclogf("task all killed :: last task uid(%d)", task.uniqueId);
+            onTaskDestroyed(task);
+        }
+    }
+
     jclogf("finish uid(0x%x) ud(0x%x) task(%s)", task.uniqueId, task.user_data, task.threadId.toString().c_str());
 }
 

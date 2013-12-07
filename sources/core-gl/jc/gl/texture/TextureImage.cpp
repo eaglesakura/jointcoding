@@ -24,6 +24,7 @@ static u32 PIXEL_TYPES[] = {
         GL_UNSIGNED_BYTE, // BGRA8888
         GL_HALF_FLOAT_OES, // LuminanceF16
         GL_HALF_FLOAT_OES, // RGBA F16
+        GL_UNSIGNED_BYTE, // A8
 //
         };
 static u32 PIXEL_FORMATS[] = {
@@ -36,6 +37,7 @@ static u32 PIXEL_FORMATS[] = {
 #endif
         GL_LUMINANCE,
         GL_RGBA, // RGBA F16
+        GL_ALPHA, // A8
 //
         };
 }

@@ -117,6 +117,16 @@ public class ImageDecoder {
     }
 
     /**
+     * 画像デコードのみを行う
+     * @param stream
+     * @return
+     */
+    @JCMethod
+    public static Bitmap decodeBitmapFromStream(InputStream stream) {
+        return BitmapFactory.decodeStream(stream);
+    }
+
+    /**
      * 画像をデコードする。
      * streamは自動では閉じないため、呼び出し元で閉じること。
      * @param stream

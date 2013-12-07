@@ -268,6 +268,22 @@ private:
      * フラグメント管理クラス
      */
     MApplicationFragmentController fragmentController;
+
+    struct TaskInfo {
+        /**
+         * 起動しているタスク数
+         */
+        s32 num;
+
+        /**
+         * 操作用ミューテックス
+         */
+        jcmutex mutex;
+
+        TaskInfo() {
+            num = 0;
+        }
+    } tasks;
 protected:
     /**
      * バインドされているプラットフォーム情報
@@ -300,6 +316,15 @@ public:
 
 public:
     /* アクセサ */
+
+    /**
+     * 現在起動しているタスク数を取得する
+     * メインループも含めるため、基本的には１以上になる。
+     */
+    virtual s32 getTaskNum() const {
+        return tasks.num;
+    }
+
     /**
      * 現在の実行状態を取得する
      */
@@ -428,6 +453,12 @@ protected:
      * メソッド呼び出し時点でデバイスロック済み。
      */
     virtual void onAppDestroy() = 0;
+
+    /**
+     * 全てのタスクが終了し、タスク数が0に達した
+     * メモリのクリーンアップを行うことを想定し、必ずスレイブデバイスを入力する
+     */
+    virtual void onTaskDestroyed(const ApplicationTaskContext &lastTask) = 0;
 
     /**
      * アプリ休止処理

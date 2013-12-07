@@ -76,15 +76,15 @@ jint CameraWrapper::getPreviewHeight_(jobject _this) {
     return (jint) env->CallIntMethod(_this, methods_CameraWrapper[1]);
 }
 
-jboolean CameraWrapper::requestOrientation(jint CameraDeviceProtocol_ORIENTATION) {
+jboolean CameraWrapper::requestOrientation(jint e) {
     CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_CameraWrapper[2], CameraDeviceProtocol_ORIENTATION);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_CameraWrapper[2], e);
 }
 
-jboolean CameraWrapper::requestOrientation_(jobject _this, jint CameraDeviceProtocol_ORIENTATION) {
+jboolean CameraWrapper::requestOrientation_(jobject _this, jint e) {
     CALL_JNIENV();
     initialize_CameraWrapper();
-    return (jboolean) env->CallBooleanMethod(_this, methods_CameraWrapper[2], CameraDeviceProtocol_ORIENTATION);
+    return (jboolean) env->CallBooleanMethod(_this, methods_CameraWrapper[2], e);
 }
 
 jboolean CameraWrapper::cancelAutofocus() {
@@ -120,15 +120,15 @@ jboolean CameraWrapper::startAutofocus_(jobject _this) {
     return (jboolean) env->CallBooleanMethod(_this, methods_CameraWrapper[5]);
 }
 
-jboolean CameraWrapper::startPreview(jint textureName) {
+jboolean CameraWrapper::startPreview(jint jint0) {
     CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_CameraWrapper[6], textureName);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_CameraWrapper[6], jint0);
 }
 
-jboolean CameraWrapper::startPreview_(jobject _this, jint textureName) {
+jboolean CameraWrapper::startPreview_(jobject _this, jint jint0) {
     CALL_JNIENV();
     initialize_CameraWrapper();
-    return (jboolean) env->CallBooleanMethod(_this, methods_CameraWrapper[6], textureName);
+    return (jboolean) env->CallBooleanMethod(_this, methods_CameraWrapper[6], jint0);
 }
 
 void CameraWrapper::dispose() {
@@ -175,21 +175,21 @@ jint CameraWrapper::popFocusMode_(jobject _this) {
     return (jint) env->CallIntMethod(_this, methods_CameraWrapper[10]);
 }
 
-jobject CameraWrapper::createInstance_unsafe(jint CameraDeviceProtocol_TYPE) {
+jobject CameraWrapper::createInstance_unsafe(jint result) {
     CALL_JNIENV();
     initialize_CameraWrapper();
-    return (jobject) env->CallStaticObjectMethod(class_CameraWrapper, methods_CameraWrapper[11], CameraDeviceProtocol_TYPE);
+    return (jobject) env->CallStaticObjectMethod(class_CameraWrapper, methods_CameraWrapper[11], result);
 }
 
-void CameraWrapper::requestPreviewSize(jint width, jint height, jint minWidth, jint minHeight) {
+void CameraWrapper::requestPreviewSize(jint size, jint i$, jint previewSizes, jint target) {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_CameraWrapper[12], width, height, minWidth, minHeight);
+    env->CallVoidMethod(this->getObject(), methods_CameraWrapper[12], size, i$, previewSizes, target);
 }
 
-void CameraWrapper::requestPreviewSize_(jobject _this, jint width, jint height, jint minWidth, jint minHeight) {
+void CameraWrapper::requestPreviewSize_(jobject _this, jint size, jint i$, jint previewSizes, jint target) {
     CALL_JNIENV();
     initialize_CameraWrapper();
-    env->CallVoidMethod(_this, methods_CameraWrapper[12], width, height, minWidth, minHeight);
+    env->CallVoidMethod(_this, methods_CameraWrapper[12], size, i$, previewSizes, target);
 }
 
 jboolean CameraWrapper::stopPreview() {

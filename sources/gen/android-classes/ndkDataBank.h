@@ -17,18 +17,18 @@ public:
     static const ::jc::charactor* CLASS_SIGNATURE;
     virtual jstring popString(jlong key);
     static jstring popString_(jobject _this, jlong key);
-    virtual jdouble popDouble(jlong key);
-    static jdouble popDouble_(jobject _this, jlong key);
-    virtual jfloat popFloat(jlong key);
-    static jfloat popFloat_(jobject _this, jlong key);
-    virtual jlong popLong(jlong key);
-    static jlong popLong_(jobject _this, jlong key);
-    virtual jint popInt(jlong key);
-    static jint popInt_(jobject _this, jlong key);
-    virtual jobject pop_unsafe(jlong key);
-    static jobject pop_unsafe_(jobject _this, jlong key);
-    virtual jlong add(jobject obj);
-    static jlong add_(jobject _this, jobject obj);
+    virtual jdouble popDouble(jlong e);
+    static jdouble popDouble_(jobject _this, jlong e);
+    virtual jfloat popFloat(jlong e);
+    static jfloat popFloat_(jobject _this, jlong e);
+    virtual jlong popLong(jlong e);
+    static jlong popLong_(jobject _this, jlong e);
+    virtual jint popInt(jlong e);
+    static jint popInt_(jobject _this, jlong e);
+    virtual jobject pop_unsafe(jlong jlong0);
+    static jobject pop_unsafe_(jobject _this, jlong jlong0);
+    virtual jlong add(jobject jobject0);
+    static jlong add_(jobject _this, jobject jobject0);
 
 
     static jc_sp<DataBank> wrap(jobject obj);

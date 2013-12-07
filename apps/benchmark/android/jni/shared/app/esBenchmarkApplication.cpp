@@ -81,6 +81,8 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
 }
 
 void BenchmarkApplication::loadResource(MDevice subDevice) {
+
+//    Thread::sleep(1000 * 3);
     try {
         MDevice device = subDevice;
         DeviceLock lock(device, jctrue);
@@ -386,12 +388,26 @@ void BenchmarkApplication::onAppResume() {
  * メソッド呼び出し時点でデバイスロック済み。
  */
 void BenchmarkApplication::onAppDestroy() {
-    jclogf("destroy %x", this);
+    jclogf("onAppDestroy %x", this);
+}
 
-    texture.reset();
-    susanow.reset();
-    shadowmap.reset();
-    basicShader.reset();
+/**
+ * 全てのタスクが終了し、タスク数が0に達した
+ * メモリのクリーンアップを行うことを想定し、必ずスレイブデバイスを入力する
+ */
+void BenchmarkApplication::onTaskDestroyed(const ApplicationTaskContext &lastTask) {
+    jclog("all task finished");
+
+    try {
+        DeviceLock lock(getWindowDevice(), jctrue);
+
+        texture.reset();
+        susanow.reset();
+        shadowmap.reset();
+        basicShader.reset();
+    } catch (Exception &e) {
+
+    }
 }
 
 }

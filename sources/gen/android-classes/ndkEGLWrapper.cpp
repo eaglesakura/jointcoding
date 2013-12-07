@@ -52,26 +52,26 @@ void EGLWrapper::dispose_(jobject _this) {
     env->CallVoidMethod(_this, methods_EGLWrapper[0]);
 }
 
-jboolean EGLWrapper::current(jobject context, jobject surface) {
+jboolean EGLWrapper::current(jobject eglSurface, jobject result) {
     CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_EGLWrapper[1], context, surface);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_EGLWrapper[1], eglSurface, result);
 }
 
-jboolean EGLWrapper::current_(jobject _this, jobject context, jobject surface) {
+jboolean EGLWrapper::current_(jobject _this, jobject eglSurface, jobject result) {
     CALL_JNIENV();
     initialize_EGLWrapper();
-    return (jboolean) env->CallBooleanMethod(_this, methods_EGLWrapper[1], context, surface);
+    return (jboolean) env->CallBooleanMethod(_this, methods_EGLWrapper[1], eglSurface, result);
 }
 
-jboolean EGLWrapper::postFrontBuffer(jobject surface) {
+jboolean EGLWrapper::postFrontBuffer(jobject currentSurface) {
     CALL_JNIENV();
-    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_EGLWrapper[2], surface);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_EGLWrapper[2], currentSurface);
 }
 
-jboolean EGLWrapper::postFrontBuffer_(jobject _this, jobject surface) {
+jboolean EGLWrapper::postFrontBuffer_(jobject _this, jobject currentSurface) {
     CALL_JNIENV();
     initialize_EGLWrapper();
-    return (jboolean) env->CallBooleanMethod(_this, methods_EGLWrapper[2], surface);
+    return (jboolean) env->CallBooleanMethod(_this, methods_EGLWrapper[2], currentSurface);
 }
 
 jc_sp<EGLWrapper> EGLWrapper::wrap(jobject obj) {

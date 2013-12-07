@@ -140,6 +140,13 @@ protected:
     virtual void onAppDestroy();
 
     /**
+     * 全てのタスクが終了し、タスク数が0に達した
+     * メモリのクリーンアップを行うことを想定し、必ずスレイブデバイスを入力する
+     */
+    virtual void onTaskDestroyed(const ApplicationTaskContext &lastTask);
+
+
+    /**
      * 新規タスクの実行をリクエストした
      */
     virtual jcboolean onAppTask(const ApplicationTaskContext &task);
