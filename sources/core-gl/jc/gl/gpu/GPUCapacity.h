@@ -69,6 +69,11 @@ enum GPUExtension_e {
     GPUExtension_Texture_HalfFloat,
 
     /**
+     * GL_MIN_EXT/GL_MAX_EXTが利用できる
+     */
+    GPUExtension_Blend_MinMax,
+
+    /**
      * num flags
      */
     GPUExtension_Num,

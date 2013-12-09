@@ -134,13 +134,15 @@ void GPUCapacity::initialize() {
 #define EXTENSION_NAME(def) #def
         const charactor* EXTENSION_NAMES[] = {
         //
-        EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture),// ETC1(Android)
-        EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), // PVRTC(PowerVR)
+                EXTENSION_NAME(GL_OES_compressed_ETC1_RGB8_texture),// ETC1(Android)
+                EXTENSION_NAME(GL_IMG_texture_compression_pvrtc), // PVRTC(PowerVR)
                 "GL_EXT_texture_compression_s3tc", // s3tc texture(Tegra)
                 EXTENSION_NAME(GL_EXT_texture_format_BGRA8888), // BGRA(Android)
                 EXTENSION_NAME(GL_OES_EGL_image_external), // SurfaceTexture(Android)
                 EXTENSION_NAME(GL_OES_depth_texture), // 深度テクスチャ
                 EXTENSION_NAME(GL_EXT_discard_framebuffer), // フレームバッファの無効化
+                EXTENSION_NAME(GL_OES_texture_half_float), // 半精度浮動小数テクスチャ
+                EXTENSION_NAME(GL_EXT_blend_minmax), // GL_MIN/GL_MAX効果
                 };
 
         // 対応している拡張機能を調べる
@@ -150,7 +152,7 @@ void GPUCapacity::initialize() {
                 extension_flags.enable(i);
                 jclogf("supported extension(%s)", EXTENSION_NAMES[i]);
 
-                assert(GPUCapacity::isSupport((GPUExtension_e)i));
+                assert(GPUCapacity::isSupport((GPUExtension_e )i));
             }
         }
 #undef  EXTENSION_NAME
@@ -186,7 +188,7 @@ void GPUCapacity::initialize() {
                 if ((*itr).length()) {
                     jclogf("GL_EXTENSIONS = %s", (*itr).c_str());
                     ++itr;
-                }else {
+                } else {
                     itr = extensions.erase(itr);
                     end = extensions.end();
                 }

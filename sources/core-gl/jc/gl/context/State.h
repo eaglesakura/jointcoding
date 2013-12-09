@@ -28,6 +28,11 @@ enum GLBlendType_e {
      * 加算ブレンディングを行う
      */
     GLBlendType_Add,
+
+    /**
+     * 一般的なαレンダリングを行うが、ピクセルのアルファ値は後から描画した値を優先する
+     */
+    GLBlendType_Alpha2,
 };
 
 // #define  STATE_NO_CHECK
@@ -203,6 +208,10 @@ class GLState: public Object {
          * dst
          */
         GLint dst;
+
+        GLint srcAlpha;
+
+        GLint dstAlpha;
     } blendContext;
 
     struct ScissorContext {
@@ -339,22 +348,39 @@ public:
     /**
      * デフォルト設定に従ってブレンドを行う
      */
-    inline jcboolean blendFunc(const GLBlendType_e type) {
-        static const GLenum sfactor[] = { GL_SRC_ALPHA, GL_SRC_ALPHA, };
-        static const GLenum dfactor[] = { GL_ONE_MINUS_SRC_ALPHA, GL_ONE };
+    jcboolean blendFunc(const GLBlendType_e type);
 
-        return blendFunc(sfactor[type], dfactor[type]);
+    /**
+     * ブレンディング設定を行う
+     */
+    inline jcboolean blendFunc(const GLenum sfactor, const GLenum dfactor) {
+        if (blendContext.src != sfactor || blendContext.dst != dfactor || blendContext.srcAlpha != sfactor || blendContext.dstAlpha != dfactor) {
+            blendContext.src = sfactor;
+            blendContext.dst = dfactor;
+
+            blendContext.srcAlpha = sfactor;
+            blendContext.dstAlpha = dfactor;
+
+            glBlendFunc(sfactor, dfactor);
+            assert_gl();
+
+            return jctrue;
+        }
+        return jcfalse;
     }
 
     /**
      * ブレンディング設定を行う
      */
-    inline jcboolean blendFunc(const GLint sfactor, const GLint dfactor) {
-        if (blendContext.src != sfactor || blendContext.dst != dfactor) {
+    inline jcboolean blendFunc(const GLenum sfactor, const GLenum dfactor, const GLenum sfactorAlpha, const GLenum dfactorAlpha) {
+        if (blendContext.src != sfactor || blendContext.dst != dfactor || blendContext.srcAlpha != sfactorAlpha || blendContext.dstAlpha != dfactorAlpha) {
             blendContext.src = sfactor;
             blendContext.dst = dfactor;
 
-            glBlendFunc(sfactor, dfactor);
+            blendContext.srcAlpha = sfactorAlpha;
+            blendContext.dstAlpha = dfactorAlpha;
+
+            glBlendFuncSeparate(sfactor, dfactor, sfactorAlpha, dfactorAlpha);
             assert_gl();
 
             return jctrue;

@@ -159,8 +159,11 @@ void GLState::syncContext() {
     {
         blendContext.enable = glIsEnabled(GL_BLEND);
         assert_gl();
-        blendContext.src = 0;
-        blendContext.dst = 0;
+        blendContext.src = blendContext.srcAlpha = blendContext.dst = blendContext.dstAlpha = 0;
+//        glGetIntegerv(GL_BLEND_SRC_RGB, &blendContext.src);
+//        glGetIntegerv(GL_BLEND_SRC_ALPHA, &blendContext.srcAlpha);
+//        glGetIntegerv(GL_BLEND_DST_RGB, &blendContext.dst);
+//        glGetIntegerv(GL_BLEND_DST_ALPHA, &blendContext.dstAlpha);
     }
     // depth
     {
@@ -189,7 +192,7 @@ void GLState::syncContext() {
         assert_gl();
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*) &frameBufferContext.frameBuffer);
         assert_gl();
-        glGetIntegerv(GL_RENDERBUFFER_BINDING, (GLint*)&frameBufferContext.renderBuffer);
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, (GLint*) &frameBufferContext.renderBuffer);
         assert_gl();
     }
     // マスクを問い合わせる
@@ -225,7 +228,7 @@ void GLState::syncContext() {
                 assert_gl();
                 glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_STRIDE, (GLint*) &attr->stride);
                 assert_gl();
-                glGetVertexAttribPointerv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER, (GLvoid**)&attr->ptr);
+                glGetVertexAttribPointerv(i, GL_VERTEX_ATTRIB_ARRAY_POINTER, (GLvoid**) &attr->ptr);
                 assert_gl();
             }
 
@@ -246,7 +249,7 @@ void GLState::print(const charactor* file, const s32 line) const {
     jclog("-------------------------  OpenGL ES Context ----------------------");
     // 描画色を取得する
     {
-        jclogf("glClearColor RGBA(%d, %d, %d, %d)", (s32) clearContext.clearColor.r(), (s32) clearContext.clearColor.g(), (s32) clearContext.clearColor.b(), (s32) clearContext.clearColor.a());
+        jclogf("glClearColor RGBA(%d, %d, %d, %d)", (s32 ) clearContext.clearColor.r(), (s32 ) clearContext.clearColor.g(), (s32 ) clearContext.clearColor.b(), (s32 ) clearContext.clearColor.a());
     }
     // viewportを取得する
     {
@@ -314,11 +317,16 @@ void GLState::printGLError(const charactor* file, const s32 line) {
 jcboolean GLState::printGLError(const charactor* file, const s32 line, GLenum error) {
 #define LOG_GL( error_enum )    case error_enum: ::jc::__logDebugF(error_enum != GL_NO_ERROR ? LogType_Alert : LogType_Debug, ::jc::__getFileName(file), "L %d | %s", line, #error_enum); return error != GL_NO_ERROR ? jctrue : jcfalse;
     switch (error) {
-        LOG_GL(GL_INVALID_ENUM);
-        LOG_GL(GL_INVALID_VALUE);
-        LOG_GL(GL_INVALID_OPERATION);
-        LOG_GL(GL_OUT_OF_MEMORY);
-        LOG_GL(GL_NO_ERROR);
+        LOG_GL(GL_INVALID_ENUM)
+            ;
+        LOG_GL(GL_INVALID_VALUE)
+            ;
+        LOG_GL(GL_INVALID_OPERATION)
+            ;
+        LOG_GL(GL_OUT_OF_MEMORY)
+            ;
+        LOG_GL(GL_NO_ERROR)
+            ;
 //        LOG_GL(GL_STACK_OVERFLOW);
 //        LOG_GL(GL_STACK_UNDERFLOW);
 //        LOG_GL(GL_TABLE_TOO_LARGE);
@@ -327,6 +335,23 @@ jcboolean GLState::printGLError(const charactor* file, const s32 line, GLenum er
     jclogf("GL unknown error = 0x%x", error);
     return jctrue;
 #undef  LOG_GL
+}
+
+/**
+ * デフォルト設定に従ってブレンドを行う
+ */
+jcboolean GLState::blendFunc(const GLBlendType_e type) {
+    static const GLenum sfactor[] = { GL_SRC_ALPHA, GL_SRC_ALPHA, };
+    static const GLenum dfactor[] = { GL_ONE_MINUS_SRC_ALPHA, GL_ONE };
+
+    static const GLenum sfactorAlpha[] = { GL_ONE, GL_SRC_ALPHA, };
+    static const GLenum dfactorAlpha[] = { GL_ZERO, GL_ONE };
+
+    return blendFunc(sfactor[type], dfactor[type], sfactorAlpha[type], dfactorAlpha[type]);
+//    glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX_EXT);
+//    glBlendFuncSeparate(sfactor[type], dfactor[type], sfactorAlpha[type], dfactorAlpha[type]);
+//    return jctrue;
+//    return blendFunc(sfactor[0], dfactor[0], sfactorAlpha[0], dfactorAlpha[0]);
 }
 
 /*

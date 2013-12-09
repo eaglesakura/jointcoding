@@ -50,6 +50,7 @@ enum ImageViewFlag_e {
 };
 
 class ImageView: public View {
+private:
     /**
      * レンダリングを行う画像
      */
@@ -94,6 +95,13 @@ public:
      */
     virtual void layoutFromImage(const ImageLayout_e imageLayout, const Vector2f &parentLayoutSize);
 
+    virtual MTextureImage getImage() const {
+        return image;
+    }
+
+    virtual BitFlags<ImageViewFlag_Num> getFlags() const {
+        return imageViewFlags;
+    }
 protected:
     /* override */
     /**
