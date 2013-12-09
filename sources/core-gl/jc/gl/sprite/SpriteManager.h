@@ -36,18 +36,6 @@ protected:
     MDevice device;
 
     /**
-     * 頂点属性インデックス
-     * @shader_attribute vPosition
-     */
-    s32 attrVertices;
-
-    /**
-     * UV属性インデックス
-     * @shader_attribute vTexCoord
-     */
-    s32 attrCoords;
-
-    /**
      * 四角形描画用の白テクスチャ
      */
     MTextureImage whiteTexture;
@@ -99,7 +87,7 @@ protected:
      */
     virtual void initialize(MDevice device);
 
-    SpriteManager(MDevice device, MGLShaderProgram shader);
+    SpriteManager(MDevice device);
 
     /**
      * 現在の環境にしたがってレンダリングさせる。
@@ -108,6 +96,18 @@ protected:
 
 public:
     virtual ~SpriteManager();
+
+    /**
+     * レンダリング用シェーダーを取得する
+     */
+    virtual MGLShaderProgram getShader() const {
+        return shader;
+    }
+
+    /**
+     * シェーダーを設定する
+     */
+    virtual void setShader(MGLShaderProgram shader);
 
     /**
      * 四角形描画を行う
@@ -233,6 +233,13 @@ public:
      */
     virtual jc_sp<Quad> getRenderingQuad() const {
         return quad;
+    }
+
+    /**
+     * レンダリング用矩形を設定する
+     */
+    virtual void setRenderingQuad(jc_sp<Quad> quad) {
+        this->quad = quad;
     }
 
     /**

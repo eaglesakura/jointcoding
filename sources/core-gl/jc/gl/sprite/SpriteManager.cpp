@@ -30,20 +30,8 @@ const static QuadVertex g_revert_vertices[] = {
  * 初期化を行う
  */
 void SpriteManager::initialize(MDevice device) {
-
-    // uniformを設定する
-    {
-        uniform.poly_data.setLocation(shader, "poly_data");
-        uniform.poly_uv.setLocation(shader, "poly_uv");
-        uniform.texture.setLocation(shader, "tex");
-        uniform.color.setLocation(shader, "blendColor");
-        uniform.aspect.setLocation(shader, "aspect");
-        uniform.rotate.setLocation(shader, "rotate");
-        uniform.texture_matrix.setLocation(shader, "unif_texm");
-        if (uniform.texture_matrix.valid()) {
-            // テクスチャ行列が有効なら単位行列をデフォルト指定する
-            setTextureMatrix(Matrix4x4());
-        }
+    if (!shader) {
+        setShader(MGLShaderProgram());
     }
 
     // attrを設定する
@@ -52,40 +40,50 @@ void SpriteManager::initialize(MDevice device) {
         quad->setPositionAttribute(QuadPositionAttribute(shader, "vPosition"));
         quad->setCoordAttribute(QuadCoordAttribute(shader, "vTexCoord"));
     }
-//
-//    {
-//        whiteTexture.reset(mark_new TextureImage(1, 1, device));
-//        whiteTexture->bind();
-//        {
-//            const u16 rgb565 = 0xFFFF;
-//            whiteTexture->copyPixelLine(&rgb565, PixelFormat_RGB565, 0, 0, 1);
-//        }
-//        whiteTexture->unbind();
-//    }
+
     whiteTexture = TextureImage::createDotTexture2D(device, Color::fromRGBAi(255, 255, 255, 255));
 
     // default shader context
     setSurfaceAspect(device->getSurface()->getWidth(), device->getSurface()->getHeight());
 }
 
-SpriteManager::SpriteManager(MDevice device, MGLShaderProgram shader) {
+SpriteManager::SpriteManager(MDevice device) {
     this->device = device;
 
-    this->shader = shader;
-
-// シェーダーが設定されて無ければ、組み込みで起動する
-    if (!shader) {
-        this->shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
-    }
-    assert(this->shader.get() != NULL);
-
-    this->attrCoords = ATTRIBUTE_DISABLE_INDEX;
-    this->attrVertices = ATTRIBUTE_DISABLE_INDEX;
-    this->initialize(device);
 }
 
 SpriteManager::~SpriteManager() {
     this->dispose();
+}
+
+/**
+ * シェーダーを設定する
+ */
+void SpriteManager::setShader(MGLShaderProgram shader) {
+
+// シェーダーが設定されて無ければ、組み込みで起動する
+    if (!shader) {
+        this->shader = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
+    } else {
+        this->shader = shader;
+    }
+    assert(this->shader);
+
+    // uniformを設定する
+    {
+        uniform.poly_data.setLocation(this->shader, "poly_data");
+        uniform.poly_uv.setLocation(this->shader, "poly_uv");
+        uniform.texture.setLocation(this->shader, "tex");
+        uniform.color.setLocation(this->shader, "blendColor");
+        uniform.aspect.setLocation(this->shader, "aspect");
+        uniform.rotate.setLocation(this->shader, "rotate");
+        uniform.texture_matrix.setLocation(this->shader, "unif_texm");
+        if (uniform.texture_matrix.valid()) {
+            // テクスチャ行列が有効なら単位行列をデフォルト指定する
+            setTextureMatrix(Matrix4x4());
+        }
+    }
+
 }
 
 /**
@@ -183,7 +181,8 @@ void SpriteManager::dispose() {
  */
 MSpriteManager SpriteManager::createInstance(MDevice device) {
     jclog("createInstance");
-    MSpriteManager result(mark_new SpriteManager(device, MGLShaderProgram()));
+    MSpriteManager result(mark_new SpriteManager(device));
+    result->initialize(device);
     return result;
 }
 
@@ -194,7 +193,9 @@ MSpriteManager SpriteManager::createExternalInstance(MDevice device) {
     jclog("createExternalInstance");
     MGLShaderProgram program = jc::gl::ShaderProgram::buildFromSource(device, VERTEX_EXTERNAL_SHADER_SOURCE, FRAGMENT_EXTERNAL_SHADER_SOURCE);
     assert(program.get() != NULL);
-    MSpriteManager result(mark_new SpriteManager(device, program));
+    MSpriteManager result(mark_new SpriteManager(device));
+    result->setShader(program);
+    result->initialize(device);
     result->getRenderingQuad()->updateVertices(g_revert_vertices);
     return result;
 }
@@ -205,7 +206,9 @@ MSpriteManager SpriteManager::createInstance(MDevice device, const Uri vertexSha
         return MSpriteManager();
     }
 
-    MSpriteManager result(mark_new SpriteManager(device, program));
+    MSpriteManager result(mark_new SpriteManager(device));
+    result->setShader(program);
+    result->initialize(device);
 
     return result;
 }
