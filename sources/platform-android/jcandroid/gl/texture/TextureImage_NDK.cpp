@@ -13,10 +13,11 @@
 #include    "jc/gl/gpu/DeviceLock.hpp"
 #include    "jc/gl/texture/TextureImage.h"
 
+using namespace jc;
+using namespace jc::gl;
 using namespace ndk;
 
-namespace jc {
-namespace gl {
+namespace ndk {
 
 class NDKPixelBuffer: public PixelBuffer {
 
@@ -42,6 +43,31 @@ public:
         byteBuffer.reset();
     }
 };
+
+MPixelBuffer createPixelBufferFromImageDecoder(jobject jImageDecoder, Vector2i *pImageSize) {
+    MPixelBuffer result;
+
+    // ラップして、必要な情報を取り出す
+    jobject jPixelBuffer = ndk::ImageDecoder::getPixels_unsafe_(jImageDecoder);
+    s32 imageWidth = ndk::ImageDecoder::getWidth_(jImageDecoder);
+    s32 imageHeight = ndk::ImageDecoder::getHeight_(jImageDecoder);
+
+    if (pImageSize) {
+        pImageSize->x = imageWidth;
+        pImageSize->y = imageHeight;
+    }
+
+    // バッファを作成する
+    result.reset(mark_new NDKPixelBuffer(jPixelBuffer, imageWidth, imageHeight));
+
+    return result;
+
+}
+
+}
+
+namespace jc {
+namespace gl {
 
 /**
  * プラットフォームデコーダを利用してデコードを行う
@@ -72,20 +98,20 @@ MPixelBuffer TextureImage::decodePixelsFromPlatformDecoder(MDevice device, const
         option->result.raw_load_time_ms = Timer::lapseTimeMs(decode_starttime);
     }
 
-    // ラップして、必要な情報を取り出す
-    jobject jPixelBuffer = ndk::ImageDecoder::getPixels_unsafe_(jImageDecoder);
-    s32 imageWidth = ndk::ImageDecoder::getWidth_(jImageDecoder);
-    s32 imageHeight = ndk::ImageDecoder::getHeight_(jImageDecoder);
+    // デコーダーを作成する
+    Vector2i size;
+    result = createPixelBufferFromImageDecoder(jImageDecoder, &size);
 
 #ifdef DEBUG
-    if (imageWidth > 256 && imageHeight > 256) {
-        const jcboolean mipmap = (option && option->gen_mipmap);
-        jcalertf("large size image[%d x %d]->[%d x %d] mipmap(%s) uri(%s)", imageWidth, imageHeight, TextureImage::toTextureSize(option, imageWidth), TextureImage::toTextureSize(option, imageHeight), mipmap ? "true" : "false", uri.getUri().c_str());
+    {
+        const s32 imageWidth = size.x;
+        const s32 imageHeight = size.y;
+        if (imageWidth > 256 && imageHeight > 256) {
+            const jcboolean mipmap = (option && option->gen_mipmap);
+            jcalertf("large size image[%d x %d]->[%d x %d] mipmap(%s) uri(%s)", imageWidth, imageHeight, TextureImage::toTextureSize(option, imageWidth), TextureImage::toTextureSize(option, imageHeight), mipmap ? "true" : "false", uri.getUri().c_str());
+        }
     }
 #endif
-
-    // バッファを作成する
-    result.reset(mark_new NDKPixelBuffer(jPixelBuffer, imageWidth, imageHeight));
 
     // デコーダ本体を解放する
     env->DeleteLocalRef(jImageDecoder);
