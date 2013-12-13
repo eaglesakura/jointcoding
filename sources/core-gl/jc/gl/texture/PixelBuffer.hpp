@@ -3,6 +3,8 @@
  *
  *  Created on: 2013/05/06
  */
+#ifndef __PIXELBUFFER_HPP__
+#define __PIXELBUFFER_HPP__
 
 #include    "jointcoding.h"
 #include    "jc/graphics/Pixel.h"
@@ -148,3 +150,5 @@ typedef jc_sp<PixelBuffer> MPixelBuffer;
 
 }
 }
+
+#endif  //__PIXELBUFFER_HPP__
