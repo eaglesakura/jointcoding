@@ -341,13 +341,15 @@ jcboolean GLState::printGLError(const charactor* file, const s32 line, GLenum er
  * デフォルト設定に従ってブレンドを行う
  */
 jcboolean GLState::blendFunc(const GLBlendType_e type) {
-    static const GLenum sfactor[] = { GL_SRC_ALPHA, GL_SRC_ALPHA, };
-    static const GLenum dfactor[] = { GL_ONE_MINUS_SRC_ALPHA, GL_ONE };
-
-    static const GLenum sfactorAlpha[] = { GL_ONE, GL_SRC_ALPHA, };
-    static const GLenum dfactorAlpha[] = { GL_ZERO, GL_ONE };
-
-    return blendFunc(sfactor[type], dfactor[type], sfactorAlpha[type], dfactorAlpha[type]);
+    static const GLenum funcTable[][4] = {
+    //      sfactor  dfactor sfactorA dfactorA
+    //      alpha
+            { GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO },
+            // add
+            { GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE },
+            // over
+            { GL_ZERO, GL_ZERO, GL_ONE, GL_ZERO }, };
+    return blendFunc(funcTable[type][0], funcTable[type][1], funcTable[type][2], funcTable[type][3]);
 //    glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX_EXT);
 //    glBlendFuncSeparate(sfactor[type], dfactor[type], sfactorAlpha[type], dfactorAlpha[type]);
 //    return jctrue;

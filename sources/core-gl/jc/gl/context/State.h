@@ -30,9 +30,9 @@ enum GLBlendType_e {
     GLBlendType_Add,
 
     /**
-     * 一般的なαレンダリングを行うが、ピクセルのアルファ値は後から描画した値を優先する
+     * 後から入力されたピクセルで上書きする
      */
-    GLBlendType_Alpha2,
+    GLBlendType_Overwriting,
 };
 
 // #define  STATE_NO_CHECK
