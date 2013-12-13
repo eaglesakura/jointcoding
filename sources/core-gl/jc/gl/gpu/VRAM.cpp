@@ -142,7 +142,8 @@ static vram_id get(_VRAM::alloc_list *res, const VRAM_e type) {
         // 指定数のオブジェクトを確保する
         alloc_func((s32) alloc_num, (u32*) vram_obj.get());
 
-#ifdef  DEBUG
+//#ifdef  DEBUG
+#if 0
         if (type == VRAM_Texture) {
             static std::map<u32, u32> texture_allocated;
 

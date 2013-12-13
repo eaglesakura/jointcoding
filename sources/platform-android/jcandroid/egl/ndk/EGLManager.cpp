@@ -90,6 +90,9 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 #endif
 
     } else {
+        // 強制でfinish待ちを行う
+        glFinish();
+
         EGLDisplay eglDisplay = display;
         EGLSurface eglReadSurface = EGL_NO_SURFACE;
         EGLSurface eglDrawSurface = EGL_NO_SURFACE;
