@@ -17,6 +17,20 @@
 namespace jc {
 
 enum FileOpenMode_e {
+    /**
+     * 読み込み専用
+     */
+    FileOpenMode_Read,
+
+    /**
+     * 読み書きを行う
+     */
+    FileOpenMode_ReadWrite,
+
+    /**
+     * 書き込み専用
+     */
+    FileOpenMode_Write,
 };
 
 /**
@@ -24,6 +38,11 @@ enum FileOpenMode_e {
  * 但し、実装によっては呼び出し側に不都合が無い程度にヒントに従わない場合もある。
  */
 struct FileOpenHint {
+    FileOpenMode_e mode;
+
+    FileOpenHint() {
+        mode = FileOpenMode_Read;
+    }
 };
 
 /**

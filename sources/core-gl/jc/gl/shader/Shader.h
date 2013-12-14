@@ -74,7 +74,7 @@ public:
     /**
      * シェーダーの作成を行う。
      */
-    static jc_sp<Shader> compile(MDevice device, const ShaderType_e type, const charactor* sourceCode);
+    static jc_sp<Shader> compile(MDevice device, const ShaderType_e type, const charactor* sourceCode, const u32 sourceCodeLength = 0);
 
     /**
      * シェーダーのコンパイルを行う

@@ -31,18 +31,18 @@ void Shader::dispose() {
  * シェーダーのコンパイルを行う
  */
 MGLShader Shader::compileFromUri(MDevice device, const ShaderType_e type, const Uri &uri) {
-    MInputStream is = Platform::getFileSystem()->openInputStream(uri);
+
+    MFileMapper file = Platform::getFileSystem()->loadFile(uri, NULL);
     MGLShader result;
-    if (!is) {
+    if (!file) {
         return result;
     }
 
     try {
-        String fileText = InputStream::toText(is);
-        jclog("------ shader source ------");
-        jclogf("%s", fileText.c_str());
-        jclog("------ shader source ------");
-        return compile(device, type, fileText.c_str());
+//        jclog("------ shader source ------");
+//        jclogf("%s", file->getHead());
+//        jclog("------ shader source ------");
+        return compile(device, type, (const charactor*) file->getHead(), file->length());
     } catch (const Exception &e) {
         jcloge(e);
     }
@@ -52,14 +52,14 @@ MGLShader Shader::compileFromUri(MDevice device, const ShaderType_e type, const 
 /**
  * シェーダーの作成を行う。
  */
-MGLShader Shader::compile(MDevice device, const ShaderType_e type, const charactor* sourceCode) {
+MGLShader Shader::compile(MDevice device, const ShaderType_e type, const charactor* sourceCode, const u32 sourceCodeLength) {
     // シェーダオブジェクトを作成
     GLObject shader;
     shader.alloc(device->getVRAM(type == ShaderType_Vertex ? VRAM_VertexShader : VRAM_FragmentShader));
     assert(shader.get());
 
     // シェーダソースを設定
-    const s32 src_length = strlen(sourceCode);
+    const s32 src_length = sourceCodeLength ? sourceCodeLength : strlen(sourceCode);
     jclogf("source chars = %d", src_length);
     glShaderSource(shader.get(), 1, &sourceCode, &src_length);
     // コンパイル

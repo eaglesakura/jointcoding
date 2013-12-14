@@ -40,6 +40,13 @@ public:
      * 不明な場合はfalseを返す。
      */
     virtual jcboolean getUri(Uri *result) = 0;
+
+    /**
+     * 書き込みの反映を行う。
+     * ただし、一切ファイルへの書き戻しをサポートしない場合がある。
+     */
+    virtual void flush() {
+    }
 };
 
 typedef jc_sp<IFileMapper> MFileMapper;

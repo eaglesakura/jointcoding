@@ -15,6 +15,49 @@
 namespace ndk {
 
 class AssetFileMapper: public Object, public IFileMapper {
+public:
+    static jc_sp<AssetFileMapper> createInstance(AAssetManager *pAssetManager, const Uri &uri, const FileOpenHint *hint) {
+        jc_sp<AssetFileMapper> result(new AssetFileMapper());
+
+        if(!result->open(pAssetManager, uri, hint)) {
+            // ファイルを開けなかった
+            return jc_sp<AssetFileMapper>();
+        }
+
+        return result;
+    }
+
+    virtual ~AssetFileMapper() {
+        if (asset) {
+            jclogf("close asset(%x)", asset);
+            AAsset_close(asset);
+            asset = NULL;
+        }
+    }
+
+    /**
+     * 長さを取得する
+     */
+    virtual s32 length() {
+        return _length;
+    }
+
+    /**
+     * 頭のポインタを取得する
+     */
+    virtual u8* getHead() {
+        return buffer;
+    }
+
+    /**
+     * 元ファイルのUriを取得する
+     * 不明な場合はfalseを返す。
+     */
+    virtual jcboolean getUri(Uri *result) {
+        *result = uri;
+        return jctrue;
+    }
+private:
     AAsset *asset;
 
     /**
@@ -43,45 +86,18 @@ class AssetFileMapper: public Object, public IFileMapper {
 
         // バッファ取得と長さチェック
         _length = AAsset_getLength(asset);
-        buffer = (u8*)AAsset_getBuffer(asset);
+        buffer = (u8*) AAsset_getBuffer(asset);
         if (!buffer || !_length) {
+            jclogf("asset buffer failed(%x / %d)", buffer, _length);
             return jcfalse;
         }
-        return jcfalse;
+        return jctrue;
     }
-public:
+
     AssetFileMapper() {
         asset = NULL;
         buffer = NULL;
         _length = 0;
-    }
-    virtual ~AssetFileMapper() {
-        if (asset) {
-            AAsset_close(asset);
-        }
-    }
-
-    /**
-     * 長さを取得する
-     */
-    virtual s32 length() {
-        return _length;
-    }
-
-    /**
-     * 頭のポインタを取得する
-     */
-    virtual u8* getHead() {
-        return buffer;
-    }
-
-    /**
-     * 元ファイルのUriを取得する
-     * 不明な場合はfalseを返す。
-     */
-    virtual jcboolean getUri(Uri *result) {
-        *result = uri;
-        return jctrue;
     }
 };
 

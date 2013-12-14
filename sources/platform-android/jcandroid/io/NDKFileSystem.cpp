@@ -98,6 +98,7 @@ MFileMapper NDKFileSystem::loadFile(const Uri &uri, const FileOpenHint *hint) {
     const UriSchemeType_e scheme = uri.getSchemeType();
     if (scheme == UriSchemeType_Assets) {
         // load assets
+        return  AssetFileMapper::createInstance(pAssetManager, uri, hint);
     }
 
     jclogf("unknown scheme :: %s", uri.getScheme().c_str());
