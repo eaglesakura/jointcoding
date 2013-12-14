@@ -93,7 +93,13 @@ jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey 
         {
             // TextureView request
             // for Android
-            params[index] = String::valueOfBoolean(specs.extensions.isEnable(SurfaceSupecExtension_AndroidTextureView));
+            params[index] = String::valueOfBoolean(specs.extensions.isEnable(SurfaceSpecExtension_AndroidTextureView));
+            ++index;
+        }
+        {
+            // SurfaceView ZOrderOnTop
+            // for Android
+            params[index] = String::valueOfBoolean(specs.extensions.isEnable(SurfaceSpecExtension_AndroidSurfaceViewOnTop));
             ++index;
         }
 

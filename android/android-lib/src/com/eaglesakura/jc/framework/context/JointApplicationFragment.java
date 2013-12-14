@@ -247,6 +247,11 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
             EGLSurfaceView view = new EGLSurfaceView(getActivity());
             view.initialize(color, depth, stencil, this);
 
+            // SurfaceViewのトップ設定を行う
+            // デフォルトは揺らぎがあるため、必ず設定する
+            AndroidUtil.log(String.format("Surface Top(%s)", Boolean.valueOf(surfaceSpecs[4])));
+            view.setZOrderOnTop(Boolean.valueOf(surfaceSpecs[4]));
+
             surface = view;
         }
 

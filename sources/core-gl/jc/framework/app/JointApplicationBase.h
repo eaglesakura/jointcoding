@@ -30,18 +30,24 @@ using namespace jc::view;
 /**
  * サーフェイススペックの拡張機能
  */
-enum SurfaceSupecExtension_e {
+enum SurfaceSpecExtension_e {
     /**
      * レンダリングにTextureViewを利用する。
      * デフォルトではSurfaceViewが利用される。
      * for Android.
      */
-    SurfaceSupecExtension_AndroidTextureView,
+    SurfaceSpecExtension_AndroidTextureView,
+
+    /**
+     * レンダリングでSurfaceViewを画面手前に配置する。
+     * デフォルトはfalse
+     */
+    SurfaceSpecExtension_AndroidSurfaceViewOnTop,
 
     /**
      * num flags...
      */
-    SurfaceSupecExtension_Num,
+    SurfaceSpecExtension_Num,
 };
 
 /**
@@ -67,7 +73,7 @@ struct SurfaceSpecs {
     /**
      * 拡張機能の有無設定
      */
-    BitFlags<SurfaceSupecExtension_Num> extensions;
+    BitFlags<SurfaceSpecExtension_Num> extensions;
 
     SurfaceSpecs() {
         // サーフェイスはRGB888

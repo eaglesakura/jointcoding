@@ -11,6 +11,7 @@
 #include    "jc/graphics/figure/data/ArchiveFigureDataFactory.h"
 
 #include    "jc/framework/assets/figure/FigureLoader.h"
+#include    "jc/gl/surface/RenderingSurfaceStub.hpp"
 
 using namespace jc::fw;
 namespace es {
@@ -30,7 +31,8 @@ BenchmarkApplication::~BenchmarkApplication() {
  */
 SurfaceSpecs BenchmarkApplication::getRenderingSurfaceSpecs() const {
     SurfaceSpecs specs;
-//    specs.extensions.enable(SurfaceSupecExtension_AndroidTextureView);
+//    specs.extensions.enable(SurfaceSpecExtension_AndroidTextureView);
+//    specs.extensions.enable(SurfaceSpecExtension_AndroidSurfaceViewOnTop);
     return specs;
 }
 
@@ -343,11 +345,14 @@ void BenchmarkApplication::onAppMainUpdate() {
         renderer->rendering(device, antan, antan_instance);
     }
 
+    // サーフェイスサイズを仮想ディスプレイから通常ディスプレイに変換する
+    getRenderingContext()->pushSurface(RenderingSurfaceStub::createInstance(getPlatformViewSize()));
     {
-        state->viewport(0, 0, getPlatformViewSize().x, getPlatformViewSize().y);
         MTextureImage texture = shadowmapTexture;
         spriteManager->renderingImage(texture, 0, texture->getHeight(), texture->getWidth(), -texture->getHeight(), 0, 0, 256, 256);
     }
+    getRenderingContext()->popSurface();
+
     getWindowDevice()->postFrontBuffer();
 }
 

@@ -68,9 +68,14 @@ public interface JointApplicationProtocol {
 
     /**
      * {@value #QueryKey_RequestSurfaceSpecs}が要求する長さ
+     * [0] color spec
+     * [1] has depth
+     * [2] has stencil
+     * [3] is textureview
+     * [4] is surfaceview top
      */
     @JCField
-    public static final int QueryKey_RequestSurfaceSpecs_length = 4;
+    public static final int QueryKey_RequestSurfaceSpecs_length = 5;
 
     /**
      * デフォルトで用意するタスク

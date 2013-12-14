@@ -13,7 +13,7 @@ const ::jc::s32 JointApplicationProtocol::PostKey_QueryApplicationState = 104857
 const ::jc::s32 JointApplicationProtocol::PostKey_RequestSurfaceSpecs = 1048577;
 const ::jc::s32 JointApplicationProtocol::PostKey_SurfaceSize = 1048578;
 const ::jc::s32 JointApplicationProtocol::PostKey_StateRequest = 1048579;
-const ::jc::s32 JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length = 4;
+const ::jc::s32 JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length = 5;
 const ::jc::s32 JointApplicationProtocol::SystemTask_Mainloop = 16777216;
 
 
