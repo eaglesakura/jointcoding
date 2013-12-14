@@ -19,6 +19,8 @@ public:
     static jint getColorRGBA(jint color_id);
     virtual void nativeInitialize();
     static void nativeInitialize_(jobject _this);
+    virtual jobject getAssetManager_unsafe();
+    static jobject getAssetManager_unsafe_(jobject _this);
     static jfloat getDimension(jint id);
     static void showToast(jstring message, jboolean longTime);
     static void gc();

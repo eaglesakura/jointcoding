@@ -13,6 +13,36 @@
 
 namespace jc {
 
+enum UriSchemeType_e {
+    /**
+     * アプリアセット
+     */
+    UriSchemeType_Assets,
+    /**
+     * ローカルストレージ
+     */
+    UriSchemeType_LocalStorage,
+    /**
+     * 外部ストレージ
+     */
+    UriSchemeType_ExternalStorage,
+
+    /**
+     *
+     */
+    UriSchemeType_WebHttp,
+
+    /**
+     *
+     */
+    UriSchemeType_WebHttps,
+
+    /**
+     * その他
+     */
+    UriSchemeType_Unknown,
+};
+
 /**
  * 特定のファイルを示すURIを構築する。
  * 内部的には独自スキーマかプラットフォームごとに決められたスキーマが投入される。
@@ -44,7 +74,7 @@ public:
     Uri(const Uri &origin) {
         this->uri = origin.uri;
     }
-    virtual ~Uri() {
+    ~Uri() {
 
     }
 
@@ -73,27 +103,32 @@ public:
     /**
      * スキーマを取得する
      */
-    virtual String getScheme() const;
+    String getScheme() const;
 
     /**
      * パス部分を取得する
      */
-    virtual String getPath() const;
+    String getPath() const;
 
     /**
      * ファイル名を取得する
      */
-    virtual String getFileName() const;
+    String getFileName() const;
 
     /**
      * ファイル拡張子を取得する
      */
-    virtual String getFileExt() const;
+    String getFileExt() const;
+
+    /**
+     * Schemeの種類を取得する
+     */
+    UriSchemeType_e getSchemeType() const;
 
     /**
      * URI全文を取得する
      */
-    virtual const String& getUri() const {
+    const String& getUri() const {
         return uri;
     }
 
@@ -121,13 +156,6 @@ public:
      * 外部ストレージからURIを生成する
      */
     static Uri fromExternalStrage(const String &path);
-
-#ifdef  BUILD_Android
-    /**
-     * アプリのrawから取得する
-     */
-    static Uri fromApkRaw(const s32 rawId);
-#endif
 };
 
 }

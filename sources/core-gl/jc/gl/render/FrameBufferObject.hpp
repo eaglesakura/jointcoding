@@ -417,6 +417,7 @@ public:
         if (depthTexture) {
             attach(state, GL_DEPTH_ATTACHMENT, depthTexture);
         }
+        unbind(state);
     }
 
     /**

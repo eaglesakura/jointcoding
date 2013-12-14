@@ -68,7 +68,7 @@ String Uri::getPath() const {
  * ファイル名を取得する
  */
 String Uri::getFileName() const {
-    return  jc::getFileName(uri.c_str());
+    return jc::getFileName(uri.c_str());
 }
 /**
  * ファイル拡張子を取得する
@@ -77,7 +77,27 @@ String Uri::getFileExt() const {
     return jc::getFileExt(uri.c_str());
 }
 
+/**
+ * Schemeの種類を取得する
+ */
+UriSchemeType_e Uri::getSchemeType() const {
+    String scheme = getScheme();
 
+    // アセットから読み込む
+    if (scheme == UriProtocol::SCHEME_APPLI_ASSETS) {
+        return UriSchemeType_Assets;
+    } else if (scheme == UriProtocol::SCHEME_EXTERNALSTRAGE) {
+        return UriSchemeType_ExternalStorage;
+    } else if (scheme == UriProtocol::SCHEME_LOCALSTRAGE) {
+        return UriSchemeType_LocalStorage;
+    } else if (scheme == UriProtocol::SCHEME_HTTP) {
+        return UriSchemeType_WebHttp;
+    } else if (scheme == UriProtocol::SCHEME_HTTPS) {
+        return UriSchemeType_WebHttps;
+    }
+
+    return UriSchemeType_Unknown;
+}
 
 /**
  * パースを行う。

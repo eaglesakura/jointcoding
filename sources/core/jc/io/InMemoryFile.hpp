@@ -14,7 +14,7 @@ namespace jc {
  * ファイルをシンプルに扱うためのクラス
  * 物理メモリにロードするため、巨大なファイルは扱わない方がいい
  */
-class InMemoryFile: public Object {
+class InMemoryFile: public Object, public IFileMapper {
 protected:
     // 長さ
     s32 _length;

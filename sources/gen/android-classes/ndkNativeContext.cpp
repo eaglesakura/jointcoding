@@ -9,10 +9,10 @@ const ::jc::charactor* NativeContext::CLASS_SIGNATURE = "com/eaglesakura/jc/jni/
 
 static jclass class_NativeContext = NULL;
 
-#define methods_NativeContext_LENGTH 13
+#define methods_NativeContext_LENGTH 14
 
 #if methods_NativeContext_LENGTH
-static jmethodID methods_NativeContext[13];
+static jmethodID methods_NativeContext[14];
 #endif
 
 static void initialize_NativeContext() {
@@ -33,16 +33,17 @@ static void initialize_NativeContext() {
         methods_NativeContext[0] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isNativeDebuggable", "()Z", true);
         methods_NativeContext[1] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getColorRGBA", "(I)I", true);
         methods_NativeContext[2] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "nativeInitialize", "()V", false);
-        methods_NativeContext[3] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getDimension", "(I)F", true);
-        methods_NativeContext[4] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "showToast", "(Ljava/lang/String;Z)V", true);
-        methods_NativeContext[5] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "gc", "()V", true);
-        methods_NativeContext[6] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getAppContext", "()Landroid/content/Context;", false);
-        methods_NativeContext[7] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isUIThread", "()Z", true);
-        methods_NativeContext[8] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "nativeGC", "()V", true);
-        methods_NativeContext[9] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getBootingId", "()Ljava/lang/String;", true);
-        methods_NativeContext[10] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getInteger", "(I)I", true);
-        methods_NativeContext[11] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getString", "(I)Ljava/lang/String;", true);
-        methods_NativeContext[12] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isNativeLogOutput", "()Z", true);
+        methods_NativeContext[3] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getAssetManager", "()Landroid/content/res/AssetManager;", false);
+        methods_NativeContext[4] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getDimension", "(I)F", true);
+        methods_NativeContext[5] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "showToast", "(Ljava/lang/String;Z)V", true);
+        methods_NativeContext[6] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "gc", "()V", true);
+        methods_NativeContext[7] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getAppContext", "()Landroid/content/Context;", false);
+        methods_NativeContext[8] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isUIThread", "()Z", true);
+        methods_NativeContext[9] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "nativeGC", "()V", true);
+        methods_NativeContext[10] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getBootingId", "()Ljava/lang/String;", true);
+        methods_NativeContext[11] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getInteger", "(I)I", true);
+        methods_NativeContext[12] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "getString", "(I)Ljava/lang/String;", true);
+        methods_NativeContext[13] = ::ndk::JniWrapper::loadMethod(class_NativeContext, "isNativeLogOutput", "()Z", true);
 
     }
 }
@@ -137,45 +138,56 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_nativeI
 #endif
 
 
+jobject NativeContext::getAssetManager_unsafe() {
+    CALL_JNIENV();
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeContext[3]);
+}
+
+jobject NativeContext::getAssetManager_unsafe_(jobject _this) {
+    CALL_JNIENV();
+    initialize_NativeContext();
+    return (jobject) env->CallObjectMethod(_this, methods_NativeContext[3]);
+}
+
 jfloat NativeContext::getDimension(jint id) {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jfloat) env->CallStaticFloatMethod(class_NativeContext, methods_NativeContext[3], id);
+    return (jfloat) env->CallStaticFloatMethod(class_NativeContext, methods_NativeContext[4], id);
 }
 
 void NativeContext::showToast(jstring message, jboolean longTime) {
     CALL_JNIENV();
     initialize_NativeContext();
-    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[4], message, longTime);
+    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[5], message, longTime);
 }
 
 void NativeContext::gc() {
     CALL_JNIENV();
     initialize_NativeContext();
-    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[5]);
+    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[6]);
 }
 
 jobject NativeContext::getAppContext_unsafe() {
     CALL_JNIENV();
-    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeContext[6]);
+    return (jobject) env->CallObjectMethod(this->getObject(), methods_NativeContext[7]);
 }
 
 jobject NativeContext::getAppContext_unsafe_(jobject _this) {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jobject) env->CallObjectMethod(_this, methods_NativeContext[6]);
+    return (jobject) env->CallObjectMethod(_this, methods_NativeContext[7]);
 }
 
 jboolean NativeContext::isUIThread() {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jboolean) env->CallStaticBooleanMethod(class_NativeContext, methods_NativeContext[7]);
+    return (jboolean) env->CallStaticBooleanMethod(class_NativeContext, methods_NativeContext[8]);
 }
 
 void NativeContext::nativeGC() {
     CALL_JNIENV();
     initialize_NativeContext();
-    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[8]);
+    env->CallStaticVoidMethod(class_NativeContext, methods_NativeContext[9]);
 }
 #if 0
 #include "jointcoding-android.h"
@@ -202,25 +214,25 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_jni_context_NativeContext_nativeG
 jstring NativeContext::getBootingId() {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jstring) env->CallStaticObjectMethod(class_NativeContext, methods_NativeContext[9]);
+    return (jstring) env->CallStaticObjectMethod(class_NativeContext, methods_NativeContext[10]);
 }
 
 jint NativeContext::getInteger(jint integer_id) {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jint) env->CallStaticIntMethod(class_NativeContext, methods_NativeContext[10], integer_id);
+    return (jint) env->CallStaticIntMethod(class_NativeContext, methods_NativeContext[11], integer_id);
 }
 
 jstring NativeContext::getString(jint id) {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jstring) env->CallStaticObjectMethod(class_NativeContext, methods_NativeContext[11], id);
+    return (jstring) env->CallStaticObjectMethod(class_NativeContext, methods_NativeContext[12], id);
 }
 
 jboolean NativeContext::isNativeLogOutput() {
     CALL_JNIENV();
     initialize_NativeContext();
-    return (jboolean) env->CallStaticBooleanMethod(class_NativeContext, methods_NativeContext[12]);
+    return (jboolean) env->CallStaticBooleanMethod(class_NativeContext, methods_NativeContext[13]);
 }
 #if 0
 #include "jointcoding-android.h"

@@ -3,6 +3,7 @@ package com.eaglesakura.jc.jni.context;
 import java.util.UUID;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
@@ -48,6 +49,15 @@ public class NativeContext {
     @JCMethod
     public Context getAppContext() {
         return appContext;
+    }
+
+    /**
+     * アセット管理クラスを取得する
+     * @return
+     */
+    @JCMethod
+    public AssetManager getAssetManager() {
+        return getAppContext().getAssets();
     }
 
     /**

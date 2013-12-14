@@ -6,6 +6,8 @@
 
 #include    "jcandroid/platform/PlatformImpl.h"
 
+#include    <android/asset_manager_jni.h>
+
 namespace ndk {
 
 namespace {
@@ -13,6 +15,7 @@ namespace {
  * プラットフォーム固有のコンテキスト
  */
 static MNativeContext __g_NativeContext;
+
 }
 
 void NativeContext_initPlatform(MNativeContext context) {
@@ -30,7 +33,7 @@ namespace jc {
 /**
  * プラットフォームごと特有のバージョン番号を取得する。
  */
-s32 Platform::getPlatformVersionNumber() {
+PlatformApiVersion_e Platform::getPlatformVersionNumber() {
     return AndroidAPI_Develop;
 }
 

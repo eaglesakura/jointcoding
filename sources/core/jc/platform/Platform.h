@@ -25,40 +25,53 @@ enum Platform_e {
 };
 
 /**
- * Androidのバージョン定数を示す。
- * APIレベルごとに定義する。
+ * プラットフォーム固有番号を示す
  */
-enum AndroidAPI_e {
+enum PlatformApiVersion_e {
     /**
      * Android 4.0.2
      */
-    AndroidAPI_API14_ICS = 14,
+    AndroidAPI_API14_ICS = 0x010000 + 14,
 
     /**
      * Android 4.0.3
      */
-    AndroidAPI_API15_ICS = 15,
+    AndroidAPI_API15_ICS,
 
     /**
      * Android 4.1
      */
-    AndroidAPI_API16_JB = 16,
+    AndroidAPI_API16_JB,
+
+    /**
+     * Android 4.2
+     */
+    AndroidAPI_API17_JB,
+
+    /**
+     * Android 4.3
+     */
+    AndroidAPI_API18_JB,
+
+    /**
+     * Android 4.4
+     */
+    AndroidAPI_API19_KK,
 
     /**
      * 開発に利用したプラットフォームバージョン
      */
     AndroidAPI_Develop = AndroidAPI_API14_ICS,
-};
 
-/**
- * iOSのバージョン定数を示す。
- * 上の桁がメジャーバージョン、下の桁がマイナーバージョン
- */
-enum iOSAPI_e {
     /**
-     * iOS現バージョン
+     * iOS現在バージョン
      */
-    iOSAPI_060 = 60,
+    iOSAPI_060 = 0x020000 + 60,
+
+    /**
+     * iOS 7.0
+     */
+    iOSAPI_070 = 0x020000 + 70,
 
     /**
      * iOS版の対象バージョン
@@ -83,7 +96,7 @@ public:
     /**
      * プラットフォームごと特有のバージョン番号を取得する。
      */
-    static s32 getPlatformVersionNumber();
+    static PlatformApiVersion_e getPlatformVersionNumber();
 
     /**
      * ネイティブAPIコールが可能なスレッドを作成する。

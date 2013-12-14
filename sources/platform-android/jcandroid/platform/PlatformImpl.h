@@ -9,7 +9,7 @@
 
 #include    "jc/platform/Platform.h"
 #include    "jcandroid/thread/JavaJointThread.h"
-#include    "jcandroid/io/FileSystem.h"
+#include    "jcandroid/io/NDKFileSystem.h"
 #include    "android-classes/ndkNativeContext.h"
 
 typedef jc_sp<ndk::NativeContext> MNativeContext;

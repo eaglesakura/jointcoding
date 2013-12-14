@@ -17,7 +17,7 @@ typedef unsafe_array<u8> byte_array;
  * ファイルとメモリの関連付けを行う。
  * 実装をラクにするため、mmapではなく単純にメモリ内にコピーする場合がある。
  */
-class IFileMapper: public Object {
+class IFileMapper {
 protected:
     IFileMapper() {
     }
@@ -41,6 +41,8 @@ public:
      */
     virtual jcboolean getUri(Uri *result) = 0;
 };
+
+typedef jc_sp<IFileMapper> MFileMapper;
 
 }
 

@@ -193,10 +193,11 @@ void BenchmarkApplication::loadResource(MDevice subDevice) {
     }
 
     try {
-        DeviceLock lock(getWindowDevice(), jctrue);
+        MDevice device = getWindowDevice();
+        DeviceLock lock(device, jctrue);
 
         // デバイスを委譲する
-        shadowmap->setRenderDevice(getWindowDevice());
+        shadowmap->setRenderDevice(device);
     } catch (Exception &e) {
         jcloge(e);
     }
