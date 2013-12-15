@@ -8,6 +8,8 @@
 #include    "protocol/jcSurfacePixelFormatProtocol.h"
 
 #include    "jc/framework/app/MessageBank.hpp"
+#include    "protocol/jcSurfaceSpecProtocol.h"
+#include    "jc/collection/StringArrayMap.hpp"
 
 namespace jc {
 namespace gl {
@@ -56,21 +58,23 @@ jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey 
         params[0] = String::valueOfInt(getRunningState());
         return jctrue;
     } else if (mainKey == JointApplicationProtocol::PostKey_RequestSurfaceSpecs) {
-        assert(params && params.length >= JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
+        assert(params && params.length);
 
         // サーフェイス性能を問い合わせる
-        SurfaceSpecs specs = getRenderingSurfaceSpecs();
+        const SurfaceSpecs specs = getRenderingSurfaceSpecs();
 
-        s32 index = 0;
+        StringArrayMap sam(params);
+
         {
+            s32 format = 0;
             // フォーマット
             switch (specs.surfaceFormat) {
                 case PixelFormat_RGB888:
-                    params[index] = String::valueOfInt(SurfacePixelFormatProtocol::RGB8);
+                    format = SurfacePixelFormatProtocol::RGB8;
                     break;
 
                 case PixelFormat_RGBA8888:
-                    params[index] = String::valueOfInt(SurfacePixelFormatProtocol::RGBA8);
+                    format = SurfacePixelFormatProtocol::RGBA8;
                     break;
                 default:
                     jcalertf("unsupported pixel format(%d)", specs.surfaceFormat)
@@ -78,33 +82,16 @@ jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey 
                     assert(false);
                     break;
             }
-            ++index;
+            sam.putInteger(SurfaceSpecProtocol::KEY_PixelFormat, format);
         }
-        {
-            // depth
-            params[index] = String::valueOfBoolean(specs.hasDepth);
-            ++index;
-        }
-        {
-            // ステンシルバッファ
-            params[index] = String::valueOfBoolean(specs.hasStencil);
-            ++index;
-        }
-        {
-            // TextureView request
-            // for Android
-            params[index] = String::valueOfBoolean(specs.extensions.isEnable(SurfaceSpecExtension_AndroidTextureView));
-            ++index;
-        }
-        {
-            // SurfaceView ZOrderOnTop
-            // for Android
-            params[index] = String::valueOfBoolean(specs.extensions.isEnable(SurfaceSpecExtension_AndroidSurfaceViewOnTop));
-            ++index;
-        }
-
-        // 正しくリクエストを書き込んでいることを検証する
-        assert(index == JointApplicationProtocol::QueryKey_RequestSurfaceSpecs_length);
+        // depth
+        sam.putBoolean(SurfaceSpecProtocol::KEY_HasDepth, specs.hasDepth);
+        // ステンシルバッファ
+        sam.putBoolean(SurfaceSpecProtocol::KEY_HasStencil, specs.hasStencil);
+        // TextureView request for Android
+        sam.putBoolean(SurfaceSpecProtocol::KEY_AndroidTextureView, specs.extensions.isEnable(SurfaceSpecExtension_AndroidTextureView));
+        // SurfaceView ZOrderOnTop for Android
+        sam.putBoolean(SurfaceSpecProtocol::KEY_AndroidSurfaceViewOnTop, specs.extensions.isEnable(SurfaceSpecExtension_AndroidSurfaceViewOnTop));
 
         return jctrue;
     } else if (mainKey == JointApplicationProtocol::PostKey_SurfaceSize) {

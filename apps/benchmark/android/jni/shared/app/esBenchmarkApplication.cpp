@@ -31,6 +31,7 @@ BenchmarkApplication::~BenchmarkApplication() {
  */
 SurfaceSpecs BenchmarkApplication::getRenderingSurfaceSpecs() const {
     SurfaceSpecs specs;
+//    specs.surfaceFormat = PixelFormat_RGB888;
 //    specs.extensions.enable(SurfaceSpecExtension_AndroidTextureView);
 //    specs.extensions.enable(SurfaceSpecExtension_AndroidSurfaceViewOnTop);
     return specs;

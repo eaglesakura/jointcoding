@@ -17,8 +17,10 @@ import com.eaglesakura.jc.egl.view.RenderingSurface;
 import com.eaglesakura.jc.framework.app.JointApplicationRenderer;
 import com.eaglesakura.jc.ui.NativeTouchEvent;
 import com.eaglesakura.jc.util.AndroidUtil;
+import com.eaglesakura.jc.util.StringArrayMap;
 import com.eaglesakura.jcprotocol.SurfacePixelFormatProtocol;
 import com.eaglesakura.jcprotocol.framework.JointApplicationProtocol;
+import com.eaglesakura.jcprotocol.framework.SurfaceSpecProtocol;
 
 /**
  * TextureView1枚でアプリ管理を行うFragmentを構築する
@@ -220,23 +222,32 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
      * @return
      */
     protected RenderingSurface createRenderingView() {
-        String[] surfaceSpecs = new String[JointApplicationProtocol.QueryKey_RequestSurfaceSpecs_length];
+        StringArrayMap map = new StringArrayMap();
+        map.put(SurfaceSpecProtocol.KEY_PixelFormat, "");
+        map.put(SurfaceSpecProtocol.KEY_HasDepth, "");
+        map.put(SurfaceSpecProtocol.KEY_HasStencil, "");
+        map.put(SurfaceSpecProtocol.KEY_AndroidTextureView, "");
+        map.put(SurfaceSpecProtocol.KEY_AndroidSurfaceViewOnTop, "");
 
         // サーフェイスを問い合わせる
-        renderer.postParams(JointApplicationProtocol.PostKey_RequestSurfaceSpecs, 0, surfaceSpecs);
+        {
+            String[] specs = map.toArray();
+            renderer.postParams(JointApplicationProtocol.PostKey_RequestSurfaceSpecs, 0, specs);
+            map.fromArray(specs);
+        }
 
         RenderingSurface surface = null;
-        SurfaceColorSpec color = (Integer.valueOf(surfaceSpecs[0]) == SurfacePixelFormatProtocol.RGB8 ? SurfaceColorSpec.RGB8
-                : SurfaceColorSpec.RGBA8);
-        boolean depth = Boolean.valueOf(surfaceSpecs[1]);
-        boolean stencil = Boolean.valueOf(surfaceSpecs[2]);
+        SurfaceColorSpec color = (map.getInteger(SurfaceSpecProtocol.KEY_PixelFormat, 0) == SurfacePixelFormatProtocol.RGB8) ? SurfaceColorSpec.RGB8
+                : SurfaceColorSpec.RGBA8;
+        boolean depth = map.getBoolean(SurfaceSpecProtocol.KEY_HasDepth, true);
+        boolean stencil = map.getBoolean(SurfaceSpecProtocol.KEY_HasStencil, true);
 
         AndroidUtil.log("Surface / color spec :: " + color.toString());
         AndroidUtil.log("Surface / hasDepth:: " + depth);
         AndroidUtil.log("Surface / hasStencil:: " + stencil);
 
         // SurfaceView / TextureViewの切り分けを行う
-        if (Boolean.valueOf(surfaceSpecs[3])) {
+        if (map.getBoolean(SurfaceSpecProtocol.KEY_AndroidTextureView, false)) {
             AndroidUtil.log("Surface / TextureView");
             EGLTextureView view = new EGLTextureView(getActivity());
             view.initialize(color, depth, stencil, this);
@@ -249,8 +260,8 @@ public class JointApplicationFragment extends Fragment implements WindowDeviceMa
 
             // SurfaceViewのトップ設定を行う
             // デフォルトは揺らぎがあるため、必ず設定する
-            AndroidUtil.log(String.format("Surface Top(%s)", Boolean.valueOf(surfaceSpecs[4])));
-            view.setZOrderOnTop(Boolean.valueOf(surfaceSpecs[4]));
+            AndroidUtil.log(String.format("Surface Top(%s)", map.get(SurfaceSpecProtocol.KEY_AndroidSurfaceViewOnTop)));
+            view.setZOrderOnTop(map.getBoolean(SurfaceSpecProtocol.KEY_AndroidSurfaceViewOnTop, false));
 
             surface = view;
         }

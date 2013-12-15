@@ -53,6 +53,9 @@ charactor const* String::c_str() const {
  * s32に変換する
  */
 s32 String::toInteger() const {
+    if (!length()) {
+        return 0;
+    }
     return atoi(text->c_str());
 }
 
@@ -60,6 +63,9 @@ s32 String::toInteger() const {
  * s64に変換する
  */
 s64 String::toLong() const {
+    if (!length()) {
+        return 0;
+    }
     return atoll(text->c_str());
 }
 
@@ -67,6 +73,10 @@ s64 String::toLong() const {
  * floatに変換する
  */
 float String::toFloat() const {
+    if (!length()) {
+        return 0;
+    }
+
     return (float) atof(text->c_str());
 }
 
@@ -74,6 +84,10 @@ float String::toFloat() const {
  * floatに変換する
  */
 double String::toDouble() const {
+    if (!length()) {
+        return 0;
+    }
+
     return atof(text->c_str());
 }
 
