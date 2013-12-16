@@ -17,8 +17,8 @@ public:
     static const ::jc::charactor* CLASS_SIGNATURE;
     virtual jobject alloc_unsafe(jint bufferSize);
     static jobject alloc_unsafe_(jobject _this, jint bufferSize);
-    virtual void encodeRGBA();
-    static void encodeRGBA_(jobject _this);
+    virtual jboolean encodeRGBA();
+    static jboolean encodeRGBA_(jobject _this);
     static jobject createInstance_unsafe();
     virtual void setImageSize(jint width, jint height);
     static void setImageSize_(jobject _this, jint width, jint height);

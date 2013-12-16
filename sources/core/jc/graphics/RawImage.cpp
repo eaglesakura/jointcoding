@@ -25,10 +25,13 @@ void RawImage::alloc(const PixelFormat_e format, const u32 width, const u32 heig
     this->height = height;
     // ピクセルバッファの取得を行う
     {
-        const s32 size = getPixelBytes() * width * height;
+        const s32 size = getBufferSize(format, width, height);
         if (this->pBuffer.length < size) {
+            jclogf("realloc buffer %d bytes", size);
             this->pixels.alloc(size);
             pBuffer = pixels.iterator();
+        } else {
+            jclogf("to allocated buffer %x -> %d bytes", pBuffer.ptr, pBuffer.length);
         }
     }
 }
@@ -37,11 +40,10 @@ void RawImage::alloc(const PixelFormat_e format, const u32 width, const u32 heig
  * ピクセルバッファの格納先を外部から指定する
  */
 void RawImage::setBuffer(const void* buffer, const s32 length) {
-    pBuffer.ptr = (u8*)buffer;
+    pBuffer.ptr = (u8*) buffer;
     pBuffer.length = length;
     pixels.clear();
 }
-
 
 /**
  * y0行とy1行のピクセルを入れ替える

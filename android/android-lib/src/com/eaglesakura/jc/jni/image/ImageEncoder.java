@@ -3,9 +3,13 @@ package com.eaglesakura.jc.jni.image;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Color;
 
+import com.eaglesakura.jc.util.AndroidUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -19,7 +23,7 @@ public class ImageEncoder {
     /**
      * 一時バッファ
      */
-    Buffer buffer;
+    ByteBuffer buffer;
 
     /**
      * 画像の幅
@@ -87,8 +91,46 @@ public class ImageEncoder {
      * RGBA画像としてBitmapを生成する
      */
     @JCMethod
-    public void encodeRGBA() {
+    public boolean encodeRGBA() {
+        try {
+            if (buffer == null) {
+                AndroidUtil.log("buffer is null...");
+                return false;
+            }
 
+            if (width <= 0 || height <= 0) {
+                AndroidUtil.log("bitmap size error");
+                return false;
+            }
+
+            image = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+
+            IntBuffer temp = buffer.asIntBuffer();
+            int[] pixels = new int[width];
+            for (int y = 0; y < height; ++y) {
+                // nativeからピクセルをキャプチャする
+                temp.position(y * width);
+                temp.get(pixels, 0, pixels.length);
+
+                // ビットの並びを変換する
+                for (int i = 0; i < pixels.length; ++i) {
+                    final int color = pixels[i];
+                    final int a = (color >> 24) & 0xFF;
+                    final int b = (color >> 16) & 0xFF;
+                    final int g = (color >> 8) & 0xFF;
+                    final int r = (color >> 0) & 0xFF;
+                    pixels[i] = Color.argb(a, r, g, b);
+                }
+
+                // キャプチャしたピクセルをBitmapへ書き込む
+                image.setPixels(pixels, 0, width, 0, y, width, 1);
+            }
+
+            return true;
+        } catch (Exception e) {
+            AndroidUtil.log(e);
+            return false;
+        }
     }
 
     @JCMethod

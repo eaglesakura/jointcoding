@@ -31,7 +31,7 @@ static void initialize_ImageEncoder() {
     // load methods
     {
         methods_ImageEncoder[0] = ::ndk::JniWrapper::loadMethod(class_ImageEncoder, "alloc", "(I)Ljava/nio/Buffer;", false);
-        methods_ImageEncoder[1] = ::ndk::JniWrapper::loadMethod(class_ImageEncoder, "encodeRGBA", "()V", false);
+        methods_ImageEncoder[1] = ::ndk::JniWrapper::loadMethod(class_ImageEncoder, "encodeRGBA", "()Z", false);
         methods_ImageEncoder[2] = ::ndk::JniWrapper::loadMethod(class_ImageEncoder, "createInstance", "()Lcom/eaglesakura/jc/jni/image/ImageEncoder;", true);
         methods_ImageEncoder[3] = ::ndk::JniWrapper::loadMethod(class_ImageEncoder, "setImageSize", "(II)V", false);
 
@@ -53,15 +53,15 @@ jobject ImageEncoder::alloc_unsafe_(jobject _this, jint bufferSize) {
     return (jobject) env->CallObjectMethod(_this, methods_ImageEncoder[0], bufferSize);
 }
 
-void ImageEncoder::encodeRGBA() {
+jboolean ImageEncoder::encodeRGBA() {
     CALL_JNIENV();
-    env->CallVoidMethod(this->getObject(), methods_ImageEncoder[1]);
+    return (jboolean) env->CallBooleanMethod(this->getObject(), methods_ImageEncoder[1]);
 }
 
-void ImageEncoder::encodeRGBA_(jobject _this) {
+jboolean ImageEncoder::encodeRGBA_(jobject _this) {
     CALL_JNIENV();
     initialize_ImageEncoder();
-    env->CallVoidMethod(_this, methods_ImageEncoder[1]);
+    return (jboolean) env->CallBooleanMethod(_this, methods_ImageEncoder[1]);
 }
 
 jobject ImageEncoder::createInstance_unsafe() {

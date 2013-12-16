@@ -109,6 +109,9 @@ public:
         return height;
     }
 
+    static u32 getBufferSize(const PixelFormat_e format, const s32 width, const s32 height) {
+        return Pixel::getPixelBytes(format) * width * height;
+    }
 };
 
 /**
