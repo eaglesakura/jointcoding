@@ -360,6 +360,16 @@ public:
      * PMKファイルのデコードを行う。
      */
     static jc_sp<TextureImage> decodePMK(MDevice device, const Uri &uri, TextureLoadOption *option = NULL);
+
+    /**
+     * GL_RGBA等に変換する
+     */
+    static GLenum toGLPixelFormat(const PixelFormat_e format);
+
+    /**
+     * GL_UNSINGNED_BYTE等に変換する
+     */
+    static GLenum toGLPixelDataType(const PixelFormat_e format);
 protected:
     /**
      * プラットフォームデコーダを利用してデコードを行う

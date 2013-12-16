@@ -40,13 +40,16 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 
 JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jobjectArray params) {
 // add code.
-    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams");
-
+//    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams");
 
     safe_array<String> tempParams;
-    tempParams.reserve(env->GetArrayLength(params));
+    if(params) {
+        tempParams.reserve(env->GetArrayLength(params));
+    }
     JointApplicationBase::string_params iterator = tempParams.iterator();
-    j2stringArray(params, &iterator);
+    if(params) {
+        j2stringArray(params, &iterator);
+    }
 
 #if 0
     for(int i = 0; i < array->length(); ++i) {
@@ -63,7 +66,7 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 // 書き込みを行う
     const jcboolean result = joint_context(_this, JointApplicationBase)->dispatchReceiveParams(&query, iterator);
 
-    if(result) {
+    if(result && params) {
         c2stringArray(params, tempParams.ptr, tempParams.length);
 #if 0
         CALL_JNIENV();

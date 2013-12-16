@@ -516,6 +516,14 @@ protected:
     }
 
     /**
+     * パラメータの受け取り処理を記述する
+     * falseを返した場合、何も行わない。
+     */
+    virtual jcboolean onReceiveParams(const ApplicationQueryKey *key, string_params &params) {
+        return jcfalse;
+    }
+
+    /**
      * エラーハンドリングを行う
      */
     virtual ApplicationRestoreStatus_e handleError(const EGLException_e exception) {

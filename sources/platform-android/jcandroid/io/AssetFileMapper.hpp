@@ -78,9 +78,9 @@ private:
     jcboolean open(AAssetManager* pAssetManager, const Uri &uri, const FileOpenHint *hint) {
         this->uri = uri;
 
-        asset = AAssetManager_open(pAssetManager, uri.getFileName().c_str(), AASSET_MODE_BUFFER);
+        asset = AAssetManager_open(pAssetManager, uri.getPath().c_str(), AASSET_MODE_BUFFER);
         if (!asset) {
-            jclogf("asset open failed :: %s", uri.getUri().c_str());
+            jclogf("asset open failed :: %s (%s)", uri.getPath().c_str(), uri.getUri().c_str());
             return jcfalse;
         }
 

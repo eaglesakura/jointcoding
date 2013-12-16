@@ -15,7 +15,7 @@ namespace jc {
 namespace gl {
 
 namespace {
-static u32 PIXEL_TYPES[] = {
+static const u32 PIXEL_TYPES[] = {
 //
         GL_UNSIGNED_SHORT_5_6_5,// RGB565
         GL_UNSIGNED_SHORT_5_5_5_1, // RGBA5551
@@ -27,7 +27,7 @@ static u32 PIXEL_TYPES[] = {
         GL_UNSIGNED_BYTE, // A8
 //
         };
-static u32 PIXEL_FORMATS[] = {
+static const u32 PIXEL_FORMATS[] = {
 //
         GL_RGB, GL_RGBA, GL_RGB, GL_RGBA,
 #ifdef GL_BGRA_EXT
@@ -364,10 +364,8 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             // 例えば2byte RGB565テクスチャの転送で4byte境界にされてしまい、テクスチャがうまいこと読み込めなくなってしまう
             if (ONCE_PIXEL_BYTES == 4 || ONCE_PIXEL_BYTES == 2) {
                 glPixelStorei(GL_UNPACK_ALIGNMENT, ONCE_PIXEL_BYTES);
-                glPixelStorei(GL_PACK_ALIGNMENT, ONCE_PIXEL_BYTES);
             } else {
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-                glPixelStorei(GL_PACK_ALIGNMENT, 1);
             }
 
             // テクスチャalloc時間を記録する
@@ -527,6 +525,20 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoa
         return result;
     }
 #endif
+}
+
+/**
+ * GL_RGBA等に変換する
+ */
+GLenum TextureImage::toGLPixelFormat(const PixelFormat_e format) {
+    return PIXEL_FORMATS[format];
+}
+
+/**
+ * GL_UNSINGNED_BYTE等に変換する
+ */
+GLenum TextureImage::toGLPixelDataType(const PixelFormat_e format) {
+    return PIXEL_TYPES[format];
 }
 
 }

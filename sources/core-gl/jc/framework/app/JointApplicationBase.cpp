@@ -51,7 +51,9 @@ jcboolean JointApplicationBase::dispatchReceiveParams(const ApplicationQueryKey 
     assert(key);
 
     const s32 mainKey = key->main_key;
-    if (mainKey == JointApplicationProtocol::PostKey_QueryApplicationState) {
+    if (onReceiveParams(key, params)) {
+        return jctrue;
+    } else if (mainKey == JointApplicationProtocol::PostKey_QueryApplicationState) {
         assert(params && params.length);
         MutexLock lock(query_mutex);
 

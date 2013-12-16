@@ -8,6 +8,7 @@
 #define RENDERINGCONTEXT_HPP_
 
 #include    "jointcoding.h"
+#include    "jc/graphics/RawImage.h"
 #include    "jc/gl/gpu/Device.h"
 #include    "jc/gl/surface/IRenderingSurface.hpp"
 #include    "jc/gl/render/FrameBufferObject.hpp"
@@ -288,6 +289,13 @@ public:
 
         }
     }
+
+    /**
+     * 現在のフレームバッファを参照してピクセルの取得を行う。
+     * フレームバッファがバインドされていればフレームバッファから取得を行う。
+     * imageのバッファは再取得される。
+     */
+    virtual void capture(MGLState state, const PixelFormat_e format, MRawImage image);
 };
 
 typedef jc_sp<RenderingContext> MRenderingContext;
