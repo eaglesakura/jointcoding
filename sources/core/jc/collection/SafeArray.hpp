@@ -29,16 +29,15 @@ struct unsafe_array {
 
     template<typename value_type2>
     unsafe_array(const value_type2 *p, const s32 length) {
-        this->ptr = (value_type*)p;
+        this->ptr = (value_type*) p;
         this->length = length;
     }
 
     template<typename value_type2>
     unsafe_array(const unsafe_array<value_type2> &cpy) {
-        this->ptr = (value_type*)cpy.ptr;
+        this->ptr = (value_type*) cpy.ptr;
         this->length = cpy.length;
     }
-
 
     /**
      * オペレータアクセスを提供する
@@ -222,6 +221,14 @@ public:
 
     ~safe_array() {
         SAFE_DELETE_ARRAY(ptr);
+    }
+
+    /**
+     * 確保済みの領域を解放する
+     */
+    inline void clear() {
+        SAFE_DELETE_ARRAY(ptr);
+        length = 0;
     }
 
     /**

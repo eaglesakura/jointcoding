@@ -33,6 +33,7 @@ void RenderingContext::capture(MGLState state, const PixelFormat_e format, MRawI
 
     image->alloc(format, frameWidth, frameHeight);
     glReadPixels(0, 0, frameWidth, frameHeight, TextureImage::toGLPixelFormat(format), TextureImage::toGLPixelDataType(format), image->getPixels());
+    assert_gl();
 
     // 取得待ちを行う
     glFinish();

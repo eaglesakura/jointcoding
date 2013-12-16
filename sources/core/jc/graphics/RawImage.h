@@ -53,10 +53,22 @@ public:
     virtual void alloc(const PixelFormat_e format, const u32 width, const u32 height);
 
     /**
+     * ピクセルバッファの格納先を外部から指定する
+     */
+    virtual void setBuffer(const void* buffer, const s32 length);
+
+    /**
      * 縦方向に反転する。
      * テクスチャからキャプチャした画素情報の天地反転用
      */
     void revertImageV();
+
+    /**
+     * ピクセルバッファの長さを取得する
+     */
+    u32 getPixelBufferLength() const {
+        return pBuffer.length;
+    }
 
     /**
      * ピクセルバッファのフォーマットを取得する

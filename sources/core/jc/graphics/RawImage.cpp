@@ -26,12 +26,22 @@ void RawImage::alloc(const PixelFormat_e format, const u32 width, const u32 heig
     // ピクセルバッファの取得を行う
     {
         const s32 size = getPixelBytes() * width * height;
-        if (this->pixels.length < size) {
+        if (this->pBuffer.length < size) {
             this->pixels.alloc(size);
+            pBuffer = pixels.iterator();
         }
-        pBuffer = pixels.iterator();
     }
 }
+
+/**
+ * ピクセルバッファの格納先を外部から指定する
+ */
+void RawImage::setBuffer(const void* buffer, const s32 length) {
+    pBuffer.ptr = (u8*)buffer;
+    pBuffer.length = length;
+    pixels.clear();
+}
+
 
 /**
  * y0行とy1行のピクセルを入れ替える

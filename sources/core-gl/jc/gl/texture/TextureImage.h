@@ -144,25 +144,25 @@ class TextureImage: public Object {
          * GL_TEXTURE_MAG_FILTER
          * default = GL_NEAREST
          */
-        GLint minFilter;
+        GLenum minFilter;
 
         /**
          * GL_TEXTURE_MIN_FILTER
          * default = GL_NEAREST
          */
-        GLint magFilter;
+        GLenum magFilter;
 
         /**
          * GL_TEXTURE_WRAP_S
          * default = GL_CLAMP_TO_EDGE
          */
-        GLint wrapS;
+        GLenum wrapS;
 
         /**
          * GL_TEXTURE_WRAP_T
          * default = GL_CLAMP_TO_EDGE
          */
-        GLint wrapT;
+        GLenum wrapT;
     } context;
 
 protected:

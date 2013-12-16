@@ -20,7 +20,6 @@ public:
     static const ::jc::s32 PostKey_RequestSurfaceSpecs;
     static const ::jc::s32 PostKey_SurfaceSize;
     static const ::jc::s32 PostKey_StateRequest;
-    static const ::jc::s32 QueryKey_RequestSurfaceSpecs_length;
     static const ::jc::s32 SystemTask_Mainloop;
 };
 
