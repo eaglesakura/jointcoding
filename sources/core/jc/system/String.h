@@ -131,6 +131,9 @@ public:
      */
     static String format(const charactor *fmt, ...);
 };
+
+typedef std::vector<String, StlAllocator<String> > string_vector;
+
 }
 
 #endif /* JCSTRING_H_ */
