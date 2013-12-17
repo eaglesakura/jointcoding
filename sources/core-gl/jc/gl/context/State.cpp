@@ -344,7 +344,7 @@ jcboolean GLState::blendFunc(const GLBlendType_e type) {
     static const GLenum funcTable[][4] = {
     //      sfactor  dfactor sfactorA dfactorA
     //      alpha
-            { GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO },
+            { GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE },
             // add
             { GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE },
             // over
