@@ -64,9 +64,11 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
 
 //        jclogf("request disp(%x) read(%x) draw(%d) ctx(%x)", eglDisplay, eglSurface, eglSurface, eglContext);
 
+#if 0
         if(NativeContext::isUIThread()) {
             stashEGLCurrents();
         }
+#endif
 
 // カレントに設定できなければ例外を投げる
         if( !eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ) {
@@ -99,7 +101,7 @@ void EGLManager::current(jc_sp<EGLContextProtocol> context, jc_sp<EGLSurfaceProt
         EGLContext eglContext = EGL_NO_CONTEXT;
 
         jcboolean backToDefault = false;
-#if 1
+#if 0
         if( NativeContext::isUIThread() ) {
 //            jclog("egl -> UIThread");
             eglDisplay = androidEGL.display;
