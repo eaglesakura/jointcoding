@@ -9,31 +9,12 @@ import com.eaglesakura.lib.jc.annotation.jnimake.JCField;
          mode = Mode.Protocol)
 public interface UriProtocol {
     /**
-     * APK内のrawから読み出しを行う場合に設定される
-     * Android
-     */
-    @JCField
-    public static final String SCHEME_APK_RAW = "apkraw://";
-
-    /**
      * アセットから読み込みを行う。
      * iOSでは特定フォルダをアセットとして扱う
      * Android / iOS
      */
     @JCField
-    public static final String SCHEME_APPLI_ASSETS = "assets://";
-
-    /**
-     * HTTP通信を行う
-     */
-    @JCField
-    public static final String SCHEME_HTTP = "http://";
-
-    /**
-     * HTTPS通信を行う
-     */
-    @JCField
-    public static final String SCHEME_HTTPS = "https://";
+    public static final String SCHEME_APPLI_ASSETS = "appassets://";
 
     /**
      * アプリのローカル保存領域から作成する
@@ -48,4 +29,16 @@ public interface UriProtocol {
      */
     @JCField
     public static final String SCHEME_EXTERNALSTRAGE = "external://";
+
+    /**
+     * HTTP通信を行う
+     */
+    @JCField
+    public static final String SCHEME_HTTP = "http://";
+
+    /**
+     * HTTPS通信を行う
+     */
+    @JCField
+    public static final String SCHEME_HTTPS = "https://";
 }

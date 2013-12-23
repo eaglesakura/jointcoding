@@ -9,7 +9,9 @@ import java.nio.IntBuffer;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.eaglesakura.jc.jni.context.NativeContext;
 import com.eaglesakura.jc.util.AndroidUtil;
+import com.eaglesakura.jc.util.NativeUriUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -127,6 +129,31 @@ public class ImageDecoder {
     }
 
     /**
+     * NativeUriからBitmapクラスをロードする
+     * @param nativeUri
+     * @return
+     */
+    @JCMethod
+    public static Bitmap decodeBitmapFromNativeUri(String nativeUri) {
+        InputStream is = null;
+        try {
+            is = NativeUriUtil.openInputStream(NativeContext.getApplicationContext(), nativeUri);
+            return decodeBitmapFromStream(is);
+        } catch (Exception e) {
+            AndroidUtil.log(e);
+            return null;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e) {
+
+                }
+            }
+        }
+    }
+
+    /**
      * 画像をデコードする。
      * streamは自動では閉じないため、呼び出し元で閉じること。
      * @param stream
@@ -143,4 +170,5 @@ public class ImageDecoder {
 
         return null;
     }
+
 }

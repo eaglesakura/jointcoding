@@ -30,12 +30,6 @@ public:
      * ファイルのマッピング方法は実装により異なる。
      */
     virtual MFileMapper loadFile(const Uri &uri, const FileOpenHint *hint = NULL);
-
-protected:
-    virtual MInputStream openAsset(const String fileName);
-    virtual MInputStream openExternalStrageFile(const String fileName);
-    virtual MInputStream openLocalStrageFile(const String fileName);
-
 };
 
 }

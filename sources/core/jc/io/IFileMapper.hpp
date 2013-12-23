@@ -8,6 +8,7 @@
 
 #include    "jointcoding.h"
 #include    "jc/collection/SafeArray.hpp"
+#include    "jc/io/Uri.h"
 
 namespace jc {
 

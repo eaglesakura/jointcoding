@@ -10,6 +10,7 @@
 #include    "jc/gl/texture/TextureImage.h"
 #include    "jc/gl/gpu/DeviceLock.hpp"
 #include    "jc/platform/Timer.h"
+#include    "jc/io/ByteArrayInputStream.h"
 
 namespace jc {
 namespace gl {
@@ -482,7 +483,7 @@ MTextureImage TextureImage::decodePMK(MDevice device, const Uri &uri, TextureLoa
     // not support ETC1
     return MTextureImage();
 #else
-    MInputStream is = Platform::getFileSystem()->openInputStream(uri);
+    MInputStream is(mark_new ByteArrayInputStream(Platform::getFileSystem()->loadFile(uri, NULL)));
     if (!is) {
         jcalertf("file not found(%s)", uri.getUri().c_str());
         return MTextureImage();

@@ -33,7 +33,7 @@ public class NativeContext {
 
     /**
      * class読み込み時に記録されるID.
-     * 例えばapkがunloadされた場合はリセットされる。
+     * 例えばプロセスがunloadされた場合はリセットされる。
      */
     static final String bootId = UUID.randomUUID().toString();
 

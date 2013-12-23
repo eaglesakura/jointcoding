@@ -58,11 +58,6 @@ public:
     }
 
     /**
-     * 読み込み用のストリームを開く。
-     */
-    virtual MInputStream openInputStream(const Uri &uri);
-
-    /**
      * 特定ディレクトリ内のファイルを開く
      */
     virtual u32 listFiles(const Uri base_uri, std::vector<File> *result);
@@ -72,11 +67,6 @@ public:
      * ファイルのマッピング方法は実装により異なる。
      */
     virtual MFileMapper loadFile(const Uri &uri, const FileOpenHint *hint = NULL) = 0;
-
-protected:
-    virtual MInputStream openAsset(const String fileName) = 0;
-    virtual MInputStream openExternalStrageFile(const String fileName) = 0;
-    virtual MInputStream openLocalStrageFile(const String fileName) = 0;
 };
 
 }

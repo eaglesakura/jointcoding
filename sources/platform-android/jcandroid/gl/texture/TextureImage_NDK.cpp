@@ -114,16 +114,23 @@ MPixelBuffer TextureImage::decodePixelsFromPlatformDecoder(MDevice device, const
     CALL_JNIENV();
 
     const jctime decode_starttime = Timer::currentTime();
-    MInputStream stream = Platform::getFileSystem()->openInputStream(uri);
-
-    jc_sp<JavaJointInputStream> jInputStream = downcast<JavaJointInputStream>(stream);
-    if (!jInputStream) {
-        jclogf("Uri(%s) not java joint", uri.getUri().c_str());
-        return result;
+//    MInputStream stream = Platform::getFileSystem()->openInputStream(uri);
+//
+//    jc_sp<JavaJointInputStream> jInputStream = downcast<JavaJointInputStream>(stream);
+//    if (!jInputStream) {
+//        jclogf("Uri(%s) not java joint", uri.getUri().c_str());
+//        return result;
+//    }
+//
+//    // decode from bitmap
+//    jobject jBitmap = ndk::ImageDecoder::decodeBitmapFromStream_unsafe(jInputStream->getJniStream()->getObject());
+    jobject jBitmap = NULL;
+    {
+        CALL_JNIENV();
+        jstring jUri = c2jstring(uri.getUri().c_str());
+        jBitmap = ndk::ImageDecoder::decodeBitmapFromNativeUri_unsafe(jUri);
+        env->DeleteLocalRef(jUri);
     }
-
-    // decode from bitmap
-    jobject jBitmap = ndk::ImageDecoder::decodeBitmapFromStream_unsafe(jInputStream->getJniStream()->getObject());
     assert(jBitmap);
 
     AndroidBitmapInfo info = { 0 };

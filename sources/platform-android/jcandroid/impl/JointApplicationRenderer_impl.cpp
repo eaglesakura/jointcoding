@@ -39,9 +39,6 @@ JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRen
 }
 
 JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postParams(JNIEnv *env, jobject _this, jint main_key, jint sub_key, jobjectArray params) {
-// add code.
-//    jclogf("call method!! :: %s", "Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_postStringParams");
-
     safe_array<String> tempParams;
     if(params) {
         tempParams.reserve(env->GetArrayLength(params));
@@ -51,16 +48,6 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
         j2stringArray(params, &iterator);
     }
 
-#if 0
-    for(int i = 0; i < array->length(); ++i) {
-        jstring arg = (jstring)array->get(i);
-        if(arg) {
-            tempParams[i] = ndk::j2String(arg, jctrue);
-        }
-        jclogf("sdk -> native param[%d] = [%s]", i, tempParams[i].c_str());
-    }
-#endif
-
     ApplicationQueryKey query(main_key, sub_key);
 
 // 書き込みを行う
@@ -68,21 +55,9 @@ JNIEXPORT jboolean JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicatio
 
     if(result && params) {
         c2stringArray(params, tempParams.ptr, tempParams.length);
-#if 0
-        CALL_JNIENV();
-        // ハンドリングに成功したらパラメータを書き戻す
-        for(int i = 0; i < tempParams.length; ++i) {
-            jobject jStr = (jobject)ndk::c2jstring(tempParams[i].c_str());
-            array->set(i, 1, &jStr);
-            env->DeleteLocalRef(jStr);
-
-            jclogf("native -> sdk param[%d] = [%s]", i, tempParams[i].c_str());
-        }
-#endif
     }
 
     return result;
-
 }
 // 非同期タスクの開始を行う
 JNIEXPORT void JNICALL Java_com_eaglesakura_jc_framework_app_JointApplicationRenderer_onNativeNewtask(JNIEnv *env, jobject _this, jint uniqueId, jint user_data) {

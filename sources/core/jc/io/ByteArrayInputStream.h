@@ -7,12 +7,14 @@
 #ifndef BYTEARRAYINPUTSTREAM_H_
 #define BYTEARRAYINPUTSTREAM_H_
 
+#include    "jc/io/IFileMapper.hpp"
 #include    "jc/io/InputStream.h"
 
 namespace jc {
 
 class ByteArrayInputStream: public InputStream {
     jc_sa<u8> raw_array;
+    MFileMapper file;
 
     s32 readable;
     u8* current_ptr;
@@ -29,6 +31,22 @@ public:
         this->raw_array = raw_array;
         this->readable = (s32)length;
         this->current_ptr = raw_array.get() + begin;
+    }
+
+    ByteArrayInputStream( MFileMapper file ) {
+        this->file = file;
+        this->readable = (s32)file->length();
+        this->current_ptr = file->getHead();
+    }
+
+    ByteArrayInputStream( MFileMapper file, const u32 begin, const u32 length) {
+        this->file = file;
+        this->readable = length;
+        this->current_ptr = file->getHead() + begin;
+    }
+
+    virtual ~ByteArrayInputStream() {
+
     }
 
     /**

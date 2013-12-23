@@ -8,6 +8,7 @@
 #define JCBINARYINPUTSTREAM_H_
 
 #include    "jc/io/InputStream.h"
+#include    "jc/io/ByteArrayInputStream.h"
 #include    "jc/math/Math.h"
 
 namespace jc {
@@ -25,6 +26,10 @@ class BinaryInputStream: public Object {
 public:
     BinaryInputStream(MInputStream is) {
         this->stream = is;
+    }
+
+    BinaryInputStream(MFileMapper file) {
+        stream.reset(mark_new ByteArrayInputStream(file));
     }
 
     virtual ~BinaryInputStream() {
@@ -115,9 +120,9 @@ public:
     virtual u32 readFixed32Array(jc_sa<float> *result_data, u32 *result_data_length, const s32 bits = FIXED_BIT_GL );
 };
 
-    /**
-     * managed
-     */
+/**
+ * managed
+ */
 typedef jc_sp<BinaryInputStream> MBinaryInputStream;
 
 }

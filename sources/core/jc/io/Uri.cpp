@@ -10,34 +10,6 @@
 #include    "jc/system/StringUtil.h"
 
 namespace jc {
-/*
- inline s32 indexOf(String &main, String &sub) {
-
- charactor *p = strchr(main.c_str(), (int) (*sub.c_str()));
- // 頭文字が見つかった
- if (p) {
- s32 result = (s32) p - (s32) main.c_str();
-
- charactor *head = sub.c_str();
-
- while ((*head) && (*p)) {
-
- // 一致しない文字があった
- if ((*head) != (*p)) {
- return -1;
- }
-
- ++head;
- ++p;
- }
-
- // 全て一致した
- return result;
- }
- return -1;
- }
- */
-
 /**
  * スキーマを取得する
  */

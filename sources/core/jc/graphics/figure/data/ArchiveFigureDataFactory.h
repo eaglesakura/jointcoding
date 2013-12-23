@@ -10,21 +10,15 @@
 #include    "jc/graphics/figure/data/FigureDataFactory.h"
 #include    "jc/data/FileArchiveImporter.h"
 #include    "jc/io/Uri.h"
+#include    "jc/io/IFileMapper.hpp"
 
 namespace jc {
 
 class ArchiveFigureDataFactory: public FigureDataFactory {
-    struct {
-        /**
-         * アーカイブを解答したデータ
-         */
-        jc_sa<u8> buffer;
-
-        /**
-         * アーカイブのサイズ
-         */
-        u32 length;
-    }raw_archive;
+    /**
+     * アーカイブバッファ
+     */
+    MFileMapper archiveFile;
 
     /**
      * アーカイブデータ

@@ -16,7 +16,7 @@ namespace jc {
  */
 MBinaryInputStream UriFigureDataFactory::openFigureInfo() {
     Uri uri = Uri::parse(String::format("%s/figure.info", baseUri.getUri().c_str()));
-    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->openInputStream(uri)));
+    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->loadFile(uri, NULL)));
 }
 
 /**
@@ -24,7 +24,7 @@ MBinaryInputStream UriFigureDataFactory::openFigureInfo() {
  */
 MBinaryInputStream UriFigureDataFactory::openNode(const s32 nodeNumber) {
     Uri uri = Uri::parse(String::format("%s/node%03d.node", baseUri.getUri().c_str(), nodeNumber));
-    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->openInputStream(uri)));
+    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->loadFile(uri, NULL)));
 }
 
 /**
@@ -32,7 +32,7 @@ MBinaryInputStream UriFigureDataFactory::openNode(const s32 nodeNumber) {
  */
 MBinaryInputStream UriFigureDataFactory::openMeshInfo(const s32 nodeNumber) {
     Uri uri = Uri::parse(String::format("%s/node%03d.meshinfo", baseUri.getUri().c_str(), nodeNumber));
-    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->openInputStream(uri)));
+    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->loadFile(uri, NULL)));
 }
 
 /*
@@ -40,7 +40,7 @@ MBinaryInputStream UriFigureDataFactory::openMeshInfo(const s32 nodeNumber) {
  */
 MBinaryInputStream UriFigureDataFactory::openMaterialInfo(const s32 nodeNumber, const s32 materialNumber) {
     Uri uri = Uri::parse(String::format("%s/node%03d_mtl%02d.material", baseUri.getUri().c_str(), nodeNumber, materialNumber));
-    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->openInputStream(uri)));
+    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->loadFile(uri, NULL)));
 }
 
 /**
@@ -106,7 +106,7 @@ MBinaryInputStream UriFigureDataFactory::openMeshData(const MeshDataType_e type,
     const char *ext_table[] = { "indices", "vertices", "coords", "normals", "bones", "weightindices", "weight" };
 
     Uri uri = Uri::parse(String::format("%s/node%03d_mtl%02d_ctx%02d.%s", baseUri.getUri().c_str(), nodeNumber, materialNumber, contextNumber, ext_table[type]));
-    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->openInputStream(uri)));
+    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->loadFile(uri, NULL)));
 }
 
 /**
@@ -133,7 +133,7 @@ MBinaryInputStream UriFigureDataFactory::openAnimationData(const AnimationDataTy
     const char *ext_table[] = { "t", "r", "s" };
 
     Uri uri = Uri::parse(String::format("%s/node%03d.anim_%s", baseUri.getUri().c_str(), nodeNumber, ext_table[type]));
-    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->openInputStream(uri)));
+    return MBinaryInputStream(mark_new BinaryInputStream(Platform::getFileSystem()->loadFile(uri, NULL)));
 }
 
 }

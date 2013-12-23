@@ -12,12 +12,11 @@ public:
     }
 
 
-    static const ::jc::charactor* SCHEME_APK_RAW;
     static const ::jc::charactor* SCHEME_APPLI_ASSETS;
-    static const ::jc::charactor* SCHEME_HTTP;
-    static const ::jc::charactor* SCHEME_HTTPS;
     static const ::jc::charactor* SCHEME_LOCALSTRAGE;
     static const ::jc::charactor* SCHEME_EXTERNALSTRAGE;
+    static const ::jc::charactor* SCHEME_HTTP;
+    static const ::jc::charactor* SCHEME_HTTPS;
 };
 
 }
