@@ -1,0 +1,11 @@
+task buildIDL(type:Exec) {
+    // IDL出力先生成
+    File cppOutDir = new File("./gen-cpp").getAbsoluteFile();
+    cppOutDir.mkdirs();
+
+    File javaOutDir = new File("./gen-java").getAbsoluteFile(); 
+    javaOutDir.mkdirs();
+    
+    // build
+    commandLine 'protoc', '--cpp_out', cppOutDir.getAbsolutePath(), '--java_out', javaOutDir.getAbsolutePath(), './idl/atlas/TextureAtlasData.proto'
+}

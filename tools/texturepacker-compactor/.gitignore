@@ -1,0 +1,9 @@
+bin/
+libs/
+.classpass
+.project
+.settings/
+*.json
+*.pb
+.gradle/
+
