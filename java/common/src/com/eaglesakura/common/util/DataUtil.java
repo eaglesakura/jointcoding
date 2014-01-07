@@ -1,0 +1,387 @@
+package com.eaglesakura.common.util;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import android.graphics.RectF;
+
+public class DataUtil {
+
+    public static final String SHIT_JIS = "Shift_JIS";
+
+    /**
+     * InputStreamを全てメモリ上に展開する。 isの長さがOOMにならないように調整すること。
+     * 
+     * @param is
+     * @return
+     * @throws IOException
+     */
+    public static byte[] toByteArray(InputStream is) throws IOException {
+        byte[] result = null;
+
+        //! 1kbずつ読み込む。
+        byte[] tempBuffer = new byte[1024 * 5];
+        //! 元ストリームを読み取り
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int n = 0;
+            while ((n = is.read(tempBuffer)) > 0) {
+                baos.write(tempBuffer, 0, n);
+            }
+            result = baos.toByteArray();
+            is.close();
+        }
+
+        return result;
+    }
+
+    /**
+     * InputStreamを全てメモリ上に展開する。 isの長さがOOMにならないように調整すること。
+     * 
+     * @param is
+     * @param close
+     * @return
+     * @throws IOException
+     */
+    public static byte[] toByteArray(InputStream is, boolean close) throws IOException {
+        byte[] result = null;
+
+        //! 1kbずつ読み込む。
+        byte[] tempBuffer = new byte[1024 * 5];
+        //! 元ストリームを読み取り
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int n = 0;
+            while ((n = is.read(tempBuffer)) > 0) {
+                baos.write(tempBuffer, 0, n);
+            }
+            result = baos.toByteArray();
+            if (close) {
+                is.close();
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * inputのバッファを全てoutputへコピーする。 完了した時点でストリームはcloseされる。
+     * 
+     * @param input
+     * @param output
+     * @throws IOException
+     */
+    public static void copyTo(InputStream input, OutputStream output) throws IOException {
+        byte[] buffer = new byte[1024 * 128];
+        int length = 0;
+
+        while ((length = input.read(buffer)) > 0) {
+            output.write(buffer, 0, length);
+        }
+
+        input.close();
+        output.close();
+    }
+
+    /**
+     * inputのバッファを全てoutputへコピーする。 
+     * close=trueの場合、完了した時点でストリームはcloseされる。
+     * 
+     * @param input
+     * @param output
+     * @throws IOException
+     */
+    public static void copyTo(InputStream input, OutputStream output, boolean close) throws IOException {
+        byte[] buffer = new byte[1024 * 128];
+        int length = 0;
+
+        while ((length = input.read(buffer)) > 0) {
+            output.write(buffer, 0, length);
+        }
+
+        if (close) {
+            input.close();
+            output.close();
+        }
+    }
+
+    /**
+     * RectFを四捨五入で丸める。
+     * 
+     * @param rect
+     */
+    public static void round(RectF rect) {
+        rect.left = Math.round(rect.left);
+        rect.right = Math.round(rect.right);
+        rect.top = Math.round(rect.top);
+        rect.bottom = Math.round(rect.bottom);
+    }
+
+    /**
+     * min <= result <= maxとなるようにnowを補正する。
+     * 
+     * 
+     * @param min
+     * @param max
+     * @param now
+     * @return
+     */
+    public static final int minmax(int min, int max, int now) {
+        if (now < min)
+            return min;
+        if (now > max)
+            return max;
+        return now;
+    }
+
+    /**
+     * 特定のビットフラグが立っていることを検証する。
+     * 
+     * 
+     * @param flg
+     * @param check
+     * @return
+     */
+    public static final boolean isFlagOn(int flg, int check) {
+        return (flg & check) != 0;
+    }
+
+    /**
+     * 特定のビットフラグがすべて立っていることを検証する。
+     * 
+     * 
+     * @param flg
+     * @param check
+     * @return
+     */
+    public static final boolean isFlagOnAll(int flg, int check) {
+        return (flg & check) == 0;
+    }
+
+    /**
+     * フラグ情報を設定する。
+     * 
+     * 
+     * @param flg
+     * @param check
+     * @param is
+     *            ビットを立てる場合はtrue、下げる場合はfalse
+     * @return
+     */
+    public static final int setFlag(int flg, int check, boolean is) {
+        if (is)
+            return flg | check;
+        else
+            return flg & (~check);
+    }
+
+    /**
+     * 全角英数を半角英数に変換する
+     * @param s
+     * @return
+     */
+    public static String zenkakuEngToHankakuEng(String s) {
+        StringBuffer sb = new StringBuffer(s);
+        for (int i = 0; i < sb.length(); i++) {
+            char c = sb.charAt(i);
+            if (c >= 'Ａ' && c <= 'Ｚ') {
+                c = (char) (c - 'Ａ' + 'A');
+            } else if (c >= '０' && c <= '９') {
+                c = (char) (c - '０' + '0');
+            } else {
+                switch (c) {
+                    case '＜':
+                        c = '<';
+                        break;
+                    case '＞':
+                        c = '>';
+                        break;
+                    case '　':
+                        c = ' ';
+                        break;
+                    case '／':
+                        c = '/';
+                        break;
+                    case '！':
+                        c = '!';
+                        break;
+                    case '？':
+                        c = '?';
+                        break;
+                    case '．':
+                        c = '.';
+                        break;
+                }
+            }
+
+            sb.setCharAt(i, c);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 全角文字を半角文字に変更する
+     * @param s
+     * @return
+     */
+    public static String zenkakuHiraganaToZenkakuKatakana(String s) {
+        StringBuffer sb = new StringBuffer(s);
+        for (int i = 0; i < sb.length(); i++) {
+            char c = sb.charAt(i);
+            if (c >= 'ァ' && c <= 'ン') {
+                sb.setCharAt(i, (char) (c - 'ァ' + 'ぁ'));
+            } else if (c == 'ヵ') {
+                sb.setCharAt(i, 'か');
+            } else if (c == 'ヶ') {
+                sb.setCharAt(i, 'け');
+            } else if (c == 'ヴ') {
+                sb.setCharAt(i, 'う');
+                sb.insert(i + 1, '゛');
+                i++;
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 
+     * @param str
+     * @return
+     */
+    public static String macStringToWinString(String str) {
+        final int indexOffsetDakuten = ('が' - 'か');
+        final int indexOffsetHandakuten = ('ぱ' - 'は');
+        final int dakuten = '゙';
+        final int handakuten = '゚';
+
+        StringBuffer sb = new StringBuffer(str.length());
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (i < (str.length() - 1)) {
+                char cNext = str.charAt(i + 1);
+                if (cNext == dakuten) {
+                    // 特殊な濁点補正
+                    switch (c) {
+                        case 'う':
+                            c = 'ゔ';
+                            break;
+                        case 'ウ':
+                            c = 'ヴ';
+                            break;
+                        default:
+                            c += indexOffsetDakuten;
+                            break;
+                    }
+                } else if (cNext == handakuten) {
+                    c += indexOffsetHandakuten;
+                }
+            }
+
+            if (c != dakuten && c != handakuten) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 日本語を意識してJavaの辞書順に並び替える
+     * @param a
+     * @param b
+     * @return
+     */
+    public static int compareString(String a, String b) {
+        a = zenkakuHiraganaToZenkakuKatakana(a.toLowerCase());
+        a = zenkakuEngToHankakuEng(a);
+        b = zenkakuHiraganaToZenkakuKatakana(b.toLowerCase());
+        b = zenkakuEngToHankakuEng(b);
+
+        return a.compareTo(b);
+    }
+
+    /**
+     * 目標数値へ移動する。
+     *
+     * 
+     * @param now
+     * @param offset
+     * @param target
+     * @return
+     */
+    public static final int targetMove(int now, int offset, int target) {
+        offset = Math.abs(offset);
+        if (Math.abs(target - now) <= offset) {
+            return target;
+        } else if (target > now) {
+            return now + offset;
+        } else {
+            return now - offset;
+        }
+    }
+
+    /**
+     * 目標数値へ移動する。
+     *
+     * 
+     * @param now
+     * @param offset
+     * @param target
+     * @return
+     */
+    public static final float targetMove(float now, float offset, float target) {
+        offset = Math.abs(offset);
+        if (Math.abs(target - now) <= offset) {
+            return target;
+        } else if (target > now) {
+            return now + offset;
+        } else {
+            return now - offset;
+        }
+    }
+
+    /**
+     * Byte配列に変換する。
+     * @param array
+     * @return
+     */
+    public static final byte[] toByteArray(int[] array) {
+        byte[] result = new byte[array.length * 4];
+        return toByteArray(array, result);
+    }
+
+    public static final byte[] toByteArray(int[] array, byte[] result) {
+        for (int i = 0; i < array.length; ++i) {
+            result[i * 4 + 0] = (byte) ((array[i] >> 24) & 0xff);
+            result[i * 4 + 1] = (byte) ((array[i] >> 16) & 0xff);
+            result[i * 4 + 2] = (byte) ((array[i] >> 8) & 0xff);
+            result[i * 4 + 3] = (byte) ((array[i] >> 0) & 0xff);
+        }
+        return result;
+    }
+
+    /**
+     * 文字列がnullか空文字だったらtrueを返す。
+     * @param str
+     * @return
+     */
+    public static boolean isEmpty(String str) {
+        if (str == null) {
+            return true;
+        }
+
+        return str.length() == 0;
+    }
+
+    /**
+     * strがnullかemptyだったらnullを返す。
+     * @param str
+     * @return
+     */
+    public static String emptyToNull(String str) {
+        return isEmpty(str) ? null : str;
+    }
+}
