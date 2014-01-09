@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.eaglesakura.resource.texture.atlas.TextureAtlasData.AtlasGroup;
+import com.eaglesakura.resource.texture.Texture;
 import com.eaglesakura.serialize.model.Model;
 
 public class TexturePackerModel extends Model {
@@ -33,7 +33,7 @@ public class TexturePackerModel extends Model {
         /**
          * フォーマット
          */
-        public AtlasGroup.PixelFormat format;
+        public Texture.PixelFormat format;
 
         /**
          * スケーリング値

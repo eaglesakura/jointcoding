@@ -6,10 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.eaglesakura.common.util.FileUtil;
+import com.eaglesakura.resource.primitive.Primitive;
+import com.eaglesakura.resource.primitive.Primitive.Rectangle;
+import com.eaglesakura.resource.primitive.Primitive.Size;
 import com.eaglesakura.resource.texture.atlas.TextureAtlasData.AtlasGroup;
 import com.eaglesakura.resource.texture.atlas.TextureAtlasData.AtlasTexture;
-import com.eaglesakura.resource.texture.atlas.TextureAtlasData.Rectangle;
-import com.eaglesakura.resource.texture.atlas.TextureAtlasData.Size;
 import com.eaglesakura.serialize.json.JSON;
 import com.eaglesakura.tool.texpack.model.ImageFrameModel;
 import com.eaglesakura.tool.texpack.model.TexturePackerModel;
@@ -29,11 +30,11 @@ public class Main {
         }
     }
 
-    static Rectangle newRectangle(int x, int y, int w, int h) {
+    static Primitive.Rectangle newRectangle(int x, int y, int w, int h) {
         return Rectangle.newBuilder().setX(x).setY(y).setW(w).setH(h).build();
     }
 
-    static Size newSize(int w, int h) {
+    static Primitive.Size newSize(int w, int h) {
         return Size.newBuilder().setW(w).setH(h).build();
     }
 
@@ -44,7 +45,6 @@ public class Main {
      */
     private static AtlasTexture buildAtlasImage(ImageFrameModel model) {
         AtlasTexture.Builder builder = AtlasTexture.newBuilder();
-        builder.setUniqueId(ImageFrameModel.genUUID(model));
         builder.setFilename(FileUtil.getFileName(model.filename));
         builder.setFrame(newRectangle(model.frame.x, model.frame.y, model.frame.w, model.frame.h));
         builder.setRotated(model.rotated);

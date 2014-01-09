@@ -1,0 +1,19 @@
+package jc_res_texture;
+
+option java_package = "com.eaglesakura.resource.texture";
+
+// テクスチャフォーマット
+enum PixelFormat {
+    RGBA8888 = 0; //
+    RGB888 = 1; //
+    RGB565 = 2; //
+    RGBA4444 = 3; //
+    RGB5551 = 4; //
+}
+
+// テクスチャの画像フォーマットを定義する
+enum TextureFormat {
+    PNG = 0;
+    JPEG = 1;
+    KTX = 2;
+}
