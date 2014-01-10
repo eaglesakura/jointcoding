@@ -276,7 +276,7 @@ public class CppHeaderExporter extends CppClassInfomationBase {
 
             // Voidメソッド以外ならば、戻り値を保存
             if (call != JniMethodResultType.Void) {
-                result += call.name() + " _result = ";
+                result += String.format("j%s _result = ", call.name().toLowerCase());
             }
 
             // 呼び出し
@@ -298,7 +298,7 @@ public class CppHeaderExporter extends CppClassInfomationBase {
 
             // Voidメソッド以外ならば、return
             if (call != JniMethodResultType.Void) {
-                result += "return " + call.name() + "_result;";
+                result += "return _result;";
             }
 
         }
