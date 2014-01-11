@@ -3,6 +3,8 @@
  *
  *  Created on: 2013/05/06
  */
+#include    "TextureAtlasData.pb.h"
+#include    <google/protobuf/io/coded_stream.h>
 
 #include    "esBenchmarkApplication.h"
 #include    "jc/collection/ArrayHandle.hpp"
@@ -62,6 +64,24 @@ void BenchmarkApplication::onAppInitialize() {
     {
         spriteManager = SpriteManager::createInstance(getRenderingContext(), getWindowDevice());
     }
+
+#if 0
+    {
+        MFileMapper file = Platform::getFileSystem()->loadFile(Uri::fromAssets("atlas.pb"), NULL);
+        jc_sp<jc_res_atlas::AtlasGroup> group(new jc_res_atlas::AtlasGroup());
+
+
+        google::protobuf::io::CodedInputStream is((uint8_t*)file->getHead(), (int)file->length());
+//        google::protobuf::io::CodedInputStream is((google::protobuf::internal::uint8*) file->getHead(), file->length());
+
+        jclogf("created image size(%d)", group->images_size());
+
+        group->MergeFromCodedStream(&is);
+
+        jclogf("loaded image size(%d)", group->images_size());
+        jclogf("file name(%s)", group->filename().c_str());
+    }
+#endif
 
 //    // テクスチャロードを開始する
     startNewtask(BenchmarkTask_LoadTexture, 0);

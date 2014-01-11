@@ -2,11 +2,21 @@
 # project/jni/Android.mk に配置する。
 #################################################################################
 LOCAL_PATH := $(call my-dir)
+## Setup Directory
+RELATIVITY_JC_PATH := $(shell ${JOINTCODING_HOME}/bin/abspath2rel.sh ${JOINTCODING_HOME})
+
+#################################################################################
+## Import Protocolbuffer
+include $(CLEAR_VARS)
+LOCAL_MODULE := protobuf-lite
+LOCAL_SRC_FILES := $(RELATIVITY_JC_PATH)/apps/protocolbuffers/android/obj/local/armeabi-v7a/libprotobuf.a
+include $(PREBUILT_STATIC_LIBRARY)
+
 #################################################################################
 ## start build
 include $(CLEAR_VARS)
 ## setup
-RELATIVITY_JC_PATH := $(shell ${JOINTCODING_HOME}/bin/abspath2rel.sh ${JOINTCODING_HOME})
+# RELATIVITY_JC_PATH := $(shell ${JOINTCODING_HOME}/bin/abspath2rel.sh ${JOINTCODING_HOME})
 ############################       app flags       ###########################
 ## Joint Coding
 # LOCAL_CPPFLAGS += -DOUTPUT_LOG
@@ -32,10 +42,16 @@ LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/platform-android/ 
 LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/platform-android/ -name '*.cpp')
 
 
+# protobuf
+LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/sources/core/protobuf
+# LOCAL_LDLIBS := -Lstatic-lib/ libprotobuf-lite
+LOCAL_STATIC_LIBRARIES += protobuf-lite
+
 ############################       build  app sources       ###########################
 LOCAL_C_INCLUDES += $(shell find '.' -type d)
 LOCAL_SRC_FILES += $(shell find '.' -name '*.c')
 LOCAL_SRC_FILES += $(shell find '.' -name '*.cpp')
+LOCAL_SRC_FILES += $(shell find '.' -name '*.cc')
 ############################         build sources finish   ###########################
 # 設定は共通のmakefileに任せる
 # マクロを追加したい場合は適宜行う

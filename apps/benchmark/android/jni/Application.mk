@@ -5,3 +5,5 @@ APP_ABI := armeabi-v7a
 # 例外・RTTI対応版のSTLを利用する
 APP_STL:= gnustl_static
 # APP_STL := stlport_static
+
+APP_MODULES := jcapp
