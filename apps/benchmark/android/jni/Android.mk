@@ -8,7 +8,7 @@ RELATIVITY_JC_PATH := $(shell ${JOINTCODING_HOME}/bin/abspath2rel.sh ${JOINTCODI
 #################################################################################
 ## Import Protocolbuffer
 include $(CLEAR_VARS)
-LOCAL_MODULE := protobuf-lite
+LOCAL_MODULE := protobuf
 LOCAL_SRC_FILES := $(RELATIVITY_JC_PATH)/apps/protocolbuffers/android/obj/local/armeabi-v7a/libprotobuf.a
 include $(PREBUILT_STATIC_LIBRARY)
 
@@ -45,7 +45,7 @@ LOCAL_SRC_FILES += $(shell find $(RELATIVITY_JC_PATH)/sources/platform-android/ 
 # protobuf
 LOCAL_C_INCLUDES += $(RELATIVITY_JC_PATH)/sources/core/protobuf
 # LOCAL_LDLIBS := -Lstatic-lib/ libprotobuf-lite
-LOCAL_STATIC_LIBRARIES += protobuf-lite
+LOCAL_STATIC_LIBRARIES += protobuf
 
 ############################       build  app sources       ###########################
 LOCAL_C_INCLUDES += $(shell find '.' -type d)

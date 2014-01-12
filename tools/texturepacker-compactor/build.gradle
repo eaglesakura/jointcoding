@@ -1,6 +1,4 @@
 task buildIDL {
-
-
     doLast {
         // IDL出力先生成
         File cppOutDir = new File("./gen-cpp").getAbsoluteFile();

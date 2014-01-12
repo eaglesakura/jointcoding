@@ -4,7 +4,7 @@
  *  Created on: 2013/05/06
  */
 #include    "TextureAtlasData.pb.h"
-#include    <google/protobuf/io/coded_stream.h>
+//#include    <google/protobuf/io/coded_stream.h>
 
 #include    "esBenchmarkApplication.h"
 #include    "jc/collection/ArrayHandle.hpp"
@@ -97,7 +97,6 @@ void BenchmarkApplication::loadTexture(MDevice subDevice) {
         texture->unbind(subDevice->getState());
 
         jclog("load finish");
-        glFinish();
     } catch (Exception &e) {
         jcloge(e);
     }
