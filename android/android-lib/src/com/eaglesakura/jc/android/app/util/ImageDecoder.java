@@ -94,7 +94,7 @@ public class ImageDecoder {
 
         AndroidUtil.log(String.format("image size(%d x %d)", image_width, image_height));
 
-        final int ONCE_READ_LINE = 6;
+        final int ONCE_READ_LINE = 128;
         final int[] temp = new int[image_width * ONCE_READ_LINE];
 
         int readHeight = image_height;

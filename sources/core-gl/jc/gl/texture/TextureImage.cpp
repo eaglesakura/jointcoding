@@ -347,6 +347,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
     jcboolean cancel_flag = jcfalse;
     jcboolean *cancel_ptr = option ? &option->load_cancel : &cancel_flag;
 
+    // 読み込み用テクスチャユニットは末尾を利用する
     const s32 texture_unit = GPUCapacity::getMaxTextureUnits() - 1;
     assert(texture_unit >= 0);
 
