@@ -23,7 +23,7 @@ MInputStream FileSystem::openInputStream(const Uri &uri) {
 #ifdef LOG_JAVAJOINTINPUTSTREAM
     jclogf("scheme = %s", scheme.c_str());
 #endif
-    jclogf("path = %s", path.c_str());
+//    jclogf("path = %s", path.c_str());
 
     // アセットから読み込む
     if (scheme == UriProtocol::SCHEME_APPLI_ASSETS) {

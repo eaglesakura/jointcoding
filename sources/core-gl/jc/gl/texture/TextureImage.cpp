@@ -324,7 +324,7 @@ MTextureImage TextureImage::decode(MDevice device, const Uri &uri, const PixelFo
         jclogf("pkm texture(%s)", uri.getUri().c_str());
         return decodePMK(device, uri, option);
     } else {
-        jclogf("platform texture(%s)", uri.getUri().c_str());
+//        jclogf("platform texture(%s)", uri.getUri().c_str());
         MPixelBuffer buffer = TextureImage::decodePixelsFromPlatformDecoder(device, uri, option);
         if (buffer) {
             return decode(device, buffer, pixelFormat, option);
