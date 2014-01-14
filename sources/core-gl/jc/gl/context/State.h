@@ -36,6 +36,8 @@ enum GLBlendType_e {
 };
 
 // #define  STATE_NO_CHECK
+// 自動バインドするときは全て0番テクスチャを利用する
+#define JC_TEXTURE_AUTOBIND_0
 
 /**
  * GLのステート情報を保持する。
@@ -555,6 +557,9 @@ public:
      * @param overrride trueの場合、適当なテクスチャユニットをピックアップして返す。
      */
     inline s32 getFreeTextureUnitIndex(const jcboolean overrride) {
+#ifdef  JC_TEXTURE_AUTOBIND_0
+        return 0;
+#else
         for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
             if (textureContext.textures[i] == 0) {
                 return i;
@@ -572,6 +577,8 @@ public:
             // 上書きせずにエラーを返す
             return -1;
         }
+#endif
+
     }
 
     /**
