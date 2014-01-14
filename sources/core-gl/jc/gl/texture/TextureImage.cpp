@@ -403,10 +403,8 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             // 例えば2byte RGB565テクスチャの転送で4byte境界にされてしまい、テクスチャがうまいこと読み込めなくなってしまう
             if (ONCE_PIXEL_BYTES == 4 || ONCE_PIXEL_BYTES == 2) {
                 glPixelStorei(GL_UNPACK_ALIGNMENT, ONCE_PIXEL_BYTES);
-                glPixelStorei(GL_PACK_ALIGNMENT, ONCE_PIXEL_BYTES);
             } else {
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-                glPixelStorei(GL_PACK_ALIGNMENT, 1);
             }
 
             // テクスチャalloc時間を記録する
