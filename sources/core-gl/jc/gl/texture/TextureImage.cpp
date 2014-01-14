@@ -386,11 +386,13 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             result->size.tex_width = texture_width;
             result->size.tex_height = texture_height;
 
+#if 0
             // mipmapを生成する場合は正方形に整列する
             if (option && option->gen_mipmap) {
                 result->size.tex_width = jc::max(texture_width, texture_height);
                 result->size.tex_height = result->size.tex_width;
             }
+#endif
 
             // テクスチャ用メモリを確保する
             result->bind(texture_unit);
