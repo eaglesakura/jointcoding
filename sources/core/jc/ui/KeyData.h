@@ -26,6 +26,11 @@ class KeyData: public Object {
         KeyState_Up,
 
         /**
+         * キーが押されているが、反応しない状態
+         */
+        KeyState_Break,
+
+        /**
          * キーが押されている状態
          */
         KeyState_Down,
@@ -76,7 +81,7 @@ public:
      * キーを押しっぱなしにしている場合はtrue
      */
     virtual jcboolean isKeeping() const {
-        if(!isPressing()) {
+        if (!isPressing()) {
             // 押されていなければKEEPもされてない
             return jcfalse;
         }
@@ -152,12 +157,26 @@ public:
         return keyCode == KeyEventProtocol::KEYCODE_BACK;
     }
 
+    /**
+     * 押下状態を強制解除する
+     */
+    virtual jcboolean breakPress() {
+        if (state == KeyState_Down) {
+            // 押下状態のみ反応
+            state = KeyState_Break;
+            checkedTime = endTime = Timer::currentTime();
+
+            return jctrue;
+        }
+        return jcfalse;
+    }
+
 private:
     /**
      * キーが押された
      */
     jcboolean onKeyDown() {
-        if (state != KeyState_Down) {
+        if (state == KeyState_Up) {
             checkedTime = beginTime = Timer::currentTime();
             state = KeyState_Down;
             return jctrue;
@@ -169,12 +188,13 @@ private:
      * キーが離された
      */
     jcboolean onKeyUp() {
-        if (state != KeyState_Up) {
+        jcboolean result = jcfalse;
+        if (state == KeyState_Down) {
             checkedTime = endTime = Timer::currentTime();
-            state = KeyState_Up;
-            return jctrue;
+            result = jctrue;
         }
-        return jcfalse;
+        state = KeyState_Up;
+        return result;
     }
 
     /**
@@ -182,7 +202,7 @@ private:
      * checkTimeMSよりも時間経過していたらtrueを返してチェックタイムをリセットする
      */
     jcboolean isKeyPressing(const s32 checkTimeMS) {
-        if (!isPressing()) {
+        if (!isPressing() || state == KeyState_Break) {
             // 押されていなければ何もしない
             return jcfalse;
         }
