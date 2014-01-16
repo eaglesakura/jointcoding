@@ -74,7 +74,7 @@ public:
      * 押下中の場合はtrueを返す
      */
     virtual jcboolean isPressing() const {
-        return endTime < beginTime;
+        return endTime < beginTime && state == KeyState_Down;
     }
 
     /**
@@ -202,7 +202,7 @@ private:
      * checkTimeMSよりも時間経過していたらtrueを返してチェックタイムをリセットする
      */
     jcboolean isKeyPressing(const s32 checkTimeMS) {
-        if (!isPressing() || state == KeyState_Break) {
+        if (!isPressing()) {
             // 押されていなければ何もしない
             return jcfalse;
         }
