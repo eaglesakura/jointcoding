@@ -108,6 +108,13 @@ public:
     }
 
     /**
+     * 直接描画先を設定する
+     */
+    void setDst(const RectF &set) {
+        dstArea = set;
+    }
+
+    /**
      * 描画領域の幅を取得する。
      * @return
      */
@@ -302,7 +309,7 @@ public:
      * レンダリングを行う
      */
     virtual void rendering(MSpriteManager spriteManager) {
-        spriteManager->renderingImage(getRenderingTexture(), srcArea.left, srcArea.top, srcArea.width(), srcArea.height(),  dstArea.left, dstArea.top, dstArea.width(), dstArea.height(), rotate, color.rgba);
+        spriteManager->renderingImage(getRenderingTexture(), srcArea.left, srcArea.top, srcArea.width(), srcArea.height(), dstArea.left, dstArea.top, dstArea.width(), dstArea.height(), rotate, color.rgba);
     }
 };
 

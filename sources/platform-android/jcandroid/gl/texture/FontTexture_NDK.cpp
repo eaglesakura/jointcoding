@@ -41,6 +41,7 @@ jc_sp<FontTexture> FontTexture::createInstance(const String &text, const u32 hei
         void* raw_buffer = env->GetDirectBufferAddress(pixelBuffer);
         result->bind();
         {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             result->copyPixelLine(raw_buffer, PixelFormat_NativeRGBA, 0, 0, imageHeight);
         }
         result->unbind();
