@@ -492,11 +492,17 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
                 }
 
                 jclog("gen mipmap");
-                result->bind(texture_unit);
-                result->genMipmaps();
-                result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-                result->setMagFilter(GL_LINEAR);
-                result->unbind();
+                {
+                    jctime  genmipmap_time = Timer::currentTime();
+
+                    result->bind(texture_unit);
+                    result->genMipmaps();
+                    result->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+                    result->setMagFilter(GL_LINEAR);
+                    result->unbind();
+
+                    option->result.genmipmap_time_ms = Timer::lapseTimeMs(genmipmap_time);
+                }
 
                 // テクスチャロードはfinish待ちを行う
                 glFinish();

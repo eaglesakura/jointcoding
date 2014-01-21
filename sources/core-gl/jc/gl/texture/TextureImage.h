@@ -81,6 +81,11 @@ struct TextureLoadOption {
          * デバイス占有時間を返却する
          */
         s32 devicelocked_time_ms;
+
+        /**
+         * mipmap生成時間
+         */
+        s32 genmipmap_time_ms;
     } result;
 
     /**
@@ -88,7 +93,7 @@ struct TextureLoadOption {
      */
     TextureLoadOption() {
         convert_pot = gen_mipmap = load_cancel = load_priority_down = jcfalse;
-        result.alloc_time_ms = result.teximage_time_ms = result.devicelocked_time_ms = result.raw_load_time_ms = result.raw_pixelconvert_time_ms = 0;
+        result.alloc_time_ms = result.teximage_time_ms = result.devicelocked_time_ms = result.raw_load_time_ms = result.raw_pixelconvert_time_ms = result.genmipmap_time_ms = 0;
         slice_loading_pixel = 4096 * 4096;
         slice_sleep_time_ms = 0;
     }
