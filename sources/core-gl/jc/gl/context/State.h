@@ -553,6 +553,18 @@ public:
     }
 
     /**
+     * 全てのテクスチャをアンバインド状態にする
+     */
+    inline void unbindTextures() {
+        const int num = GPUCapacity::getMaxTextureUnits();
+        for (int i = 0; i < num; ++i) {
+            activeTexture(i);
+            bindTexture(GL_TEXTURE_2D, 0);
+        }
+        activeTexture(0);
+    }
+
+    /**
      * 空いているテクスチャユニット番号を取得する
      * @param overrride trueの場合、適当なテクスチャユニットをピックアップして返す。
      */

@@ -138,9 +138,9 @@ jcboolean GLState::printProgramError(const GLuint programObject, const GLint sta
  * この呼出は非常に重くなると予想されるので、極力呼び出さないようにする
  */
 void GLState::syncContext() {
-    jclog("------------------------- sync OpenGL ES Context ----------------------");
+//    jclog("------------------------- sync OpenGL ES Context ----------------------");
     // 命令の同期待を行う
-    finish();
+//    finish();
     // 描画色を取得する
     {
         s32 colors[4] = { 0 };
@@ -238,8 +238,8 @@ void GLState::syncContext() {
             vertexAttrContext.buffers[i].enable = (jcboolean) temp;
         }
     }
-    print(__FILE__, __LINE__);
-    jclog("------------------ sync complete!! OpenGL ES Context ------------------");
+//    print(__FILE__, __LINE__);
+//    jclog("------------------ sync complete!! OpenGL ES Context ------------------");
 }
 
 /**
