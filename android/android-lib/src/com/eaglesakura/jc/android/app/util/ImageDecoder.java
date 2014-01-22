@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.eaglesakura.jc.android.app.AndroidUtil;
+import com.eaglesakura.jc.android.app.NativeContext;
+import com.eaglesakura.jc.android.util.NativeUriUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCClass;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCMethod;
 
@@ -129,7 +131,7 @@ public class ImageDecoder {
             image = BitmapFactory.decodeStream(stream);
             return decodeFromBitmap(image, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            //            e.printStackTrace();
         } finally {
             if (image != null) {
                 image.recycle();
@@ -137,5 +139,39 @@ public class ImageDecoder {
         }
 
         return null;
+    }
+
+    /**
+     * 画像デコードのみを行う
+     * @param stream
+     * @return
+     */
+    @JCMethod
+    public static Bitmap decodeBitmapFromStream(InputStream stream) {
+        return BitmapFactory.decodeStream(stream);
+    }
+
+    /**
+     * NativeUriからBitmapクラスをロードする
+     * @param nativeUri
+     * @return
+     */
+    @JCMethod
+    public static Bitmap decodeBitmapFromNativeUri(String nativeUri) {
+        InputStream is = null;
+        try {
+            is = NativeUriUtil.openInputStream(NativeContext.getApplicationContext(), nativeUri);
+            return decodeBitmapFromStream(is);
+        } catch (Exception e) {
+            //            AndroidUtil.log(e);
+            return null;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 }

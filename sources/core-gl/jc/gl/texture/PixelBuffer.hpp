@@ -3,8 +3,9 @@
  *
  *  Created on: 2013/05/06
  */
-#ifndef __PIXELBUFFER_HPP__
-#define __PIXELBUFFER_HPP__
+
+#ifndef __PIXEL_BUFFER_HPP__
+#define __PIXEL_BUFFER_HPP__
 
 #include    "jointcoding.h"
 #include    "jc/graphics/Pixel.h"
@@ -107,7 +108,8 @@ public:
             return;
         }
 
-        jclogf("convert pixelformat(%d) -> (%d)", pixelFormat, newFormat);
+        jclogf("request format(%d) -> (%d)", pixelFormat, newFormat);
+
         bytesParPixel = Pixel::getPixelBytes(newFormat);
         jc_sa<u8> newBuffer = Pixel::createPixelBuffer(newFormat, width * height);
 
@@ -119,6 +121,12 @@ public:
             case PixelFormat_RGB888:
             Pixel::copyRGB888Pixels(header, newFormat, newBuffer.get(), width * height);
             break;
+            case PixelFormat_BGRA8888:
+            Pixel::copyBGRA8888Pixels(header, newFormat, newBuffer.get(), width * height);
+            break;
+
+// PixelFormatに違いが生じている場合はコンバートを許可する
+#if(PixelFormat_NativeRGBA != PixelFormat_RGBA8888)
             case PixelFormat_NativeRGBA:
 #if defined(BUILD_Android)
             // AndroidはBGRA -> 新フォーマット
@@ -129,6 +137,7 @@ public:
             Pixel::copyRGBA8888Pixels(header, newFormat, newBuffer.get(), width * height);
 #endif
             break;
+#endif
             default:
             // その他のフォーマットは相互変換出来ない
             jclogf("not support format(%d)", newFormat);
@@ -151,4 +160,5 @@ typedef jc_sp<PixelBuffer> MPixelBuffer;
 }
 }
 
-#endif  //__PIXELBUFFER_HPP__
+#endif /* __PIXEL_BUFFER_HPP__ */
+

@@ -17,9 +17,11 @@ public:
     static const ::jc::charactor* CLASS_SIGNATURE;
     virtual jobject getPixels_unsafe();
     static jobject getPixels_unsafe_(jobject _this);
+    static jobject decodeBitmapFromNativeUri_unsafe(jstring nativeUri);
     virtual jint getHeight();
     static jint getHeight_(jobject _this);
     static jobject decodeFromStream_unsafe(jobject stream);
+    static jobject decodeBitmapFromStream_unsafe(jobject stream);
     virtual jint getWidth();
     static jint getWidth_(jobject _this);
     static jobject decodeFromBitmap_unsafe(jobject image, jboolean recycle);
