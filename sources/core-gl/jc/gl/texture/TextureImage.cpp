@@ -11,6 +11,11 @@
 #include    "jc/gl/gpu/DeviceLock.hpp"
 #include    "jc/platform/Timer.h"
 
+/**
+ *
+ */
+#define EXTERNAL_TEXTURE_BIND_UNIT 2
+
 namespace jc {
 namespace gl {
 
@@ -99,7 +104,13 @@ TextureImage::~TextureImage() {
 }
 
 s32 TextureImage::getFreeTextureUnitIndex() {
-    return state->getFreeTextureUnitIndex(jctrue);
+    if (target == GL_TEXTURE_EXTERNAL_OES) {
+        // for SurfaceTexture
+        return EXTERNAL_TEXTURE_BIND_UNIT;
+    } else {
+        return state->getFreeTextureUnitIndex(jctrue);
+    }
+
 }
 
 void TextureImage::copyPixelLine(const void* src, const PixelFormat_e pixelFormat, const s32 mipLevel, const s32 lineHeader, const s32 lineNum) {
@@ -241,6 +252,11 @@ void TextureImage::bind(s32 index) {
     if (!texture.exist()) {
         jclogf("texture is not exist(%x)", this);
         return;
+    }
+
+    // for SurfaceTexture
+    if (target == GL_TEXTURE_EXTERNAL_OES) {
+        index = EXTERNAL_TEXTURE_BIND_UNIT;
     }
 
     assert(index >= 0 && index < GPUCapacity::getMaxTextureUnits());
@@ -493,7 +509,7 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
 
                 jclog("gen mipmap");
                 {
-                    jctime  genmipmap_time = Timer::currentTime();
+                    jctime genmipmap_time = Timer::currentTime();
 
                     result->bind(texture_unit);
                     result->genMipmaps();
