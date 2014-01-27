@@ -9,7 +9,7 @@
 #include    "jc/gl/context/State.h"
 #include    <map>
 
-#define PRINT_VRAM
+// #define PRINT_VRAM
 
 namespace jc {
 namespace gl {
@@ -205,7 +205,7 @@ vram_id _VRAM::alloc(VRAM_e type) {
         id = ref(get(&alloc_pool[type], type));
     }
 
-#ifdef DEBUG
+#ifdef PRINT_VRAM
     if (type == VRAM_Texture) {
         jclogf("alloc texture vram obj(%d)", id->obj);
     }
@@ -321,7 +321,7 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
                 assert_gl();
 #endif
 
-#ifdef DEBUG
+#ifdef PRINT_VRAM
                 if (state && i == VRAM_Texture) {
                     for (int k = 0; k < dealloc_pool[i].size(); ++k) {
                         jclogf("delete texture vram obj(%d)", dealloc_pool[i][k]);
