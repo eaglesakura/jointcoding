@@ -191,8 +191,6 @@ vram_id _VRAM::alloc(VRAM_e type) {
     MutexLock lock(mutex);
     ++alloced_num[type];
 
-    std::vector<vram_id> releasePool;
-
     vram_id id = ref(get(&alloc_pool[type], type));
 
     // 既に予約中のキャッシュがある場合、それを返さないようにする
