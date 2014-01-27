@@ -636,6 +636,14 @@ public:
                 // GL_TEXTURE_EXTERNAL_OESは外部的な要因でエラーを吐く場合がある
                 print_glerror();
             }
+
+#ifdef DEBUG
+            // デバッグ中はtextureが有効でなければならない
+            if (texture) {
+                assert(glIsTexture(texture) == GL_TRUE);
+            }
+#endif
+
 #else
             assert_gl_msg("active(%d) target(%x) texture(%u)", index, target, texture);
 #endif

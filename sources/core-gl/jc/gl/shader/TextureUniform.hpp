@@ -8,6 +8,7 @@
 #define TEXTUREUNIFORM_HPP_
 
 #include    "jc/gl/shader/UniformBase.hpp"
+#define JC_TEXTURE_FORCE_UPLOAD
 
 namespace jc {
 namespace gl {
@@ -29,7 +30,6 @@ public:
         setLocation(program, name);
     }
 
-
     ~TextureUniform() {
 
     }
@@ -43,15 +43,20 @@ public:
         if (!valid()) {
             return jcfalse;
         }
-
         const u32 texUnit = tex->bind();
+
+
+#ifndef JC_TEXTURE_FORCE_UPLOAD
         if (bindUnit != texUnit) {
+#endif
             glUniform1i(location, texUnit);
             assert_gl();
             bindUnit = texUnit;
             return jctrue;
+#ifndef JC_TEXTURE_FORCE_UPLOAD
         }
         return jcfalse;
+#endif
     }
 };
 

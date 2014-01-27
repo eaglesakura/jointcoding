@@ -102,7 +102,7 @@ struct VramFunction {
 static VramFunction function_tbl[VRAM_e_num] = {
 #if 1
         // VRAM_Texture
-        { 32, (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, "Texture", },
+        { 1, (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, "Texture", },
         // VRAM_Indices
         { 4, (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, "IndexBuffer", },
         // VRAM_VertexBufferObject
