@@ -11,6 +11,7 @@
 #include    "jc/mem/SmartPtr.h"
 #include    <vector>
 #include    <list>
+#include    "jc/collection/UniqueCache.hpp"
 
 namespace jc {
 namespace gl {
@@ -192,7 +193,6 @@ private:
      */
     s32 deleted_num[VRAM_e_num];
 
-
     /**
      * 生成済みのvram_id一覧
      */
@@ -202,6 +202,11 @@ private:
      * 廃棄用のVRAM領域
      */
     dealloc_list dealloc_pool[VRAM_e_num];
+
+    /**
+     * 生きているリソース数管理
+     */
+    UniqueCache existResourceCache[VRAM_e_num];
 
     jcmutex mutex;
 public:
@@ -316,6 +321,11 @@ public:
      * コピーを行う
      */
     SharedResource& operator=(const SharedResource &cpy) {
+        if (this->vid == cpy.vid) {
+            jclogf("copy to self!! obj(%d)", this->get());
+            return *this;
+        }
+
         release();
         this->vram = cpy.vram;
         this->vid = vram->ref(cpy.vid);

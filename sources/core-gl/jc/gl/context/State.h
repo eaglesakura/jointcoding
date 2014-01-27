@@ -595,6 +595,19 @@ public:
 
     /**
      * 指定したテクスチャがバインド済みになっているかを調べる
+     * 主に削除済みのテクスチャがバインド済みキャッシュとなっているかを確認するために利用する
+     */
+    inline jcboolean isBindedTexture(const GLuint texture) const {
+        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
+            if (textureContext.textures[i] == texture) {
+                return jctrue;
+            }
+        }
+        return jcfalse;
+    }
+
+    /**
+     * 指定したテクスチャがバインド済みになっているかを調べる
      */
     inline jcboolean isBindedTexture(const GLenum target, const GLuint texture) const {
         for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
@@ -611,6 +624,20 @@ public:
     inline jcboolean isBindedTexture(const u32 index, const GLenum target, const GLuint texture) {
         assert(index < caps.MAX_TEXTURE_UNITS);
         return textureContext.textures[index] == texture && textureContext.targets[index] == target;
+    }
+
+    /**
+     * テクスチャが不要になったらテクスチャキャッシュから排除する。
+     * 不要になったテクスチャは利用されず、キャッシュヒットさせる必要がなくなるため。
+     */
+    inline void releaseTextureCache(const GLuint texture) {
+        for (int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
+            if (textureContext.textures[i] == texture) {
+                jclogf("unload texture from statecache unit(%d) id(%d)", i, texture);
+                textureContext.textures[i] = -1;
+                textureContext.targets[i] = -1;
+            }
+        }
     }
 
     /**

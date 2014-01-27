@@ -47,6 +47,11 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
 
     texture.alloc(device->getVRAM(), VRAM_Texture);
 
+    // デッドキャッシュをチェック。
+    // allocしたばかりでバインド状態にあってはいけない
+    state->releaseTextureCache(texture.get());
+    assert(!state->isBindedTexture(texture.get()));
+
     {
         const s32 index = GPUCapacity::getMaxTextureUnits() - 1;
         this->bind(index);
@@ -66,6 +71,10 @@ TextureImage::TextureImage(const s32 width, const s32 height, MDevice device) {
         }
         this->unbind();
     }
+
+    assert(bindUnit < 0);
+    assert(!isBinded(NULL));
+    assert(!state->isBindedTexture(texture.get()));
 }
 
 TextureImage::TextureImage(const GLenum target, const s32 width, const s32 height, MDevice device) {
@@ -77,6 +86,11 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
     bindUnit = -1;
 //    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     texture.alloc(device->getVRAM(), VRAM_Texture);
+
+    // デッドキャッシュをチェック。
+    // allocしたばかりでバインド状態にあってはいけない
+    state->releaseTextureCache(texture.get());
+    assert(!state->isBindedTexture(texture.get()));
 
     {
         const s32 index = GPUCapacity::getMaxTextureUnits() - 1;
@@ -97,6 +111,10 @@ TextureImage::TextureImage(const GLenum target, const s32 width, const s32 heigh
         }
         this->unbind();
     }
+
+    assert(bindUnit < 0);
+    assert(!isBinded(NULL));
+    assert(!state->isBindedTexture(texture.get()));
 }
 
 TextureImage::~TextureImage() {
@@ -228,21 +246,13 @@ jcboolean TextureImage::isPowerOfTwoTexture() {
 
 s32 TextureImage::bind() {
     if (bindUnit >= 0) {
-        assert(bindUnit >= 0 && bindUnit < GPUCapacity::getMaxTextureUnits());
-
-        // バインドキャッシュがある場合は、まだバインドが有効かをチェックする
-        if (state->isBindedTexture(bindUnit, target, texture.get())) {
-            // まだバインドされていたらactiveへ切り替える
-            state->activeTexture(bindUnit);
-            return bindUnit;
-        }
-        bindUnit = -1;
+        this->bind(bindUnit);
+    } else {
+        s32 unitIndex = getFreeTextureUnitIndex();
+        this->bind(unitIndex);
     }
 
-    s32 unitIndex = getFreeTextureUnitIndex();
-//    unitIndex = 0;
-    this->bind(unitIndex);
-    return unitIndex;
+    return bindUnit;
 }
 
 /**
@@ -261,12 +271,8 @@ void TextureImage::bind(s32 index) {
 
     assert(index >= 0 && index < GPUCapacity::getMaxTextureUnits());
 
-    if (bindUnit == index) {
-        if (state->isBindedTexture(bindUnit, target, texture.get())) {
-            state->activeTexture(bindUnit);
-            return;
-        }
-    } else if (bindUnit >= 0) {
+    // 違うユニットへのバインドが行われているかもしれないなら、アンバインドを行う
+    if (bindUnit >= 0 && bindUnit != index) {
         unbind();
     }
     bindUnit = index;
@@ -304,6 +310,9 @@ jcboolean TextureImage::isBinded(s32 *resultIndex) {
  */
 void TextureImage::dispose() {
     if (texture.exist()) {
+        // テクスチャキャッシュから排除する
+        state->releaseTextureCache(texture.get());
+
         texture.release();
     }
 }
@@ -414,6 +423,11 @@ jc_sp<TextureImage> TextureImage::decode(MDevice device, MPixelBuffer pixelBuffe
             // テクスチャ用メモリを確保する
             result->bind(texture_unit);
             result->allocPixelMemory(pixelFormat, 0);
+            {
+                // 重複allocを避けるため、1pix loadを試す
+                Color col;
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, PIXEL_FORMATS[pixelFormat], PIXEL_TYPES[pixelFormat], &col);
+            }
 
             // glTexImage2D用にパッキングを行う
             // この呼出を行わない場合、テクセル境界が4byteとなってしまう

@@ -8,7 +8,7 @@
 #define TEXTUREUNIFORM_HPP_
 
 #include    "jc/gl/shader/UniformBase.hpp"
-#define JC_TEXTURE_FORCE_UPLOAD
+// #define JC_TEXTURE_FORCE_UPLOAD
 
 namespace jc {
 namespace gl {

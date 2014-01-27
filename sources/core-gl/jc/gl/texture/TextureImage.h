@@ -182,6 +182,11 @@ class TextureImage: public Object {
 protected:
     virtual s32 getFreeTextureUnitIndex();
 
+    /**
+     * 資源解放はデストラクタに任せる
+     */
+    virtual void dispose();
+
     static u32 toTextureSize(const TextureLoadOption *option, const u32 size) {
         if (option) {
             if (option->convert_pot || option->gen_mipmap) {
@@ -331,9 +336,11 @@ public:
     virtual void unbind();
 
     /**
-     * 管理している資源を開放する
+     * テクスチャが有効であればtrueを返す
      */
-    virtual void dispose();
+    virtual jcboolean exist() {
+        return texture.exist();
+    }
 
     /**
      * 1x1dotのシンプルなテクスチャを生成する

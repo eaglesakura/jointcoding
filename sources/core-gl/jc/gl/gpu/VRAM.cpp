@@ -9,7 +9,7 @@
 #include    "jc/gl/context/State.h"
 #include    <map>
 
-//     #define PRINT_VRAM
+#define PRINT_VRAM
 
 namespace jc {
 namespace gl {
@@ -102,7 +102,7 @@ struct VramFunction {
 static VramFunction function_tbl[VRAM_e_num] = {
 #if 1
         // VRAM_Texture
-        { 1, (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, "Texture", },
+        { 16, (vram_alloc_function) glGenTextures, (vram_delete_function) glDeleteTextures, "Texture", },
         // VRAM_Indices
         { 4, (vram_alloc_function) glGenBuffers, (vram_delete_function) glDeleteBuffers, "IndexBuffer", },
         // VRAM_VertexBufferObject
@@ -191,7 +191,31 @@ vram_id _VRAM::alloc(VRAM_e type) {
     MutexLock lock(mutex);
     ++alloced_num[type];
 
-    return ref(get(&alloc_pool[type], type));
+    std::vector<vram_id> releasePool;
+
+    vram_id id = ref(get(&alloc_pool[type], type));
+
+    // 既に予約中のキャッシュがある場合、それを返さないようにする
+    while (existResourceCache[type].exist(id->obj)) {
+        jclogf("recreate resource vram(%x) obj(%d)", id, id->obj)
+
+        // 削除プールに戻すと問題が発生するため、delete操作を行う
+        SAFE_DELETE(id);
+
+        id = ref(get(&alloc_pool[type], type));
+    }
+
+#ifdef DEBUG
+    if (type == VRAM_Texture) {
+        jclogf("alloc texture vram obj(%d)", id->obj);
+    }
+#endif
+
+    // プールに追加する
+    existResourceCache[type].insert(id->obj);
+    assert(existResourceCache[type].exist(id->obj));
+
+    return id;
 }
 
 /**
@@ -237,6 +261,11 @@ void _VRAM::release(vram_id vid) {
 #endif
         // 解放プールに追加する
         dealloc_pool[vid->type].push_back(vid->obj);
+
+        // 利用中キャッシュからも外す
+        existResourceCache[vid->type].remove(vid->obj);
+        assert(!existResourceCache[vid->type].exist(vid->obj));
+
         SAFE_DELETE(vid);
     }
 }
@@ -278,24 +307,28 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
 
                 gc_objects += dealloc_pool[i].size();
 
+#if 0
                 if (state) {
-
                     switch (i) {
                         case VRAM_Texture: {
                             state->unbindTextures(dealloc_pool[i].size(), &(dealloc_pool[i][0]));
                         }
-                            break;
+                        break;
                     }
                 }
 
                 state->finish();
                 assert_gl();
-                // 解放ビットフラグを含んでいたら、解放を行う
-//                for (u32 k = 0; k < dealloc_pool[i].size(); ++k) {
-//                    function_tbl[i].delete_func(1, (u32*) &(dealloc_pool[i][k]));
-//                    assert_gl();
-//                    state->flush();
-//                }
+#endif
+
+#ifdef DEBUG
+                if (state && i == VRAM_Texture) {
+                    for (int k = 0; k < dealloc_pool[i].size(); ++k) {
+                        jclogf("delete texture vram obj(%d)", dealloc_pool[i][k]);
+                    }
+                }
+#endif
+
                 function_tbl[i].delete_func(dealloc_pool[i].size(), &(dealloc_pool[i][0]));
                 state->finish();
 
@@ -309,7 +342,11 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
 
     if (gc_objects) {
         jclogf("VRAM-GC(%d objects)", gc_objects);
+        if (state) {
+            state->syncContext();
+        }
     }
+
 }
 
 /**

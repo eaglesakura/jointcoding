@@ -238,6 +238,15 @@ void GLState::syncContext() {
             vertexAttrContext.buffers[i].enable = (jcboolean) temp;
         }
     }
+    // テクスチャユニット問い合わせ
+    {
+        glGetIntegerv(GL_ACTIVE_TEXTURE, &textureContext.active);
+        for(int i = 0; i < caps.MAX_TEXTURE_UNITS; ++i) {
+            textureContext.targets[i] = -1;
+            textureContext.textures[i] = -1;
+        }
+    }
+
 //    print(__FILE__, __LINE__);
 //    jclog("------------------ sync complete!! OpenGL ES Context ------------------");
 }

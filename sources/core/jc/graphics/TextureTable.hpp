@@ -52,7 +52,13 @@ public:
         int index = 0;
         while(itr != end) {
             if(*itr == key) {
-                return value_array[index];
+                jc_sp<TextureType> cache = value_array[index];
+                if(cache && cache->exist()) {
+                    return cache;
+                } else {
+                    jclogf("texture dead cache!! (%d)", cache.get());
+                    return jc_sp<TextureType>();
+                }
             }
             ++index;
             ++itr;
