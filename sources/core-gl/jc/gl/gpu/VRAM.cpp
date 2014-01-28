@@ -320,7 +320,7 @@ void _VRAM::gc(MGLState state, const u32 gc_flags) {
 #endif
 
 #ifdef PRINT_VRAM
-                if (state && i == VRAM_Texture) {
+                if (i == VRAM_Texture) {
                     for (int k = 0; k < dealloc_pool[i].size(); ++k) {
                         jclogf("delete texture vram obj(%d)", dealloc_pool[i][k]);
                     }
