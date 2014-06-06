@@ -57,7 +57,7 @@ public class ClassesImporter {
                 return false;
             }
         }
-        //        LogUtil.log("from file :: " + file.getAbsolutePath());
+        LogUtil.log("    from file :: " + file.getAbsolutePath());
         InputStream is = null;
         try {
             is = new FileInputStream(file);
@@ -96,7 +96,7 @@ public class ClassesImporter {
      * @return
      */
     public static boolean fromJar(File file) {
-        LogUtil.log("from jar :: " + file.getAbsolutePath());
+        LogUtil.log("    from jar :: " + file.getAbsolutePath());
         InputStream is = null;
         try {
             int clzCount = 0;
