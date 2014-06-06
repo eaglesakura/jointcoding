@@ -43,6 +43,8 @@ public class CppImplExporter extends CppClassInfomationBase {
             case CallSupport:
                 exportCallSupport(writer);
                 break;
+            default:
+                break;
         }
 
         // ネームスペース出力
@@ -69,8 +71,7 @@ public class CppImplExporter extends CppClassInfomationBase {
         {
             String sign = converter.getJavaClassName();
             sign = sign.replaceAll("\\.", "/");
-            writer.add("const ::jc::charactor* ").add(converter.getClassName()).add("::CLASS_SIGNATURE = \"").add(sign)
-                    .add("\";");
+            writer.add("const ::jc::charactor* ").add(converter.getClassName()).add("::CLASS_SIGNATURE = \"").add(sign).add("\";");
             writer.newline();
         }
 
@@ -106,8 +107,7 @@ public class CppImplExporter extends CppClassInfomationBase {
         // コンストラクタ部分を記述
         {
             writer.newline();
-            writer.add(className).add("::").add(className).add("(jobject obj): ").add(superClass).add("(obj)").add("{")
-                    .newline();
+            writer.add(className).add("::").add(className).add("(jobject obj): ").add(superClass).add("(obj)").add("{").newline();
 
             writer.indent().add("initialize_").add(className).add("();").newline();
             writer.add("}").newline();
@@ -137,8 +137,7 @@ public class CppImplExporter extends CppClassInfomationBase {
         {
             writer.add("jc_sp<").add(className).add("> ").add(className).add("::global(jobject obj) {").newline();
             {
-                writer.indent().add("return jc_sp<").add(className).add(">( (").add(className).add("*)(mark_new ")
-                        .add(className).add("(obj))->addGlobalRef());").newline();
+                writer.indent().add("return jc_sp<").add(className).add(">( (").add(className).add("*)(mark_new ").add(className).add("(obj))->addGlobalRef());").newline();
             }
             writer.add("}").newline();
         }
@@ -170,8 +169,7 @@ public class CppImplExporter extends CppClassInfomationBase {
     private String getCallImpl(FieldConverter field) {
         StringWriter writer = new StringWriter();
         writer.append(field.getFieldPrototype()).append(" ");
-        writer.append(converter.getClassName()).append("::").append(field.getName()).append(" = ")
-                .append(field.getValue());
+        writer.append(converter.getClassName()).append("::").append(field.getName()).append(" = ").append(field.getValue());
         writer.append(";");
         writer.flush();
         return writer.getBuffer().toString();
@@ -188,9 +186,7 @@ public class CppImplExporter extends CppClassInfomationBase {
         String methodArrayName = "methods_" + converter.getClassName();
         {
             writer.append(methodArrayName).append("[").append(Integer.toString(id)).append("] = ");
-            writer.append("::ndk::JniWrapper::loadMethod(class_").append(converter.getClassName()).append(", \"")
-                    .append(method.getRawName()).append("\"").append(", \"").append(method.getMethodSigneture())
-                    .append("\", ").append(Boolean.toString(method.isStaticMethod())).append(");");
+            writer.append("::ndk::JniWrapper::loadMethod(class_").append(converter.getClassName()).append(", \"").append(method.getRawName()).append("\"").append(", \"").append(method.getMethodSigneture()).append("\", ").append(Boolean.toString(method.isStaticMethod())).append(");");
         }
 
         writer.flush();
@@ -231,8 +227,7 @@ public class CppImplExporter extends CppClassInfomationBase {
 
                 String arg_name;
                 if ("this".equals(arg.getName())) {
-                    System.out
-                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    System.out.println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
                     arg_name = (JCUtil.toCppType(arg.getType()) + i);
                 } else {
                     arg_name = arg.getName();
@@ -280,8 +275,7 @@ public class CppImplExporter extends CppClassInfomationBase {
                 Argment arg = method.getArgment(i);
                 String arg_name;
                 if ("this".equals(arg.getName())) {
-                    System.out
-                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    System.out.println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
                     arg_name = (JCUtil.toCppType(arg.getType()) + i);
                 } else {
                     arg_name = arg.getName();
@@ -341,8 +335,7 @@ public class CppImplExporter extends CppClassInfomationBase {
 
                 String arg_name;
                 if ("this".equals(arg.getName())) {
-                    System.out
-                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    System.out.println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
                     arg_name = (JCUtil.toCppType(arg.getType()) + i);
                 } else {
                     arg_name = arg.getName();
@@ -398,8 +391,7 @@ public class CppImplExporter extends CppClassInfomationBase {
 
                 String arg_name;
                 if ("this".equals(arg.getName())) {
-                    System.out
-                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    System.out.println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
                     arg_name = (JCUtil.toCppType(arg.getType()) + i);
                 } else {
                     arg_name = arg.getName();
@@ -423,8 +415,7 @@ public class CppImplExporter extends CppClassInfomationBase {
         if (resultType.equals("void")) {
             template.replase("JCEXPORTCLASSRETURNCODE", "pointer->" + method.getName() + "(" + newArgs + ");");
         } else {
-            template.replase("JCEXPORTCLASSRETURNCODE", "return (" + resultType + ") pointer->" + method.getName()
-                    + "(" + newArgs + ");");
+            template.replase("JCEXPORTCLASSRETURNCODE", "return (" + resultType + ") pointer->" + method.getName() + "(" + newArgs + ");");
         }
         writer.append(template.getCode());
     }
@@ -459,8 +450,7 @@ public class CppImplExporter extends CppClassInfomationBase {
 
                 String arg_name;
                 if ("this".equals(arg.getName())) {
-                    System.out
-                            .println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
+                    System.out.println(String.format("arg[%d] %s %s", i, JCUtil.toCppType(arg.getType()), arg.getName()));
                     arg_name = (JCUtil.toCppType(arg.getType()) + i);
                 } else {
                     arg_name = arg.getName();

@@ -208,6 +208,8 @@ public class ClassConverter extends ConverterBase {
                             MethodConverter exporter = new MethodConverter(this, method);
                             methods.add(exporter);
                         } catch (Exception e) {
+                            LogUtil.log("fail :: " + method.getName());
+                            LogUtil.log(e);
                         }
                     }
                 }

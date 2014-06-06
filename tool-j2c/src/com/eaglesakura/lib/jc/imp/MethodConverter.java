@@ -6,6 +6,8 @@ import javassist.Modifier;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
+import com.eaglesakura.lib.android.game.util.GameUtil;
+import com.eaglesakura.lib.android.game.util.LogUtil;
 import com.eaglesakura.lib.jc.AnnotationArgment;
 import com.eaglesakura.lib.jc.JCUtil;
 import com.eaglesakura.lib.jc.annotation.jnimake.JCAliasMethod;
@@ -106,6 +108,7 @@ public class MethodConverter extends ConverterBase {
         paramTypes = method.getParameterTypes();
         isStatic = Modifier.isStatic(method.getModifiers());
         factoryClassName = argments.getArgment("factory", "");
+
         // 引数名を保持する
         {
             if (paramTypes != null && paramTypes.length > 0) {
@@ -119,9 +122,17 @@ public class MethodConverter extends ConverterBase {
 
                 for (int i = 0; i < paramTypes.length; ++i) {
                     int index = isStatic ? i : (i + 1);
-                    if (lval != null) {
-                        argNames[i] = lval.getConstPool().getUtf8Info(lval.nameIndex(index));
-                    } else {
+                    try {
+                        // 引数名を取り出す
+                        if (lval != null) {
+                            argNames[i] = lval.getConstPool().getUtf8Info(lval.nameIndex(index));
+                        }
+                    } catch (Exception e) {
+                        LogUtil.log("error get argName :: " + methodName);
+                        //                        LogUtil.log(e);
+                    }
+
+                    if (GameUtil.isEmpty(argNames[i])) {
                         argNames[i] = ("arg" + i);
                         try {
                             argNames[i] = (paramTypes[i].getSimpleName().toLowerCase() + "_" + i);
@@ -152,6 +163,11 @@ public class MethodConverter extends ConverterBase {
 
         }
 
+        if (hasAnnotation(JCMethod.class)) {
+            LogUtil.log("    method export :: " + methodName + " / static = " + isStatic);
+        } else {
+            LogUtil.log("    method drop :: " + methodName + " / static = " + isStatic);
+        }
     }
 
     /**

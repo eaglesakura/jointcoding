@@ -30,6 +30,7 @@ public class Main {
     public static void main(String[] args) {
 
         CmdArgmentList argments = new CmdArgmentList(args);
+        LogUtil.setOutput(true);
 
         // ライブラリを読み込む
         {

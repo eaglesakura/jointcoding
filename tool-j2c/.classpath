@@ -5,9 +5,9 @@
 	<classpathentry kind="src" path="sample"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="libs/junit-4.8.2.jar"/>
-	<classpathentry kind="lib" path="libs/javassist-3.6.0.GA.jar"/>
 	<classpathentry kind="lib" path="libs/eglibrary-android-api8.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jcannotation"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" path="libs/javassist-3.6.0.GA.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
