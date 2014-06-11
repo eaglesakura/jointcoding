@@ -52,11 +52,19 @@ public class Main {
 
         // 入力ディレクトリ
         {
-            String inputPath = argments.getArgmentParam("source");
-            File IMPORT_DIRECTORY = new File(inputPath);
+            CmdArgment params = argments.getArgmentParams("source");
+            List<String> list = params.getArgments();
+            
+            for (String path : list) {
+                File IMPORT_DIRECTORY = new File(path);
+                ClassesImporter.fromDirectory(IMPORT_DIRECTORY);
+            }
+            
+            for (String path : list) {
+                File IMPORT_DIRECTORY = new File(path);
+                loadDirectory(IMPORT_DIRECTORY);
+            }
 
-            ClassesImporter.fromDirectory(IMPORT_DIRECTORY);
-            loadDirectory(IMPORT_DIRECTORY);
         }
     }
 
